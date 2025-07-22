@@ -1,0 +1,70 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block title %}Select Login Type - Sentiment Analysis{% endblock %}
+
+{% block header_icon %}<i class="fas fa-users me-2"></i>{% endblock %}
+{% block header_title %}Welcome{% endblock %}
+{% block header_subtitle %}Sentiment Analysis Platform{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/select.css' %}">
+{% endblock %}
+
+{% block content %}
+<h5 class="text-center mb-4 text-muted">Select Your Login Type</h5>
+
+<!-- Admin Login Option -->
+<div class="d-grid mb-3">
+    <a href="{% url 'login_admin' %}" class="btn btn-outline-primary selection-btn">
+        <div class="d-flex align-items-center">
+            <div class="icon-wrapper">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="btn-content">
+                <span class="btn-title">Admin Login</span>
+                <span class="btn-subtitle">Access administrative features</span>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Student Login Option -->
+<div class="d-grid mb-3">
+    <a href="{% url 'login_student' %}" class="btn btn-outline-primary selection-btn">
+        <div class="d-flex align-items-center">
+            <div class="icon-wrapper">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="btn-content">
+                <span class="btn-title">Student Login</span>
+                <span class="btn-subtitle">Access student dashboard</span>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Register Option -->
+<div class="d-grid mb-3">
+    <a href="{% url 'register' %}" class="btn btn-outline-success selection-btn">
+        <div class="d-flex align-items-center">
+            <div class="icon-wrapper">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="btn-content">
+                <span class="btn-title">Register as Student</span>
+                <span class="btn-subtitle">Create new student account</span>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Divider -->
+<div class="text-center my-4">
+    <hr class="divider">
+    <small class="text-muted">
+        <i class="fas fa-info-circle me-1"></i>
+        Choose the appropriate option based on your role
+    </small>
+</div>
+{% endblock %}

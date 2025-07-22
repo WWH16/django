@@ -1,0 +1,669 @@
+/* ============================
+   Global Styles
+============================ */
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #ffffff;
+  position: relative;
+  z-index: 0;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================
+   Hero Section (Background Image)
+============================ */
+.hero-section {
+  height: 90vh;
+  background: url("../images/ISU.jpg") no-repeat center center;
+  background-size: cover;
+  position: relative;
+  padding-top: 100px;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 0;
+}
+
+.hero-section .container {
+  position: relative;
+  z-index: 1;
+  color: #;
+}
+/* ============================
+   Hero Section learn more button
+ ============================*/
+.custom-btn-white-outline {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  transition: all 0.3s ease;
+}
+
+.custom-btn-white-outline:hover {
+  color: #fff !important;
+  background-color: #198754 !important; /* Bootstrap's success green */
+  border-color: #198754 !important;
+}
+
+/*
+   Navbar Styling
+============================ */
+
+
+
+#preloader {
+  position: fixed;
+  background: #fff url("{% static 'images/spinner.gif' %}") no-repeat center center;
+  background-size: 60px 60px;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+
+nav.navbar.bg-body-tertiary {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  background-color: transparent !important;
+  transition: background-color 0.5s ease;
+}
+
+/* Change background of nav-bar color on scroll */
+nav.navbar.bg-body-tertiary.scrolled {
+  background-color: rgba(0, 102, 0, 0.8) !important; /* 0.9 = 90% opaque */
+}
+
+.navbar {
+  padding: 1rem 2rem;
+  min-height: 90px;
+}
+
+.navbar-brand {
+  color: #ffffff !important;
+  font-weight: bold;
+  font-size: 1.9rem;
+  text-transform: uppercase;
+}
+
+/* ============================
+   Navbar Links
+============================ */
+.navbar-nav .nav-item {
+  margin-left: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav .nav-item {
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.navbar-nav > li > .nav-link {
+  position: relative;
+  color: #ffffff !important;
+  padding-bottom: 4px;
+  background-color: transparent !important;
+  outline: none;
+  transition: color 0.3s ease;
+}
+
+/* Underline effect (only non-dropdown links) */
+.navbar-nav > li > .nav-link:not(.dropdown-toggle)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.navbar-nav > li > .nav-link:not(.dropdown-toggle):hover::after {
+  width: 100%;
+}
+
+.navbar-nav > li > .nav-link:hover {
+  color: #ffffff !important;
+}
+
+/* Active & Disabled Links */
+.navbar-nav .nav-link.active {
+  color: #ffffff !important;
+}
+
+.navbar-nav .nav-link.disabled {
+  color: #cccccc !important;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.navbar-nav .nav-link:focus,
+.navbar-nav .nav-link:active {
+  background-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+/* ============================
+   Dropdown
+============================ */
+.nav-link.dropdown-toggle::after {
+  content: ' ▼';
+  font-size: 0.6rem;
+  margin-left: 4px;
+  color: #ffffff;
+}
+
+.dropdown-menu {
+  background-color: #ffffff !important;
+  border: none !important;
+  padding: 0.5rem 0 !important;
+  border-radius: 0 !important;
+}
+
+.dropdown-menu .dropdown-item {
+  color: #000000;
+  padding: 0.5rem 1.25rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #006600;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================
+   Divider (Vertical)
+============================ */
+.navbar-divider-vertical {
+  width: 2px;
+  height: 30px;
+  background-color: #ffffff;
+  opacity: 0.8;
+  margin: 0 0.75rem;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-divider-vertical {
+    display: none;
+  }
+}
+
+/* ============================
+   Search Bar
+============================ */
+.form-control {
+  border-radius: 20px;
+  padding: 0.375rem 1rem;
+  border: 1px solid #ccc;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 1rem;
+}
+
+.btn-outline-success {
+  color: #ffffff;
+  border-color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-success:hover {
+  background-color: #00cc99;
+  border-color: #00cc99;
+  color: #000000;
+}
+
+/* ============================
+   Scrollable Content Section
+============================ */
+.content-section {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 4rem 2rem;
+}
+
+/* ============================
+   Brand Site Title (Optional)
+============================ */
+.site-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+
+/*--------------------------------------------------------------
+# Leadership Section
+--------------------------------------------------------------*/
+/* Fonts */
+:root {
+  --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Raleway", sans-serif;
+  --nav-font: "Poppins", sans-serif;
+
+  --background-color: #f1f5f4;
+  --default-color: #212529;
+  --heading-color: #2d465e;
+  --accent-color: #006600;
+  --surface-color: #ffffff;
+  --contrast-color: #ffffff;
+
+  --nav-color: rgba(255, 255, 255, 0.75);
+  --nav-hover-color: #006600;
+  --nav-mobile-background-color: #ffffff;
+  --nav-dropdown-background-color: #ffffff;
+  --nav-dropdown-color: #212529;
+  --nav-dropdown-hover-color: #006600;
+
+  scroll-behavior: smooth;
+}
+
+.light-background {
+  --background-color: #ffffff;
+  --surface-color: #ffffff;
+}
+
+.dark-background {
+  --background-color: #060606;
+  --default-color: #ffffff;
+  --heading-color: #ffffff;
+  --surface-color: #252525;
+  --contrast-color: #ffffff;
+}
+
+.leadership .section-subtitle {
+  color: var(--accent-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  padding-top: 1rem;
+
+}
+
+.leadership .section-heading {
+  color: var(--heading-color);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.leadership .section-description {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.leadership .about-image {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.leadership .about-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.leadership .stats-container {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 92%);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.leadership .stats-container .stat-item {
+  text-align: center;
+  padding: 15px 0;
+}
+
+.leadership .stats-container .stat-item h3 {
+  color: var(--heading-color);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.leadership .stats-container .stat-item p {
+  color: var(--default-color);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.leadership .leadership-team {
+  margin-top: 4rem;
+}
+
+.leadership .leadership-team .leader-card {
+  background-color: var(--surface-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.leadership .leadership-team .leader-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ FIXED: Social links should always be visible */
+/* Initial hidden state */
+.leadership .leadership-team .leader-card .leader-image .social-links {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  padding: 15px 0 10px;
+  display: flex;
+  justify-content: center;
+  opacity: 0; /* Default: hidden */
+  transition: opacity 0.5s ease-in-out; /* ✅ Smooth transition */
+  z-index: 10;
+}
+/* Show on hover */
+.leadership .leadership-team .leader-card:hover .leader-image .social-links {
+  opacity: 1; /* ✅ Show with fade-in */
+}
+
+
+/* ✅ FIXED: Style for the icons */
+.leadership .leadership-team .leader-card .leader-image .social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  margin: 0 5px;
+  color: var(--contrast-color);
+  font-size: 1rem;
+  transition: background-color 0.5s;
+}
+
+.leadership .leadership-team .leader-card .leader-image .social-links a:hover {
+  background-color: #006600;
+}
+
+.leadership .leadership-team .leader-card .leader-info {
+  padding: 20px;
+  text-align: center;
+}
+
+.leadership .leadership-team .leader-card .leader-info h4 {
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-size: 1.25rem;
+}
+
+.leadership .leadership-team .leader-card .leader-info .position {
+  color: var(--accent-color);
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.leadership .leadership-team .leader-card .leader-info .bio {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+@media (max-width: 992px) {
+  .leadership .section-heading {
+    font-size: 2rem;
+  }
+
+  .leadership .about-image {
+    margin-top: 2rem;
+    height: 400px;
+  }
+
+  .leadership .leadership-team {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .leadership .about-image {
+    height: 300px;
+  }
+
+  .leadership .stat-item {
+    margin-bottom: 15px;
+  }
+}
+
+/*--------------------------------------------------------------
+# Global Footer
+--------------------------------------------------------------*/
+.footer {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  font-size: 14px;
+  position: relative;
+}
+
+.footer .footer-top {
+  padding-top: 50px;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.footer .footer-about .logo {
+  line-height: 1;
+  margin-bottom: 25px;
+}
+
+.footer .footer-about .logo img {
+  max-height: 40px;
+  margin-right: 6px;
+}
+
+.footer .footer-about .logo span {
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.footer .footer-about p {
+  font-size: 14px;
+  font-family: var(--heading-font);
+}
+
+.footer .social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 50%);
+  font-size: 16px;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  margin-right: 10px;
+  transition: 0.3s;
+}
+
+.footer .social-links a:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.footer h4 {
+  font-size: 16px;
+  font-weight: bold;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.footer .footer-links {
+  margin-bottom: 30px;
+}
+
+.footer .footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer .footer-links ul i {
+  padding-right: 2px;
+  font-size: 12px;
+  line-height: 0;
+}
+
+.footer .footer-links ul li {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.footer .footer-links ul li:first-child {
+  padding-top: 0;
+}
+
+.footer .footer-links ul a {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  display: inline-block;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer .footer-links ul a:hover {
+  color: #006600;
+  /* text-decoration: underline;  optional */
+}
+
+.footer .footer-contact p {
+  margin-bottom: 5px;
+}
+
+.footer .copyright {
+  padding: 25px 0;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.footer .copyright p {
+  margin-bottom: 0;
+}
+
+.footer .credits {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+
+/*--------------------------------------------------------------
+# Preloader
+--------------------------------------------------------------*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  overflow: hidden;
+  background: var(--background-color);
+  transition: all 0.6s ease-out;
+}
+
+#preloader:before {
+  content: "";
+  position: fixed;
+  top: calc(50% - 30px);
+  left: calc(50% - 30px);
+  border: 6px solid #ffffff;
+  border-color: var(--accent-color) transparent var(--accent-color) transparent;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: animate-preloader 1.5s linear infinite;
+}
+
+@keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*--------------------------------------------------------------
+# Scroll Top Button
+--------------------------------------------------------------*/
+.scroll-top {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  right: 15px;
+  bottom: 15px;
+  z-index: 99999;
+  background-color: var(--accent-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  transition: all 0.4s;
+}
+
+.scroll-top i {
+  font-size: 24px;
+  color: var(--contrast-color);
+  line-height: 0;
+}
+
+.scroll-top:hover {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+  color: var(--contrast-color);
+}
+
+.scroll-top.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* === Fix: Mobile Navbar Background and Visibility === */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background-color: #006600 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 0 0 12px 12px;
+  }
+  .navbar-nav > li > .nav-link,
+  .navbar-nav .nav-link.active {
+    color: #fff !important;
+  }
+  .dropdown-menu {
+    background-color: #fff !important;
+  }
+}
+
+/*--------------------------------------------------------------
+# Disable aos animation delay on mobile devices
+--------------------------------------------------------------*/
+@media screen and (max-width: 768px) {
+  [data-aos-delay] {
+    transition-delay: 0 !important;
+  }
+}

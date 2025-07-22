@@ -1,0 +1,38 @@
+{% load static %}
+{% extends 'feedback_form.html' %}
+
+{% block content %}
+<div class="container" style="min-height: 100vh; padding-top: 90px;">
+    <div class="d-flex align-items-center justify-content-center" style="min-height: 75vh;">
+        <div class="row justify-content-center w-100">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="mb-4 text-center text-success"><i class="bi bi-chat-dots"></i> Submit Your Feedback</h3>
+                        <form method="post" action="{% url 'give_feedback' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="service" class="form-label">Service</label>
+                                <select class="form-select" id="service" name="service" required>
+                                    <option value="" disabled selected>Select a service</option>
+                                    <option value="Wi-Fi">Wi-Fi</option>
+                                    <option value="Library">Library</option>
+                                    <option value="Scholarship">Scholarship</option>
+                                    <!-- Add more services as needed -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="feedback" class="form-label">Your Feedback</label>
+                                <textarea class="form-control" id="feedback" name="feedback" rows="4" required placeholder="Type your feedback here..."></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">Submit Feedback</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

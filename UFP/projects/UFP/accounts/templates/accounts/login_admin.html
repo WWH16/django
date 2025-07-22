@@ -1,0 +1,135 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block title %}Admin Login - Sentiment Analysis{% endblock %}
+
+{% block header_icon %}<i class="fas fa-shield-alt me-2"></i>{% endblock %}
+{% block header_title %}Admin Login{% endblock %}
+{% block header_subtitle %}Sentiment Analysis Platform{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Error Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Login Form -->
+<form method="post" action="{% url 'login_admin' %}">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors|join:"<br>"|safe }}
+        </div>
+    {% endif %}
+    
+    <!-- Username Field -->
+    <div class="mb-4">
+        <div class="form-outline" data-mdb-input-init>
+            <input type="text" 
+                   id="username" 
+                   name="username" 
+                   class="form-control" 
+                   required />
+            <label class="form-label" for="username">
+                <i class="fas fa-user me-2"></i>Username
+            </label>
+            {% if form.username.errors %}
+                <div class="alert alert-danger mt-2 py-1" role="alert">
+                    {{ form.username.errors|join:"<br>"|safe }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Password Field with Toggle -->
+    <div class="mb-4">
+        <div class="form-outline" data-mdb-input-init>
+            <input type="password" 
+                   id="password" 
+                   name="password" 
+                   class="form-control" 
+                   required />
+            <label class="form-label" for="password">
+                <i class="fas fa-lock me-2"></i>Password
+            </label>
+            {% if form.password.errors %}
+                <div class="alert alert-danger mt-2 py-1" role="alert">
+                    {{ form.password.errors|join:"<br>"|safe }}
+                </div>
+            {% endif %}
+        </div>
+        <button type="button" 
+                class="password-toggle" 
+                onclick="togglePassword()">
+            <i class="fas fa-eye" id="password-icon"></i>
+        </button>
+    </div>
+
+    <!-- reCAPTCHA Field -->
+    <div class="mb-4" style="max-width:304px;">
+        {{ form.captcha }}
+        {% if form.captcha.errors %}
+            <div class="text-danger" style="font-size:0.95em;">{{ form.captcha.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Remember Me and Forgot Password -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="remember" name="remember">
+            <label class="form-check-label" for="remember">Remember Me</label>
+        </div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="d-grid mb-3 mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+        </button>
+    </div>
+    <div class="mb-3 text-end">
+        <a href="#" class="text-decoration-underline text-muted small">Forgot Password?</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Password Toggle Script -->
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('password-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+            passwordIcon.style.color = '#006600';
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+            passwordIcon.style.color = '#6c757d';
+        }
+    }
+    
+    // MDB Initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize MDB Input components
+        const inputs = document.querySelectorAll('[data-mdb-input-init]');
+        inputs.forEach(function(input) {
+            // MDB will handle the initialization automatically
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,220 @@
+{% extends 'accounts/auth_base.html' %}
+{% load static %}
+
+{% block title %}Student Registration - Sentiment Analysis{% endblock %}
+
+{% block header_icon %}<i class="fas fa-user-plus me-2"></i>{% endblock %}
+{% block header_title %}Student Registration{% endblock %}
+{% block header_subtitle %}Create Your Student Account{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/login.css' %}">
+<style>
+.custom-select {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    box-shadow: none;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+.custom-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+}
+.form-outline {
+    margin-bottom: 0.5rem !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Error Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+            {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle me-2"></i>
+            {% else %}
+                <i class="fas fa-exclamation-triangle me-2"></i>
+            {% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Registration Form -->
+<form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors|join:"<br>"|safe }}
+        </div>
+    {% endif %}
+    <!-- First Row: Student ID and Full Name -->
+    <div class="input-group mb-4">
+        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+        <input type="text" id="student_id" name="student_id" class="form-control" maxlength="8" placeholder="Student ID (e.g., 22-10243)" required />
+    </div>
+    <div class="input-group mb-4">
+        <span class="input-group-text"><i class="fas fa-user"></i></span>
+        <input type="text" id="fullname" name="fullname" class="form-control" placeholder="Full Name" required />
+    </div>
+    <!-- Email Field -->
+    <div class="input-group mb-4">
+        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Email" required />
+    </div>
+    <!-- Department and Course: Side by Side -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <select id="department" name="department" class="form-control custom-select" required>
+                <option value="" selected disabled>Select Department</option>
+                {% for dept in departments %}
+                    <option value="{{ dept.departmentID }}">{{ dept.departmentName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <select id="course" name="course" class="form-control custom-select" required disabled>
+                <option value="" selected disabled>Select Course</option>
+            </select>
+        </div>
+    </div>
+    <!-- Password and Confirm Password: Side by Side -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required />
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                    <i class="fas fa-eye" id="password-icon"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm Password" required />
+                <button type="button" class="btn btn-outline-secondary" onclick="toggleConfirmPassword()">
+                    <i class="fas fa-eye" id="confirm-password-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- reCAPTCHA Field -->
+    <div class="mb-4" style="max-width:304px;">
+        {{ form.captcha }}
+        {% if form.captcha.errors %}
+            <div class="text-danger" style="font-size:0.95em;">{{ form.captcha.errors }}</div>
+        {% endif %}
+    </div>
+    <!-- Submit Button -->
+    <div class="d-grid mb-4">
+        <button type="submit" class="btn btn-success" style="background-color: #16a34a; border-radius: 0.375rem; border: none; font-weight: 600; letter-spacing: 1px;">
+            Register
+        </button>
+    </div>
+</form>
+<!-- Back Button -->
+<div class="text-center mt-2">
+    <span class="text-muted small">Already have an account?</span>
+    <a href="{% url 'login_student' %}" class="ms-1 text-success fw-bold text-decoration-none">Login</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Password Toggle Script -->
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('password-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+            passwordIcon.style.color = '#006600';
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+            passwordIcon.style.color = '#6c757d';
+        }
+    }
+    function toggleConfirmPassword() {
+        const passwordInput = document.getElementById('confirm_password');
+        const passwordIcon = document.getElementById('confirm-password-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+            passwordIcon.style.color = '#006600';
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+            passwordIcon.style.color = '#6c757d';
+        }
+    }
+    // MDB Initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize MDB Input components
+        const inputs = document.querySelectorAll('[data-mdb-input-init]');
+        inputs.forEach(function(input) {
+            // MDB will handle the initialization automatically
+        });
+        const departmentSelect = document.getElementById('department');
+        const courseSelect = document.getElementById('course');
+        departmentSelect.addEventListener('change', function() {
+            const departmentId = this.value;
+            // Reset course select
+            courseSelect.innerHTML = '<option value="" selected disabled>Select Course</option>';
+            courseSelect.disabled = true;
+            // Update MDB label state
+            if (courseSelect.nextElementSibling) {
+                courseSelect.nextElementSibling.classList.remove('form-label-active');
+            }
+            if (departmentId) {
+                // Show loading state
+                courseSelect.innerHTML = '<option value="" selected disabled>Loading courses...</option>';
+                // Fetch courses for selected department
+                fetch(`/accounts/get-courses/${departmentId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        courseSelect.innerHTML = '<option value="" selected disabled>Select Course</option>';
+                        if (data.courses && data.courses.length > 0) {
+                            data.courses.forEach(course => {
+                                const option = document.createElement('option');
+                                option.value = course.courseID;
+                                option.textContent = course.courseName;
+                                courseSelect.appendChild(option);
+                            });
+                            courseSelect.disabled = false;
+                        } else {
+                            courseSelect.innerHTML = '<option value="" selected disabled>No courses available</option>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading courses:', error);
+                        courseSelect.innerHTML = '<option value="" selected disabled>Error loading courses</option>';
+                    });
+            }
+        });
+        // Handle course select change
+        courseSelect.addEventListener('change', function() {
+            // Update MDB label state
+            if (this.nextElementSibling) {
+                if (this.value) {
+                    this.nextElementSibling.classList.add('form-label-active');
+                } else {
+                    this.nextElementSibling.classList.remove('form-label-active');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

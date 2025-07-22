@@ -1,0 +1,171 @@
+{
+  "timestamp": "2025-07-11T10:09:31.150527",
+  "total_records": 15,
+  "feedback": [
+    {
+      "feedbackID": 26,
+      "studentID": "22-10357",
+      "studentName": "Harvy Agsalog",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 3,
+      "sentimentName": "Negative",
+      "comments": "slow",
+      "timestamp": "2025-07-05T05:11:44.453127+00:00"
+    },
+    {
+      "feedbackID": 28,
+      "studentID": "22-10361",
+      "studentName": "John Ronnie Lelina",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 3,
+      "sentimentName": "Negative",
+      "comments": "always down",
+      "timestamp": "2025-07-05T05:12:19.736576+00:00"
+    },
+    {
+      "feedbackID": 12,
+      "studentID": "22-10197",
+      "studentName": "Lucy A. Caguiat",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 3,
+      "sentimentName": "Negative",
+      "comments": "there are a lot of peaple causing the internet to be slow",
+      "timestamp": "2025-06-28T07:04:05.200258+00:00"
+    },
+    {
+      "feedbackID": 13,
+      "studentID": "22-10243",
+      "studentName": "John Ansley Rocel",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 2,
+      "sentimentName": "Neutral",
+      "comments": "not good but not bade",
+      "timestamp": "2025-07-05T04:01:59.846559+00:00"
+    },
+    {
+      "feedbackID": 40,
+      "studentID": "22-10357",
+      "studentName": "Harvy Agsalog",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "goods\r\n",
+      "timestamp": "2025-07-09T15:04:24.674659+00:00"
+    },
+    {
+      "feedbackID": 34,
+      "studentID": "22-10357",
+      "studentName": "Harvy Agsalog",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "goods",
+      "timestamp": "2025-07-06T03:43:43.787700+00:00"
+    },
+    {
+      "feedbackID": 31,
+      "studentID": "22-10237",
+      "studentName": "Nathaniel Panis",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "it's fast",
+      "timestamp": "2025-07-05T05:13:15.829679+00:00"
+    },
+    {
+      "feedbackID": 38,
+      "studentID": "22-10243",
+      "studentName": "John Ansley Rocel",
+      "serviceID": 1,
+      "serviceName": "Wi-Fi",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "fast as always",
+      "timestamp": "2025-07-09T10:41:30.842205+00:00"
+    },
+    {
+      "feedbackID": 27,
+      "studentID": "22-11051",
+      "studentName": "Antonio Dizon",
+      "serviceID": 2,
+      "serviceName": "Scholarship",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "there's a lot of books",
+      "timestamp": "2025-07-05T05:12:01.942656+00:00"
+    },
+    {
+      "feedbackID": 35,
+      "studentID": "22-10237",
+      "studentName": "Nathaniel Panis",
+      "serviceID": 2,
+      "serviceName": "Scholarship",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "always updated",
+      "timestamp": "2025-07-06T03:43:57.531327+00:00"
+    },
+    {
+      "feedbackID": 32,
+      "studentID": "22-10435",
+      "studentName": "Angelica S. Abuan",
+      "serviceID": 3,
+      "serviceName": "Library facility",
+      "sentimentID": 3,
+      "sentimentName": "Negative",
+      "comments": "other students are noisy\r\n",
+      "timestamp": "2025-07-05T05:13:47.171648+00:00"
+    },
+    {
+      "feedbackID": 29,
+      "studentID": "22-10213",
+      "studentName": "Ediemar Erro",
+      "serviceID": 3,
+      "serviceName": "Library facility",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "free coffee is amazing",
+      "timestamp": "2025-07-05T05:12:35.365433+00:00"
+    },
+    {
+      "feedbackID": 30,
+      "studentID": "22-10215",
+      "studentName": "Kenny Angelo Estrellon",
+      "serviceID": 3,
+      "serviceName": "Library facility",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "free bread is good\r\n",
+      "timestamp": "2025-07-05T05:12:58.427738+00:00"
+    },
+    {
+      "feedbackID": 24,
+      "studentID": "22-11729",
+      "studentName": "Lean D. Bagay",
+      "serviceID": 4,
+      "serviceName": "College admission tests",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "good",
+      "timestamp": "2025-07-05T05:10:02.041962+00:00"
+    },
+    {
+      "feedbackID": 25,
+      "studentID": "22-10243",
+      "studentName": "John Ansley Rocel",
+      "serviceID": 4,
+      "serviceName": "College admission tests",
+      "sentimentID": 1,
+      "sentimentName": "Positive",
+      "comments": "the staff are accomodating, and the questions are a bit harder but understandable.",
+      "timestamp": "2025-07-05T05:11:30.280047+00:00"
+    }
+  ]
+}
