@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_recaptcha',
+    'api',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -130,7 +132,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'staticFiles'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # usually used in production for collectstatic
@@ -152,3 +154,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'estevesjancen388@gmail.com'
 EMAIL_HOST_PASSWORD = 'sqyo mcxz rhjm mewu'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+}

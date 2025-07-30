@@ -15,9 +15,9 @@ def my_feedback(request):
             'feedback_list': feedback_list,
             'feedback_count': feedback_count,
         }
-        return render(request, 'dashboard/my_feedback.html', context)
+        return render(request, 'studentDashboard/my_feedback.html', context)
     except Student.DoesNotExist:
-        return render(request, 'dashboard/my_feedback.html', {
+        return render(request, 'studentDashboard/my_feedback.html', {
             'feedback_list': [],
             'feedback_count': 0,
         })
@@ -34,7 +34,7 @@ def profile(request):
             'user_email': user_email,  # Use this in the template
             'feedback_count': feedback_count,
         }
-        return render(request, 'dashboard/profile.html', context)
+        return render(request, 'studentDashboard/profile.html', context)
     except Student.DoesNotExist:
         context = {
             'student': None,
@@ -43,7 +43,7 @@ def profile(request):
             'user_email': request.user.email,  # Only user.email available
             'feedback_count': 0,
         }
-        return render(request, 'dashboard/profile.html', context)
+        return render(request, 'studentDashboard/profile.html', context)
 @login_required
 def give_feedback(request):
     if request.method == 'POST':
@@ -59,7 +59,7 @@ def give_feedback(request):
         
         if not service_name or not feedback_text:
             messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'dashboard/feedback_form.html')
+            return render(request, 'studentDashboard/feedback_form.html')
         
         try:
             # Get the current student
@@ -92,8 +92,8 @@ def give_feedback(request):
         except Exception as e:
             messages.error(request, f'Error submitting feedback: {str(e)}')
     
-    # GET request - show the form
-    return render(request, 'dashboard/feedback_form.html')
+    # GET request - show the form   
+    return render(request, 'studentDashboard/feedback_form.html')
 
 @login_required
 def edit_profile(request):
