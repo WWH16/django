@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# ALLOWED_HOSTS = ['yourdomain.com', 'your_server_ip']
+
 # Make sure you have this in settings.py
 STUDENT_LOGIN_URL = 'login_student'   # The name of your login URL pattern
 STUDENT_LOGIN_REDIRECT_URL = 'give_feedback'  # After successful login
