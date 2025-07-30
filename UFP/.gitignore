@@ -10,6 +10,8 @@ static/
 staticfiles/
 */migrations/__pycache__/
 */migrations/*.pyc
+db.sqlite3
+db.sqlite3-journal
 
 # =======================
 # Python General Ignores
@@ -61,6 +63,33 @@ Thumbs.db
 logs/
 
 # =======================
+# Security & Secrets
+# =======================
+secrets.py
+*.pem
+*.key
+*.cert
+.env.production
+.env.staging
+.env.local
+
+# =======================
+# Coverage & Testing
+# =======================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# =======================
 # PostgreSQL (Optional)
 # =======================
 *.sql
@@ -69,3 +98,4 @@ logs/
 *.pgsql
 .pgdata/
 .psql_history
+
