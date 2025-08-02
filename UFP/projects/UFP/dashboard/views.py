@@ -120,3 +120,15 @@ def edit_profile(request):
         messages.success(request, 'Profile updated successfully!')
     return redirect('profile')
 
+def admin_dashboard(request):
+    # Placeholder for admin dashboard view
+    return render(request, 'adminDashboard/combined-dashboard.html')
+def osas_services(request):
+    # Placeholder for OSAS services view
+    return render(request, 'adminDashboard/osas-services.html')
+def teacher_evaluation(request):
+    # Placeholder for teacher evaluation admin view
+    return render(request, 'adminDashboard/teacher-evaluation.html')
+def admin_reports(request):
+    # Placeholder for admin reports view
+    return render(request, 'adminDashboard/table.html')
