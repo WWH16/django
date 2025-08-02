@@ -1,0 +1,297 @@
+{% extends 'adminDashboard/dashboard_base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-dark mb-0">Sentiment Analysis Dashboard Overview</h3><a
+            class="btn btn-sm d-none d-sm-inline-block" role="button" href="#" style="background-color: #006600; color: white;"><i
+                class="fas fa-download fa-sm text-white-50"></i>&nbsp;Export Report</a>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow border-start-success py-2">
+                <div class="card-body">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Total Positive</span></div>
+                            <div class="text-dark fw-bold h5 mb-0"><span>891</span></div>
+                            <div class="text-xs text-muted">71% of all feedback</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-smile fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow border-start-warning py-2">
+                <div class="card-body">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Total Neutral</span></div>
+                            <div class="text-dark fw-bold h5 mb-0"><span>241</span></div>
+                            <div class="text-xs text-muted">20% of all feedback</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-meh fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow border-start-danger py-2">
+                <div class="card-body">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Total Negative</span></div>
+                            <div class="text-dark fw-bold h5 mb-0"><span>107</span></div>
+                            <div class="text-xs text-muted">9% of all feedback</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-frown fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card shadow border-start-primary py-2">
+                <div class="card-body">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total
+                                    Feedback</span></div>
+                            <div class="text-dark fw-bold h5 mb-0"><span>1,239</span></div>
+                            <div class="text-xs text-muted">Combined systems</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- Start: Chart -->
+    <div class="row">
+        <div class="col-lg-7 col-xl-8">
+            <div class="card shadow mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="text-primary fw-bold m-0">System Comparison - OSAS vs Teacher Evaluation</h6>
+                    <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
+                            aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
+                                class="fas fa-ellipsis-v text-gray-400"></i></button>
+                        <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+                            <p class="text-center dropdown-header">Filter Options:</p><a
+                                class="dropdown-item" href="#">&nbsp;All Services</a><a class="dropdown-item"
+                                href="#">&nbsp;Last 7 Days</a>
+                            <div class="dropdown-divider"></div><a class="dropdown-item"
+                                href="#">&nbsp;Export Data</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body"><!-- Start: Bar Chart -->
+                    <div class="chart-area"><canvas
+                            data-bss-chart="{&quot;type&quot;:&quot;bar&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;OSAS Services&quot;,&quot;Teacher Evaluation&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Positive&quot;,&quot;backgroundColor&quot;:&quot;#28a745&quot;,&quot;borderColor&quot;:&quot;#28a745&quot;,&quot;data&quot;:[&quot;324&quot;,&quot;567&quot;]},{&quot;label&quot;:&quot;Neutral&quot;,&quot;backgroundColor&quot;:&quot;#ffc107&quot;,&quot;borderColor&quot;:&quot;#ffc107&quot;,&quot;data&quot;:[&quot;98&quot;,&quot;143&quot;]},{&quot;label&quot;:&quot;Negative&quot;,&quot;backgroundColor&quot;:&quot;#dc3545&quot;,&quot;borderColor&quot;:&quot;#dc3545&quot;,&quot;data&quot;:[&quot;52&quot;,&quot;55&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:true,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:false},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}],&quot;yAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:false},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}]}}}"></canvas>
+                    </div><!-- End: Bar Chart -->
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 col-xl-4">
+            <div class="card shadow mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
+                    <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
+                            aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
+                                class="fas fa-ellipsis-v text-gray-400"></i></button>
+                        <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+                            <p class="text-center dropdown-header">View Options:</p><a
+                                class="dropdown-item" href="#">&nbsp;Last Week</a><a class="dropdown-item"
+                                href="#">&nbsp;Last Month</a>
+                            <div class="dropdown-divider"></div><a class="dropdown-item"
+                                href="#">&nbsp;Generate Report</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area"><canvas
+                            data-bss-chart="{&quot;type&quot;:&quot;doughnut&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Positive&quot;,&quot;Neutral&quot;,&quot;Negative&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;&quot;,&quot;backgroundColor&quot;:[&quot;#28a745&quot;,&quot;#ffc107&quot;,&quot;#dc3545&quot;],&quot;borderColor&quot;:[&quot;#ffffff&quot;,&quot;#ffffff&quot;,&quot;#ffffff&quot;],&quot;data&quot;:[&quot;891&quot;,&quot;241&quot;,&quot;107&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:false,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}}}"></canvas>
+                    </div>
+                    <div class="text-center small mt-4"><span class="me-2"><i
+                                class="fas fa-circle text-success"></i>Positive (71%)</span><span class="me-2"><i
+                                class="fas fa-circle text-warning"></i>Neutral (20%)</span><span class="me-2"><i
+                                class="fas fa-circle text-danger"></i>Negative (9%)</span></div>
+                </div>
+            </div>
+        </div>
+    </div><!-- End: Chart -->
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="text-primary fw-bold m-0">System Performance Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-success fw-bold">68%</h4>
+                                <small class="text-muted">OSAS Satisfaction</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-primary fw-bold">74%</h4>
+                                <small class="text-muted">Teacher Rating</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 68%" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100">OSAS</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 74%" aria-valuenow="74" aria-valuemin="0" aria-valuemax="100">Teachers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6>
+                </div>
+                <div class="card-body">
+                    <h4 class="small fw-bold">Library Facility<span class="float-end">Urgent</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-danger" aria-valuenow="23" aria-valuemin="0"
+                            aria-valuemax="100" style="width: 23%;"><span
+                                class="visually-hidden">23% negative feedback</span></div>
+                    </div>
+                    <h4 class="small fw-bold">College Admission Test<span class="float-end">Medium</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-warning" aria-valuenow="15" aria-valuemin="0"
+                            aria-valuemax="100" style="width: 15%;"><span
+                                class="visually-hidden">15% negative feedback</span></div>
+                    </div>
+                    <h4 class="small fw-bold">Wi-Fi Services<span class="float-end">Low</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-info" aria-valuenow="13" aria-valuemin="0"
+                            aria-valuemax="100" style="width: 13%;"><span
+                                class="visually-hidden">13% negative feedback</span></div>
+                    </div>
+                    <h4 class="small fw-bold">Scholarship Services<span class="float-end">Excellent</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-success" aria-valuenow="7" aria-valuemin="0"
+                            aria-valuemax="100" style="width: 7%;"><span
+                                class="visually-hidden">7% negative feedback</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="text-primary fw-bold m-0">Recent Critical Feedback</h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2">
+                                <h6 class="mb-0"><strong>Library Internet Connection</strong></h6>
+                                <span class="text-xs text-danger">Negative Sentiment</span>
+                                <p class="text-xs text-muted mb-0">"The Wi-Fi in the library is extremely slow..."</p>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge bg-danger">Critical</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2">
+                                <h6 class="mb-0"><strong>Admission Test Schedule</strong></h6>
+                                <span class="text-xs text-warning">Neutral Sentiment</span>
+                                <p class="text-xs text-muted mb-0">"The test schedule could be better organized..."</p>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge bg-warning">Review</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2">
+                                <h6 class="mb-0"><strong>Scholarship Process</strong></h6>
+                                <span class="text-xs text-success">Positive Sentiment</span>
+                                <p class="text-xs text-muted mb-0">"The scholarship application process was smooth..."</p>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge bg-success">Good</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card text-white bg-success shadow">
+                        <div class="card-body">
+                            <h5 class="m-0">Wi-Fi Services</h5>
+                            <p class="text-white-50 small m-0">95 Positive • 25 Neutral • 18 Negative</p>
+                            <div class="mt-2">
+                                <span class="badge bg-light text-success">69% Satisfaction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card text-white bg-warning shadow">
+                        <div class="card-body">
+                            <h5 class="m-0">College Admission Test</h5>
+                            <p class="text-white-50 small m-0">78 Positive • 32 Neutral • 12 Negative</p>
+                            <div class="mt-2">
+                                <span class="badge bg-light text-warning">64% Satisfaction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card text-white bg-primary shadow">
+                        <div class="card-body">
+                            <h5 class="m-0">Scholarship Services</h5>
+                            <p class="text-white-50 small m-0">89 Positive • 18 Neutral • 8 Negative</p>
+                            <div class="mt-2">
+                                <span class="badge bg-light text-primary">77% Satisfaction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card text-white bg-danger shadow">
+                        <div class="card-body">
+                            <h5 class="m-0">Library Facility</h5>
+                            <p class="text-white-50 small m-0">62 Positive • 23 Neutral • 14 Negative</p>
+                            <div class="mt-2">
+                                <span class="badge bg-light text-danger">63% Satisfaction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h6 class="text-primary fw-bold m-0">Action Items & Recommendations</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Urgent:</strong> Library Facility needs immediate attention - 14% negative feedback rate
+                            </div>
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Review:</strong> College Admission Test process requires optimization
+                            </div>
+                            <div class="alert alert-success" role="alert">
+                                <strong>Maintain:</strong> Scholarship Services showing excellent performance
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

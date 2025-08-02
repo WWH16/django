@@ -1,0 +1,261 @@
+{% extends 'adminDashboard/dashboard_base.html' %}
+
+{% block content %}
+				<div class="container-fluid">
+					<div class="d-sm-flex justify-content-between align-items-center mb-4">
+						<h3 class="text-dark mb-0">Teacher Evaluation Sentiment Analysis Dashboard</h3>
+						<a class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#"><i
+							class="fas fa-download fa-sm text-white-50"></i>&nbsp;Export Teacher Report</a>
+					</div>
+					<div class="row">
+						<div class="col-md-6 col-xl-3 mb-4">
+							<div class="card shadow border-start-success py-2">
+								<div class="card-body">
+									<div class="row align-items-center no-gutters">
+										<div class="col me-2">
+											<div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive
+													Reviews</span></div>
+											<div class="text-dark fw-bold h5 mb-0"><span>567</span></div>
+											<div class="text-xs text-muted">74% of total reviews</div>
+										</div>
+										<div class="col-auto"><i class="fas fa-thumbs-up fa-2x text-gray-300"></i></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 col-xl-3 mb-4">
+							<div class="card shadow border-start-warning py-2">
+								<div class="card-body">
+									<div class="row align-items-center no-gutters">
+										<div class="col me-2">
+											<div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral
+													Reviews</span></div>
+											<div class="text-dark fw-bold h5 mb-0"><span>143</span></div>
+											<div class="text-xs text-muted">19% of total reviews</div>
+										</div>
+										<div class="col-auto"><i class="fas fa-minus-circle fa-2x text-gray-300"></i></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 col-xl-3 mb-4">
+							<div class="card shadow border-start-danger py-2">
+								<div class="card-body">
+									<div class="row align-items-center no-gutters">
+										<div class="col me-2">
+											<div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative
+													Reviews</span></div>
+											<div class="text-dark fw-bold h5 mb-0"><span>55</span></div>
+											<div class="text-xs text-muted">7% of total reviews</div>
+										</div>
+										<div class="col-auto"><i class="fas fa-thumbs-down fa-2x text-gray-300"></i></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 col-xl-3 mb-4">
+							<div class="card shadow border-start-primary py-2">
+								<div class="card-body">
+									<div class="row align-items-center no-gutters">
+										<div class="col me-2">
+											<div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total
+													Reviews</span></div>
+											<div class="text-dark fw-bold h5 mb-0"><span>765</span></div>
+											<div class="text-xs text-muted">This semester</div>
+										</div>
+										<div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div><!-- Start: Chart -->
+					<div class="row">
+						<div class="col-lg-7 col-xl-8">
+							<div class="card shadow mb-4">
+								<div class="card-header d-flex justify-content-between align-items-center">
+									<h6 class="text-primary fw-bold m-0">Teacher Performance by Program</h6>
+									<div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
+											aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
+												class="fas fa-ellipsis-v text-gray-400"></i></button>
+										<div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+											<p class="text-center dropdown-header">Filter Options:</p><a
+												class="dropdown-item" href="#">&nbsp;All Programs</a><a class="dropdown-item"
+												href="#">&nbsp;Current Semester</a>
+											<div class="dropdown-divider"></div><a class="dropdown-item"
+												href="#">&nbsp;Export Data</a>
+										</div>
+									</div>
+								</div>
+								<div class="card-body"><!-- Start: Bar Chart -->
+									<div class="chart-area"><canvas
+											data-bss-chart="{&quot;type&quot;:&quot;bar&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;BSIT&quot;,&quot;BSCS&quot;,&quot;BSEMC&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Positive&quot;,&quot;backgroundColor&quot;:&quot;#28a745&quot;,&quot;borderColor&quot;:&quot;#28a745&quot;,&quot;data&quot;:[&quot;198&quot;,&quot;245&quot;,&quot;124&quot;]},{&quot;label&quot;:&quot;Neutral&quot;,&quot;backgroundColor&quot;:&quot;#ffc107&quot;,&quot;borderColor&quot;:&quot;#ffc107&quot;,&quot;data&quot;:[&quot;45&quot;,&quot;62&quot;,&quot;36&quot;]},{&quot;label&quot;:&quot;Negative&quot;,&quot;backgroundColor&quot;:&quot;#dc3545&quot;,&quot;borderColor&quot;:&quot;#dc3545&quot;,&quot;data&quot;:[&quot;18&quot;,&quot;22&quot;,&quot;15&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:true,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:false},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}],&quot;yAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;]},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}]}}}"></canvas>
+									</div><!-- End: Bar Chart -->
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-5 col-xl-4">
+							<div class="card shadow mb-4">
+								<div class="card-header d-flex justify-content-between align-items-center">
+									<h6 class="text-primary fw-bold m-0">Overall Teacher Rating Distribution</h6>
+									<div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
+											aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
+												class="fas fa-ellipsis-v text-gray-400"></i></button>
+										<div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+											<p class="text-center dropdown-header">View Options:</p><a
+												class="dropdown-item" href="#">&nbsp;Last Semester</a><a class="dropdown-item"
+												href="#">&nbsp;This Year</a>
+											<div class="dropdown-divider"></div><a class="dropdown-item"
+												href="#">&nbsp;Generate Report</a>
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="chart-area"><canvas
+											data-bss-chart="{&quot;type&quot;:&quot;doughnut&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Positive&quot;,&quot;Neutral&quot;,&quot;Negative&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;&quot;,&quot;backgroundColor&quot;:[&quot;#28a745&quot;,&quot;#ffc107&quot;,&quot;#dc3545&quot;],&quot;borderColor&quot;:[&quot;#ffffff&quot;,&quot;#ffffff&quot;,&quot;#ffffff&quot;],&quot;data&quot;:[&quot;567&quot;,&quot;143&quot;,&quot;55&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:false,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}}}"></canvas>
+									</div>
+									<div class="text-center small mt-4"><span class="me-2"><i
+												class="fas fa-circle text-success"></i>Positive (74%)</span><span class="me-2"><i
+												class="fas fa-circle text-warning"></i>Neutral (19%)</span><span class="me-2"><i
+												class="fas fa-circle text-danger"></i>Negative (7%)</span></div>
+								</div>
+							</div>
+						</div>
+					</div><!-- End: Chart -->
+					<div class="row">
+						<div class="col-lg-6 mb-4">
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h6 class="text-primary fw-bold m-0">Teacher Improvement Priority</h6>
+								</div>
+								<div class="card-body">
+									<h4 class="small fw-bold">Dr. Smith (BSIT)<span class="float-end">Urgent</span></h4>
+									<div class="progress mb-4">
+										<div class="progress-bar bg-danger" aria-valuenow="27" aria-valuemin="0"
+											aria-valuemax="100" style="width: 27%;"><span
+												class="visually-hidden">27% negative reviews</span></div>
+									</div>
+									<h4 class="small fw-bold">Prof. Johnson (BSEMC)<span class="float-end">Medium</span></h4>
+									<div class="progress mb-4">
+										<div class="progress-bar bg-warning" aria-valuenow="18" aria-valuemin="0"
+											aria-valuemax="100" style="width: 18%;"><span
+												class="visually-hidden">18% negative reviews</span></div>
+									</div>
+									<h4 class="small fw-bold">Dr. Brown (BSCS)<span class="float-end">Low</span></h4>
+									<div class="progress mb-4">
+										<div class="progress-bar bg-info" aria-valuenow="12" aria-valuemin="0"
+											aria-valuemax="100" style="width: 12%;"><span
+												class="visually-hidden">12% negative reviews</span></div>
+									</div>
+									<h4 class="small fw-bold">Prof. Davis (BSIT)<span class="float-end">Excellent</span></h4>
+									<div class="progress mb-4">
+										<div class="progress-bar bg-success" aria-valuenow="5" aria-valuemin="0"
+											aria-valuemax="100" style="width: 5%;"><span
+												class="visually-hidden">5% negative reviews</span></div>
+									</div>
+								</div>
+							</div>
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h6 class="text-primary fw-bold m-0">Recent Critical Teacher Reviews</h6>
+								</div>
+								<ul class="list-group list-group-flush">
+									<li class="list-group-item">
+										<div class="row align-items-center no-gutters">
+											<div class="col me-2">
+												<h6 class="mb-0"><strong>Dr. Smith - Teaching Method</strong></h6>
+												<span class="text-xs text-danger">Negative Sentiment</span>
+												<p class="text-xs text-muted mb-0">"The professor's explanations are unclear and confusing..."</p>
+											</div>
+											<div class="col-auto">
+												<span class="badge bg-danger">Critical</span>
+											</div>
+										</div>
+									</li>
+									<li class="list-group-item">
+										<div class="row align-items-center no-gutters">
+											<div class="col me-2">
+												<h6 class="mb-0"><strong>Prof. Johnson - Time Management</strong></h6>
+												<span class="text-xs text-warning">Neutral Sentiment</span>
+												<p class="text-xs text-muted mb-0">"Class often runs overtime, better planning needed..."</p>
+											</div>
+											<div class="col-auto">
+												<span class="badge bg-warning">Review</span>
+											</div>
+										</div>
+									</li>
+									<li class="list-group-item">
+										<div class="row align-items-center no-gutters">
+											<div class="col me-2">
+												<h6 class="mb-0"><strong>Prof. Davis - Course Content</strong></h6>
+												<span class="text-xs text-success">Positive Sentiment</span>
+												<p class="text-xs text-muted mb-0">"Excellent course structure and engaging lectures..."</p>
+											</div>
+											<div class="col-auto">
+												<span class="badge bg-success">Good</span>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col-lg-6 mb-4">
+									<div class="card text-white bg-success shadow">
+										<div class="card-body">
+											<h5 class="m-0">BSIT Program</h5>
+											<p class="text-white-50 small m-0">198 Positive • 45 Neutral • 18 Negative</p>
+											<div class="mt-2">
+												<span class="badge bg-light text-success">76% Teacher Rating</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-6 mb-4">
+									<div class="card text-white bg-primary shadow">
+										<div class="card-body">
+											<h5 class="m-0">BSCS Program</h5>
+											<p class="text-white-50 small m-0">245 Positive • 62 Neutral • 22 Negative</p>
+											<div class="mt-2">
+												<span class="badge bg-light text-primary">74% Teacher Rating</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-6 mb-4">
+									<div class="card text-white bg-info shadow">
+										<div class="card-body">
+											<h5 class="m-0">BSEMC Program</h5>
+											<p class="text-white-50 small m-0">124 Positive • 36 Neutral • 15 Negative</p>
+											<div class="mt-2">
+												<span class="badge bg-light text-info">71% Teacher Rating</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-12 mb-4">
+									<div class="card shadow">
+										<div class="card-header">
+											<h6 class="text-primary fw-bold m-0">Teacher Development Recommendations</h6>
+										</div>
+										<div class="card-body">
+											<div class="alert alert-danger" role="alert">
+												<strong>Urgent:</strong> Dr. Smith requires immediate teaching methodology training - 27% negative feedback
+											</div>
+											<div class="alert alert-warning" role="alert">
+												<strong>Review:</strong> Prof. Johnson needs time management workshop - class scheduling issues
+											</div>
+											<div class="alert alert-success" role="alert">
+												<strong>Recognize:</strong> Prof. Davis shows excellent teaching performance - consider for award nomination
+											</div>
+											<div class="alert alert-info" role="alert">
+												<strong>Support:</strong> Provide additional resources for faculty development programs
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+{% endblock %}
