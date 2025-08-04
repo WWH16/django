@@ -24,19 +24,19 @@ class Sentiment(models.Model):
     def __str__(self):
         return self.sentimentName
 
-class Course(models.Model):
-    courseID = models.AutoField(primary_key=True)
-    courseName = models.CharField(max_length=100)
+class Program(models.Model):
+    programID = models.AutoField(primary_key=True)
+    programName = models.CharField(max_length=100)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.courseName
+        return self.programName
 
 class Student(models.Model):
     studentID = models.CharField(max_length=10, primary_key=True)
     studentName = models.CharField(max_length=100)
     password = models.CharField(max_length=128, null=True, blank=True)  # For storing hashed passwords
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True)
     email = models.EmailField(unique=True, null=True)
 
     def __str__(self):

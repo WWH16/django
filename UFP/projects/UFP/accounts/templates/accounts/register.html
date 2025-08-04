@@ -67,7 +67,7 @@
         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
         <input type="email" id="email" name="email" class="form-control" placeholder="Email" required />
     </div>
-    <!-- Department and Course: Side by Side -->
+    <!-- Department and Program: Side by Side -->
     <div class="row g-4 mb-4">
         <div class="col-md-6">
             <select id="department" name="department" class="form-control custom-select" required>
@@ -78,8 +78,8 @@
             </select>
         </div>
         <div class="col-md-6">
-            <select id="course" name="course" class="form-control custom-select" required disabled>
-                <option value="" selected disabled>Select Course</option>
+            <select id="program" name="program" class="form-control custom-select" required disabled>
+                <option value="" selected disabled>Select Program</option>
             </select>
         </div>
     </div>
@@ -168,44 +168,44 @@
             // MDB will handle the initialization automatically
         });
         const departmentSelect = document.getElementById('department');
-        const courseSelect = document.getElementById('course');
+        const programSelect = document.getElementById('program');
         departmentSelect.addEventListener('change', function() {
             const departmentId = this.value;
-            // Reset course select
-            courseSelect.innerHTML = '<option value="" selected disabled>Select Course</option>';
-            courseSelect.disabled = true;
+            // Reset program select
+            programSelect.innerHTML = '<option value="" selected disabled>Select Program</option>';
+            programSelect.disabled = true;
             // Update MDB label state
-            if (courseSelect.nextElementSibling) {
-                courseSelect.nextElementSibling.classList.remove('form-label-active');
+            if (programSelect.nextElementSibling) {
+                programSelect.nextElementSibling.classList.remove('form-label-active');
             }
             if (departmentId) {
                 // Show loading state
-                courseSelect.innerHTML = '<option value="" selected disabled>Loading courses...</option>';
-                // Fetch courses for selected department
-                fetch(`/accounts/get-courses/${departmentId}/`)
+                programSelect.innerHTML = '<option value="" selected disabled>Loading programs...</option>';
+                // Fetch programs for selected department
+                fetch(`/accounts/get-programs/${departmentId}/`)
                     .then(response => response.json())
                     .then(data => {
-                        courseSelect.innerHTML = '<option value="" selected disabled>Select Course</option>';
-                        if (data.courses && data.courses.length > 0) {
-                            data.courses.forEach(course => {
+                        programSelect.innerHTML = '<option value="" selected disabled>Select Program</option>';
+                        if (data.programs && data.programs.length > 0) {
+                            data.programs.forEach(program => {
                                 const option = document.createElement('option');
-                                option.value = course.courseID;
-                                option.textContent = course.courseName;
-                                courseSelect.appendChild(option);
+                                option.value = program.programID;
+                                option.textContent = program.programName;
+                                programSelect.appendChild(option);
                             });
-                            courseSelect.disabled = false;
+                            programSelect.disabled = false;
                         } else {
-                            courseSelect.innerHTML = '<option value="" selected disabled>No courses available</option>';
+                            programSelect.innerHTML = '<option value="" selected disabled>No programs available</option>';
                         }
                     })
                     .catch(error => {
-                        console.error('Error loading courses:', error);
-                        courseSelect.innerHTML = '<option value="" selected disabled>Error loading courses</option>';
+                        console.error('Error loading programs:', error);
+                        programSelect.innerHTML = '<option value="" selected disabled>Error loading programs</option>';
                     });
             }
         });
-        // Handle course select change
-        courseSelect.addEventListener('change', function() {
+        // Handle program select change
+        programSelect.addEventListener('change', function() {
             // Update MDB label state
             if (this.nextElementSibling) {
                 if (this.value) {

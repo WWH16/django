@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Service, Department, Sentiment, Course, Student, StudentFeedback, StudentActivityLog
+from .models import Service, Department, Sentiment, Program, Student, StudentFeedback, StudentActivityLog
 # Register your models here.
 admin.site.register(Service)
 admin.site.register(Department)
 admin.site.register(Sentiment)
-admin.site.register(Course)
+admin.site.register(Program)
 admin.site.register(Student)
 admin.site.register(StudentFeedback)
 
