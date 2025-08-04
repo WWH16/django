@@ -17,7 +17,7 @@ class DimStudent(models.Model):
 
 
 class DimService(models.Model):
-    service_id = models.IntegerField(primary_key=True)
+    service_id = models.AutoField(primary_key=True)
     service_name = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
@@ -28,7 +28,7 @@ class DimService(models.Model):
 
 
 class DimSentiment(models.Model):
-    sentiment_id = models.IntegerField(primary_key=True)
+    sentiment_id = models.AutoField(primary_key=True)
     label = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
@@ -39,7 +39,7 @@ class DimSentiment(models.Model):
 
 
 class FactFeedback(models.Model):
-    feedback_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    feedback_id = models.AutoField(primary_key=True)
     student = models.ForeignKey(DimStudent, on_delete=models.SET_NULL, null=True, db_column='student_id')
     service = models.ForeignKey(DimService, on_delete=models.SET_NULL, null=True, db_column='service_id')
     sentiment = models.ForeignKey(DimSentiment, on_delete=models.SET_NULL, null=True, db_column='sentiment_id')
@@ -68,7 +68,7 @@ class dim_teacher(models.Model):
         return self.teacher_name or self.teacher_id
     
 class fact_teacher_evaluation(models.Model):
-    evaluation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    evaluation_id = models.AutoField(primary_key=True)
     teacher = models.ForeignKey(dim_teacher, on_delete=models.SET_NULL, null=True, db_column='teacher_id')
     student = models.ForeignKey(DimStudent, on_delete=models.SET_NULL, null=True, db_column='student_id')
     service = models.ForeignKey(DimService, on_delete=models.SET_NULL, null=True, db_column='service_id')
