@@ -74,7 +74,7 @@ class StudentActivityLog(models.Model):
         return f"Student {self.student} {str(self.activity_type).lower()} at {self.timestamp}"
     
 class Teacher(models.Model):
-    teacherID = models.AutoField(primary_key=True)
+    teacher_id = models.CharField(max_length=50, primary_key=True)
     teacherName = models.CharField(max_length=100)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
