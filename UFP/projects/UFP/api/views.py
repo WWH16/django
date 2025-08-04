@@ -1,22 +1,19 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import viewsets
-from .serializers import StudentFeedbackSerializer
+from rest_framework import status
 from system.models import StudentFeedback
+from .serializers import StudentFeedbackSerializer
 
-@api_view(['GET'])
-def api_home(request):
-    """
-    API home endpoint to provide API information.
-    """
-    return Response({
-        "status": "success",
-        "version": "1.0.0",
-        "endpoints": {
-            "feedback": "/api/feedback/",
-        }
-    })
-
-class FeedbackViewSet(viewsets.ModelViewSet):
-    queryset = StudentFeedback.objects.all()
-    serializer_class = StudentFeedbackSerializer
+# Create your views here.
+@api_view(['GET', 'POST'])
+def feedback_list(request):
+    if request.method == 'GET':
+        feedbacks = StudentFeedback.objects.all()
+        serializer = StudentFeedbackSerializer(feedbacks, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = StudentFeedbackSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

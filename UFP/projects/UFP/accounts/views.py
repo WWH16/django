@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.models import LogEntry, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
-from system.models import Student, Course, Department
+from system.models import Student, Program, Department
 from system.utils import log_student_activity
 from django.http import JsonResponse
 import re
@@ -97,7 +97,7 @@ def register_view(request):
             fullname = form.cleaned_data['fullname']
             email = form.cleaned_data['email']
             department_id = form.cleaned_data['department']
-            course_id = form.cleaned_data['course']
+            program_id = form.cleaned_data['program']
 
             # Debug: Print all form data to see what's being received
             print("DEBUG: All POST data:")
@@ -140,18 +140,18 @@ def register_view(request):
                 messages.error(request, 'Student ID must be in format: XX-XXXXX (e.g., 22-10243)')
                 return redirect('register')
 
-            # Validate department and course selection
+            # Validate department and program selection
             if not department_id:
                 messages.error(request, 'Please select a department.')
                 return redirect('register')
 
-            if not course_id:
-                messages.error(request, 'Please select a course.')
+            if not program_id:
+                messages.error(request, 'Please select a program.')
                 return redirect('register')
 
             try:
-                # Get the selected course
-                course = Course.objects.get(courseID=course_id)
+                # Get the selected program
+                program = Program.objects.get(programID=program_id)
                 
                 print(f"DEBUG: About to create user with password: {password[:3]}...")
                 
@@ -168,11 +168,11 @@ def register_view(request):
 
                 print(f"DEBUG: User created successfully. Password hash: {user.password[:20]}...")
 
-                # Create Student record with course and password hash (do not save email here)
+                # Create Student record with program and password hash (do not save email here)
                 student = Student.objects.create(
                     studentID=student_id,
                     studentName=fullname,
-                    course=course,
+                    program=program,
                     password=user.password  # Store the hashed password in Student model too
                     # email is not saved in Student model anymore
                 )
@@ -186,8 +186,8 @@ def register_view(request):
                 messages.success(request, 'Student account created successfully! You can now login using your Student ID.')
                 return redirect('login_student')
 
-            except Course.DoesNotExist:
-                messages.error(request, 'Selected course does not exist.')
+            except Program.DoesNotExist:
+                messages.error(request, 'Selected program does not exist.')
                 return redirect('register')
             except Exception as e:
                 messages.error(request, f'Error creating account: {str(e)}')
@@ -236,17 +236,17 @@ def logout_view(request):
 def dashboard_view(request):
     return render(request, 'dashboard.html')
 
-# AJAX endpoint for getting courses by department
-def get_courses_by_department(request, department_id):
+        # AJAX endpoint for getting programs by department
+def get_programs_by_department(request, department_id):
     try:
-        courses = Course.objects.filter(department_id=department_id)
-        course_list = []
-        for course in courses:
-            course_list.append({
-                'courseID': course.courseID,
-                'courseName': course.courseName
+        programs = Program.objects.filter(department_id=department_id)
+        program_list = []
+        for program in programs:
+            program_list.append({
+                'programID': program.programID,
+                'programName': program.programName
             })
-        return JsonResponse({'courses': course_list})
+        return JsonResponse({'programs': program_list})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
