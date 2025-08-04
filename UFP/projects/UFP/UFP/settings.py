@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_recaptcha',
     'rest_framework',
     'api',
+    'warehouse.apps.WarehouseConfig',
 ]
 
 MIDDLEWARE = [
