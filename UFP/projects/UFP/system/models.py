@@ -72,4 +72,26 @@ class StudentActivityLog(models.Model):
 
     def __str__(self):
         return f"Student {self.student} {str(self.activity_type).lower()} at {self.timestamp}"
+    
+class Teacher(models.Model):
+    teacherID = models.AutoField(primary_key=True)
+    teacherName = models.CharField(max_length=100)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.teacherName
+
+class TeacherEvaluation(models.Model):
+    evaluationID = models.AutoField(primary_key=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100)
+    comments = models.TextField()
+    sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.teacher.teacherName} - {self.subject} ({self.specialization})"
 
