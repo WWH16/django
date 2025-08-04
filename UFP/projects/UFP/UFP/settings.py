@@ -48,8 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_recaptcha',
-    'api',
     'rest_framework',
+    'api',
 ]
 
 MIDDLEWARE = [
