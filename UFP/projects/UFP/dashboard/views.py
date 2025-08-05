@@ -121,8 +121,10 @@ def edit_profile(request):
     return redirect('profile')
 
 def admin_dashboard(request):
-    # Placeholder for admin dashboard view
-    return render(request, 'adminDashboard/combined-dashboard.html')
+    context = {
+        'user_display_name': request.user.get_full_name() or request.user.username
+    }
+    return render(request, 'adminDashboard/combined-dashboard.html', context)
 def osas_services(request):
     # Placeholder for OSAS services view
     return render(request, 'adminDashboard/osas-services.html')
