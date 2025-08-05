@@ -189,9 +189,15 @@
 									<div class="card text-white bg-success shadow">
 										<div class="card-body">
 											<h5 class="m-0">BSIT Program</h5>
-											<p class="text-white-50 small m-0">198 Positive • 45 Neutral • 18 Negative</p>
+											<p class="text-white-50 small m-0">
+                                                <span id="bsit-positive">0</span> Positive •
+                                                <span id="bsit-neutral">0</span> Neutral •
+                                                <span id="bsit-negative">0</span> Negative
+                                            </p>
 											<div class="mt-2">
-												<span class="badge bg-light text-success">76% Teacher Rating</span>
+												<span class="badge bg-light text-success">
+													<span id="bsit-rating">0</span>% Teacher Rating
+												</span>
 											</div>
 										</div>
 									</div>
@@ -200,9 +206,15 @@
 									<div class="card text-white bg-primary shadow">
 										<div class="card-body">
 											<h5 class="m-0">BSCS Program</h5>
-											<p class="text-white-50 small m-0">245 Positive • 62 Neutral • 22 Negative</p>
+											<p class="text-white-50 small m-0">
+                                                <span id="bscs-positive">0</span> Positive •
+                                                <span id="bscs-neutral">0</span> Neutral •
+                                                <span id="bscs-negative">0</span> Negative
+                                            </p>
 											<div class="mt-2">
-												<span class="badge bg-light text-primary">74% Teacher Rating</span>
+												<span class="badge bg-light text-primary">
+													<span id="bscs-rating">0</span>% Teacher Rating
+												</span>
 											</div>
 										</div>
 									</div>
@@ -211,9 +223,15 @@
 									<div class="card text-white bg-info shadow">
 										<div class="card-body">
 											<h5 class="m-0">BSEMC Program</h5>
-											<p class="text-white-50 small m-0">124 Positive • 36 Neutral • 15 Negative</p>
+											<p class="text-white-50 small m-0">
+                                                <span id="bsemc-positive">0</span> Positive •
+                                                <span id="bsemc-neutral">0</span> Neutral •
+                                                <span id="bsemc-negative">0</span> Negative
+                                            </p>
 											<div class="mt-2">
-												<span class="badge bg-light text-info">71% Teacher Rating</span>
+												<span class="badge bg-light text-info">
+													<span id="bsemc-rating">0</span>% Teacher Rating
+												</span>
 											</div>
 										</div>
 									</div>
@@ -286,10 +304,10 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/teacher-evaluation-dashboard/')
         .then(response => response.json())
         .then(stats => {
-            document.querySelector('#positive-count').textContent = stats.positive;
-            document.querySelector('#neutral-count').textContent = stats.neutral;
-            document.querySelector('#negative-count').textContent = stats.negative;
-            document.querySelector('#total-count').textContent = stats.total;
+            document.querySelector('#positive-count').textContent = stats.positive.toLocaleString();
+document.querySelector('#neutral-count').textContent = stats.neutral.toLocaleString();
+document.querySelector('#negative-count').textContent = stats.negative.toLocaleString();
+document.querySelector('#total-count').textContent = stats.total.toLocaleString();
             document.querySelector('#positive-percent').textContent = stats.positive_percent + '% of total reviews';
             document.querySelector('#neutral-percent').textContent = stats.neutral_percent + '% of total reviews';
             document.querySelector('#negative-percent').textContent = stats.negative_percent + '% of total reviews';
@@ -344,12 +362,23 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             const programs = data.programs;
+            programs.forEach(prog => {
+                const key = prog.name.toLowerCase(); // 'bsit', 'bscs', 'bsemc'
+                document.getElementById(`${key}-positive`).textContent = prog.positive.toLocaleString();
+                document.getElementById(`${key}-neutral`).textContent = prog.neutral.toLocaleString();
+                document.getElementById(`${key}-negative`).textContent = prog.negative.toLocaleString();
+                // Calculate rating as percent positive of total reviews
+                const total = prog.positive + prog.neutral + prog.negative;
+                const rating = total > 0 ? Math.round((prog.positive / total) * 100) : 0;
+                document.getElementById(`${key}-rating`).textContent = rating;
+            });
+
+            // Update the bar chart
             const labels = programs.map(p => p.name);
             const positive = programs.map(p => p.positive);
             const neutral = programs.map(p => p.neutral);
             const negative = programs.map(p => p.negative);
 
-            // Update the bar chart
             barChart.data.labels = labels;
             barChart.data.datasets = [
                 {
@@ -371,6 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
             barChart.update();
         });
 
+    // Fetch and render Teacher Improvement Priority
     fetch('/api/teacher-improvement-priority/')
         .then(response => response.json())
         .then(priorityList => {
