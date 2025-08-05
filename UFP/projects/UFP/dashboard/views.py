@@ -197,3 +197,10 @@ class AdminPasswordChangeView(PasswordChangeView):
             change_message="Admin changed their password."
         )
         return response
+
+@login_required
+def admin_activity_log(request):
+    if not request.user.is_staff:
+        return redirect('admin_profile')
+    logs = LogEntry.objects.filter(user=request.user).order_by('-action_time')[:50]
+    return render(request, 'adminDashboard/admin_activity_log.html', {'logs': logs})
