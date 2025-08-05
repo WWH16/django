@@ -114,3 +114,39 @@ def teacher_improvement_priority(request):
     # Sort by percent_negative descending
     priority_list.sort(key=lambda x: x['percent_negative'], reverse=True)
     return Response(priority_list)
+
+@api_view(['GET'])
+def osas_sentiment_dashboard(request):
+    qs = FactFeedback.objects.all()
+    total = qs.count()
+    positive = qs.filter(sentiment__label='Positive').count()
+    neutral = qs.filter(sentiment__label='Neutral').count()
+    negative = qs.filter(sentiment__label='Negative').count()
+    # Per service
+    services = []
+    for service in qs.values_list('service__service_name', flat=True).distinct():
+        s_qs = qs.filter(service__service_name=service)
+        s_pos = s_qs.filter(sentiment__label='Positive').count()
+        s_neu = s_qs.filter(sentiment__label='Neutral').count()
+        s_neg = s_qs.filter(sentiment__label='Negative').count()
+        s_total = s_qs.count()
+        satisfaction = round((s_pos / s_total) * 100) if s_total else 0
+        percent_negative = round((s_neg / s_total) * 100) if s_total else 0
+        services.append({
+            "name": service,
+            "positive": s_pos,
+            "neutral": s_neu,
+            "negative": s_neg,
+            "satisfaction": satisfaction,
+            "percent_negative": percent_negative
+        })
+    return Response({
+        "total": total,
+        "positive": positive,
+        "neutral": neutral,
+        "negative": negative,
+        "positive_percent": round(positive/total*100) if total else 0,
+        "neutral_percent": round(neutral/total*100) if total else 0,
+        "negative_percent": round(negative/total*100) if total else 0,
+        "services": services
+    })
