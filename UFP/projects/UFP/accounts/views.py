@@ -227,6 +227,7 @@ def logout_view(request):
             except Student.DoesNotExist:
                 pass
     
+    list(messages.get_messages(request))  # This will clear all messages
     auth_logout(request)
     return redirect('select')
 

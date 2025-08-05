@@ -1,0 +1,12 @@
+{% extends 'adminDashboard/dashboard_base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Profile</h2>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>First Name:</strong> {{ user.first_name }}</p>
+    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <a href="{% url 'edit_admin_profile' %}" class="btn btn-success mt-3">Edit Profile</a>
+    <a href="{% url 'password_change' %}" class="btn btn-secondary mt-3 ms-2">Change Password</a>
+</div>
+{% endblock %}

@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = ['yourdomain.com', 'your_server_ip']
 
 # Make sure you have this in settings.py
-STUDENT_LOGIN_URL = 'login_student'   # The name of your login URL pattern
+LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
 STUDENT_LOGIN_REDIRECT_URL = 'give_feedback'  # After successful login
 STUDENT_LOGOUT_REDIRECT_URL = 'login_student'  # After logout
 
@@ -113,6 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    {
+        'NAME': 'dashboard.validators.NotSameAsOldPasswordValidator',
     },
 ]
 
