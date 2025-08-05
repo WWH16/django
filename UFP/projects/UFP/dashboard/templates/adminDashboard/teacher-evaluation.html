@@ -118,10 +118,11 @@
 									<div class="chart-area">
     <canvas id="pieChart" data-bss-chart="..."></canvas>
 </div>
-									<div class="text-center small mt-4"><span class="me-2"><i
-												class="fas fa-circle text-success"></i>Positive (74%)</span><span class="me-2"><i
-												class="fas fa-circle text-warning"></i>Neutral (19%)</span><span class="me-2"><i
-												class="fas fa-circle text-danger"></i>Negative (7%)</span></div>
+									<div class="text-center small mt-4" id="pie-chart-percentages">
+    <span class="me-2"><i class="fas fa-circle text-success"></i>Positive (<span id="pie-positive-percent">0</span>%)</span>
+    <span class="me-2"><i class="fas fa-circle text-warning"></i>Neutral (<span id="pie-neutral-percent">0</span>%)</span>
+    <span class="me-2"><i class="fas fa-circle text-danger"></i>Negative (<span id="pie-negative-percent">0</span>%)</span>
+</div>
 								</div>
 							</div>
 						</div>
@@ -292,6 +293,11 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('#positive-percent').textContent = stats.positive_percent + '% of total reviews';
             document.querySelector('#neutral-percent').textContent = stats.neutral_percent + '% of total reviews';
             document.querySelector('#negative-percent').textContent = stats.negative_percent + '% of total reviews';
+
+            // Update pie chart legend percentages
+            document.getElementById('pie-positive-percent').textContent = stats.positive_percent;
+            document.getElementById('pie-neutral-percent').textContent = stats.neutral_percent;
+            document.getElementById('pie-negative-percent').textContent = stats.negative_percent;
 
             // Update Chart.js charts
             const chartData = [stats.positive, stats.neutral, stats.negative];
