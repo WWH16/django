@@ -1,5 +1,7 @@
 from django.db import models
 import uuid
+from datetime import datetime
+from django.utils import timezone
 
 class DimStudent(models.Model):
     student_id = models.CharField(max_length=50, primary_key=True)
@@ -71,11 +73,10 @@ class fact_teacher_evaluation(models.Model):
     evaluation_id = models.AutoField(primary_key=True)
     teacher = models.ForeignKey(dim_teacher, on_delete=models.SET_NULL, null=True, db_column='teacher_id')
     student = models.ForeignKey(DimStudent, on_delete=models.SET_NULL, null=True, db_column='student_id')
-    service = models.ForeignKey(DimService, on_delete=models.SET_NULL, null=True, db_column='service_id')
     sentiment = models.ForeignKey(DimSentiment, on_delete=models.SET_NULL, null=True, db_column='sentiment_id')
-    timestamp = models.DateTimeField()
     comment_length = models.IntegerField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = 'warehouse"."fact_teacher_evaluation'
