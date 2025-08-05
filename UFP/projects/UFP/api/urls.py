@@ -4,4 +4,7 @@ from . import views
 urlpatterns = [
     path('fact-feedback/', views.fact_feedback_list, name='api_fact_feedback_list'),
     path('teacher-evaluations/', views.teacher_evaluation_list, name='api_teacher_evaluation_list'),
+    path('teacher-evaluation-dashboard/', views.teacher_evaluation_dashboard_stats, name='teacher_evaluation_dashboard'),
+    path('recent-teacher-evaluations/', views.recent_teacher_evaluations, name='recent_teacher_evaluations'),
+    path('teacher-performance-by-program/', views.teacher_performance_by_program, name='teacher_performance_by_program'),
 ]

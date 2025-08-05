@@ -15,8 +15,9 @@
 										<div class="col me-2">
 											<div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive
 													Reviews</span></div>
-											<div class="text-dark fw-bold h5 mb-0"><span>567</span></div>
-											<div class="text-xs text-muted">74% of total reviews</div>
+											<!-- Positive Reviews Card -->
+											<div class="text-dark fw-bold h5 mb-0"><span id="positive-count">0</span></div>
+											<div class="text-xs text-muted" id="positive-percent">0% of total reviews</div>
 										</div>
 										<div class="col-auto"><i class="fas fa-thumbs-up fa-2x text-gray-300"></i></div>
 									</div>
@@ -30,8 +31,9 @@
 										<div class="col me-2">
 											<div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral
 													Reviews</span></div>
-											<div class="text-dark fw-bold h5 mb-0"><span>143</span></div>
-											<div class="text-xs text-muted">19% of total reviews</div>
+											<!-- Neutral Reviews Card -->
+											<div class="text-dark fw-bold h5 mb-0"><span id="neutral-count">0</span></div>
+											<div class="text-xs text-muted" id="neutral-percent">0% of total reviews</div>
 										</div>
 										<div class="col-auto"><i class="fas fa-minus-circle fa-2x text-gray-300"></i></div>
 									</div>
@@ -45,8 +47,9 @@
 										<div class="col me-2">
 											<div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative
 													Reviews</span></div>
-											<div class="text-dark fw-bold h5 mb-0"><span>55</span></div>
-											<div class="text-xs text-muted">7% of total reviews</div>
+											<!-- Negative Reviews Card -->
+											<div class="text-dark fw-bold h5 mb-0"><span id="negative-count">0</span></div>
+											<div class="text-xs text-muted" id="negative-percent">0% of total reviews</div>
 										</div>
 										<div class="col-auto"><i class="fas fa-thumbs-down fa-2x text-gray-300"></i></div>
 									</div>
@@ -60,7 +63,8 @@
 										<div class="col me-2">
 											<div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total
 													Reviews</span></div>
-											<div class="text-dark fw-bold h5 mb-0"><span>765</span></div>
+											<!-- Total Reviews Card -->
+											<div class="text-dark fw-bold h5 mb-0"><span id="total-count">0</span></div>
 											<div class="text-xs text-muted">This semester</div>
 										</div>
 										<div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
@@ -87,9 +91,10 @@
 									</div>
 								</div>
 								<div class="card-body"><!-- Start: Bar Chart -->
-									<div class="chart-area"><canvas
-											data-bss-chart="{&quot;type&quot;:&quot;bar&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;BSIT&quot;,&quot;BSCS&quot;,&quot;BSEMC&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Positive&quot;,&quot;backgroundColor&quot;:&quot;#28a745&quot;,&quot;borderColor&quot;:&quot;#28a745&quot;,&quot;data&quot;:[&quot;198&quot;,&quot;245&quot;,&quot;124&quot;]},{&quot;label&quot;:&quot;Neutral&quot;,&quot;backgroundColor&quot;:&quot;#ffc107&quot;,&quot;borderColor&quot;:&quot;#ffc107&quot;,&quot;data&quot;:[&quot;45&quot;,&quot;62&quot;,&quot;36&quot;]},{&quot;label&quot;:&quot;Negative&quot;,&quot;backgroundColor&quot;:&quot;#dc3545&quot;,&quot;borderColor&quot;:&quot;#dc3545&quot;,&quot;data&quot;:[&quot;18&quot;,&quot;22&quot;,&quot;15&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:true,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:false},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}],&quot;yAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;]},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}]}}}"></canvas>
-									</div><!-- End: Bar Chart -->
+									<div class="chart-area">
+    <canvas id="barChart" data-bss-chart="..."></canvas>
+</div>
+<!-- End: Bar Chart -->
 								</div>
 							</div>
 						</div>
@@ -110,9 +115,9 @@
 									</div>
 								</div>
 								<div class="card-body">
-									<div class="chart-area"><canvas
-											data-bss-chart="{&quot;type&quot;:&quot;doughnut&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Positive&quot;,&quot;Neutral&quot;,&quot;Negative&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;&quot;,&quot;backgroundColor&quot;:[&quot;#28a745&quot;,&quot;#ffc107&quot;,&quot;#dc3545&quot;],&quot;borderColor&quot;:[&quot;#ffffff&quot;,&quot;#ffffff&quot;,&quot;#ffffff&quot;],&quot;data&quot;:[&quot;567&quot;,&quot;143&quot;,&quot;55&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:false,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}}}"></canvas>
-									</div>
+									<div class="chart-area">
+    <canvas id="pieChart" data-bss-chart="..."></canvas>
+</div>
 									<div class="text-center small mt-4"><span class="me-2"><i
 												class="fas fa-circle text-success"></i>Positive (74%)</span><span class="me-2"><i
 												class="fas fa-circle text-warning"></i>Neutral (19%)</span><span class="me-2"><i
@@ -158,7 +163,7 @@
 								<div class="card-header py-3">
 									<h6 class="text-primary fw-bold m-0">Recent Critical Teacher Reviews</h6>
 								</div>
-								<ul class="list-group list-group-flush">
+								<ul class="list-group list-group-flush" id="recent-evaluations-list">
 									<li class="list-group-item">
 										<div class="row align-items-center no-gutters">
 											<div class="col me-2">
@@ -258,4 +263,128 @@
 						</div>
 					</div>
 				</div>
+<script>
+let barChart, pieChart;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+                label: 'Reviews',
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                data: [0, 0, 0]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Pie/Doughnut Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    pieChart = new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                data: [0, 0, 0]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Fetch dashboard stats and update cards/charts
+    fetch('/api/teacher-evaluation-dashboard/')
+        .then(response => response.json())
+        .then(stats => {
+            document.querySelector('#positive-count').textContent = stats.positive;
+            document.querySelector('#neutral-count').textContent = stats.neutral;
+            document.querySelector('#negative-count').textContent = stats.negative;
+            document.querySelector('#total-count').textContent = stats.total;
+            document.querySelector('#positive-percent').textContent = stats.positive_percent + '% of total reviews';
+            document.querySelector('#neutral-percent').textContent = stats.neutral_percent + '% of total reviews';
+            document.querySelector('#negative-percent').textContent = stats.negative_percent + '% of total reviews';
+
+            // Update Chart.js charts
+            const chartData = [stats.positive, stats.neutral, stats.negative];
+            if (pieChart) {
+                pieChart.data.datasets[0].data = chartData;
+                pieChart.update();
+            }
+            if (barChart) {
+                barChart.data.datasets[0].data = chartData;
+                barChart.update();
+            }
+        });
+
+    // Fetch and render recent teacher evaluations
+    fetch('/api/recent-teacher-evaluations/')
+        .then(response => response.json())
+        .then(evaluations => {
+            const list = document.getElementById('recent-evaluations-list');
+            if (!list) return;
+            list.innerHTML = '';
+            evaluations.forEach(ev => {
+                let badgeClass = 'bg-secondary', sentimentText = 'Review';
+                if (ev.sentiment === 'Positive') { badgeClass = 'bg-success'; sentimentText = 'Good'; }
+                else if (ev.sentiment === 'Negative') { badgeClass = 'bg-danger'; sentimentText = 'Critical'; }
+                else if (ev.sentiment === 'Neutral') { badgeClass = 'bg-warning'; sentimentText = 'Review'; }
+                list.innerHTML += `
+                <li class="list-group-item">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <h6 class="mb-0"><strong>${ev.teacher}</strong></h6>
+                            <span class="text-xs ${badgeClass.replace('bg-', 'text-')}">${sentimentText}</span>
+                            <p class="text-xs text-muted mb-0">"${ev.comments || ''}"</p>
+                        </div>
+                        <div class="col-auto">
+                            <span class="badge ${badgeClass}">${sentimentText}</span>
+                        </div>
+                    </div>
+                </li>`;
+            });
+        });
+
+    // Fetch and render Teacher Performance by Program
+    fetch('/api/teacher-performance-by-program/')
+        .then(response => response.json())
+        .then(data => {
+            const programs = data.programs;
+            const labels = programs.map(p => p.name);
+            const positive = programs.map(p => p.positive);
+            const neutral = programs.map(p => p.neutral);
+            const negative = programs.map(p => p.negative);
+
+            // Update the bar chart
+            barChart.data.labels = labels;
+            barChart.data.datasets = [
+                {
+                    label: 'Positive',
+                    backgroundColor: '#28a745',
+                    data: positive
+                },
+                {
+                    label: 'Neutral',
+                    backgroundColor: '#ffc107',
+                    data: neutral
+                },
+                {
+                    label: 'Negative',
+                    backgroundColor: '#dc3545',
+                    data: negative
+                }
+            ];
+            barChart.update();
+        });
+});
+</script>
 {% endblock %}

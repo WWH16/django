@@ -37,3 +37,49 @@ def teacher_evaluation_list(request):
     result_page = paginator.paginate_queryset(evaluations, request)
     serializer = TeacherEvaluationSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+@api_view(['GET'])
+def teacher_evaluation_dashboard_stats(request):
+    qs = fact_teacher_evaluation.objects.all()
+    total = qs.count()
+    positive = qs.filter(sentiment__label='Positive').count()
+    neutral = qs.filter(sentiment__label='Neutral').count()
+    negative = qs.filter(sentiment__label='Negative').count()
+    return Response({
+        "total": total,
+        "positive": positive,
+        "neutral": neutral,
+        "negative": negative,
+        "positive_percent": round(positive/total*100) if total else 0,
+        "neutral_percent": round(neutral/total*100) if total else 0,
+        "negative_percent": round(negative/total*100) if total else 0,
+    })
+
+@api_view(['GET'])
+def recent_teacher_evaluations(request):
+    evaluations = fact_teacher_evaluation.objects.select_related('teacher', 'sentiment').order_by('-timestamp')[:5]
+    data = [
+        {
+            "teacher": e.teacher.teacher_name if e.teacher else "Unknown",
+            "sentiment": e.sentiment.label if e.sentiment else "Unknown",
+            "comments": e.comments,
+            "timestamp": e.timestamp,
+        }
+        for e in evaluations
+    ]
+    return Response(data)
+
+@api_view(['GET'])
+def teacher_performance_by_program(request):
+    from warehouse.models import fact_teacher_evaluation
+    programs = [
+        {"name": "BSIT"},
+        {"name": "BSCS"},
+        {"name": "BSEMC"},
+    ]
+    for prog in programs:
+        qs = fact_teacher_evaluation.objects.filter(teacher__program_name=prog["name"])
+        prog["positive"] = qs.filter(sentiment__label="Positive").count()
+        prog["neutral"] = qs.filter(sentiment__label="Neutral").count()
+        prog["negative"] = qs.filter(sentiment__label="Negative").count()
+    return Response({"programs": programs})
