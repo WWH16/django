@@ -132,32 +132,11 @@
 								<div class="card-header py-3">
 									<h6 class="text-primary fw-bold m-0">Teacher Improvement Priority</h6>
 								</div>
-								<div class="card-body">
-									<h4 class="small fw-bold">Dr. Smith (BSIT)<span class="float-end">Urgent</span></h4>
-									<div class="progress mb-4">
-										<div class="progress-bar bg-danger" aria-valuenow="27" aria-valuemin="0"
-											aria-valuemax="100" style="width: 27%;"><span
-												class="visually-hidden">27% negative reviews</span></div>
-									</div>
-									<h4 class="small fw-bold">Prof. Johnson (BSEMC)<span class="float-end">Medium</span></h4>
-									<div class="progress mb-4">
-										<div class="progress-bar bg-warning" aria-valuenow="18" aria-valuemin="0"
-											aria-valuemax="100" style="width: 18%;"><span
-												class="visually-hidden">18% negative reviews</span></div>
-									</div>
-									<h4 class="small fw-bold">Dr. Brown (BSCS)<span class="float-end">Low</span></h4>
-									<div class="progress mb-4">
-										<div class="progress-bar bg-info" aria-valuenow="12" aria-valuemin="0"
-											aria-valuemax="100" style="width: 12%;"><span
-												class="visually-hidden">12% negative reviews</span></div>
-									</div>
-									<h4 class="small fw-bold">Prof. Davis (BSIT)<span class="float-end">Excellent</span></h4>
-									<div class="progress mb-4">
-										<div class="progress-bar bg-success" aria-valuenow="5" aria-valuemin="0"
-											aria-valuemax="100" style="width: 5%;"><span
-												class="visually-hidden">5% negative reviews</span></div>
-									</div>
-								</div>
+								<div style="max-height: 300px; overflow-y: auto;">
+        <ul class="list-group list-group-flush" id="teacher-priority-list">
+            <!-- JS will insert items here -->
+        </ul>
+    </div>
 							</div>
 							<div class="card shadow mb-4">
 								<div class="card-header py-3">
@@ -384,6 +363,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             ];
             barChart.update();
+        });
+
+    fetch('/api/teacher-improvement-priority/')
+        .then(response => response.json())
+        .then(priorityList => {
+            const list = document.getElementById('teacher-priority-list');
+            if (!list) return;
+            list.innerHTML = '';
+            priorityList.forEach(item => {
+                let badgeClass = 'bg-secondary';
+                if (item.priority === 'Urgent') badgeClass = 'bg-danger';
+                else if (item.priority === 'Medium') badgeClass = 'bg-warning';
+                else if (item.priority === 'Low') badgeClass = 'bg-info';
+                list.innerHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${item.teacher}</strong> (${item.program})<br>
+                            <span class="text-muted">${item.percent_negative}% negative reviews</span>
+                        </div>
+                        <span class="badge ${badgeClass}">${item.priority}</span>
+                    </li>
+                `;
+            });
+        })
+        .catch(error => {
+            console.error('Failed to load teacher improvement priority:', error);
         });
 });
 </script>

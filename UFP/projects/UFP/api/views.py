@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from system.models import StudentFeedback
 from .serializers import FactFeedbackSerializer, TeacherEvaluationSerializer
-from warehouse.models import FactFeedback, fact_teacher_evaluation
+from warehouse.models import FactFeedback, fact_teacher_evaluation, dim_teacher
 from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
@@ -83,3 +83,34 @@ def teacher_performance_by_program(request):
         prog["neutral"] = qs.filter(sentiment__label="Neutral").count()
         prog["negative"] = qs.filter(sentiment__label="Negative").count()
     return Response({"programs": programs})
+
+@api_view(['GET'])
+def teacher_improvement_priority(request):
+    teachers = dim_teacher.objects.all()
+    priority_list = []
+    for teacher in teachers:
+        evaluations = fact_teacher_evaluation.objects.filter(teacher=teacher)
+        total = evaluations.count()
+        if total == 0:
+            continue
+        negative = evaluations.filter(sentiment__label='Negative').count()
+        percent_negative = round((negative / total) * 100)
+        # Assign priority
+        if percent_negative >= 25:
+            priority = 'Urgent'
+        elif percent_negative >= 15:
+            priority = 'Medium'
+        elif percent_negative >= 10:
+            priority = 'Low'
+        else:
+            priority = None
+        if priority:
+            priority_list.append({
+                "teacher": teacher.teacher_name,
+                "program": teacher.program_name,
+                "priority": priority,
+                "percent_negative": percent_negative
+            })
+    # Sort by percent_negative descending
+    priority_list.sort(key=lambda x: x['percent_negative'], reverse=True)
+    return Response(priority_list)
