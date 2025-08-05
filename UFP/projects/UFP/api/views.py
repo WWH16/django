@@ -31,6 +31,9 @@ def fact_feedback_list(request):
 
 @api_view(['GET'])
 def teacher_evaluation_list(request):
-    evaluations = fact_teacher_evaluation.objects.select_related('teacher', 'student', 'sentiment').all()[:50]
-    serializer = TeacherEvaluationSerializer(evaluations, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = int(request.GET.get('page_size', 10))
+    evaluations = fact_teacher_evaluation.objects.select_related('teacher', 'student', 'sentiment').all()
+    result_page = paginator.paginate_queryset(evaluations, request)
+    serializer = TeacherEvaluationSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)

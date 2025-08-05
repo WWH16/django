@@ -8,6 +8,10 @@
             <p class="text-primary m-0 fw-bold">Comments table</p>
         </div>
         <div class="card-body">
+            <div class="mb-3">
+                <button id="showFactFeedback" class="btn btn-primary btn-sm">Services Feedback</button>
+                <button id="showTeacherFeedback" class="btn btn-secondary btn-sm">Teacher Evaluation</button>
+            </div>
             <div class="row">
                 <div class="col-md-6 text-nowrap">
                     <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
@@ -28,7 +32,7 @@
             <!-- Make the table scrollable with a dynamic height -->
             <div class="table-responsive" style="height: 60vh; min-height: 250px; overflow-y: auto;">
                 <table class="table my-0 text-dark" id="dataTable">
-                    <thead>
+                    <thead id="table-head">
                         <tr>
                             <th>No.</th>
                             <th>Student</th>
@@ -41,9 +45,9 @@
                     <tbody id="feedback-table-body">
                         <!-- Data will be inserted here by JavaScript -->
                     </tbody>
-                    <tfoot>
+                    <tfoot id="table-foot">
                         <tr>
-                            <td><strong>feedback_id</strong></td>
+                            <td><strong>No.</strong></td>
                             <td><strong>Student</strong></td>
                             <td><strong>Service</strong></td>
                             <td><strong>Sentiment</strong></td>
@@ -68,24 +72,90 @@
     </div>
 </div>
 <script>
+let currentMode = 'fact'; // 'fact' or 'teacher'
+
+function setTableHeaders(mode) {
+    const thead = document.getElementById('table-head');
+    const tfoot = document.getElementById('table-foot');
+    if (mode === 'teacher') {
+        thead.innerHTML = `<tr>
+            <th>No.</th>
+            <th>Teacher</th>
+            <th>Comments</th>
+            <th>Sentiment</th>
+            <th>Student</th>
+            <th>Date</th>
+        </tr>`;
+        tfoot.innerHTML = `<tr>
+            <td><strong>No.</strong></td>
+            <td><strong>Teacher</strong></td>
+            <td><strong>Comments</strong></td>
+            <td><strong>Sentiment</strong></td>
+            <td><strong>Student</strong></td>
+            <td><strong>Date</strong></td>
+        </tr>`;
+    } else {
+        thead.innerHTML = `<tr>
+            <th>No.</th>
+            <th>Service</th>
+            <th>Comments</th>
+            <th>Sentiment</th>
+            <th>Student</th>
+            <th>Date</th>
+        </tr>`;
+        tfoot.innerHTML = `<tr>
+            <td><strong>No.</strong></td>
+            <td><strong>Service</strong></td>
+            <td><strong>Comments</strong></td>
+            <td><strong>Sentiment</strong></td>
+            <td><strong>Student</strong></td>
+            <td><strong>Date</strong></td>
+        </tr>`;
+    }
+}
+
 function loadFeedback(page=1, page_size=10) {
-    fetch(`/api/fact-feedback/?page=${page}&page_size=${page_size}`)
+    let url, renderRow;
+    if (currentMode === 'fact') {
+        url = `/api/fact-feedback/?page=${page}&page_size=${page_size}`;
+        renderRow = item => `
+            <tr>
+                <td>${item.feedback_id}</td>
+                <td>${item.service}</td>
+                <td>${item.comments}</td>
+                <td>${item.sentiment || ''}</td>
+                <td>${item.student}</td>
+                <td>${item.timestamp ? item.timestamp.split('T')[0] : ''}</td>
+            </tr>
+        `;
+    } else {
+        url = `/api/teacher-evaluations/?page=${page}&page_size=${page_size}`;
+        renderRow = item => `
+            <tr>
+                <td>${item.evaluation_id}</td>
+                <td>${item.teacher}</td>
+                <td>${item.comments}</td>
+                <td>${item.sentiment || ''}</td>
+                <td>${item.student}</td>
+                <td>${item.timestamp ? item.timestamp.split('T')[0] : ''}</td>
+                
+            </tr>
+        `;
+    }
+
+    setTableHeaders(currentMode);
+
+    fetch(url)
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById('feedback-table-body');
             tbody.innerHTML = '';
-            data.results.forEach(item => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${item.feedback_id}</td>
-                        <td>${item.student}</td>
-                        <td>${item.service}</td>
-                        <td>${item.sentiment || ''}</td>
-                        <td>${item.timestamp ? item.timestamp.split('T')[0] : ''}</td>
-                        <td>${item.comments}</td>
-                    </tr>
-                `;
-            });
+            const items = data.results || data; // fallback to data if results is undefined
+            if (Array.isArray(items)) {
+                items.forEach(item => {
+                    tbody.innerHTML += renderRow(item);
+                });
+            }
 
             // Pagination controls
             const pagination = document.querySelector('.pagination');
@@ -119,9 +189,39 @@ function loadFeedback(page=1, page_size=10) {
 
 // On page load
 document.addEventListener('DOMContentLoaded', function() {
+    setTableHeaders(currentMode);
     loadFeedback();
     document.querySelector('select.form-select-sm').addEventListener('change', function() {
         loadFeedback(1, parseInt(this.value));
+    });
+    document.getElementById('showFactFeedback').addEventListener('click', function() {
+        currentMode = 'fact';
+        setTableHeaders(currentMode);
+        loadFeedback();
+        this.classList.add('btn-primary');
+        this.classList.remove('btn-secondary');
+        document.getElementById('showTeacherFeedback').classList.remove('btn-primary');
+        document.getElementById('showTeacherFeedback').classList.add('btn-secondary');
+    });
+    document.getElementById('showTeacherFeedback').addEventListener('click', function() {
+        currentMode = 'teacher';
+        setTableHeaders(currentMode);
+        loadFeedback();
+        this.classList.add('btn-primary');
+        this.classList.remove('btn-secondary');
+        document.getElementById('showFactFeedback').classList.remove('btn-primary');
+        document.getElementById('showFactFeedback').classList.add('btn-secondary');
+    });
+
+    // Simple client-side search for visible rows
+    const searchBox = document.querySelector('#dataTable_filter input');
+    searchBox.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#feedback-table-body tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
     });
 });
 </script>
