@@ -15,8 +15,9 @@
 						<div class="col me-2">
 							<div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive
 									Feedback</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span>324</span></div>
-							<div class="text-xs text-muted">68% of total feedback</div>
+							<div class="text-dark fw-bold h5 mb-0"><span id="osas-positive-count">0</span></div>
+							<div class="text-xs text-muted"><span id="osas-positive-percent">0</span>% of total feedback
+							</div>
 						</div>
 						<div class="col-auto"><i class="fas fa-smile fa-2x text-gray-300"></i></div>
 					</div>
@@ -30,8 +31,9 @@
 						<div class="col me-2">
 							<div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral
 									Feedback</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span>98</span></div>
-							<div class="text-xs text-muted">21% of total feedback</div>
+							<div class="text-dark fw-bold h5 mb-0"><span id="osas-neutral-count">0</span></div>
+							<div class="text-xs text-muted"><span id="osas-neutral-percent">0</span>% of total feedback
+							</div>
 						</div>
 						<div class="col-auto"><i class="fas fa-meh fa-2x text-gray-300"></i></div>
 					</div>
@@ -45,8 +47,9 @@
 						<div class="col me-2">
 							<div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative
 									Feedback</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span>52</span></div>
-							<div class="text-xs text-muted">11% of total feedback</div>
+							<div class="text-dark fw-bold h5 mb-0"><span id="osas-negative-count">0</span></div>
+							<div class="text-xs text-muted"><span id="osas-negative-percent">0</span>% of total feedback
+							</div>
 						</div>
 						<div class="col-auto"><i class="fas fa-frown fa-2x text-gray-300"></i></div>
 					</div>
@@ -60,7 +63,7 @@
 						<div class="col me-2">
 							<div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total
 									Comments</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span>474</span></div>
+							<div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
 							<div class="text-xs text-muted">This month</div>
 						</div>
 						<div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
@@ -87,8 +90,8 @@
 					</div>
 				</div>
 				<div class="card-body"><!-- Start: Bar Chart -->
-					<div class="chart-area"><canvas
-							data-bss-chart="{&quot;type&quot;:&quot;bar&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Wi-Fi Services&quot;,&quot;College Admission Test&quot;,&quot;Scholarship Services&quot;,&quot;Library Facility&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Positive&quot;,&quot;backgroundColor&quot;:&quot;#28a745&quot;,&quot;borderColor&quot;:&quot;#28a745&quot;,&quot;data&quot;:[&quot;95&quot;,&quot;78&quot;,&quot;89&quot;,&quot;62&quot;]},{&quot;label&quot;:&quot;Neutral&quot;,&quot;backgroundColor&quot;:&quot;#ffc107&quot;,&quot;borderColor&quot;:&quot;#ffc107&quot;,&quot;data&quot;:[&quot;25&quot;,&quot;32&quot;,&quot;18&quot;,&quot;23&quot;]},{&quot;label&quot;:&quot;Negative&quot;,&quot;backgroundColor&quot;:&quot;#dc3545&quot;,&quot;borderColor&quot;:&quot;#dc3545&quot;,&quot;data&quot;:[&quot;18&quot;,&quot;12&quot;,&quot;8&quot;,&quot;14&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:true,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;],&quot;drawOnChartArea&quot;:false},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}],&quot;yAxes&quot;:[{&quot;gridLines&quot;:{&quot;color&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;zeroLineColor&quot;:&quot;rgb(234, 236, 244)&quot;,&quot;drawBorder&quot;:false,&quot;drawTicks&quot;:false,&quot;borderDash&quot;:[&quot;2&quot;],&quot;zeroLineBorderDash&quot;:[&quot;2&quot;]},&quot;ticks&quot;:{&quot;fontColor&quot;:&quot;#858796&quot;,&quot;fontStyle&quot;:&quot;normal&quot;,&quot;padding&quot;:20}}]}}}"></canvas>
+					<div class="chart-area" style="height: 320px;">
+						<canvas id="osasBarChart"></canvas>
 					</div><!-- End: Bar Chart -->
 				</div>
 			</div>
@@ -110,13 +113,15 @@
 					</div>
 				</div>
 				<div class="card-body">
-					<div class="chart-area"><canvas
-							data-bss-chart="{&quot;type&quot;:&quot;doughnut&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;Positive&quot;,&quot;Neutral&quot;,&quot;Negative&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;&quot;,&quot;backgroundColor&quot;:[&quot;#28a745&quot;,&quot;#ffc107&quot;,&quot;#dc3545&quot;],&quot;borderColor&quot;:[&quot;#ffffff&quot;,&quot;#ffffff&quot;,&quot;#ffffff&quot;],&quot;data&quot;:[&quot;324&quot;,&quot;98&quot;,&quot;52&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:false,&quot;legend&quot;:{&quot;display&quot;:false,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}}}"></canvas>
+					<!-- Pie Chart for Overall Sentiment Distribution -->
+					<div class="chart-area" style="height: 320px;">
+						<canvas id="osasPieChart"></canvas>
 					</div>
-					<div class="text-center small mt-4"><span class="me-2"><i
-								class="fas fa-circle text-success"></i>Positive (68%)</span><span class="me-2"><i
-								class="fas fa-circle text-warning"></i>Neutral (21%)</span><span class="me-2"><i
-								class="fas fa-circle text-danger"></i>Negative (11%)</span></div>
+					<div class="text-center small mt-4">
+						<span class="me-2"><i class="fas fa-circle text-success"></i>Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+						<span class="me-2"><i class="fas fa-circle text-warning"></i>Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+						<span class="me-2"><i class="fas fa-circle text-danger"></i>Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -127,31 +132,8 @@
 				<div class="card-header py-3">
 					<h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6>
 				</div>
-				<div class="card-body">
-					<h4 class="small fw-bold">Library Facility<span class="float-end">Urgent</span></h4>
-					<div class="progress mb-4">
-						<div class="progress-bar bg-danger" aria-valuenow="23" aria-valuemin="0"
-							aria-valuemax="100" style="width: 23%;"><span
-								class="visually-hidden">23% negative feedback</span></div>
-					</div>
-					<h4 class="small fw-bold">College Admission Test<span class="float-end">Medium</span></h4>
-					<div class="progress mb-4">
-						<div class="progress-bar bg-warning" aria-valuenow="15" aria-valuemin="0"
-							aria-valuemax="100" style="width: 15%;"><span
-								class="visually-hidden">15% negative feedback</span></div>
-					</div>
-					<h4 class="small fw-bold">Wi-Fi Services<span class="float-end">Low</span></h4>
-					<div class="progress mb-4">
-						<div class="progress-bar bg-info" aria-valuenow="13" aria-valuemin="0"
-							aria-valuemax="100" style="width: 13%;"><span
-								class="visually-hidden">13% negative feedback</span></div>
-					</div>
-					<h4 class="small fw-bold">Scholarship Services<span class="float-end">Excellent</span></h4>
-					<div class="progress mb-4">
-						<div class="progress-bar bg-success" aria-valuenow="7" aria-valuemin="0"
-							aria-valuemax="100" style="width: 7%;"><span
-								class="visually-hidden">7% negative feedback</span></div>
-					</div>
+				<div class="card-body" id="service-priority-list">
+					<!-- JS will insert progress bars here -->
 				</div>
 			</div>
 			<div class="card shadow mb-4">
@@ -204,9 +186,14 @@
 					<div class="card text-white bg-success shadow">
 						<div class="card-body">
 							<h5 class="m-0">Wi-Fi Services</h5>
-							<p class="text-white-50 small m-0">95 Positive • 25 Neutral • 18 Negative</p>
+							<p class="text-white-50 small m-0">
+								<span id="wifi-positive">0</span> Positive •
+								<span id="wifi-neutral">0</span> Neutral •
+								<span id="wifi-negative">0</span> Negative
+							</p>
 							<div class="mt-2">
-								<span class="badge bg-light text-success">69% Satisfaction</span>
+								<span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span>%
+									Satisfaction</span>
 							</div>
 						</div>
 					</div>
@@ -215,9 +202,14 @@
 					<div class="card text-white bg-warning shadow">
 						<div class="card-body">
 							<h5 class="m-0">College Admission Test</h5>
-							<p class="text-white-50 small m-0">78 Positive • 32 Neutral • 12 Negative</p>
+							<p class="text-white-50 small m-0">
+								<span id="admission-positive">0</span> Positive •
+								<span id="admission-neutral">0</span> Neutral •
+								<span id="admission-negative">0</span> Negative
+							</p>
 							<div class="mt-2">
-								<span class="badge bg-light text-warning">64% Satisfaction</span>
+								<span class="badge bg-light text-warning"><span id="admission-satisfaction">0</span>%
+									Satisfaction</span>
 							</div>
 						</div>
 					</div>
@@ -226,9 +218,14 @@
 					<div class="card text-white bg-primary shadow">
 						<div class="card-body">
 							<h5 class="m-0">Scholarship Services</h5>
-							<p class="text-white-50 small m-0">89 Positive • 18 Neutral • 8 Negative</p>
+							<p class="text-white-50 small m-0">
+								<span id="scholarship-positive">0</span> Positive •
+								<span id="scholarship-neutral">0</span> Neutral •
+								<span id="scholarship-negative">0</span> Negative
+							</p>
 							<div class="mt-2">
-								<span class="badge bg-light text-primary">77% Satisfaction</span>
+								<span class="badge bg-light text-primary"><span id="scholarship-satisfaction">0</span>%
+									Satisfaction</span>
 							</div>
 						</div>
 					</div>
@@ -237,9 +234,14 @@
 					<div class="card text-white bg-danger shadow">
 						<div class="card-body">
 							<h5 class="m-0">Library Facility</h5>
-							<p class="text-white-50 small m-0">62 Positive • 23 Neutral • 14 Negative</p>
+							<p class="text-white-50 small m-0">
+								<span id="library-positive">0</span> Positive •
+								<span id="library-neutral">0</span> Neutral •
+								<span id="library-negative">0</span> Negative
+							</p>
 							<div class="mt-2">
-								<span class="badge bg-light text-danger">63% Satisfaction</span>
+								<span class="badge bg-light text-danger"><span id="library-satisfaction">0</span>%
+									Satisfaction</span>
 							</div>
 						</div>
 					</div>
@@ -266,4 +268,143 @@
 		</div>
 	</div>
 </div>
+<script>
+let osasPieChart, osasBarChart;
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/osas-sentiment-dashboard/')
+        .then(response => response.json())
+        .then(data => {
+            // Update cards
+            document.getElementById('osas-positive-count').textContent = data.positive.toLocaleString();
+            document.getElementById('osas-neutral-count').textContent = data.neutral.toLocaleString();
+            document.getElementById('osas-negative-count').textContent = data.negative.toLocaleString();
+            document.getElementById('osas-total-count').textContent = data.total.toLocaleString();
+            document.getElementById('osas-positive-percent').textContent = data.positive_percent;
+            document.getElementById('osas-neutral-percent').textContent = data.neutral_percent;
+            document.getElementById('osas-negative-percent').textContent = data.negative_percent;
+
+            // Update pie chart legend percentages
+            document.getElementById('osas-pie-positive-percent').textContent = data.positive_percent;
+            document.getElementById('osas-pie-neutral-percent').textContent = data.neutral_percent;
+            document.getElementById('osas-pie-negative-percent').textContent = data.negative_percent;
+
+            // Pie Chart (Overall Sentiment)
+            const pieCtx = document.getElementById('osasPieChart').getContext('2d');
+            const pieData = [data.positive, data.neutral, data.negative];
+            if (!osasPieChart) {
+                osasPieChart = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Positive', 'Neutral', 'Negative'],
+                        datasets: [{
+                            backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                            data: pieData
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            } else {
+                osasPieChart.data.datasets[0].data = pieData;
+                osasPieChart.update();
+            }
+
+            // Bar Chart (Sentiment by Service)
+            const serviceLabels = data.services.map(s => s.name);
+            const positiveData = data.services.map(s => s.positive);
+            const neutralData = data.services.map(s => s.neutral);
+            const negativeData = data.services.map(s => s.negative);
+
+            const barCtx = document.getElementById('osasBarChart').getContext('2d');
+            if (!osasBarChart) {
+                osasBarChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: serviceLabels,
+                        datasets: [
+                            {
+                                label: 'Positive',
+                                backgroundColor: '#28a745',
+                                data: positiveData
+                            },
+                            {
+                                label: 'Neutral',
+                                backgroundColor: '#ffc107',
+                                data: neutralData
+                            },
+                            {
+                                label: 'Negative',
+                                backgroundColor: '#dc3545',
+                                data: negativeData
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                ticks: {
+                                    stepSize: 10, // Adjust as needed
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                osasBarChart.data.labels = serviceLabels;
+                osasBarChart.data.datasets[0].data = positiveData;
+                osasBarChart.data.datasets[1].data = neutralData;
+                osasBarChart.data.datasets[2].data = negativeData;
+                osasBarChart.update();
+            }
+
+            // Service Improvement Priority (dynamic)
+            const priorityContainer = document.getElementById('service-priority-list');
+            if (priorityContainer) {
+                // Sort services by percent_negative descending
+                const sortedServices = [...data.services].sort((a, b) => b.percent_negative - a.percent_negative);
+                priorityContainer.innerHTML = '';
+                sortedServices.forEach(service => {
+                    // Determine priority label and color
+                    let priority = '';
+                    let barClass = '';
+                    if (service.percent_negative >= 20) {
+                        priority = 'Urgent';
+                        barClass = 'bg-danger';
+                    } else if (service.percent_negative >= 10) {
+                        priority = 'Medium';
+                        barClass = 'bg-warning';
+                    } else if (service.percent_negative >= 5) {
+                        priority = 'Low';
+                        barClass = 'bg-info';
+                    } else {
+                        priority = 'Excellent';
+                        barClass = 'bg-success';
+                    }
+                    priorityContainer.innerHTML += `
+                        <h4 class="small fw-bold">${service.name}<span class="float-end">${priority}</span></h4>
+                        <div class="progress mb-4">
+                            <div class="progress-bar ${barClass}" aria-valuenow="${service.percent_negative}" aria-valuemin="0"
+                                aria-valuemax="100" style="width: ${service.percent_negative}%;">
+                                <span class="visually-hidden">${service.percent_negative}% negative feedback</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load OSAS sentiment dashboard data:', error);
+        });
+});
+</script>
 {% endblock %}
