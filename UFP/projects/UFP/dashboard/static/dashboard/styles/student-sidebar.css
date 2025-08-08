@@ -1,0 +1,320 @@
+/* Student Dashboard Sidebar CSS */
+body {
+  background: #f8f9fa;
+}
+
+/* Top Navbar */
+.student-navbar {
+  background: #006600;
+  color: #fff;
+  min-height: 56px;
+  z-index: 1040;
+}
+
+.student-navbar .navbar-brand, 
+.student-navbar .nav-link, 
+.student-navbar span {
+  color: #fff !important;
+}
+
+.student-navbar .nav-link:hover {
+  color: #d4f3e3 !important;
+}
+
+/* Main Layout */
+.dashboard-flex {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 56px);
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  height: 100vh;
+  width: 220px;
+  background: #006600;
+  color: #fff;
+  transition: width 0.3s ease;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  padding: 0 !important;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+/* Sidebar Brand */
+.sidebar-brand {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 1rem;
+}
+
+.sidebar-brand span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 0.5px;
+  opacity: 1;
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none;
+  flex: 1;
+}
+
+.sidebar-nav .nav-item {
+  margin-bottom: 0;
+}
+
+/* Sidebar Nav Link - Always full height, centered */
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  transition: background 0.2s, color 0.2s;
+  font-weight: 500;
+  text-decoration: none;
+  margin: 0;
+  min-height: 48px;
+  height: 48px;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 0 !important;
+}
+
+.sidebar-nav .nav-link i,
+.sidebar-nav .nav-link .sidebar-text {
+  padding-left: 1.25rem;
+}
+
+.sidebar.collapsed .nav-link i,
+.sidebar.collapsed .nav-link .sidebar-text {
+  padding-left: 0;
+}
+
+/* Collapsed: Center icon, full clickable area */
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 0;
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  margin: 0;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  border-radius: 0;
+}
+
+/* Collapsed: Icon size and centering */
+.sidebar.collapsed .nav-link i {
+  font-size: 1.5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Sidebar Text */
+.sidebar-text {
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Remove .sidebar-text in collapsed */
+.sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: auto;
+  text-align: center;
+}
+
+.sidebar-footer span {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 220px;
+  transition: margin-left 0.3s ease;
+  padding: 2rem 1rem 1rem 1rem;
+  min-height: 100%;
+  overflow-x: auto;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 60px;
+}
+
+/* Sidebar Backdrop for Mobile */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 1049;
+  backdrop-filter: blur(2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 991.98px) {
+  .sidebar {
+    left: -220px;
+    width: 220px;
+    transition: left 0.3s ease;
+  }
+  
+  .sidebar.mobile-visible {
+    left: 0;
+  }
+  
+  .sidebar-backdrop.mobile-visible {
+    display: block;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  body.sidebar-open {
+    overflow: hidden;
+  }
+  
+  /* Ensure sidebar text is visible on mobile when open */
+  .sidebar.mobile-visible .sidebar-text {
+    opacity: 1;
+    width: auto;
+  }
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.375rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.sidebar-toggle:hover {
+  color: #d4f3e3;
+  background: rgba(255,255,255,0.1);
+}
+
+.sidebar-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+}
+
+/* Tooltip for collapsed sidebar */
+.sidebar.collapsed .nav-link {
+  position: relative;
+}
+
+.sidebar.collapsed .nav-link:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #333;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 1060;
+  margin-left: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+/* Sidebar Nav Link Hover/Active (expanded and collapsed) */
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background: #004d26;
+  color: #d4f3e3;
+  box-shadow: none;
+  transform: none;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  border-radius: 0 !important;
+  margin: 0;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  padding: 0.75rem 1.25rem;
+
+}
+
+.sidebar.collapsed .nav-link:hover,
+.sidebar.collapsed .nav-link.active {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  border-radius: 0;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  padding: 0;
+}
+
+/* Ensure icon color transitions too */
+.sidebar-nav .nav-link:hover i,
+.sidebar-nav .nav-link.active i {
+  color: #d4f3e3;
+  transition: color 0.2s;
+}
+.card {
+  box-shadow: none !important;
+  transform: none !important;
+}
