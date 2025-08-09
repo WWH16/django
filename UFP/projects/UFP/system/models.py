@@ -80,18 +80,21 @@ class Teacher(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     def __str__(self):
         return self.teacherName
+    
+from django.conf import settings
 
 class TeacherEvaluation(models.Model):
     evaluationID = models.AutoField(primary_key=True)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=100)
-    specialization = models.CharField(max_length=100)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='evaluations')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='evaluations')
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='evaluations')
     comments = models.TextField()
-    sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
+    is_anonymous = models.BooleanField(default=False)
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='teacher_evaluations'
+    )
     timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.teacher.teacherName} - {self.subject} ({self.specialization})"
-
+        return f"{self.teacher} • {self.department} • {self.program} • {self.timestamp:%Y-%m-%d}"

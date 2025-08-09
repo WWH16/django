@@ -8,6 +8,7 @@ urlpatterns = [
     path('my-feedback/', views.my_feedback, name='my_feedback'),
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_student_profile, name='edit_profile'),  # for students
+    path('give_evaluation', views.give_evaluation, name='give_evaluation'), 
 
 # for admins
     path('admin/', views.admin_dashboard, name='admin_dashboard'),
@@ -21,4 +22,6 @@ urlpatterns = [
     path('admin/profile/', views.admin_profile, name='admin_profile'),
     path('admin/profile/edit/', views.edit_admin_profile, name='edit_admin_profile'),  
     path('profile/password/', AdminPasswordChangeView.as_view(), name='password_change'),
+    
+    path('api/osas-sentiment-dashboard/', views.osas_sentiment_dashboard, name='osas_sentiment_dashboard'),
 ]

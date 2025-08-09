@@ -2,409 +2,403 @@
 
 {% block content %}
 <div class="container-fluid">
-	<div class="d-sm-flex justify-content-between align-items-center mb-4">
-		<h3 class="text-dark mb-0">OSAS Services Sentiment Analysis Dashboard</h3><a
-			class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#"><i
-				class="fas fa-download fa-sm text-white-50"></i>&nbsp;Export Report</a>
-	</div>
-	<div class="row">
-		<div class="col-md-6 col-xl-3 mb-4">
-			<div class="card shadow border-start-success py-2">
-				<div class="card-body">
-					<div class="row align-items-center no-gutters">
-						<div class="col me-2">
-							<div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive
-									Feedback</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span id="osas-positive-count">0</span></div>
-							<div class="text-xs text-muted"><span id="osas-positive-percent">0</span>% of total feedback
-							</div>
-						</div>
-						<div class="col-auto"><i class="fas fa-smile fa-2x text-gray-300"></i></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6 col-xl-3 mb-4">
-			<div class="card shadow border-start-warning py-2">
-				<div class="card-body">
-					<div class="row align-items-center no-gutters">
-						<div class="col me-2">
-							<div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral
-									Feedback</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span id="osas-neutral-count">0</span></div>
-							<div class="text-xs text-muted"><span id="osas-neutral-percent">0</span>% of total feedback
-							</div>
-						</div>
-						<div class="col-auto"><i class="fas fa-meh fa-2x text-gray-300"></i></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6 col-xl-3 mb-4">
-			<div class="card shadow border-start-danger py-2">
-				<div class="card-body">
-					<div class="row align-items-center no-gutters">
-						<div class="col me-2">
-							<div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative
-									Feedback</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span id="osas-negative-count">0</span></div>
-							<div class="text-xs text-muted"><span id="osas-negative-percent">0</span>% of total feedback
-							</div>
-						</div>
-						<div class="col-auto"><i class="fas fa-frown fa-2x text-gray-300"></i></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6 col-xl-3 mb-4">
-			<div class="card shadow border-start-primary py-2">
-				<div class="card-body">
-					<div class="row align-items-center no-gutters">
-						<div class="col me-2">
-							<div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total
-									Comments</span></div>
-							<div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
-							<div class="text-xs text-muted">This month</div>
-						</div>
-						<div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div><!-- Start: Chart -->
-	<div class="row">
-		<div class="col-lg-7 col-xl-8">
-			<div class="card shadow mb-4">
-				<div class="card-header d-flex justify-content-between align-items-center">
-					<h6 class="text-primary fw-bold m-0">Sentiment Distribution by OSAS Services</h6>
-					<div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
-							aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
-								class="fas fa-ellipsis-v text-gray-400"></i></button>
-						<div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
-							<p class="text-center dropdown-header">Filter Options:</p><a
-								class="dropdown-item" href="#">&nbsp;All Services</a><a class="dropdown-item"
-								href="#">&nbsp;Last 7 Days</a>
-							<div class="dropdown-divider"></div><a class="dropdown-item"
-								href="#">&nbsp;Export Data</a>
-						</div>
-					</div>
-				</div>
-				<div class="card-body"><!-- Start: Bar Chart -->
-					<div class="chart-area" style="height: 320px;">
-						<canvas id="osasBarChart"></canvas>
-					</div><!-- End: Bar Chart -->
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-5 col-xl-4">
-			<div class="card shadow mb-4">
-				<div class="card-header d-flex justify-content-between align-items-center">
-					<h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
-					<div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle"
-							aria-expanded="false" data-bs-toggle="dropdown" type="button"><i
-								class="fas fa-ellipsis-v text-gray-400"></i></button>
-						<div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
-							<p class="text-center dropdown-header">View Options:</p><a
-								class="dropdown-item" href="#">&nbsp;Last Week</a><a class="dropdown-item"
-								href="#">&nbsp;Last Month</a>
-							<div class="dropdown-divider"></div><a class="dropdown-item"
-								href="#">&nbsp;Generate Report</a>
-						</div>
-					</div>
-				</div>
-				<div class="card-body">
-					<!-- Pie Chart for Overall Sentiment Distribution -->
-					<div class="chart-area" style="height: 320px;">
-						<canvas id="osasPieChart"></canvas>
-					</div>
-					<div class="text-center small mt-4">
-						<span class="me-2"><i class="fas fa-circle text-success"></i>Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
-						<span class="me-2"><i class="fas fa-circle text-warning"></i>Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
-						<span class="me-2"><i class="fas fa-circle text-danger"></i>Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div><!-- End: Chart -->
-	<div class="row">
-		<div class="col-lg-6 mb-4">
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6>
-				</div>
-				<div class="card-body" id="service-priority-list">
-					<!-- JS will insert progress bars here -->
-				</div>
-			</div>
-			<div class="card shadow mb-4">
-				<div class="card-header py-3">
-					<h6 class="text-primary fw-bold m-0">Recent Critical Feedback</h6>
-				</div>
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item">
-						<div class="row align-items-center no-gutters">
-							<div class="col me-2">
-								<h6 class="mb-0"><strong>Library Internet Connection</strong></h6>
-								<span class="text-xs text-danger">Negative Sentiment</span>
-								<p class="text-xs text-muted mb-0">"The Wi-Fi in the library is extremely slow..."</p>
-							</div>
-							<div class="col-auto">
-								<span class="badge bg-danger">Critical</span>
-							</div>
-						</div>
-					</li>
-					<li class="list-group-item">
-						<div class="row align-items-center no-gutters">
-							<div class="col me-2">
-								<h6 class="mb-0"><strong>Admission Test Schedule</strong></h6>
-								<span class="text-xs text-warning">Neutral Sentiment</span>
-								<p class="text-xs text-muted mb-0">"The test schedule could be better organized..."</p>
-							</div>
-							<div class="col-auto">
-								<span class="badge bg-warning">Review</span>
-							</div>
-						</div>
-					</li>
-					<li class="list-group-item">
-						<div class="row align-items-center no-gutters">
-							<div class="col me-2">
-								<h6 class="mb-0"><strong>Scholarship Process</strong></h6>
-								<span class="text-xs text-success">Positive Sentiment</span>
-								<p class="text-xs text-muted mb-0">"The scholarship application process was smooth..."</p>
-							</div>
-							<div class="col-auto">
-								<span class="badge bg-success">Good</span>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="col">
-			<div class="row">
-				<div class="col-lg-6 mb-4">
-					<div class="card text-white bg-success shadow">
-						<div class="card-body">
-							<h5 class="m-0">Wi-Fi Services</h5>
-							<p class="text-white-50 small m-0">
-								<span id="wifi-positive">0</span> Positive •
-								<span id="wifi-neutral">0</span> Neutral •
-								<span id="wifi-negative">0</span> Negative
-							</p>
-							<div class="mt-2">
-								<span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span>%
-									Satisfaction</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6 mb-4">
-					<div class="card text-white bg-warning shadow">
-						<div class="card-body">
-							<h5 class="m-0">College Admission Test</h5>
-							<p class="text-white-50 small m-0">
-								<span id="admission-positive">0</span> Positive •
-								<span id="admission-neutral">0</span> Neutral •
-								<span id="admission-negative">0</span> Negative
-							</p>
-							<div class="mt-2">
-								<span class="badge bg-light text-warning"><span id="admission-satisfaction">0</span>%
-									Satisfaction</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6 mb-4">
-					<div class="card text-white bg-primary shadow">
-						<div class="card-body">
-							<h5 class="m-0">Scholarship Services</h5>
-							<p class="text-white-50 small m-0">
-								<span id="scholarship-positive">0</span> Positive •
-								<span id="scholarship-neutral">0</span> Neutral •
-								<span id="scholarship-negative">0</span> Negative
-							</p>
-							<div class="mt-2">
-								<span class="badge bg-light text-primary"><span id="scholarship-satisfaction">0</span>%
-									Satisfaction</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6 mb-4">
-					<div class="card text-white bg-danger shadow">
-						<div class="card-body">
-							<h5 class="m-0">Library Facility</h5>
-							<p class="text-white-50 small m-0">
-								<span id="library-positive">0</span> Positive •
-								<span id="library-neutral">0</span> Neutral •
-								<span id="library-negative">0</span> Negative
-							</p>
-							<div class="mt-2">
-								<span class="badge bg-light text-danger"><span id="library-satisfaction">0</span>%
-									Satisfaction</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-12 mb-4">
-					<div class="card shadow">
-						<div class="card-header">
-							<h6 class="text-primary fw-bold m-0">Action Items & Recommendations</h6>
-						</div>
-						<div class="card-body">
-							<div class="alert alert-danger" role="alert">
-								<strong>Urgent:</strong> Library Facility needs immediate attention - 14% negative feedback rate
-							</div>
-							<div class="alert alert-warning" role="alert">
-								<strong>Review:</strong> College Admission Test process requires optimization
-							</div>
-							<div class="alert alert-success" role="alert">
-								<strong>Maintain:</strong> Scholarship Services showing excellent performance
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="d-sm-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-dark mb-0">OSAS Services Sentiment Analysis Dashboard</h3>
+    <a class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#">
+      <i class="fas fa-download fa-sm text-white-50"></i>&nbsp;Export Report
+    </a>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="row">
+    <div class="col-md-6 col-xl-3 mb-4">
+      <div class="card shadow border-start-success py-2">
+        <div class="card-body">
+          <div class="row align-items-center no-gutters">
+            <div class="col me-2">
+              <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive Feedback</span></div>
+              <div class="text-dark fw-bold h5 mb-0"><span id="osas-positive-count">0</span></div>
+              <div class="text-xs text-muted"><span id="osas-positive-percent">0</span>% of total feedback</div>
+            </div>
+            <div class="col-auto"><i class="fas fa-smile fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3 mb-4">
+      <div class="card shadow border-start-warning py-2">
+        <div class="card-body">
+          <div class="row align-items-center no-gutters">
+            <div class="col me-2">
+              <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral Feedback</span></div>
+              <div class="text-dark fw-bold h5 mb-0"><span id="osas-neutral-count">0</span></div>
+              <div class="text-xs text-muted"><span id="osas-neutral-percent">0</span>% of total feedback</div>
+            </div>
+            <div class="col-auto"><i class="fas fa-meh fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3 mb-4">
+      <div class="card shadow border-start-danger py-2">
+        <div class="card-body">
+          <div class="row align-items-center no-gutters">
+            <div class="col me-2">
+              <div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative Feedback</span></div>
+              <div class="text-dark fw-bold h5 mb-0"><span id="osas-negative-count">0</span></div>
+              <div class="text-xs text-muted"><span id="osas-negative-percent">0</span>% of total feedback</div>
+            </div>
+            <div class="col-auto"><i class="fas fa-frown fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3 mb-4">
+      <div class="card shadow border-start-primary py-2">
+        <div class="card-body">
+          <div class="row align-items-center no-gutters">
+            <div class="col me-2">
+              <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total Comments</span></div>
+              <div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
+              <div class="text-xs text-muted">This month</div>
+            </div>
+            <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="row">
+    <div class="col-lg-7 col-xl-8">
+      <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="text-primary fw-bold m-0">Sentiment Distribution by OSAS Services</h6>
+          <div class="dropdown no-arrow">
+            <button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">
+              <i class="fas fa-ellipsis-v text-gray-400"></i>
+            </button>
+            <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+              <p class="text-center dropdown-header">Filter Options:</p>
+              <a class="dropdown-item" href="#">&nbsp;All Services</a>
+              <a class="dropdown-item" href="#">&nbsp;Last 7 Days</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">&nbsp;Export Data</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-area" style="height: 320px;">
+            <canvas id="osasBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5 col-xl-4">
+      <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
+          <div class="dropdown no-arrow">
+            <button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">
+              <i class="fas fa-ellipsis-v text-gray-400"></i>
+            </button>
+            <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+              <p class="text-center dropdown-header">View Options:</p>
+              <a class="dropdown-item" href="#">&nbsp;Last Week</a>
+              <a class="dropdown-item" href="#">&nbsp;Last Month</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">&nbsp;Generate Report</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-area" style="height: 320px;">
+            <canvas id="osasPieChart"></canvas>
+          </div>
+          <div class="text-center small mt-4">
+            <span class="me-2"><i class="fas fa-circle text-success"></i>Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+            <span class="me-2"><i class="fas fa-circle text-warning"></i>Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+            <span class="me-2"><i class="fas fa-circle text-danger"></i>Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: SERVICE CARDS + ACTIONS -->
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6>
+        </div>
+        <div class="card-body" id="service-priority-list"></div>
+      </div>
+
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="text-primary fw-bold m-0">Recent Critical Feedback</h6>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="row align-items-center no-gutters">
+              <div class="col me-2">
+                <h6 class="mb-0"><strong>Library Internet Connection</strong></h6>
+                <span class="text-xs text-danger">Negative Sentiment</span>
+                <p class="text-xs text-muted mb-0">"The Wi-Fi in the library is extremely slow..."</p>
+              </div>
+              <div class="col-auto">
+                <span class="badge bg-danger">Critical</span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row align-items-center no-gutters">
+              <div class="col me-2">
+                <h6 class="mb-0"><strong>Admission Test Schedule</strong></h6>
+                <span class="text-xs text-warning">Neutral Sentiment</span>
+                <p class="text-xs text-muted mb-0">"The test schedule could be better organized..."</p>
+              </div>
+              <div class="col-auto">
+                <span class="badge bg-warning">Review</span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row align-items-center no-gutters">
+              <div class="col me-2">
+                <h6 class="mb-0"><strong>Scholarship Process</strong></h6>
+                <span class="text-xs text-success">Positive Sentiment</span>
+                <p class="text-xs text-muted mb-0">"The scholarship application process was smooth..."</p>
+              </div>
+              <div class="col-auto">
+                <span class="badge bg-success">Good</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="card text-white bg-success shadow">
+            <div class="card-body">
+              <h5 class="m-0">Wi-Fi Services</h5>
+              <p class="text-white-50 small m-0">
+                <span id="wifi-positive">0</span> Positive •
+                <span id="wifi-neutral">0</span> Neutral •
+                <span id="wifi-negative">0</span> Negative
+              </p>
+              <div class="mt-2">
+                <span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span>% Satisfaction</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card text-white bg-warning shadow">
+            <div class="card-body">
+              <h5 class="m-0">College Admission Test</h5>
+              <p class="text-white-50 small m-0">
+                <span id="admission-positive">0</span> Positive •
+                <span id="admission-neutral">0</span> Neutral •
+                <span id="admission-negative">0</span> Negative
+              </p>
+              <div class="mt-2">
+                <span class="badge bg-light text-warning"><span id="admission-satisfaction">0</span>% Satisfaction</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+              <h5 class="m-0">Scholarship Services</h5>
+              <p class="text-white-50 small m-0">
+                <span id="scholarship-positive">0</span> Positive •
+                <span id="scholarship-neutral">0</span> Neutral •
+                <span id="scholarship-negative">0</span> Negative
+              </p>
+              <div class="mt-2">
+                <span class="badge bg-light text-primary"><span id="scholarship-satisfaction">0</span>% Satisfaction</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card text-white bg-danger shadow">
+            <div class="card-body">
+              <h5 class="m-0">Library Facility</h5>
+              <p class="text-white-50 small m-0">
+                <span id="library-positive">0</span> Positive •
+                <span id="library-neutral">0</span> Neutral •
+                <span id="library-negative">0</span> Negative
+              </p>
+              <div class="mt-2">
+                <span class="badge bg-light text-danger"><span id="library-satisfaction">0</span>% Satisfaction</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-12 mb-4">
+          <div class="card shadow">
+            <div class="card-header">
+              <h6 class="text-primary fw-bold m-0">Action Items & Recommendations</h6>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-danger" role="alert">
+                <strong>Urgent:</strong> Library Facility needs immediate attention - 14% negative feedback rate
+              </div>
+              <div class="alert alert-warning" role="alert">
+                <strong>Review:</strong> College Admission Test process requires optimization
+              </div>
+              <div class="alert alert-success" role="alert">
+                <strong>Maintain:</strong> Scholarship Services showing excellent performance
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
+
 <script>
 let osasPieChart, osasBarChart;
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/osas-sentiment-dashboard/')
-        .then(response => response.json())
-        .then(data => {
-            // Update cards
-            document.getElementById('osas-positive-count').textContent = data.positive.toLocaleString();
-            document.getElementById('osas-neutral-count').textContent = data.neutral.toLocaleString();
-            document.getElementById('osas-negative-count').textContent = data.negative.toLocaleString();
-            document.getElementById('osas-total-count').textContent = data.total.toLocaleString();
-            document.getElementById('osas-positive-percent').textContent = data.positive_percent;
-            document.getElementById('osas-neutral-percent').textContent = data.neutral_percent;
-            document.getElementById('osas-negative-percent').textContent = data.negative_percent;
+document.addEventListener('DOMContentLoaded', function () {
+  fetch('/api/osas-sentiment-dashboard/')
+    .then(response => response.json())
+    .then(data => {
+      // ===== TOP KPI CARDS =====
+      const total = Number(data.total || 0);
+      const pos = Number(data.positive || 0);
+      const neu = Number(data.neutral || 0);
+      const neg = Number(data.negative || 0);
 
-            // Update pie chart legend percentages
-            document.getElementById('osas-pie-positive-percent').textContent = data.positive_percent;
-            document.getElementById('osas-pie-neutral-percent').textContent = data.neutral_percent;
-            document.getElementById('osas-pie-negative-percent').textContent = data.negative_percent;
+      const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
 
-            // Pie Chart (Overall Sentiment)
-            const pieCtx = document.getElementById('osasPieChart').getContext('2d');
-            const pieData = [data.positive, data.neutral, data.negative];
-            if (!osasPieChart) {
-                osasPieChart = new Chart(pieCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Positive', 'Neutral', 'Negative'],
-                        datasets: [{
-                            backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-                            data: pieData
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            } else {
-                osasPieChart.data.datasets[0].data = pieData;
-                osasPieChart.update();
-            }
+      document.getElementById('osas-positive-count').textContent = pos.toLocaleString();
+      document.getElementById('osas-neutral-count').textContent = neu.toLocaleString();
+      document.getElementById('osas-negative-count').textContent = neg.toLocaleString();
+      document.getElementById('osas-total-count').textContent    = total.toLocaleString();
 
-            // Bar Chart (Sentiment by Service)
-            const serviceLabels = data.services.map(s => s.name);
-            const positiveData = data.services.map(s => s.positive);
-            const neutralData = data.services.map(s => s.neutral);
-            const negativeData = data.services.map(s => s.negative);
+      document.getElementById('osas-positive-percent').textContent = data.positive_percent ?? pct(pos, total);
+      document.getElementById('osas-neutral-percent').textContent  = data.neutral_percent ?? pct(neu, total);
+      document.getElementById('osas-negative-percent').textContent = data.negative_percent ?? pct(neg, total);
 
-            const barCtx = document.getElementById('osasBarChart').getContext('2d');
-            if (!osasBarChart) {
-                osasBarChart = new Chart(barCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: serviceLabels,
-                        datasets: [
-                            {
-                                label: 'Positive',
-                                backgroundColor: '#28a745',
-                                data: positiveData
-                            },
-                            {
-                                label: 'Neutral',
-                                backgroundColor: '#ffc107',
-                                data: neutralData
-                            },
-                            {
-                                label: 'Negative',
-                                backgroundColor: '#dc3545',
-                                data: negativeData
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                min: 0,
-                                ticks: {
-                                    stepSize: 10, // Adjust as needed
-                                    callback: function(value) {
-                                        return value.toLocaleString();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            } else {
-                osasBarChart.data.labels = serviceLabels;
-                osasBarChart.data.datasets[0].data = positiveData;
-                osasBarChart.data.datasets[1].data = neutralData;
-                osasBarChart.data.datasets[2].data = negativeData;
-                osasBarChart.update();
-            }
-
-            // Service Improvement Priority (dynamic)
-            const priorityContainer = document.getElementById('service-priority-list');
-            if (priorityContainer) {
-                // Sort services by percent_negative descending
-                const sortedServices = [...data.services].sort((a, b) => b.percent_negative - a.percent_negative);
-                priorityContainer.innerHTML = '';
-                sortedServices.forEach(service => {
-                    // Determine priority label and color
-                    let priority = '';
-                    let barClass = '';
-                    if (service.percent_negative >= 20) {
-                        priority = 'Urgent';
-                        barClass = 'bg-danger';
-                    } else if (service.percent_negative >= 10) {
-                        priority = 'Medium';
-                        barClass = 'bg-warning';
-                    } else if (service.percent_negative >= 5) {
-                        priority = 'Low';
-                        barClass = 'bg-info';
-                    } else {
-                        priority = 'Excellent';
-                        barClass = 'bg-success';
-                    }
-                    priorityContainer.innerHTML += `
-                        <h4 class="small fw-bold">${service.name}<span class="float-end">${priority}</span></h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar ${barClass}" aria-valuenow="${service.percent_negative}" aria-valuemin="0"
-                                aria-valuemax="100" style="width: ${service.percent_negative}%;">
-                                <span class="visually-hidden">${service.percent_negative}% negative feedback</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Failed to load OSAS sentiment dashboard data:', error);
+      // ===== PIE CHART =====
+      const pieCtx = document.getElementById('osasPieChart').getContext('2d');
+      const pieData = [pos, neu, neg];
+      if (!osasPieChart) {
+        osasPieChart = new Chart(pieCtx, {
+          type: 'doughnut',
+          data: { labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{ backgroundColor: ['#28a745', '#ffc107', '#dc3545'], data: pieData }] },
+          options: { responsive: true, maintainAspectRatio: false }
         });
+      } else {
+        osasPieChart.data.datasets[0].data = pieData;
+        osasPieChart.update();
+      }
+      document.getElementById('osas-pie-positive-percent').textContent = pct(pos, total);
+      document.getElementById('osas-pie-neutral-percent').textContent  = pct(neu, total);
+      document.getElementById('osas-pie-negative-percent').textContent = pct(neg, total);
+
+      // ===== BAR CHART =====
+      const serviceLabels = (data.services || []).map(s => s.name);
+      const positiveData = (data.services || []).map(s => s.positive);
+      const neutralData  = (data.services || []).map(s => s.neutral);
+      const negativeData = (data.services || []).map(s => s.negative);
+
+      const barCtx = document.getElementById('osasBarChart').getContext('2d');
+      if (!osasBarChart) {
+        osasBarChart = new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: serviceLabels,
+            datasets: [
+              { label: 'Positive', backgroundColor: '#28a745', data: positiveData },
+              { label: 'Neutral',  backgroundColor: '#ffc107', data: neutralData  },
+              { label: 'Negative', backgroundColor: '#dc3545', data: negativeData }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { yAxes: [{ ticks: { beginAtZero: true, min: 0, stepSize: 1000 } }] }
+          }
+        });
+      } else {
+        osasBarChart.data.labels = serviceLabels;
+        osasBarChart.data.datasets[0].data = positiveData;
+        osasBarChart.data.datasets[1].data = neutralData;
+        osasBarChart.data.datasets[2].data = negativeData;
+        osasBarChart.update();
+      }
+
+      // ===== SERVICE PRIORITY =====
+      const priorityContainer = document.getElementById('service-priority-list');
+      if (priorityContainer) {
+        const sorted = [...(data.services || [])].sort((a,b) => (b.percent_negative||0) - (a.percent_negative||0));
+        priorityContainer.innerHTML = '';
+        sorted.forEach(svc => {
+          const pctNeg = Number(svc.percent_negative || 0);
+          const barClass = pctNeg >= 20 ? 'bg-danger' : pctNeg >= 10 ? 'bg-warning' : pctNeg >= 5 ? 'bg-info' : 'bg-success';
+          const priority = pctNeg >= 20 ? 'Urgent' : pctNeg >= 10 ? 'Medium' : pctNeg >= 5 ? 'Low' : 'Excellent';
+          priorityContainer.insertAdjacentHTML('beforeend', `
+            <h4 class="small fw-bold">${svc.name}<span class="float-end">${priority}</span></h4>
+            <div class="progress mb-4"><div class="progress-bar ${barClass}" style="width:${pctNeg}%"></div></div>
+          `);
+        });
+      }
+
+      // ===== FOUR SERVICE CARDS =====
+      // reset all four to zero first (prevents stale values)
+      ['wifi','admission','scholarship','library'].forEach(id => {
+        ['positive','neutral','negative'].forEach(kind => {
+          const el = document.getElementById(`${id}-${kind}`);
+          if (el) el.textContent = '0';
+        });
+        const sEl = document.getElementById(`${id}-satisfaction`);
+        if (sEl) sEl.textContent = '0';
+      });
+
+      // flexible name→id mapping
+      const nameToId = (n) => {
+        const s = (n || '').toLowerCase();
+        if (s.includes('wi-fi') || s.includes('wifi')) return 'wifi';
+        if (s.includes('admission')) return 'admission';
+        if (s.includes('scholar')) return 'scholarship';
+        if (s.includes('library')) return 'library';
+        return null;
+      };
+
+      (data.services || []).forEach(svc => {
+        const id = nameToId(svc.name);
+        if (!id) return;
+        const p = Number(svc.positive || 0);
+        const u = Number(svc.neutral  || 0);
+        const n = Number(svc.negative || 0);
+        const t = p + u + n;
+        const sat = t ? Math.round((p / t) * 100) : 0;
+
+        const posEl = document.getElementById(`${id}-positive`);
+        const neuEl = document.getElementById(`${id}-neutral`);
+        const negEl = document.getElementById(`${id}-negative`);
+        const satEl = document.getElementById(`${id}-satisfaction`);
+
+        if (posEl) posEl.textContent = p.toLocaleString();
+        if (neuEl) neuEl.textContent = u.toLocaleString();
+        if (negEl) negEl.textContent = n.toLocaleString();
+        if (satEl) satEl.textContent = String(sat);
+      });
+    })
+    .catch(err => console.error('Failed to load OSAS sentiment dashboard data:', err));
 });
 </script>
 {% endblock %}
