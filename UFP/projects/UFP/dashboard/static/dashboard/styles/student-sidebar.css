@@ -318,3 +318,47 @@ body {
   box-shadow: none !important;
   transform: none !important;
 }
+ @media (max-width: 576px) {
+      .dashboard-flex {
+        margin-top: 70px !important;
+      }
+    }
+
+    /* Custom class to make modal appear at the top */
+    .modal-dialog-top {
+      margin-top: 2rem;
+      margin-bottom: auto;
+    }
+    body, html {
+      font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+
+    /* Blur effect on form */
+    .blurred {
+      filter: blur(4px);
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.7;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+      position: relative;
+    }
+
+    /* Cooldown Overlay */
+    #cooldownOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 4rem;
+      font-weight: 700;
+      color: #738678; /* Bootstrap danger red */
+      z-index: 1000;
+      user-select: none;
+    }
+
+    /* Container to position relative for overlay */
+    #feedbackFormContainer {
+      position: relative;
+    }

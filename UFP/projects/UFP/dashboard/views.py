@@ -8,6 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
+from datetime import timedelta
+from django.utils import timezone
 
 
 @login_required
@@ -51,56 +53,64 @@ def profile(request):
         }
         return render(request, 'studentDashboard/profile.html', context)
 
-@login_required
 def give_feedback(request):
+    cooldown_seconds = 10
+    now = timezone.now()
+
+    # Your debug prints and student fetching - preserved as is
+    print('DEBUG: request.user:', request.user)
+    print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
+    print('DEBUG: All Student IDs:', list(Student.objects.values_list('studentID', flat=True)))
+
+    try:
+        student = Student.objects.get(studentID=request.user.username)
+    except Student.DoesNotExist:
+        messages.error(request, 'Student profile not found.')
+        return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': 0})
+
+    last_feedback = StudentFeedback.objects.filter(student=student).order_by('-timestamp').first()
+
+    cooldown_remaining = 0
+    if last_feedback:
+        elapsed = (now - last_feedback.timestamp).total_seconds()
+        if elapsed < cooldown_seconds:
+            cooldown_remaining = int(cooldown_seconds - elapsed)  # Ensure integer here
+
     if request.method == 'POST':
-        # Debug: Print user info and all student IDs
-        print('DEBUG: request.user:', request.user)
-        print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
-        from system.models import Student
-        print('DEBUG: All Student IDs:', list(Student.objects.values_list('studentID', flat=True)))
-        # Get form data
+        if cooldown_remaining > 0:
+            messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
+            return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': cooldown_remaining})
+
+        # The rest of your POST logic preserved exactly
         service_name = request.POST.get('service')
         feedback_text = request.POST.get('feedback')
-        # sentiment = request.POST.get('sentiment', 'Neutral')  # Remove this line, do not use sentiment from form
-        
+
         if not service_name or not feedback_text:
             messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'studentDashboard/feedback_form.html')
-        
+            return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': 0})
+
         try:
-            # Get the current student
-            student = Student.objects.get(studentID=request.user.username)
-            
-            # Get or create service
-            service, created = Service.objects.get_or_create(
-                serviceName=service_name
-            )
-            
-            # Create feedback with sentiment=None
-            feedback = StudentFeedback.objects.create(
+            service, _ = Service.objects.get_or_create(serviceName=service_name)
+
+            StudentFeedback.objects.create(
                 student=student,
                 service=service,
                 sentiment=None,
                 comments=feedback_text
             )
-            
-            # Log the activity
-            log_student_activity(
-                student=student,
-                activity_type='Feedback Submit'
-            )
-            
+
+            log_student_activity(student=student, activity_type='Feedback Submit')
+
             messages.success(request, 'Feedback submitted successfully! Thank you for your input.')
             return redirect('my_feedback')
-            
-        except Student.DoesNotExist:
-            messages.error(request, 'Student profile not found.')
+
         except Exception as e:
             messages.error(request, f'Error submitting feedback: {str(e)}')
-    
-    # GET request - show the form   
-    return render(request, 'studentDashboard/feedback_form.html')
+            return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': 0})
+
+    # GET request — preserved as is, just ensure cooldown_remaining is int
+    return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': cooldown_remaining})
+
 
 @login_required
 def edit_student_profile(request):
