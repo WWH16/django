@@ -229,6 +229,12 @@
       var form = document.getElementById('feedbackForm');
       var cooldownOverlay = document.getElementById('cooldownOverlay');
       var countdownElem = document.getElementById('countdown');
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var cooldown = parseInt({{ cooldown_remaining|default:"0" }}, 10);
+      var form = document.getElementById('feedbackForm');
+      var cooldownOverlay = document.getElementById('cooldownOverlay');
+      var countdownElem = document.getElementById('countdown');
 
     document.addEventListener('DOMContentLoaded', function() {
       var cooldown = parseInt({{ cooldown_remaining|default:"0" }}, 10);
