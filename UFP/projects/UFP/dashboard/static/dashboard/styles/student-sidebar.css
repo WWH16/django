@@ -276,7 +276,6 @@ body {
 /* Sidebar Nav Link Hover/Active (expanded and collapsed) */
 .sidebar-nav .nav-link:hover,
 .sidebar-nav .nav-link.active {
-  background: #004d26;
   color: #d4f3e3;
   box-shadow: none;
   transform: none;
