@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from system.models import Student, StudentFeedback, Service, Sentiment, StudentActivityLog
 from system.utils import log_student_activity
-from django.contrib import messages
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
@@ -214,3 +215,36 @@ def admin_activity_log(request):
         return redirect('admin_profile')
     logs = LogEntry.objects.filter(user=request.user).order_by('-action_time')[:50]
     return render(request, 'adminDashboard/admin_activity_log.html', {'logs': logs})
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+        user = request.user
+
+        if not user.check_password(old_password):
+            messages.error(request, 'Current password is incorrect.')
+        elif new_password1 != new_password2:
+            messages.error(request, 'New passwords do not match.')
+        elif not new_password1:
+            messages.error(request, 'New password cannot be empty.')
+        else:
+            user.set_password(new_password1)
+            user.save()
+            update_session_auth_hash(request, user)  # Keep user logged in
+
+            # Log the password change
+            try:
+                student = Student.objects.get(email=user.email)
+                StudentActivityLog.objects.create(
+                    student=student,
+                    activity_type='Student changed password.',
+                )
+            except Student.DoesNotExist:
+                pass  # Optionally handle if student record not found
+
+            messages.success(request, 'Your password was changed successfully.')
+            return redirect('profile')
+    return render(request, 'studentDashboard/change_password.html')
