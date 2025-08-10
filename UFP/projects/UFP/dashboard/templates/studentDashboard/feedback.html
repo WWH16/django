@@ -8,7 +8,10 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h3 class="mb-4 text-center text-success"><i class="bi bi-chat-dots"></i> Submit Your Feedback</h3>
+                        <!-- Changed: bi bi-chat-dots → fas fa-comment-dots -->
+                        <h3 class="mb-4 text-center text-success">
+                            <i class="fas fa-comment-dots"></i> Submit Your Feedback
+                        </h3>
                         <form method="post" action="{% url 'give_feedback' %}">
                             {% csrf_token %}
                             <div class="mb-3">
@@ -35,4 +38,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
