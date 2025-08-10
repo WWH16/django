@@ -17,6 +17,18 @@
 			border-left: 3px solid white !important;
 			color: white !important;
 		}
+    .sidebar-button {
+      font-size: 0.85rem; /* 13.6px in rem units */
+    }
+    .sidebar .nav-link {
+        font-size: 0.85rem; /* 13.6px in rem units */
+        display: flex;
+        align-items: center;
+        gap: 0; /* No gap between icon and text */
+    }
+    .sidebar .nav-link i {
+        margin-right: 0rem; /* Minimal space between icon and text */
+    }
   </style>
 </head>
 <body>
@@ -79,6 +91,12 @@
           <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}" href="{% url 'give_feedback' %}">
             <i class="fas fa-edit"></i>
             <span class="sidebar-text">Give Feedback</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link sidebar-button" href="{% url 'teacher_evaluation' %}">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span class="sidebar-text">Teacher Evaluation</span>
           </a>
         </li>
         <!-- Divider to isolate logout button -->

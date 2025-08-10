@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from system.models import Student, StudentFeedback, Service, Sentiment, StudentActivityLog
+from system.models import Student, StudentFeedback, Service, Sentiment, StudentActivityLog, TeacherEvaluation, Teacher, Department, Program
 from system.utils import log_student_activity
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
@@ -151,9 +151,9 @@ def osas_services(request):
     return render(request, 'adminDashboard/osas-services.html')
 
 @login_required
-def teacher_evaluation(request):
+def teacher_evaluation_dashboard(request):
     # Placeholder for teacher evaluation admin view
-    return render(request, 'adminDashboard/teacher-evaluation.html')
+    return render(request, 'adminDashboard/teacher-evaluation-dashboard.html')
 
 @login_required 
 def admin_reports(request):
@@ -248,3 +248,43 @@ def change_password(request):
             messages.success(request, 'Your password was changed successfully.')
             return redirect('profile')
     return render(request, 'studentDashboard/change_password.html')
+
+@login_required
+def teacher_evaluation(request):
+    teachers = Teacher.objects.all()
+    departments = Department.objects.all()
+    programs = Program.objects.all()
+    sentiments = Sentiment.objects.all()
+
+    if request.method == 'POST':
+        comments = request.POST.get('comments')
+        teacher_id = request.POST.get('teacher')
+        department_id = request.POST.get('department')
+        program_id = request.POST.get('program')
+        specialization = request.POST.get('specialization')
+        sentiment_id = request.POST.get('sentiment')
+        submitted_by = request.user.username  # Always use username for now
+
+        if comments and teacher_id and department_id and program_id and specialization:
+            TeacherEvaluation.objects.create(
+                comments=comments,
+                teacher_id=teacher_id,
+                department_id=department_id,
+                program_id=program_id,
+                specialization=specialization,
+                sentiment_id=sentiment_id if sentiment_id else None,
+                submitted_by=submitted_by,
+                timestamp=timezone.now()
+            )
+            messages.success(request, 'Your evaluation has been submitted successfully!')
+            return redirect('teacher_evaluation')
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+
+    context = {
+        'teachers': teachers,
+        'departments': departments,
+        'programs': programs,
+        'sentiments': sentiments,
+    }
+    return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
