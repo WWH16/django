@@ -80,6 +80,8 @@ class Teacher(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     def __str__(self):
         return self.teacherName
+    
+from django.conf import settings
 
 class TeacherEvaluation(models.Model):
     evaluationid = models.AutoField(primary_key=True)
@@ -94,7 +96,7 @@ class TeacherEvaluation(models.Model):
     sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
     specialization = models.CharField(max_length=100)
 
-    
+
     def __str__(self):
         return f"{self.teacher.teacherName} ({self.program.programName})"
 

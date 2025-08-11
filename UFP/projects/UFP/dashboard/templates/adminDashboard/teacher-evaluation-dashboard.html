@@ -277,10 +277,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: [0, 0, 0]
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
+options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true,
+                min: 0,
+                stepSize: 1000,
+                precision: 0
+            }
+        }]
+    }
+}
     });
 
     // Pie/Doughnut Chart
