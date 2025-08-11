@@ -8,25 +8,25 @@ body {
     justify-content: center;
     padding: 1rem;
     margin: 0;
-    font-family: 'Poppins', sans-serif; /* Consistent typography */
+    font-family: 'Poppins', sans-serif;
 }
 
 .login-card {
     background: white;
-    border-radius: 16px; /* Increased for modern look */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
-    border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border for definition */
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .login-header {
-    background: linear-gradient(135deg, #006600 0%, #005500 100%); /* Gradient for visual interest */
+    background: linear-gradient(135deg, #006600 0%, #005500 100%);
     color: white;
-    padding: 2.5rem 2rem; /* Increased padding for better breathing room */
-    text-align: center;
+    padding: 2.5rem 2rem;
     border-radius: 16px 16px 0 0;
+    text-align: center;
     position: relative;
     overflow: hidden;
 }
@@ -58,104 +58,46 @@ body {
 }
 
 .login-body {
-    padding: 2.5rem 2rem; /* Increased padding for better spacing */
+    padding: 2.5rem 2rem;
 }
 
-/* Selection Buttons with UI Principles */
+/* Buttons without icons, text centered */
 .selection-btn {
-    text-align: left;
-    padding: 1.5rem 1.75rem; /* Increased padding for better touch targets */
-    border-radius: 16px; /* More rounded for modern look */
-    transition: all 0.2s ease; /* Faster transitions */
+    padding: 0.8rem 1.25rem;
+    min-height: 50px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
     font-family: 'Poppins', sans-serif;
     border: 2px solid #e9ecef;
     background: white;
     color: #495057;
     text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    min-height: 80px; /* Ensure consistent height */
+
     display: flex;
     align-items: center;
+    justify-content: center;  /* Center horizontally */
 }
 
-.selection-btn:hover {
-    border-color: #006600;
-    background: #f8f9fa;
-    color: #006600;
-    transform: translateY(-3px); /* Slightly more lift for feedback */
-    box-shadow: 0 8px 25px rgba(0, 102, 0, 0.15); /* Enhanced shadow */
-    text-decoration: none;
+/* Primary buttons hover like register button */
+
+.selection-btn.btn-outline-primary:hover {
+    border-color: #198754;          /* same green as register hover */
+    background: #f8f9fa;            /* light bg like register */
+    color: #495057;                 /* keep original text color */
+    box-shadow: 0 8px 25px rgba(25, 135, 84, 0.15);  /* like register */
+    transform: none;                /* no lift effect */
 }
 
-.selection-btn:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 102, 0, 0.2);
+.selection-btn.btn-outline-primary:focus,
+.selection-btn.btn-outline-primary:active {
+    background-color: transparent !important;
+    border-color: #198754 !important;
+    color: #495057 !important;     /* keep text color same as normal */
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.2) !important;
+    transform: none !important;
 }
 
-.selection-btn:active {
-    transform: translateY(-1px); /* Less lift when pressed */
-}
-
-/* Icon wrapper with better visual hierarchy */
-.icon-wrapper {
-    width: 56px; /* Larger for better visual weight */
-    height: 56px;
-    border-radius: 12px;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1.25rem;
-    transition: all 0.2s ease;
-    flex-shrink: 0; /* Prevent icon from shrinking */
-}
-
-.selection-btn:hover .icon-wrapper {
-    background: #006600;
-    transform: scale(1.05); /* Slight scale for feedback */
-}
-
-.selection-btn i {
-    font-size: 1.3rem; /* Slightly larger icons */
-    color: #6c757d;
-    transition: color 0.2s ease;
-}
-
-.selection-btn:hover i {
-    color: white;
-}
-
-/* Button content with better typography */
-.btn-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    min-width: 0; /* Allow text to wrap */
-}
-
-.btn-title {
-    font-weight: 600;
-    font-size: 1.1rem; /* Slightly larger for hierarchy */
-    margin-bottom: 0.375rem;
-    color: inherit;
-    line-height: 1.3;
-}
-
-.btn-subtitle {
-    font-size: 0.9rem;
-    color: #6c757d;
-    font-weight: 400;
-    transition: color 0.2s ease;
-    line-height: 1.4;
-}
-
-.selection-btn:hover .btn-subtitle {
-    color: #006600;
-}
-
-/* Success button with consistent styling */
+/* Success button */
 .btn-outline-success.selection-btn {
     border-color: #e9ecef;
     color: #495057;
@@ -168,48 +110,64 @@ body {
     box-shadow: 0 8px 25px rgba(25, 135, 84, 0.15);
 }
 
-.btn-outline-success.selection-btn:hover .icon-wrapper {
-    background: #198754;
+/* Remove icon-wrapper styles entirely since no icons */
+
+/* Button content centered */
+.btn-content {
+    display: flex;
+    justify-content: center; /* center horizontally */
+    align-items: center;     /* center vertically */
+    width: 100%;
 }
 
-.btn-outline-success.selection-btn:hover .btn-subtitle {
-    color: #198754;
+.btn-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: inherit;
+    line-height: 1.3;
 }
 
-/* Override Bootstrap button styles to prevent blue background */
-.btn-outline-primary.selection-btn:active,
-.btn-outline-primary.selection-btn:focus,
-.btn-outline-primary.selection-btn.active {
-    background-color: transparent !important;
-    border-color: #006600 !important;
-    color: #006600 !important;
-    box-shadow: 0 0 0 3px rgba(0, 102, 0, 0.2) !important;
+/* OR button and lines */
+.or-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
 }
 
-.btn-outline-primary.selection-btn:active:hover,
-.btn-outline-primary.selection-btn:focus:hover {
-    background-color: #f8f9fa !important;
-    border-color: #006600 !important;
-    color: #006600 !important;
+.or-btn::before,
+.or-btn::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e9ecef;
+    margin: 0 0.5rem;
+    opacity: 0.8;
 }
 
-/* Divider with better visual separation */
+/* Divider */
 .divider {
     border: none;
     height: 1px;
     background: linear-gradient(90deg, transparent 0%, #e9ecef 50%, transparent 100%);
-    margin: 2.5rem 0;
+    margin: 0.5rem 0;
     opacity: 0.8;
 }
 
-/* Typography hierarchy */
+/* Typography */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     line-height: 1.3;
 }
 
-/* Responsive design with UI principles */
+/* Responsive */
 @media (max-width: 576px) {
     body {
         padding: 0.75rem;
@@ -231,21 +189,11 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .selection-btn {
-        padding: 1.25rem 1.5rem;
-        min-height: 70px;
-    }
-    
-    .icon-wrapper {
-        width: 48px;
-        height: 48px;
-        margin-right: 1rem;
+        padding: 0.6rem 1rem;
+        min-height: 45px;
     }
     
     .btn-title {
-        font-size: 1rem;
-    }
-    
-    .btn-subtitle {
         font-size: 0.85rem;
     }
 }
@@ -268,14 +216,12 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .selection-btn {
-        padding: 1rem 1.25rem;
-        min-height: 65px;
+        padding: 0.5rem 0.8rem;
+        min-height: 40px;
     }
     
-    .icon-wrapper {
-        width: 44px;
-        height: 44px;
-        margin-right: 0.875rem;
+    .btn-title {
+        font-size: 0.8rem;
     }
 }
 

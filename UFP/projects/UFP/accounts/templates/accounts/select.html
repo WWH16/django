@@ -3,7 +3,8 @@
 
 {% block title %}Select Login Type - Sentiment Analysis{% endblock %}
 
-{% block header_icon %}<i class="fas fa-users me-2"></i>{% endblock %}
+{% comment %} Removed header icon block content {% endcomment %}
+{% block header_icon %}{% endblock %}
 {% block header_title %}Welcome{% endblock %}
 {% block header_subtitle %}Sentiment Analysis Platform{% endblock %}
 
@@ -12,19 +13,12 @@
 {% endblock %}
 
 {% block content %}
-<h5 class="text-center mb-4 text-muted">Select Your Login Type</h5>
 
 <!-- Admin Login Option -->
 <div class="d-grid mb-3">
     <a href="{% url 'login_admin' %}" class="btn btn-outline-primary selection-btn">
-        <div class="d-flex align-items-center">
-            <div class="icon-wrapper">
-                <i class="fas fa-shield-alt"></i>
-            </div>
-            <div class="btn-content">
-                <span class="btn-title">Admin Login</span>
-                <span class="btn-subtitle">Access administrative features</span>
-            </div>
+        <div class="btn-content">
+            <span class="btn-title">Admin Login</span>
         </div>
     </a>
 </div>
@@ -32,35 +26,25 @@
 <!-- Student Login Option -->
 <div class="d-grid mb-3">
     <a href="{% url 'login_student' %}" class="btn btn-outline-primary selection-btn">
-        <div class="d-flex align-items-center">
-            <div class="icon-wrapper">
-                <i class="fas fa-user-graduate"></i>
-            </div>
-            <div class="btn-content">
-                <span class="btn-title">Student Login</span>
-                <span class="btn-subtitle">Access student dashboard</span>
-            </div>
+        <div class="btn-content">
+            <span class="btn-title">Student Login</span>
         </div>
     </a>
 </div>
 
+<span class="or-btn">OR</span>
+
 <!-- Register Option -->
 <div class="d-grid mb-3">
     <a href="{% url 'register' %}" class="btn btn-outline-success selection-btn">
-        <div class="d-flex align-items-center">
-            <div class="icon-wrapper">
-                <i class="fas fa-user-plus"></i>
-            </div>
-            <div class="btn-content">
-                <span class="btn-title">Register as Student</span>
-                <span class="btn-subtitle">Create new student account</span>
-            </div>
+        <div class="btn-content">
+            <span class="btn-title">Register as Student</span>
         </div>
     </a>
 </div>
 
 <!-- Divider -->
-<div class="text-center my-4">
+<div class="text-center my-1">
     <hr class="divider">
     <small class="text-muted">
         <i class="fas fa-info-circle me-1"></i>
