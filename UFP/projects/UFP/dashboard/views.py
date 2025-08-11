@@ -14,7 +14,7 @@ from django.utils import timezone
 
 # ---------- Sentiment API (cards/charts) ----------
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core.exceptions import FieldError
 from warehouse.models import FactFeedback
 
@@ -134,20 +134,30 @@ def osas_sentiment_dashboard(request):
 
 @login_required
 def my_feedback(request):
+    # Try to fetch the student's OSAS feedback (optional for teacher evals)
+    feedback_list = []
+    feedback_count = 0
     try:
         student = Student.objects.get(studentID=request.user.username)
         feedback_list = StudentFeedback.objects.filter(student=student).order_by('-timestamp')
         feedback_count = feedback_list.count()
-        context = {
-            'feedback_list': feedback_list,
-            'feedback_count': feedback_count,
-        }
-        return render(request, 'studentDashboard/my_feedback.html', context)
     except Student.DoesNotExist:
-        return render(request, 'studentDashboard/my_feedback.html', {
-            'feedback_list': [],
-            'feedback_count': 0,
-        })
+        pass  # Still show teacher evaluations below
+
+    # Teacher evaluations by this user (you store username in submitted_by)
+    teacher_evaluations = (
+        TeacherEvaluation.objects
+        .filter(submitted_by=request.user.username)
+        .select_related('teacher')
+        .annotate(teacher_name=F('teacher__teacherName'))
+        .order_by('-timestamp')
+    )
+
+    return render(request, 'studentDashboard/my_feedback.html', {
+        'feedback_list': feedback_list,
+        'feedback_count': feedback_count,
+        'teacher_evaluations': teacher_evaluations,
+    })
 
 @login_required
 def profile(request):
@@ -498,7 +508,8 @@ def teacher_evaluation(request):
         program_id = request.POST.get('program')
         specialization = request.POST.get('specialization')
         sentiment_id = request.POST.get('sentiment')
-        submitted_by = request.user.username  # Always use username for now
+        is_anonymous = bool(request.POST.get('is_anonymous'))  # from your form
+        submitted_by = None if is_anonymous else request.user.username
 
         if comments and teacher_id and department_id and program_id and specialization:
             TeacherEvaluation.objects.create(
@@ -512,7 +523,7 @@ def teacher_evaluation(request):
                 timestamp=timezone.now()
             )
             messages.success(request, 'Your evaluation has been submitted successfully!')
-            return redirect('teacher_evaluation')
+            return redirect('my_feedback')  # <-- go to My Feedback
         else:
             messages.error(request, 'Please fill in all required fields.')
 
@@ -523,4 +534,3 @@ def teacher_evaluation(request):
         'sentiments': sentiments,
     }
     return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
-    return render(request, 'adminDashboard/admin_activity_log.html', {'logs': logs})
