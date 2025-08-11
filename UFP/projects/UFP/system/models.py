@@ -82,7 +82,7 @@ class Teacher(models.Model):
         return self.teacherName
 
 class TeacherEvaluation(models.Model):
-    evaluationID = models.AutoField(primary_key=True)
+    evaluationid = models.AutoField(primary_key=True)
     comments = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
@@ -93,6 +93,7 @@ class TeacherEvaluation(models.Model):
     specialization = models.CharField(max_length=100)
     sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
     specialization = models.CharField(max_length=100)
+
     
     def __str__(self):
         return f"{self.teacher.teacherName} ({self.program.programName})"
