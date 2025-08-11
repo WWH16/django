@@ -18,6 +18,11 @@ from django.db.models import Q
 from django.core.exceptions import FieldError
 from warehouse.models import FactFeedback
 
+# sa change password
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 
 def osas_sentiment_dashboard(request):
     """
@@ -262,100 +267,109 @@ def _coerce_pk_for_model(model, raw_value):
         # CharField / UUIDField etc. — keep as-is
         return raw
 
-@login_required
-def give_evaluation(request):
-    if request.method == "POST":
-        teacher_raw = (request.POST.get("teacher_id") or "").strip()
-        dept_raw    = (request.POST.get("department_id") or "").strip()
-        prog_raw    = (request.POST.get("program_id") or "").strip()
-        comments    = (request.POST.get("comments") or "").strip()
-        # anonymous checkbox may exist in UI, but the model has no field for it
-
-        errors = []
-
-        # Validate numeric IDs expected by FK fields
-        try:
-            teacher = Teacher.objects.get(pk=int(teacher_raw))
-        except Exception:
-            teacher = None
-            errors.append("Please select a valid teacher.")
-
-        try:
-            department = Department.objects.get(pk=int(dept_raw))
-        except Exception:
-            department = None
-            errors.append("Please select a valid department.")
-
-        try:
-            program = Program.objects.get(pk=int(prog_raw))
-        except Exception:
-            program = None
-            errors.append("Please select a valid program.")
-
-        if not comments:
-            errors.append("Please enter your feedback in the comments field.")
-
-        if errors:
-            for e in errors:
-                messages.error(request, e)
-            return render(
-                request,
-                "studentDashboard/give_evaluation.html",
-                {
-                    "teachers": Teacher.objects.order_by("teacherName"),
-                    "departments": Department.objects.order_by("departmentName"),
-                    "programs": Program.objects.order_by("programName"),
-                    "form_data": request.POST,  # preserve user selections
-                },
-            )
-
-        # Create WITHOUT 'anonymous' because the model doesn't have that field
-        TeacherEvaluation.objects.create(
-            teacher_id=teacher.pk,
-            department_id=department.pk,
-            program_id=program.pk,
-            comments=comments,
-        )
-
-        messages.success(request, "Thanks! Your evaluation was submitted.")
-        return redirect("give_evaluation")
-
-    # GET
-    return render(
-        request,
-        "studentDashboard/give_evaluation.html",
-        {
-            "teachers": Teacher.objects.order_by("teacherName"),
-            "departments": Department.objects.order_by("departmentName"),
-            "programs": Program.objects.order_by("programName"),
-        },
-    )
-
 
 @login_required
 def edit_student_profile(request):
-    if request.method == 'POST':
-        user = request.user
-        first_name = request.POST.get('first_name')
-        email = request.POST.get('email')
+    if request.method != 'POST':
+        return redirect('profile')
 
-        user.first_name = first_name
-        user.email = email
+    user = request.user
+    posted_first = (request.POST.get('first_name') or request.POST.get('fullname') or "").strip()
+    posted_email = (request.POST.get('email') or "").strip()
+
+    changes = []
+    if posted_first and posted_first != (user.first_name or ""):
+        user.first_name = posted_first
+        changes.append("name")
+    if posted_email and posted_email != (user.email or ""):
+        user.email = posted_email
+        changes.append("email")
+
+    if changes:
         user.save()
-
         try:
             student = Student.objects.get(studentID=user.username)
-            student.studentName = first_name
-            student.email = email
+            if "name" in changes:
+                student.studentName = user.first_name
+            if "email" in changes:
+                student.email = user.email
             student.save()
-            StudentActivityLog.objects.create(
-                student=student,
-                activity_type='Profile updated.'
-            )
+            StudentActivityLog.objects.create(student=student, activity_type='Profile updated.')
         except Student.DoesNotExist:
             pass
+        messages.success(request, f"Profile updated: {', '.join(changes)}.")
+    else:
+        messages.info(request, "No changes to update.")
+    return redirect('profile')
 
-        messages.success(request, 'Profile updated successfully!')
+
+@login_required
+def profile(request):
+    # Render profile normally; errors (if any) come from change_password() via context
+    return render(request, "studentDashboard/profile.html", {})
+
+@login_required
+def change_password(request):
+    if request.method != "POST":
+        return redirect('profile')
+
+    current_password = (request.POST.get('current_password') or '').strip()
+    new_password     = (request.POST.get('new_password') or '').strip()
+    confirm_password = (request.POST.get('confirm_password') or '').strip()
+
+    errors = {}
+    summary_error = None
+
+    # Field presence
+    if not current_password:
+        errors['cp_error'] = "Current password is required."
+    if not new_password:
+        errors['np_error'] = "New password is required."
+    if not confirm_password:
+        errors['cnp_error'] = "Please confirm your new password."
+
+    # Current password check
+    if current_password and not request.user.check_password(current_password):
+        errors['cp_error'] = "Current password is incorrect."
+
+    # Match check
+    if new_password and confirm_password and new_password != confirm_password:
+        errors['cnp_error'] = "New password and confirmation do not match."
+
+    # Optional: Django password validators (length/complexity/history, etc.)
+    if new_password and 'np_error' not in errors:
+        try:
+            validate_password(new_password, user=request.user)
+        except ValidationError as ve:
+            errors['np_error'] = " ".join(ve.messages)
+
+    # If there are any errors, re-render profile with modal open and inline messages
+    if errors:
+        context = {
+            'open_change_password_modal': True,
+            'summary_error': summary_error,
+            'cp_error': errors.get('cp_error'),
+            'np_error': errors.get('np_error'),
+            'cnp_error': errors.get('cnp_error'),
+        }
+        # Do NOT include password values in context (security)
+        return render(request, "studentDashboard/profile.html", context)
+
+    # All good: set the new password
+    request.user.set_password(new_password)
+    request.user.save()
+
+    # Keep user logged in
+    update_session_auth_hash(request, request.user)
+
+    # Log the activity (best effort)
+    try:
+        student = Student.objects.get(studentID=request.user.username)
+        StudentActivityLog.objects.create(student=student, activity_type='Password changed.')
+    except Student.DoesNotExist:
+        pass
+
+    messages.success(request, "Password updated successfully.")
     return redirect('profile')
 
 @login_required

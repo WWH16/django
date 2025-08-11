@@ -36,7 +36,7 @@ def login_admin_view(request):
                     action_flag=ADDITION,
                     change_message="Admin logged in."
                 )
-                return redirect('admin_dashboardx')
+                return redirect('admin_dashboard')
             else:
                 # Add a generic error to the form
                 form.add_error(None, 'Invalid username or password.')

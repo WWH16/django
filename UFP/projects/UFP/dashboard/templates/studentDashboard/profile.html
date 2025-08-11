@@ -37,13 +37,15 @@
         <div class="modal-body" style="font-size: 0.92rem;">
           <div class="mb-3">
             <label for="first_name" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="fullname" name="fullname" value="{{ user.first_name }}" required>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
           </div>
+
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ user_email }}" required>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" style="font-size: 0.92rem;">Cancel</button>
           <button type="submit" class="btn btn-success btn-sm" style="font-size: 0.92rem;">Save Changes</button>
@@ -52,4 +54,88 @@
     </div>
   </div>
 </div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'change_password' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+
+          {% if cp_error or np_error or cnp_error or summary_error %}
+            <div class="alert alert-danger mb-3">
+              {{ summary_error|default:"Please fix the errors below." }}
+            </div>
+          {% endif %}
+
+          <div class="mb-3">
+            <label for="current_password" class="form-label">Current Password</label>
+            <input
+              type="password"
+              class="form-control {% if cp_error %}is-invalid{% endif %}"
+              id="current_password"
+              name="current_password"
+              required
+            >
+            {% if cp_error %}
+              <div class="invalid-feedback d-block">{{ cp_error }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="new_password" class="form-label">New Password</label>
+            <input
+              type="password"
+              class="form-control {% if np_error %}is-invalid{% endif %}"
+              id="new_password"
+              name="new_password"
+              required
+            >
+            {% if np_error %}
+              <div class="invalid-feedback d-block">{{ np_error }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="confirm_password" class="form-label">Confirm New Password</label>
+            <input
+              type="password"
+              class="form-control {% if cnp_error %}is-invalid{% endif %}"
+              id="confirm_password"
+              name="confirm_password"
+              required
+            >
+            {% if cnp_error %}
+              <div class="invalid-feedback d-block">{{ cnp_error }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{# Auto-open the Change Password modal if there were validation errors #}
+{% if open_change_password_modal %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var el = document.getElementById('changePasswordModal');
+    if (el && typeof bootstrap !== 'undefined') {
+      new bootstrap.Modal(el).show();
+    }
+  });
+</script>
+{% endif %}
+
 {% endblock %}
