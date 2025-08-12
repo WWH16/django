@@ -14,9 +14,9 @@ body {
 .login-card {
     background: white;
     border-radius: 16px; /* Increased for modern look */
-  /*   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); Softer, more modern shadow */
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); Softer, more modern shadow */
     width: 100%;
-    max-width: 350px;
+    max-width:  450px;
     margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border for definition */
 }
@@ -398,7 +398,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Form container matches captcha width and is centered */
 form {
-    max-width: 340px;
+    max-width: 540px;
     margin: 0 auto;
     padding: 1.5rem 1rem;
     background: #fff;
