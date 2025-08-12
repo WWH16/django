@@ -138,12 +138,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'assets'),
-    os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'staticFiles'),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticFiles')  # usually used in production for collectstatic
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticFiles')  # usually used in production for collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # usually used in production for collectstatic
 
 
 # Default primary key field type
