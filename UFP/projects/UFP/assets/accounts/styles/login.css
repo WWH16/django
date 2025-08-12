@@ -16,7 +16,7 @@ body {
     border-radius: 16px; /* Increased for modern look */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
     width: 100%;
-    max-width: 400px;
+    max-width: 350px;
     margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border for definition */
 }
@@ -24,7 +24,7 @@ body {
 .login-header {
     background: linear-gradient(135deg, #006600 0%, #005500 100%); /* Gradient for visual interest */
     color: white;
-    padding: 2.5rem 2rem; /* Increased padding for better breathing room */
+    padding: 2rem 1.5rem; /* Reduced padding for smaller form */
     text-align: center;
     border-radius: 16px 16px 0 0;
     position: relative;
@@ -58,7 +58,7 @@ body {
 }
 
 .login-body {
-    padding: 2.5rem 2rem; /* Increased padding for better spacing */
+    padding: 2rem 1.5rem; /* Reduced padding for smaller form */
 }
 
 /* MDB Form Outline with UI Principles */
@@ -67,8 +67,8 @@ body {
     border-color: #e1e5e9; /* Softer border color */
     font-family: 'Poppins', sans-serif;
     border-radius: 12px; /* Rounded corners for modern look */
-    padding: 1rem 1.25rem; /* Better padding for touch targets */
-    font-size: 1rem;
+    padding: 0.875rem 1rem; /* Reduced padding for smaller form */
+    font-size: 0.95rem;
     transition: all 0.2s ease; /* Faster transition for responsiveness */
 }
 
@@ -203,13 +203,13 @@ body {
     background: linear-gradient(135deg, #006600 0%, #005500 100%);
     border: none;
     border-radius: 12px; /* Consistent with other elements */
-    padding: 1rem 2rem;
+    padding: 0.875rem 1.75rem;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-family: 'Poppins', sans-serif;
     transition: all 0.2s ease;
     box-shadow: 0 4px 12px rgba(0, 102, 0, 0.2);
-    min-height: 48px; /* Ensure minimum touch target */
+    min-height: 44px; /* Reduced minimum touch target */
 }
 
 .btn-primary:hover {
@@ -291,6 +291,26 @@ body {
     border-left: 4px solid #dc2626;
 }
 
+/* create account & forgot password style */
+a.text-decoration-underline.text-muted.small {
+    color: #6c757d;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: transform 0.1s ease;
+    cursor: pointer;
+    display: inline-block;
+    user-select: none;
+  }
+  
+  a.text-decoration-underline.text-muted.small:hover,
+  a.text-decoration-underline.text-muted.small:focus {
+    transform: scale(1.1);
+  }
+  
+  a.text-decoration-underline.text-muted.small:active {
+    transform: scale(0.95);
+  }
+  
 /* Typography hierarchy */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
@@ -340,13 +360,13 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (min-width: 768px) {
     .login-card {
-        max-width: 450px;
+        max-width: 400px;
     }
 }
 
 @media (min-width: 992px) {
     .login-card {
-        max-width: 500px;
+        max-width: 450px;
     }
 }
 
@@ -375,3 +395,4 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.9rem !important;
   }
 }
+

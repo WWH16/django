@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'universityFeedbackPlatform',
         'USER': 'postgres',
-        'PASSWORD': 'lattu123',
+        'PASSWORD': 'Estevesjancen06-16-23',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -139,8 +139,10 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'assets'),
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticFiles')  # usually used in production for collectstatic
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticFiles')  # usually used in production for collectstatic
 
 

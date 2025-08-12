@@ -318,8 +318,6 @@ body {
   box-shadow: none !important;
   transform: none !important;
 }
-
-
  @media (max-width: 576px) {
       .dashboard-flex {
         margin-top: 70px !important;
