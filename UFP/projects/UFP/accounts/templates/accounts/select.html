@@ -15,37 +15,32 @@
 {% block content %}
 
 <!-- Admin Login Option -->
-<div class="d-grid mb-3">
-    <a href="{% url 'login_admin' %}" class="btn btn-outline-primary selection-btn">
-        <div class="btn-content">
-            <span class="btn-title">Admin Login</span>
-        </div>
+<div class="d-grid mb-2">
+    <a href="{% url 'login_admin' %}" class="btn btn-outline-primary btn-sm selection-btn">
+        Admin Login
     </a>
 </div>
 
 <!-- Student Login Option -->
-<div class="d-grid mb-3">
-    <a href="{% url 'login_student' %}" class="btn btn-outline-primary selection-btn">
-        <div class="btn-content">
-            <span class="btn-title">Student Login</span>
-        </div>
+<div class="d-grid mb-2">
+    <a href="{% url 'login_student' %}" class="btn btn-outline-primary btn-sm selection-btn">
+        Student Login
     </a>
 </div>
-
-<span class="or-btn">OR</span>
-
+ <!-- Divider -->
+<div class="divider-or">
+    <span class="divider-line"></span>
+    OR
+    <span class="divider-line"></span>
+</div>
 <!-- Register Option -->
-<div class="d-grid mb-3">
-    <a href="{% url 'register' %}" class="btn btn-outline-success selection-btn">
-        <div class="btn-content">
-            <span class="btn-title">Register as Student</span>
-        </div>
+<div class="d-grid mb-2">
+    <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm selection-btn">
+        Register as Student
     </a>
 </div>
 
-<!-- Divider -->
 <div class="text-center my-1">
-    <hr class="divider">
     <small class="text-muted">
         <i class="fas fa-info-circle me-1"></i>
         Choose the appropriate option based on your role
