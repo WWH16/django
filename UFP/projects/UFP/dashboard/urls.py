@@ -24,5 +24,4 @@ urlpatterns = [
     path('admin/profile/edit/', views.edit_admin_profile, name='edit_admin_profile'),  
     path('profile/password/', AdminPasswordChangeView.as_view(), name='password_change'),
     path('change-password/', views.change_password, name='change_password'),
-    path('api/osas-sentiment-dashboard/', views.osas_sentiment_dashboard, name='osas_sentiment_dashboard'),
 ]
