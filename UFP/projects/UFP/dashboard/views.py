@@ -243,7 +243,7 @@ def give_feedback(request):
 
             log_student_activity(student=student, activity_type='Feedback Submit')
             messages.success(request, 'Feedback submitted successfully! Thank you for your input.')
-            return redirect('my_feedback')
+            return redirect('give_feedback')
 
         except Student.DoesNotExist:
             messages.error(request, 'Student profile not found.')
@@ -523,7 +523,7 @@ def teacher_evaluation(request):
                 timestamp=timezone.now()
             )
             messages.success(request, 'Your evaluation has been submitted successfully!')
-            return redirect('my_feedback')  # <-- go to My Feedback
+            return redirect('teacher_evaluation')  # <-- go to My Feedback
         else:
             messages.error(request, 'Please fill in all required fields.')
 

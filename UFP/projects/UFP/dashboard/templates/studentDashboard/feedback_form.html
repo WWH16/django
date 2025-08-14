@@ -67,7 +67,10 @@
         <a href="{% url 'sample' %}" class="btn btn-sm btn-outline-light border-0" title="Visit Website">
           <i class="fas fa-globe"></i> Visit Website
         </a>
-        
+        <span style="width:1px; height:30px; background:linear-gradient(to bottom, #d4f3e3 60%, #006600 100%); opacity:0.7; border-radius:2px; display:inline-block;"></span>
+        <span class="small d-flex align-items-center">
+          Welcome, <span class="fw-semibold text-light ms-1">{{ user.first_name|default:user.username|title }}</span>
+        </span>
       </div>
     </div>
   </nav>
@@ -128,7 +131,17 @@
                 <h3 class="mb-4 text-center text-success">
                   <i class="fas fa-comment-dots"></i> Submit Your Feedback
                 </h3>
-
+                <!-- ALERTS for form feedback -->
+                {% if messages %}
+                  {% for message in messages %}
+                    {% if 'login' not in message.tags %}
+                      <div class="alert alert-{% if 'error' in message.tags %}danger{% elif 'success' in message.tags %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
                 <!-- Cooldown Overlay -->
                 <div id="cooldownOverlay" style="display:none;">
                   <span id="countdown">{{ cooldown_remaining|default:"0" }}</span>{% if cooldown_remaining|default:0 > 1 %}s{% endif %}
@@ -176,34 +189,30 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
 
-  <!-- Feedback Modal (always success style) -->
+  <!-- LOGIN SUCCESS MODAL -->
   {% if messages %}
-  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h1 class="modal-title fs-5" id="feedbackModalLabel">
-            <i class="fas fa-check-circle me-2"></i>Login Successful
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    {% for message in messages %}
+      {% if 'login' in message.tags %}
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-success text-white">
+                <h1 class="modal-title fs-5">
+                  <i class="fas fa-check-circle me-2"></i>{{ message }}
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-          {% for message in messages %}
-            {{ message }}
-          {% endfor %}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
-      feedbackModal.show();
-    });
-  </script>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var modal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
+            modal.show();
+          });
+        </script>
+      {% endif %}
+    {% endfor %}
   {% endif %}
 
   <script>
@@ -244,4 +253,4 @@
     });
   </script>
 </body>
-</html>
+</html> 
