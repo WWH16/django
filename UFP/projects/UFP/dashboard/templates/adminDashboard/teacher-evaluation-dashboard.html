@@ -282,10 +282,11 @@ const cache = {
   summary: null,          // /api/teacher-evaluation-dashboard/
   programs: null,         // /api/teacher-performance-by-program/
   improvement: null,      // kept for UI
-  recent: null            // kept for UI
+  recent: null,           // kept for UI
+  teachers: null          // NEW: /api/teacher-performance-by-teacher/
 };
 
-// CSV now ONLY includes Summary and Per-Program
+// CSV now ONLY includes Summary and Per-Program + (NEW) Per-Teacher
 function buildTeacherCsv(cache) {
   const now = new Date().toISOString();
 
@@ -328,7 +329,27 @@ function buildTeacherCsv(cache) {
     ...programRows
   ];
 
-  return arrayToCsv([...header, ...summary, ...perProgram]);
+  // ---- NEW: Per-Teacher Breakdown (appended, no changes to existing parts) ----
+  const teachers = Array.isArray(cache.teachers) ? cache.teachers : [];
+  const teacherRows = teachers
+    .map(t => {
+      const name = t.teacher || 'Unknown';
+      const P = Number(t.positive || 0), U = Number(t.neutral || 0), N = Number(t.negative || 0);
+      const T = P + U + N;
+      return { name, P, U, N, T };
+    })
+    .sort((a, b) => b.T - a.T) // optional: largest total first
+    .map(t => [t.name, t.P, t.U, t.N, t.T]);
+
+  const perTeacher = [
+    [],
+    ['Per-Teacher Breakdown'],
+    ['Teacher','Positive','Neutral','Negative','Total'],
+    ...teacherRows
+  ];
+  // ---------------------------------------------------------------------------
+
+  return arrayToCsv([...header, ...summary, ...perProgram, ...perTeacher]);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -353,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
     options: { responsive: true, maintainAspectRatio: false }
   });
 
-  // Export (now excludes improvement + recent)
+  // Export (now includes Per-Teacher at the end; leaves existing sections intact)
   const exportBtn = document.getElementById('export-teacher-report-btn');
   if (exportBtn) {
     exportBtn.addEventListener('click', async (e) => {
@@ -361,6 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         if (!cache.summary)  cache.summary  = await fetch('/api/teacher-evaluation-dashboard/').then(r => r.json());
         if (!cache.programs) cache.programs = await fetch('/api/teacher-performance-by-program/').then(r => r.json());
+        if (!cache.teachers) cache.teachers = await fetch('/api/teacher-performance-by-teacher/').then(r => r.json()); // NEW
 
         const csv = buildTeacherCsv(cache);
         const ts = new Date().toISOString().replace(/[:.]/g,'-');

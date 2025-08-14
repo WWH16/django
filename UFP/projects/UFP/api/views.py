@@ -150,3 +150,43 @@ def osas_sentiment_dashboard(request):
         "negative_percent": round(negative/total*100) if total else 0,
         "services": services
     })
+
+    
+# sa pag export ng teacher evaluation as csv per teacher
+from django.db.models import Count, Q, F, Subquery, OuterRef
+from warehouse.models import fact_teacher_evaluation as Eval
+from system.models import Teacher
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.http import JsonResponse
+
+def teacher_performance_by_teacher(request):
+    # Join to get the display name from system_teacher (teacherName)
+    name_sq = Subquery(
+        Teacher.objects
+        .filter(teacher_id=OuterRef('teacher_id'))
+        .values('teacherName')[:1]
+    )
+
+    qs = (
+        Eval.objects
+        .values('teacher_id')
+        .annotate(
+            teacher_name=name_sq,
+            positive=Count('evaluation_id', filter=Q(sentiment_id=1)),
+            negative=Count('evaluation_id', filter=Q(sentiment_id=2)),
+            neutral =Count('evaluation_id', filter=Q(sentiment_id=3)),
+            total=Count('evaluation_id'),
+        )
+        .order_by('teacher_name', 'teacher_id')
+    )
+
+    data = [{
+        "teacher": r.get("teacher_name") or r["teacher_id"],
+        "positive": int(r["positive"] or 0),
+        "neutral":  int(r["neutral"]  or 0),
+        "negative": int(r["negative"] or 0),
+        "total":    int(r["total"]    or 0),
+    } for r in qs]
+
+    return JsonResponse(data, safe=False)
