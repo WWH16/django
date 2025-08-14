@@ -2,86 +2,137 @@
 
 {% block dashboard_content %}
 <div class="container-fluid">
-    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
-        <div class="col-12 col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-body" id="teacherEvaluationFormContainer">
-                    <h3 class="mb-4 text-center text-success">
-                        <i class="fas fa-comment-dots"></i> Teacher Evaluation Form
-                    </h3>
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="teacher" class="form-label">Teacher</label>
-                            <select name="teacher" id="teacher" class="form-select" required>
-                                <option value="" disabled selected>Select a teacher</option>
-                                {% for teacher in teachers %}
-                                    <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="department" class="form-label">Department</label>
-                            <select name="department" id="department" class="form-select" required>
-                                <option value="" disabled selected>Select a department</option>
-                                {% for department in departments %}
-                                    <option value="{{ department.pk }}">{{ department.departmentName }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="program" class="form-label">Program</label>
-                            <select name="program" id="program" class="form-select" required>
-                                <option value="" disabled selected>Select a program</option>
-                                {% for program in programs %}
-                                    <option value="{{ program.pk }}">{{ program.programName }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="specialization" class="form-label">Specialization</label>
-                            <input type="text" name="specialization" id="specialization" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sentiment" class="form-label">Sentiment</label>
-                            <select name="sentiment" id="sentiment" class="form-select">
-                                <option value="" selected>Optional</option>
-                                {% for sentiment in sentiments %}
-                                    <option value="{{ sentiment.pk }}">{{ sentiment.sentimentName }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="comments" class="form-label">Your Comments</label>
-                            <textarea name="comments" id="comments" class="form-control" rows="4" required></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input type="checkbox" name="is_anonymous" id="is_anonymous" class="form-check-input">
-                            <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-paper-plane"></i> Submit Evaluation
-                            </button>
-                        </div>
-                    </form>
-                    <hr>
-                    <div class="text-center text-muted" style="font-size: 0.95em;">
-                        Your feedback helps us improve our teaching quality. Thank you!
-                    </div>
-                </div>
+  <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body" id="teacherEvaluationFormContainer">
+          <h3 class="mb-4 text-center text-success">
+            <i class="fas fa-comment-dots"></i> Teacher Evaluation Form
+          </h3>
+
+          {# Flash messages #}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {# Teacher #}
+            <div class="mb-3">
+              <label for="teacher" class="form-label">Teacher</label>
+              <select name="teacher" id="teacher" class="form-select" required>
+                <option value="" disabled {% if not request.POST.teacher %}selected{% endif %}>
+                  Select a teacher
+                </option>
+                {% for teacher in teachers %}
+                  {# Compare as strings to be safe #}
+                  <option value="{{ teacher.pk }}" {% if request.POST.teacher|stringformat:"s" == teacher.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ teacher.teacherName }}
+                  </option>
+                {% endfor %}
+              </select>
             </div>
+
+            {# Department #}
+            <div class="mb-3">
+              <label for="department" class="form-label">Department</label>
+              <select name="department" id="department" class="form-select" required>
+                <option value="" disabled {% if not request.POST.department %}selected{% endif %}>
+                  Select a department
+                </option>
+                {% for department in departments %}
+                  <option value="{{ department.pk }}" {% if request.POST.department|stringformat:"s" == department.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ department.departmentName }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            {# Program #}
+            <div class="mb-3">
+              <label for="program" class="form-label">Program</label>
+              <select name="program" id="program" class="form-select" required>
+                <option value="" disabled {% if not request.POST.program %}selected{% endif %}>
+                  Select a program
+                </option>
+                {% for program in programs %}
+                  <option value="{{ program.pk }}" {% if request.POST.program|stringformat:"s" == program.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ program.programName }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            {# Specialization #}
+            <div class="mb-3">
+              <label for="specialization" class="form-label">Specialization</label>
+              <input
+                type="text"
+                name="specialization"
+                id="specialization"
+                class="form-control"
+                value="{{ request.POST.specialization|default:'' }}"
+                required
+              >
+            </div>
+
+            {# Sentiment (optional) #}
+            <div class="mb-3">
+              <label for="sentiment" class="form-label">Sentiment</label>
+              <select name="sentiment" id="sentiment" class="form-select">
+                <option value="" {% if not request.POST.sentiment %}selected{% endif %}>Optional</option>
+                {% for sentiment in sentiments %}
+                  <option value="{{ sentiment.pk }}" {% if request.POST.sentiment|stringformat:"s" == sentiment.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ sentiment.sentimentName }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            {# Comments #}
+            <div class="mb-3">
+              <label for="comments" class="form-label">Your Comments</label>
+              <textarea
+                name="comments"
+                id="comments"
+                class="form-control"
+                rows="4"
+                required
+              >{{ request.POST.comments|default:'' }}</textarea>
+            </div>
+
+            {# Anonymous checkbox #}
+            <div class="form-check mb-3">
+              <input
+                type="checkbox"
+                name="is_anonymous"
+                id="is_anonymous"
+                class="form-check-input"
+                {% if request.POST.is_anonymous %}checked{% endif %}
+              >
+              <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-paper-plane"></i> Submit Evaluation
+              </button>
+            </div>
+          </form>
+
+          <hr>
+          <div class="text-center text-muted" style="font-size: 0.95em;">
+            Your feedback helps us improve our teaching quality. Thank you!
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
-</body>
-</html>

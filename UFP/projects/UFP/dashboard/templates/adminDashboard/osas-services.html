@@ -4,7 +4,7 @@
 <div class="container-fluid">
   <div class="d-sm-flex justify-content-between align-items-center mb-4">
     <h3 class="text-dark mb-0">OSAS Services Sentiment Analysis Dashboard</h3>
-    <!-- Export button (now functional) -->
+    <!-- Export button -->
     <a id="export-report-btn" class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#">
       <i class="fas fa-download fa-sm text-white-50"></i>&nbsp;Export Report
     </a>
@@ -61,7 +61,7 @@
             <div class="col me-2">
               <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total Comments</span></div>
               <div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
-              <div class="text-xs text-muted">This month</div>
+              <div class="text-xs text-muted">This selection</div>
             </div>
             <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
           </div>
@@ -75,18 +75,24 @@
     <div class="col-lg-7 col-xl-8">
       <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h6 class="text-primary fw-bold m-0">Sentiment Distribution by OSAS Services</h6>
+          <h6 class="text-primary fw-bold m-0">
+            Sentiment Distribution by OSAS Services
+            <small class="text-muted" id="active-range-label"></small>
+          </h6>
           <div class="dropdown no-arrow">
-            <button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown"
-              type="button">
+            <button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">
               <i class="fas fa-ellipsis-v text-gray-400"></i>
             </button>
             <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
               <p class="text-center dropdown-header">Filter Options:</p>
-              <a class="dropdown-item" href="#">&nbsp;All Services</a>
-              <a class="dropdown-item" href="#">&nbsp;Last 7 Days</a>
+              <a class="dropdown-item osas-range" data-range="all"         href="#">&nbsp;All Time</a>
+              <a class="dropdown-item osas-range" data-range="7d"          href="#">&nbsp;Last 7 Days</a>
+              <a class="dropdown-item osas-range" data-range="30d"         href="#">&nbsp;Last 30 Days</a>
+              <a class="dropdown-item osas-range" data-range="this_month"  href="#">&nbsp;This Month</a>
+              <a class="dropdown-item osas-range" data-range="6m"          href="#">&nbsp;Last 6 Months</a>
+              <a class="dropdown-item osas-range" data-range="1y"          href="#">&nbsp;Last Year</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">&nbsp;Export Data</a>
+              <a class="dropdown-item" id="osas-export-data" href="#">&nbsp;Export Data</a>
             </div>
           </div>
         </div>
@@ -97,21 +103,25 @@
         </div>
       </div>
     </div>
+
     <div class="col-lg-5 col-xl-4">
       <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
           <div class="dropdown no-arrow">
-            <button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown"
-              type="button">
+            <button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">
               <i class="fas fa-ellipsis-v text-gray-400"></i>
             </button>
             <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
-              <p class="text-center dropdown-header">View Options:</p>
-              <a class="dropdown-item" href="#">&nbsp;Last Week</a>
-              <a class="dropdown-item" href="#">&nbsp;Last Month</a>
+              <p class="text-center dropdown-header">Filter Options:</p>
+              <a class="dropdown-item osas-range" data-range="all"         href="#">&nbsp;All Time</a>
+              <a class="dropdown-item osas-range" data-range="7d"          href="#">&nbsp;Last 7 Days</a>
+              <a class="dropdown-item osas-range" data-range="30d"         href="#">&nbsp;Last 30 Days</a>
+              <a class="dropdown-item osas-range" data-range="this_month"  href="#">&nbsp;This Month</a>
+              <a class="dropdown-item osas-range" data-range="6m"          href="#">&nbsp;Last 6 Months</a>
+              <a class="dropdown-item osas-range" data-range="1y"          href="#">&nbsp;Last Year</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">&nbsp;Generate Report</a>
+              <a class="dropdown-item" id="osas-generate-report" href="#">&nbsp;Generate Report</a>
             </div>
           </div>
         </div>
@@ -120,12 +130,9 @@
             <canvas id="osasPieChart"></canvas>
           </div>
           <div class="text-center small mt-4">
-            <span class="me-2"><i class="fas fa-circle text-success"></i>Positive (<span
-                id="osas-pie-positive-percent">0</span>%)</span>
-            <span class="me-2"><i class="fas fa-circle text-warning"></i>Neutral (<span
-                id="osas-pie-neutral-percent">0</span>%)</span>
-            <span class="me-2"><i class="fas fa-circle text-danger"></i>Negative (<span
-                id="osas-pie-negative-percent">0</span>%)</span>
+            <span class="me-2"><i class="fas fa-circle text-success"></i>Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+            <span class="me-2"><i class="fas fa-circle text-warning"></i>Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+            <span class="me-2"><i class="fas fa-circle text-danger"></i>Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
           </div>
         </div>
       </div>
@@ -209,19 +216,16 @@
             <div class="card-body">
               <h5 class="m-0">College Admission Test</h5>
               <p class="text-white-50 small m-0">
-								<span id="collegeadmissiontests-positive">0</span> Positive •
-								<span id="collegeadmissiontests-neutral">0</span> Neutral •
-								<span id="collegeadmissiontests-negative">0</span> Negative
-							</p>
-							<div class="mt-2">
-								<span class="badge bg-light text-warning"><span id="collegeadmissiontests-satisfaction">0</span>%
-									Satisfaction</span>
-								<span class="badge bg-light text-warning" id="collegeadmissiontests-satisfaction-badge">
-									<span id="collegeadmissiontests-satisfaction">0</span>% Satisfaction
-								</span>
-							</div>
+                <span id="admission-positive">0</span> Positive •
+                <span id="admission-neutral">0</span> Neutral •
+                <span id="admission-negative">0</span> Negative
+              </p>
+              <div class="mt-2">
+                <span class="badge bg-light text-warning"><span id="admission-satisfaction">0</span>% Satisfaction</span>
+              </div>
             </div>
           </div>
+        </div>
         <div class="col-lg-6 mb-4">
           <div class="card text-white bg-primary shadow">
             <div class="card-body">
@@ -232,8 +236,7 @@
                 <span id="scholarship-negative">0</span> Negative
               </p>
               <div class="mt-2">
-                <span class="badge bg-light text-primary"><span id="scholarship-satisfaction">0</span>%
-                  Satisfaction</span>
+                <span class="badge bg-light text-primary"><span id="scholarship-satisfaction">0</span>% Satisfaction</span>
               </div>
             </div>
           </div>
@@ -281,6 +284,38 @@
 <script>
   let osasPieChart, osasBarChart;
   let cachedDashboardData = null; // cache for export
+  let currentRange = { key: 'all', start: null, end: null };
+  let isLoading = false;
+
+  // --- Date helpers ---
+  function toISODate(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  function today() { return new Date(); }
+  function daysAgo(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d;
+  }
+  function firstDayOfThisMonth() {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  }
+  function monthsAgo(n) {
+    const d = new Date();
+    const day = d.getDate();
+    d.setMonth(d.getMonth() - n);
+    if (d.getDate() !== day) d.setDate(0); // snap to last day when overflow
+    return d;
+  }
+  function yearsAgo(n) {
+    const d = new Date();
+    const m = d.getMonth(), day = d.getDate();
+    d.setFullYear(d.getFullYear() - n);
+    if (d.getMonth() !== m) d.setDate(0); // handle Feb 29, etc.
+    return d;
+  }
 
   // --- CSV helpers ---
   function csvEscape(value) {
@@ -292,7 +327,7 @@
     return rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
   }
   function downloadCsv(filename, csvString) {
-    const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' }); // BOM for Excel
+    const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -314,6 +349,7 @@
     const header = [
       ['OSAS Services Sentiment Analysis Export'],
       ['Generated At', stamp],
+      ['Range', document.getElementById('active-range-label')?.textContent || 'All Time'],
       []
     ];
 
@@ -359,17 +395,255 @@
     return arrayToCsv(out);
   }
 
+  // --- API URL with range params ---
+  function buildApiUrl() {
+    const base = '/api/osas-sentiment-dashboard/';
+    const url = new URL(base, window.location.origin);
+
+    if (currentRange.key && currentRange.key !== 'all') {
+      url.searchParams.set('range', currentRange.key);
+    }
+    if (currentRange.start) url.searchParams.set('start', currentRange.start);
+    if (currentRange.end)   url.searchParams.set('end',   currentRange.end);
+
+    return url.toString();
+  }
+
+  // --- UI label for range ---
+  function setRangeLabel() {
+    const el = document.getElementById('active-range-label');
+    if (!el) return;
+
+    switch (currentRange.key) {
+      case '7d':
+        el.textContent = '· Last 7 Days';
+        break;
+      case '30d':
+        el.textContent = '· Last 30 Days';
+        break;
+      case 'this_month':
+        el.textContent = '· This Month';
+        break;
+      case '6m':
+        el.textContent = '· Last 6 Months';
+        break;
+      case '1y':
+        el.textContent = '· Last Year';
+        break;
+      default:
+        el.textContent = '· All Time';
+    }
+  }
+
+  // --- Add/remove "active" class in both menus ---
+  function markActiveMenuItems(key) {
+    document.querySelectorAll('.osas-range').forEach(a => {
+      const k = a.getAttribute('data-range') || 'all';
+      if (k === key) a.classList.add('active');
+      else a.classList.remove('active');
+    });
+  }
+
+  // --- Main render routine ---
+  async function fetchAndRender() {
+    if (isLoading) return;
+    isLoading = true;
+    setRangeLabel();
+    markActiveMenuItems(currentRange.key);
+
+    try {
+      const apiUrl = buildApiUrl();
+      const response = await fetch(apiUrl, { headers: { 'Accept': 'application/json' } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      cachedDashboardData = data;
+
+      // ===== TOP KPI CARDS =====
+      const total = Number(data.total || 0);
+      const pos = Number(data.positive || 0);
+      const neu = Number(data.neutral || 0);
+      const neg = Number(data.negative || 0);
+      const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
+
+      document.getElementById('osas-positive-count').textContent = pos.toLocaleString();
+      document.getElementById('osas-neutral-count').textContent = neu.toLocaleString();
+      document.getElementById('osas-negative-count').textContent = neg.toLocaleString();
+      document.getElementById('osas-total-count').textContent = total.toLocaleString();
+
+      document.getElementById('osas-positive-percent').textContent = data.positive_percent ?? pct(pos, total);
+      document.getElementById('osas-neutral-percent').textContent  = data.neutral_percent  ?? pct(neu, total);
+      document.getElementById('osas-negative-percent').textContent = data.negative_percent ?? pct(neg, total);
+
+      // ===== PIE CHART =====
+      const pieCtx = document.getElementById('osasPieChart').getContext('2d');
+      const pieData = [pos, neu, neg];
+      if (!osasPieChart) {
+        osasPieChart = new Chart(pieCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{ backgroundColor: ['#28a745', '#ffc107', '#dc3545'], data: pieData }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      } else {
+        osasPieChart.data.datasets[0].data = pieData;
+        osasPieChart.update();
+      }
+      document.getElementById('osas-pie-positive-percent').textContent = pct(pos, total);
+      document.getElementById('osas-pie-neutral-percent').textContent  = pct(neu, total);
+      document.getElementById('osas-pie-negative-percent').textContent = pct(neg, total);
+
+      // ===== BAR CHART =====
+      const serviceLabels = (data.services || []).map(s => s.name);
+      const positiveData  = (data.services || []).map(s => Number(s.positive || 0));
+      const neutralData   = (data.services || []).map(s => Number(s.neutral || 0));
+      const negativeData  = (data.services || []).map(s => Number(s.negative || 0));
+
+      const barCtx = document.getElementById('osasBarChart').getContext('2d');
+      if (!osasBarChart) {
+        osasBarChart = new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: serviceLabels,
+            datasets: [
+              { label: 'Positive', backgroundColor: '#28a745', data: positiveData },
+              { label: 'Neutral',  backgroundColor: '#ffc107', data: neutralData },
+              { label: 'Negative', backgroundColor: '#dc3545', data: negativeData }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            // If using Chart.js v3+, update to: scales:{ y:{ beginAtZero:true, min:0 } }
+            scales: { yAxes: [{ ticks: { beginAtZero: true, min: 0 } }] }
+          }
+        });
+      } else {
+        osasBarChart.data.labels = serviceLabels;
+        osasBarChart.data.datasets[0].data = positiveData;
+        osasBarChart.data.datasets[1].data = neutralData;
+        osasBarChart.data.datasets[2].data = negativeData;
+        osasBarChart.update();
+      }
+
+      // ===== SERVICE PRIORITY =====
+      const priorityContainer = document.getElementById('service-priority-list');
+      if (priorityContainer) {
+        const sorted = [...(data.services || [])].sort((a, b) => (Number(b.percent_negative || 0)) - (Number(a.percent_negative || 0)));
+        priorityContainer.innerHTML = '';
+        sorted.forEach(svc => {
+          const pctNeg = Number(svc.percent_negative || 0);
+          const barClass = pctNeg >= 20 ? 'bg-danger' : pctNeg >= 10 ? 'bg-warning' : pctNeg >= 5 ? 'bg-info' : 'bg-success';
+          const priority = pctNeg >= 20 ? 'Urgent' : pctNeg >= 10 ? 'Medium' : pctNeg >= 5 ? 'Low' : 'Excellent';
+          priorityContainer.insertAdjacentHTML('beforeend', `
+            <h4 class="small fw-bold">${svc.name}<span class="float-end">${priority}</span></h4>
+            <div class="progress mb-4"><div class="progress-bar ${barClass}" style="width:${pctNeg}%"></div></div>
+          `);
+        });
+      }
+
+      // ===== FOUR SERVICE CARDS =====
+      ['wifi', 'admission', 'scholarship', 'library'].forEach(id => {
+        ['positive', 'neutral', 'negative'].forEach(kind => {
+          const el = document.getElementById(`${id}-${kind}`);
+          if (el) el.textContent = '0';
+        });
+        const sEl = document.getElementById(`${id}-satisfaction`);
+        if (sEl) sEl.textContent = '0';
+      });
+
+      const nameToId = (n) => {
+        const s = (n || '').toLowerCase();
+        if (s.includes('wi-fi') || s.includes('wifi')) return 'wifi';
+        if (s.includes('admission')) return 'admission';
+        if (s.includes('scholar')) return 'scholarship';
+        if (s.includes('library')) return 'library';
+        return null;
+      };
+
+      (data.services || []).forEach(svc => {
+        const id = nameToId(svc.name);
+        if (!id) return;
+        const p = Number(svc.positive || 0);
+        const u = Number(svc.neutral || 0);
+        const n = Number(svc.negative || 0);
+        const t = p + u + n;
+        const sat = t ? Math.round((p / t) * 100) : 0;
+
+        const posEl = document.getElementById(`${id}-positive`);
+        const neuEl = document.getElementById(`${id}-neutral`);
+        const negEl = document.getElementById(`${id}-negative`);
+        const satEl = document.getElementById(`${id}-satisfaction`);
+
+        if (posEl) posEl.textContent = p.toLocaleString();
+        if (neuEl) neuEl.textContent = u.toLocaleString();
+        if (negEl) negEl.textContent = n.toLocaleString();
+        if (satEl) satEl.textContent = String(sat);
+      });
+    } catch (err) {
+      console.error('Failed to refresh dashboard:', err);
+      alert('Sorry—failed to load the dashboard. Please refresh the page.');
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // --- Range switching ---
+  function applyRange(key) {
+    // Prevent spamming while loading
+    if (isLoading) return;
+
+    const end = toISODate(today());
+    let start = null;
+
+    switch (key) {
+      case '7d':
+        start = toISODate(daysAgo(6)); // inclusive: today + prior 6 days
+        break;
+      case '30d':
+        start = toISODate(daysAgo(29));
+        break;
+      case 'this_month':
+        start = toISODate(firstDayOfThisMonth());
+        break;
+      case '6m': {
+        const s = monthsAgo(6);
+        start = toISODate(s);
+        break;
+      }
+      case '1y': {
+        const s = yearsAgo(1);
+        start = toISODate(s);
+        break;
+      }
+      default: // 'all'
+        start = null;
+    }
+
+    currentRange = { key, start, end: start ? end : null };
+    fetchAndRender();
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
-    // Hook the Export button
+    // Bind all filter items (both menus)
+    document.querySelectorAll('.osas-range').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const key = e.currentTarget.getAttribute('data-range') || 'all';
+        applyRange(key);
+      });
+    });
+
+    // Export button (top right)
     const exportBtn = document.getElementById('export-report-btn');
     if (exportBtn) {
       exportBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         try {
-          const data = cachedDashboardData || await fetch('/api/osas-sentiment-dashboard/').then(r => r.json());
+          const data = cachedDashboardData || await (await fetch(buildApiUrl())).json();
           const csv = buildDashboardCsv(data);
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
-          downloadCsv(`osas-sentiment-dashboard_${ts}.csv`, csv);
+          downloadCsv(`osas-sentiment-dashboard_${currentRange.key}_${ts}.csv`, csv);
         } catch (err) {
           console.error('CSV export failed:', err);
           alert('Sorry—failed to export the report. Please try again.');
@@ -377,137 +651,15 @@
       });
     }
 
-    // Fetch data for dashboard
-    fetch('/api/osas-sentiment-dashboard/')
-      .then(response => response.json())
-      .then(data => {
-        cachedDashboardData = data;
+    // Mirror menu items to top export
+    const exportDataItem = document.getElementById('osas-export-data');
+    if (exportDataItem) exportDataItem.addEventListener('click', (e) => { e.preventDefault(); exportBtn?.click(); });
 
-        // ===== TOP KPI CARDS =====
-        const total = Number(data.total || 0);
-        const pos = Number(data.positive || 0);
-        const neu = Number(data.neutral || 0);
-        const neg = Number(data.negative || 0);
+    const genReportItem = document.getElementById('osas-generate-report');
+    if (genReportItem) genReportItem.addEventListener('click', (e) => { e.preventDefault(); exportBtn?.click(); });
 
-        const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
-
-        document.getElementById('osas-positive-count').textContent = pos.toLocaleString();
-        document.getElementById('osas-neutral-count').textContent = neu.toLocaleString();
-        document.getElementById('osas-negative-count').textContent = neg.toLocaleString();
-        document.getElementById('osas-total-count').textContent = total.toLocaleString();
-
-        document.getElementById('osas-positive-percent').textContent = data.positive_percent ?? pct(pos, total);
-        document.getElementById('osas-neutral-percent').textContent = data.neutral_percent ?? pct(neu, total);
-        document.getElementById('osas-negative-percent').textContent = data.negative_percent ?? pct(neg, total);
-
-        // ===== PIE CHART =====
-        const pieCtx = document.getElementById('osasPieChart').getContext('2d');
-        const pieData = [pos, neu, neg];
-        if (!osasPieChart) {
-          osasPieChart = new Chart(pieCtx, {
-            type: 'doughnut',
-            data: {
-              labels: ['Positive', 'Neutral', 'Negative'],
-              datasets: [{ backgroundColor: ['#28a745', '#ffc107', '#dc3545'], data: pieData }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-          });
-        } else {
-          osasPieChart.data.datasets[0].data = pieData;
-          osasPieChart.update();
-        }
-        document.getElementById('osas-pie-positive-percent').textContent = pct(pos, total);
-        document.getElementById('osas-pie-neutral-percent').textContent = pct(neu, total);
-        document.getElementById('osas-pie-negative-percent').textContent = pct(neg, total);
-
-        // ===== BAR CHART =====
-        const serviceLabels = (data.services || []).map(s => s.name);
-        const positiveData = (data.services || []).map(s => s.positive);
-        const neutralData = (data.services || []).map(s => s.neutral);
-        const negativeData = (data.services || []).map(s => s.negative);
-
-        const barCtx = document.getElementById('osasBarChart').getContext('2d');
-        if (!osasBarChart) {
-          osasBarChart = new Chart(barCtx, {
-            type: 'bar',
-            data: {
-              labels: serviceLabels,
-              datasets: [
-                { label: 'Positive', backgroundColor: '#28a745', data: positiveData },
-                { label: 'Neutral', backgroundColor: '#ffc107', data: neutralData },
-                { label: 'Negative', backgroundColor: '#dc3545', data: negativeData }
-              ]
-            },
-            options: {
-              responsive: true, maintainAspectRatio: false,
-              // If you're on Chart.js v3+, switch to: scales: { y: { beginAtZero: true } }
-              scales: { yAxes: [{ ticks: { beginAtZero: true, min: 0 } }] }
-            }
-          });
-        } else {
-          osasBarChart.data.labels = serviceLabels;
-          osasBarChart.data.datasets[0].data = positiveData;
-          osasBarChart.data.datasets[1].data = neutralData;
-          osasBarChart.data.datasets[2].data = negativeData;
-          osasBarChart.update();
-        }
-
-        // ===== SERVICE PRIORITY =====
-        const priorityContainer = document.getElementById('service-priority-list');
-        if (priorityContainer) {
-          const sorted = [...(data.services || [])].sort((a, b) => (b.percent_negative || 0) - (a.percent_negative || 0));
-          priorityContainer.innerHTML = '';
-          sorted.forEach(svc => {
-            const pctNeg = Number(svc.percent_negative || 0);
-            const barClass = pctNeg >= 20 ? 'bg-danger' : pctNeg >= 10 ? 'bg-warning' : pctNeg >= 5 ? 'bg-info' : 'bg-success';
-            const priority = pctNeg >= 20 ? 'Urgent' : pctNeg >= 10 ? 'Medium' : pctNeg >= 5 ? 'Low' : 'Excellent';
-            priorityContainer.insertAdjacentHTML('beforeend', `
-            <h4 class="small fw-bold">${svc.name}<span class="float-end">${priority}</span></h4>
-            <div class="progress mb-4"><div class="progress-bar ${barClass}" style="width:${pctNeg}%"></div></div>
-          `);
-          });
-        }
-
-        // ===== FOUR SERVICE CARDS =====
-        ['wifi', 'admission', 'scholarship', 'library'].forEach(id => {
-          ['positive', 'neutral', 'negative'].forEach(kind => {
-            const el = document.getElementById(`${id}-${kind}`);
-            if (el) el.textContent = '0';
-          });
-          const sEl = document.getElementById(`${id}-satisfaction`);
-          if (sEl) sEl.textContent = '0';
-        });
-
-        const nameToId = (n) => {
-          const s = (n || '').toLowerCase();
-          if (s.includes('wi-fi') || s.includes('wifi')) return 'wifi';
-          if (s.includes('admission')) return 'admission';
-          if (s.includes('scholar')) return 'scholarship';
-          if (s.includes('library')) return 'library';
-          return null;
-        };
-
-        (data.services || []).forEach(svc => {
-          const id = nameToId(svc.name);
-          if (!id) return;
-          const p = Number(svc.positive || 0);
-          const u = Number(svc.neutral || 0);
-          const n = Number(svc.negative || 0);
-          const t = p + u + n;
-          const sat = t ? Math.round((p / t) * 100) : 0;
-
-          const posEl = document.getElementById(`${id}-positive`);
-          const neuEl = document.getElementById(`${id}-neutral`);
-          const negEl = document.getElementById(`${id}-negative`);
-          const satEl = document.getElementById(`${id}-satisfaction`);
-
-          if (posEl) posEl.textContent = p.toLocaleString();
-          if (neuEl) neuEl.textContent = u.toLocaleString();
-          if (negEl) negEl.textContent = n.toLocaleString();
-          if (satEl) satEl.textContent = String(sat);
-        });
-      })
-      .catch(err => console.error('Failed to load OSAS sentiment dashboard data:', err));
+    // Initial load (All Time)
+    applyRange('all');
   });
 </script>
 {% endblock %}

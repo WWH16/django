@@ -9,12 +9,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 # ---------- Sentiment API (cards/charts) ----------
 from django.http import JsonResponse
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.core.exceptions import FieldError
 from warehouse.models import FactFeedback
 
@@ -24,131 +24,165 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
-def osas_sentiment_dashboard(request):
-    """
-    Returns totals and per-service sentiment for the dashboard using warehouse.FactFeedback.
-    Auto-detects the service & sentiment fields (CharField or FK via common child names),
-    avoids invalid lookups, and never crashes — falls back to zeros if fields cannot be found.
-    """
-    Model = FactFeedback
+# TODO: adjust import
+# from warehouse.models import FactFeedback
 
-    # Helper: choose the first valid field/lookup from a list
-    def pick_field(candidates):
-        for f in candidates:
+# ---- SET THESE TO YOUR ACTUAL FIELD NAMES ----
+TIMESTAMP_FIELD = "timestamp"       # e.g., "timestamp", "created_at", "feedback_date"
+SERVICE_TEXT    = "service__name"   # text label for service (often FK child like "service__name")
+SENTIMENT_FIELD = "sentiment"       # "Positive/Neutral/Negative", "POS/NEU/NEG", or 1/0/-1
+# ---------------------------------------------
+
+def _parse_dates(request):
+    """Return (range_key, start_date, end_date) based on ?range/start/end."""
+    key = (request.GET.get("range") or "all").lower()
+    start = request.GET.get("start")
+    end   = request.GET.get("end")
+
+    def d(s):
+        try: return datetime.strptime(s, "%Y-%m-%d").date()
+        except: return None
+
+    s = d(start) if start else None
+    e = d(end)   if end   else None
+    today = timezone.localdate()
+
+    if not s:
+        if key == "7d":          s = today - timedelta(days=6)
+        elif key == "30d":       s = today - timedelta(days=29)
+        elif key == "this_month":s = today.replace(day=1)
+        elif key == "6m":        s = today - timedelta(days=182)
+        elif key == "1y":        s = today - timedelta(days=365)
+
+    if s and not e:
+        e = today
+    return key, s, e
+
+def _count_any(qs, field, values):
+    """Count rows where 'field' equals any of 'values', tolerant to strings/ints."""
+    total = 0
+    for v in values:
+        try:
+            total += qs.filter(**{f"{field}__iexact": v}).count()
+        except:
             try:
-                # Will raise FieldError immediately if the path is invalid
-                Model.objects.values_list(f, flat=True)[:1]
-                return f
-            except FieldError:
-                continue
-        return None
+                iv = int(v)
+                total += qs.filter(**{field: iv}).count()
+            except:
+                total += qs.filter(**{f"{field}__exact": v}).count()
+    return total
 
-    # Try common possibilities for both columns (direct or FK child)
-    service_field = pick_field([
-        "service", "service_name", "serviceName",
-        "service__name", "service__serviceName",
-        "dim_service__name", "dim_service__serviceName",
-        "category", "category_name",
-    ])
-
-    sentiment_field = pick_field([
-        "sentiment", "sentiment_name", "sentimentName",
-        "label", "value", "type", "title",
-        "sentiment__name", "sentiment__sentimentName",
-        "sentiment__label", "sentiment__value",
-        "sentiment__type", "sentiment__title",
-    ])
-
-    # If we can't detect fields, return a benign zero payload (UI won't crash)
-    if not service_field or not sentiment_field:
-        zero_services = [
-            {"name": "Wi-Fi Services", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
-            {"name": "College Admission Test", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
-            {"name": "Scholarship Services", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
-            {"name": "Library Facility", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
-        ]
-        return JsonResponse({
-            "positive": 0, "neutral": 0, "negative": 0, "total": 0,
-            "positive_percent": 0, "neutral_percent": 0, "negative_percent": 0,
-            "services": zero_services,
-        })
+def osas_sentiment_dashboard(request):
+    """API that the dashboard calls; returns totals + per-service, honoring date filters."""
+    Model = FactFeedback
+    range_key, start_date, end_date = _parse_dates(request)
 
     qs = Model.objects.all()
 
-    # Count helper for sentiments (case-insensitive)
-    def count_sent(qs_in, label):
+    # Inclusive date filtering (supports DateTimeField and DateField)
+    if start_date and end_date:
         try:
-            return qs_in.filter(**{f"{sentiment_field}__iexact": label}).count()
-        except FieldError:
-            return 0
+            # If TIMESTAMP_FIELD is DateTimeField, __date works
+            qs = qs.filter(**{
+                f"{TIMESTAMP_FIELD}__date__gte": start_date,
+                f"{TIMESTAMP_FIELD}__date__lte": end_date
+            })
+        except:
+            # Fallback to full datetime window
+            try:
+                start_dt = datetime.combine(start_date, datetime.min.time())
+                end_dt   = datetime.combine(end_date,   datetime.max.time())
+                qs = qs.filter(**{
+                    f"{TIMESTAMP_FIELD}__gte": start_dt,
+                    f"{TIMESTAMP_FIELD}__lte": end_dt
+                })
+            except:
+                # If it's a pure DateField
+                qs = qs.filter(**{
+                    f"{TIMESTAMP_FIELD}__gte": start_date,
+                    f"{TIMESTAMP_FIELD}__lte": end_date
+                })
 
-    # Overall totals
-    total_pos = count_sent(qs, "Positive")
-    total_neu = count_sent(qs, "Neutral")
-    total_neg = count_sent(qs, "Negative")
+    # Sentiment encodings (covers strings and ints)
+    POS = {"Positive","POS","positive","1",1}
+    NEU = {"Neutral","NEU","neutral","0",0}
+    NEG = {"Negative","NEG","negative","-1",-1}
+
+    total_pos = _count_any(qs, SENTIMENT_FIELD, POS)
+    total_neu = _count_any(qs, SENTIMENT_FIELD, NEU)
+    total_neg = _count_any(qs, SENTIMENT_FIELD, NEG)
     total_all = total_pos + total_neu + total_neg
-    pct = lambda n, d: round((n / d) * 100) if d else 0
+    pct = lambda n, d: round((n/d)*100) if d else 0
 
-    # Four card groups (keyword-based so minor label differences still match)
-    groups = [
-        ("Wi-Fi Services",        ["wi-fi", "wifi"]),
-        ("College Admission Test",["admission"]),
-        ("Scholarship Services",  ["scholar"]),
-        ("Library Facility",      ["library"]),
-    ]
+    # Group by service label and aggregate sentiment
+    grouped = list(
+        qs.values(SERVICE_TEXT).annotate(
+            p=Count("pk", filter=Q(**{f"{SENTIMENT_FIELD}__in": list(POS)})),
+            u=Count("pk", filter=Q(**{f"{SENTIMENT_FIELD}__in": list(NEU)})),
+            n=Count("pk", filter=Q(**{f"{SENTIMENT_FIELD}__in": list(NEG)})),
+        )
+    )
 
     services = []
-    for display_name, keywords in groups:
-        q = Q()
-        for kw in keywords:
-            q |= Q(**{f"{service_field}__icontains": kw})
-        base = qs.filter(q)
-
-        p = count_sent(base, "Positive")
-        u = count_sent(base, "Neutral")
-        n = count_sent(base, "Negative")
+    for row in grouped:
+        name = row[SERVICE_TEXT] or "Unknown"
+        p, u, n = int(row["p"] or 0), int(row["u"] or 0), int(row["n"] or 0)
         t = p + u + n
-
         services.append({
-            "name": display_name,
+            "name": name,
             "positive": p,
             "neutral": u,
             "negative": n,
+            "satisfaction": pct(p, t),
             "percent_negative": pct(n, t),
         })
 
-    data = {
+    return JsonResponse({
+        "range": range_key,
+        "start": start_date.isoformat() if start_date else None,
+        "end":   end_date.isoformat() if end_date else None,
+        "total": total_all,
         "positive": total_pos,
         "neutral": total_neu,
         "negative": total_neg,
-        "total": total_all,
         "positive_percent": pct(total_pos, total_all),
-        "neutral_percent": pct(total_neu, total_all),
+        "neutral_percent":  pct(total_neu, total_all),
         "negative_percent": pct(total_neg, total_all),
         "services": services,
-    }
-    return JsonResponse(data)
+    })
 
 
 # ---------- Existing dashboard / student views ----------
 
+def _resolve_username(user):
+    """Use the SAME logic used when saving TeacherEvaluation.submitted_by."""
+    get_un = getattr(user, 'get_username', None)
+    username = get_un() if callable(get_un) else ''
+    if not username:
+        username = getattr(user, 'username', '') or getattr(user, 'email', '') or ''
+    if not username:
+        username = str(getattr(user, 'pk', '') or user) or 'Unknown'
+    return username
+
 @login_required
 def my_feedback(request):
-    # Try to fetch the student's OSAS feedback (optional for teacher evals)
+    username = _resolve_username(request.user)
+
+    # OSAS feedback (optional)
     feedback_list = []
     feedback_count = 0
     try:
-        student = Student.objects.get(studentID=request.user.username)
+        student = Student.objects.get(studentID=username)
         feedback_list = StudentFeedback.objects.filter(student=student).order_by('-timestamp')
         feedback_count = feedback_list.count()
     except Student.DoesNotExist:
-        pass  # Still show teacher evaluations below
+        pass
 
-    # Teacher evaluations by this user (you store username in submitted_by)
+    # Teacher evaluations submitted by this user
     teacher_evaluations = (
         TeacherEvaluation.objects
-        .filter(submitted_by=request.user.username)
-        .select_related('teacher')
+        .filter(submitted_by=username)  # <- ONLY this user's rows
+        .select_related('teacher', 'department', 'program', 'sentiment')
         .annotate(teacher_name=F('teacher__teacherName'))
         .order_by('-timestamp')
     )
@@ -502,14 +536,15 @@ def teacher_evaluation(request):
     sentiments = Sentiment.objects.all()
 
     if request.method == 'POST':
-        comments = request.POST.get('comments')
-        teacher_id = request.POST.get('teacher')
-        department_id = request.POST.get('department')
-        program_id = request.POST.get('program')
+        comments       = request.POST.get('comments')
+        teacher_id     = request.POST.get('teacher')
+        department_id  = request.POST.get('department')
+        program_id     = request.POST.get('program')
         specialization = request.POST.get('specialization')
-        sentiment_id = request.POST.get('sentiment')
-        is_anonymous = bool(request.POST.get('is_anonymous'))  # from your form
-        submitted_by = None if is_anonymous else request.user.username
+        sentiment_id   = request.POST.get('sentiment')
+
+        is_anonymous = 'is_anonymous' in request.POST
+        username = _resolve_username(request.user)  # store this ALWAYS
 
         if comments and teacher_id and department_id and program_id and specialization:
             TeacherEvaluation.objects.create(
@@ -518,19 +553,19 @@ def teacher_evaluation(request):
                 department_id=department_id,
                 program_id=program_id,
                 specialization=specialization,
-                sentiment_id=sentiment_id if sentiment_id else None,
-                submitted_by=submitted_by,
-                timestamp=timezone.now()
+                sentiment_id=sentiment_id or None,
+                is_anonymous=is_anonymous,
+                submitted_by=username,           # <- key for filtering later
+                timestamp=timezone.now(),
             )
             messages.success(request, 'Your evaluation has been submitted successfully!')
-            return redirect('my_feedback')  # <-- go to My Feedback
+            return redirect('my_feedback')
         else:
             messages.error(request, 'Please fill in all required fields.')
 
-    context = {
+    return render(request, 'studentDashboard/teacher_evaluation_form.html', {
         'teachers': teachers,
         'departments': departments,
         'programs': programs,
         'sentiments': sentiments,
-    }
-    return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
+    })

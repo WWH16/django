@@ -91,7 +91,7 @@ class TeacherEvaluation(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     is_anonymous = models.BooleanField(default=False)
-    submitted_by = models.CharField(max_length=100)
+    submitted_by = models.CharField(max_length=100, null=True, blank=True)
     specialization = models.CharField(max_length=100)
     sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
     specialization = models.CharField(max_length=100)
