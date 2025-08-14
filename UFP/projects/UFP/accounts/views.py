@@ -50,40 +50,35 @@ def login_admin_view(request):
 def login_student_view(request):
     if request.method == 'POST':
         form = StudentLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
+        if form.is_valid():  # Validates captcha too
+            student_id = form.cleaned_data['student_id']
             password = form.cleaned_data['password']
             remember = request.POST.get('remember') == 'on'
-            user = authenticate(request, username=username, password=password)
-            if user and not user.is_staff:
+
+            user = authenticate(request, username=student_id, password=password)
+
+            if user and user.is_active and not user.is_staff:
                 auth_login(request, user)
-                
-                # Log student login activity
-                try:
-                    student = Student.objects.get(studentID=username)
-                    log_student_activity(
-                        student=student,
-                        activity_type='StudentLoggedIn'
-                    )
-                except Student.DoesNotExist:
-                    # Log error if student record not found
-                    pass
-                            # Set session expiry based on "Remember Me"
+
                 if remember:
                     request.session.set_expiry(604800)  # 7 days
                 else:
-                    request.session.set_expiry(0)  # Expires on browser close
-                
-                messages.success(request, f'Welcome, {user.username}!')
-                return redirect('give_feedback')  # Redirect student to feedback form
+                    request.session.set_expiry(0)  # Browser close
+
+                messages.success(request, f'Welcome, {user.first_name or user.username}!')
+                return redirect('give_feedback')
             else:
-                # Replace specific error with generic error for security
-                form.add_error(None, 'Invalid username or password.')
-                return render(request, 'accounts/login_student.html', {'form': form})
-        # If form is invalid, fall through to render with errors
+                # Generic error message for security
+                messages.error(request, 'Invalid student ID or password.')
+        else:
+            if 'captcha' in form.errors:
+                messages.error(request, 'Please complete the reCAPTCHA verification.')
     else:
         form = StudentLoginForm()
+
+    # Always return with the form (even if invalid) so captcha renders
     return render(request, 'accounts/login_student.html', {'form': form})
+
 
 
 # Registration (for students only)
