@@ -60,6 +60,16 @@ def login_student_view(request):
             if user and user.is_active and not user.is_staff:
                 auth_login(request, user)
 
+                # Log student login activity
+                try:
+                    student = Student.objects.get(studentID=user.username)
+                    log_student_activity(
+                        student=student,
+                        activity_type='StudentLoggedIn'
+                    )
+                except Student.DoesNotExist:
+                    pass
+
                 if remember:
                     request.session.set_expiry(604800)  # 7 days
                 else:

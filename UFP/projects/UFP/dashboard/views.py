@@ -522,8 +522,17 @@ def teacher_evaluation(request):
                 submitted_by=submitted_by,
                 timestamp=timezone.now()
             )
+            # Log activity for every submission, even anonymous
+            try:
+                student = Student.objects.get(studentID=request.user.username)
+                log_student_activity(
+                    student=student,
+                    activity_type='Feedback Submit'
+                )
+            except Student.DoesNotExist:
+                pass
             messages.success(request, 'Your evaluation has been submitted successfully!')
-            return redirect('teacher_evaluation')  # <-- go to My Feedback
+            return redirect('teacher_evaluation')
         else:
             messages.error(request, 'Please fill in all required fields.')
 
