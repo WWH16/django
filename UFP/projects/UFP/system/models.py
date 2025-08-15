@@ -56,8 +56,12 @@ class StudentFeedback(models.Model):
 
 class StudentActivityLog(models.Model):
     ACTIVITY_CHOICES = [
-        ('Student logged in.', 'Student logged in.'),
-        ('Student logged out.', 'Student logged out.'),
+        ('StudentLoggedIn', 'StudentLoggedIn'),
+        ('StudentLoggedOut', 'StudentLoggedOut'),
+        ('Feedback Submit', 'Feedback Submit'),
+        ('Profile updated.', 'Profile updated.'),
+        ('Password changed.', 'Password changed.'),
+        ('Student changed password.', 'Student changed password.'),
     ]
 
     logID = models.AutoField(primary_key=True)
@@ -72,6 +76,7 @@ class StudentActivityLog(models.Model):
 
     def __str__(self):
         return f"Student {self.student} {str(self.activity_type).lower()} at {self.timestamp}"
+
     
 class Teacher(models.Model):
     teacher_id = models.CharField(max_length=50, primary_key=True)
@@ -96,7 +101,7 @@ class TeacherEvaluation(models.Model):
     sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
     specialization = models.CharField(max_length=100)
 
-
+    
     def __str__(self):
         return f"{self.teacher.teacherName} ({self.program.programName})"
 

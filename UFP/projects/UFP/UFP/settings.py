@@ -37,6 +37,16 @@ STUDENT_LOGOUT_REDIRECT_URL = 'login_student'  # After logout
 # Application definition
 
 INSTALLED_APPS = [
+    "unfold",  # before django.contrib.admin
+    "unfold.contrib.filters",  # optional, if special filters are needed
+    "unfold.contrib.forms",  # optional, if special form elements are needed
+    "unfold.contrib.inlines",  # optional, if special inlines are needed
+    "unfold.contrib.import_export",  # optional, if django-import-export package is used
+    "import_export",
+    "unfold.contrib.guardian",  # optional, if django-guardian package is used
+    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
+    "unfold.contrib.location_field",  # optional, if django-location-field package is used
+    "unfold.contrib.constance",  # optional, if django-constance package is used
     'accounts.apps.LoginConfig',
     'dashboard.apps.DashboardConfig',
     'system.apps.SystemConfig',
@@ -166,4 +176,81 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+}
+UNFOLD = {
+    "SITE_TITLE": "UFP Admin",
+    "SITE_HEADER": "UFP Admin",
+    "SITE_SUBHEADER": "University Feedback Platform",
+    "EXTRA_CSS": [
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css",
+    ],
+    "EXTRA_JS": [
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js",
+    ],
+    "COLORS": {
+        "primary": {
+            "50": "220, 255, 220",   # very light green
+            "100": "200, 255, 200",  # lighter green
+            "200": "170, 255, 170",  # light green
+            "300": "140, 255, 140",  # medium-light green
+            "400": "100, 230, 100",  # medium green
+            "500": "51, 204, 51",    # brighter main green
+            "600": "0, 153, 0",      # accent green
+            "700": "0, 128, 0",      # slightly darker
+            "800": "0, 102, 0",      # dark green
+            "900": "0, 77, 0",       # darkest green
+        }
+    },
+    "COLORS_DARK": {
+        "primary": {
+            "50": "200, 255, 200",
+            "100": "170, 255, 170",
+            "200": "140, 255, 140",
+            "300": "100, 230, 100",
+            "400": "51, 204, 51",
+            "500": "0, 153, 0",
+            "600": "0, 128, 0",
+            "700": "0, 102, 0",
+            "800": "0, 77, 0",
+            "900": "0, 51, 0",
+        }
+    },
+    "SIDEBAR": {
+        "navigation": [
+            {
+                "title": "Authentication and Authorization",
+                "separator": True,
+                "items": [
+                    {"title": "Users", "icon": "people", "link": "/admin/auth/user/"},
+                    {"title": "Groups", "icon": "group", "link": "/admin/auth/group/"},
+                ],
+            },
+            {
+                "title": "System",
+                "separator": True,
+                "items": [
+                    {"title": "Services", "icon": "build", "link": "/admin/system/service/"},
+                    {"title": "Departments", "icon": "apartment", "link": "/admin/system/department/"},
+                    {"title": "Sentiments", "icon": "emoji_emotions", "link": "/admin/system/sentiment/"},
+                    {"title": "Programs", "icon": "school", "link": "/admin/system/program/"},
+                    {"title": "Students", "icon": "person", "link": "/admin/system/student/"},
+                    {"title": "Feedback", "icon": "feedback", "link": "/admin/system/studentfeedback/"},
+                    {"title": "Teachers", "icon": "people", "link": "/admin/system/teacher/"},
+                    {"title": "Teacher Evaluation", "icon": "rate_review", "link": "/admin/system/teacherevaluation/"},
+                ],
+            },
+            {
+                "title": "Warehouse",
+                "separator": True,
+                "items": [
+                    {"title": "DimService", "icon": "build", "link": "/admin/warehouse/dimservice/"},
+                    {"title": "DimSentiment", "icon": "emoji_emotions", "link": "/admin/warehouse/dimsentiment/"},
+                    {"title": "DimStudent", "icon": "person", "link": "/admin/warehouse/dimstudent/"},
+                    {"title": "DimTeacher", "icon": "people", "link": "/admin/warehouse/dim_teacher/"},
+                    {"title": "FactTeacherEvaluation", "icon": "rate_review", "link": "/admin/warehouse/fact_teacher_evaluation/"},
+                    {"title": "FactFeedback", "icon": "feedback", "link": "/admin/warehouse/factfeedback/"},
+                ],
+            },
+        ],
+    },
 }
