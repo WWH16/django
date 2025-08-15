@@ -177,15 +177,31 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
+
+# django unfold config 
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+
 UNFOLD = {
     "SITE_TITLE": "UFP Admin",
     "SITE_HEADER": "UFP Admin",
     "SITE_SUBHEADER": "University Feedback Platform",
+    "SHOW_BACK_BUTTON": True,
     "EXTRA_CSS": [
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css",
     ],
     "EXTRA_JS": [
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js",
+    ],
+    "SITE_SYMBOL": "speed",  # symbol from icon set
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/svg+xml",
+            "href": lambda request: static("favicon.svg"),
+        },
     ],
     "COLORS": {
         "primary": {
@@ -215,42 +231,213 @@ UNFOLD = {
             "900": "0, 51, 0",
         }
     },
-    "SIDEBAR": {
-        "navigation": [
+"SIDEBAR": {
+    "show_search": True,  # Search in applications and models names
+    "command_search": True,  # Replace the sidebar search with the command search
+    "show_all_applications": True,  # Dropdown with all applications and models
+    "navigation": [
+        {
+            "title": _("Authentication and Authorization"),
+            "separator": True,  # Top border
+            # "collapsible": True,  # Collapsible group of links (optional)
+            "items": [
+                {
+                    "title": _("Users"),
+                    "icon": "people",
+                    "link": reverse_lazy("admin:auth_user_changelist"),
+                    "permission": lambda request: request.user.is_superuser,
+                },
+                {
+                    "title": _("Groups"),
+                    "icon": "group",
+                    "link": reverse_lazy("admin:auth_group_changelist"),
+                },
+            ],
+        },
+        {
+            "title": _("System"),
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": _("Services"),
+                    "icon": "build",
+                    "link": reverse_lazy("admin:system_service_changelist"),
+                },
+                {
+                    "title": _("Departments"),
+                    "icon": "apartment",
+                    "link": reverse_lazy("admin:system_department_changelist"),
+                },
+                {
+                    "title": _("Sentiments"),
+                    "icon": "emoji_emotions",
+                    "link": reverse_lazy("admin:system_sentiment_changelist"),
+                },
+                {
+                    "title": _("Programs"),
+                    "icon": "school",
+                    "link": reverse_lazy("admin:system_program_changelist"),
+                },
+                {
+                    "title": _("Students"),
+                    "icon": "person",
+                    "link": reverse_lazy("admin:system_student_changelist"),
+                },
+                {
+                    "title": _("Feedback"),
+                    "icon": "feedback",
+                    "link": reverse_lazy("admin:system_studentfeedback_changelist"),
+                },
+                {
+                    "title": _("Teachers"),
+                    "icon": "people",
+                    "link": reverse_lazy("admin:system_teacher_changelist"),
+                },
+                {
+                    "title": _("Teacher Evaluation"),
+                    "icon": "rate_review",
+                    "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
+                },
+                {
+                    "title": _("Student Activity Log"),
+                    "icon": "history",
+                    "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
+                },
+            ],
+        },
+        {
+            "title": _("Warehouse"),
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": _("DimService"),
+                    "icon": "build",
+                    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
+                },
+                {
+                    "title": _("DimSentiment"),
+                    "icon": "emoji_emotions",
+                    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
+                },
+                {
+                    "title": _("DimStudent"),
+                    "icon": "person",
+                    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
+                },
+                {
+                    "title": _("DimTeacher"),
+                    "icon": "people",
+                    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+                },
+                {
+                    "title": _("FactTeacherEvaluation"),
+                    "icon": "rate_review",
+                    "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
+                },
+                {
+                    "title": _("FactFeedback"),
+                    "icon": "feedback",
+                    "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
+                },
+            ],
+        },
+    ],
+},
+"TABS": [
+    {
+        "models": [
+            "system.service",
+            "system.department",
+            "system.sentiment",
+            "system.program",
+            "system.student",
+            "system.studentfeedback",
+            "system.teacher",
+            "system.teacherevaluation",
+            "system.studentactivitylog",
+        ],
+        "items": [
             {
-                "title": "Authentication and Authorization",
-                "separator": True,
-                "items": [
-                    {"title": "Users", "icon": "people", "link": "/admin/auth/user/"},
-                    {"title": "Groups", "icon": "group", "link": "/admin/auth/group/"},
-                ],
+                "title": _("Services"),
+                "link": reverse_lazy("admin:system_service_changelist"),
             },
             {
-                "title": "System",
-                "separator": True,
-                "items": [
-                    {"title": "Services", "icon": "build", "link": "/admin/system/service/"},
-                    {"title": "Departments", "icon": "apartment", "link": "/admin/system/department/"},
-                    {"title": "Sentiments", "icon": "emoji_emotions", "link": "/admin/system/sentiment/"},
-                    {"title": "Programs", "icon": "school", "link": "/admin/system/program/"},
-                    {"title": "Students", "icon": "person", "link": "/admin/system/student/"},
-                    {"title": "Feedback", "icon": "feedback", "link": "/admin/system/studentfeedback/"},
-                    {"title": "Teachers", "icon": "people", "link": "/admin/system/teacher/"},
-                    {"title": "Teacher Evaluation", "icon": "rate_review", "link": "/admin/system/teacherevaluation/"},
-                ],
+                "title": _("Departments"),
+                "link": reverse_lazy("admin:system_department_changelist"),
             },
             {
-                "title": "Warehouse",
-                "separator": True,
-                "items": [
-                    {"title": "DimService", "icon": "build", "link": "/admin/warehouse/dimservice/"},
-                    {"title": "DimSentiment", "icon": "emoji_emotions", "link": "/admin/warehouse/dimsentiment/"},
-                    {"title": "DimStudent", "icon": "person", "link": "/admin/warehouse/dimstudent/"},
-                    {"title": "DimTeacher", "icon": "people", "link": "/admin/warehouse/dim_teacher/"},
-                    {"title": "FactTeacherEvaluation", "icon": "rate_review", "link": "/admin/warehouse/fact_teacher_evaluation/"},
-                    {"title": "FactFeedback", "icon": "feedback", "link": "/admin/warehouse/factfeedback/"},
-                ],
+                "title": _("Sentiments"),
+                "link": reverse_lazy("admin:system_sentiment_changelist"),
+            },
+            {
+                "title": _("Programs"),
+                "link": reverse_lazy("admin:system_program_changelist"),
+            },
+            {
+                "title": _("Students"),
+                "link": reverse_lazy("admin:system_student_changelist"),
+            },
+            {
+                "title": _("Feedback"),
+                "link": reverse_lazy("admin:system_studentfeedback_changelist"),
+            },
+            {
+                "title": _("Teachers"),
+                "link": reverse_lazy("admin:system_teacher_changelist"),
+            },
+            {
+                "title": _("Teacher Evaluation"),
+                "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
+            },
+            {
+                "title": _("Student Activity Log"),
+                "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
             },
         ],
     },
+    {
+        "models": [
+            "warehouse.dimservice",
+            "warehouse.dimsentiment",
+            "warehouse.dimstudent",
+            "warehouse.dim_teacher",
+            "warehouse.fact_teacher_evaluation",
+            "warehouse.factfeedback",
+        ],
+        "items": [
+            {
+                "title": _("DimService"),
+                "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
+            },
+            {
+                "title": _("DimSentiment"),
+                "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
+            },
+            {
+                "title": _("DimStudent"),
+                "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
+            },
+            {
+                "title": _("DimTeacher"),
+                "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+            },
+            {
+                "title": _("Fact Teacher Evaluation"),
+                "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
+            },
+            {
+                "title": _("Fact Feedback"),
+                "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
+            },
+        ],
+    },
+],
+
+
+        # Your callbacks here:
+    #"ENVIRONMENT": "system.views.environment_callback",
+    #"ENVIRONMENT_TITLE_PREFIX": None,
+    #"DASHBOARD_CALLBACK": "system.views.dashboard_callback",
 }

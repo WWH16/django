@@ -52,7 +52,6 @@ class SentimentAdmin(ModelAdmin):
 class ProgramAdmin(ModelAdmin):
     list_display = ('programID', 'programName')
     search_fields = ('programName',)
-
 @admin.register(Student)
 class StudentAdmin(ModelAdmin):
     list_display = ('studentID', 'studentName','program')
@@ -177,3 +176,4 @@ class StudentActivityLogAdmin(ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False  # prevent editing
+    
