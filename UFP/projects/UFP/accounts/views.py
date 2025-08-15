@@ -65,19 +65,30 @@ def login_student_view(request):
                 else:
                     request.session.set_expiry(0)  # Browser close
 
-                messages.success(request, f'Welcome, {user.first_name or user.username}!')
+                messages.success(
+                    request,
+                    f'Welcome, {user.first_name or user.username}!',
+                    extra_tags='login'
+                )
                 return redirect('give_feedback')
             else:
-                # Generic error message for security
-                messages.error(request, 'Invalid student ID or password.')
+                messages.error(
+                    request,
+                    'Invalid student ID or password.',
+                    extra_tags='login'
+                )
         else:
             if 'captcha' in form.errors:
-                messages.error(request, 'Please complete the reCAPTCHA verification.')
+                messages.error(
+                    request,
+                    'Please complete the reCAPTCHA verification.',
+                    extra_tags='login'
+                )
     else:
         form = StudentLoginForm()
 
-    # Always return with the form (even if invalid) so captcha renders
     return render(request, 'accounts/login_student.html', {'form': form})
+
 
 
 

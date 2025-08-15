@@ -193,18 +193,32 @@
   {% if messages %}
     {% for message in messages %}
       {% if 'login' in message.tags %}
-        <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header bg-success text-white">
-                <h1 class="modal-title fs-5">
-                  <i class="fas fa-check-circle me-2"></i>{{ message }}
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
+      <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            
+            <!-- Modal Header -->
+            <div class="modal-header bg-success text-white">
+              <h1 class="modal-title fs-5">
+                <i class="fas fa-check-circle me-2"></i>{{ message }}
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+      
+            <!-- Modal Body -->
+            <div class="modal-body">
+              You have successfully logged in.
+            </div>
+      
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+      
           </div>
         </div>
+      </div>
+      
         <script>
           document.addEventListener('DOMContentLoaded', function() {
             var modal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
