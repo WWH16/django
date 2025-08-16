@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Login - Sentiment Analysis{% endblock %}</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols (for arrow icons) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body { font-family: 'Inter', Arial, sans-serif; background: #fff; min-height: 100vh; }
+        .flex-center { display: flex; min-height: 100vh; align-items: center; justify-content: center; position: relative; }
+        .card { width: 100%; max-width: 384px; margin: 0 auto; background: #fff; box-sizing: border-box; }
+        .divider { border-bottom: 1px solid #e5e7eb; width: 100%; margin: 0 0 30px 0; padding: 0 0 20px 0; }
+        .header-title { font-size: 1.25rem; font-weight: 600; color: #009900; letter-spacing: -0.5px; }
+        .header-sub { color: #000000; font-size: 0.91rem; font-weight: 600; padding-bottom: 2px; }
+        .form-label { font-size: 0.95rem; font-weight: 600; color: #222; margin-bottom: 2px; }
+        .form-required { color: #ef4444; }
+        .form-input { border: 1px solid #e5e7eb; background: #fff; font-size: 0.92rem; font-weight: 500; border-radius: 0.4rem; padding: 0.5rem 0.6rem; margin-top: 0.25rem; margin-bottom: 0.25rem; width: 100%; }
+        .form-input:focus { border-color: #009900; outline: none; border-width: 2px; }
+        .field-error { color: #dc2626; font-size: 0.8rem; margin-top: 0.15rem; }
+        .btn-primary { background: #009900; color: #fff; font-weight: 600; border: none; border-radius: 0.4rem; padding: 0.8em 0.75em; width: 100%; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; cursor: pointer; transition: background 0.2s; }
+        .arrow { font-family: 'Material Symbols Outlined'; font-size: 1rem; vertical-align: middle; transition: right 0.2s, left 0.2s; position: relative; right: 0; left: 0; }
+        .back-link { display: flex; align-items: center; gap: 0.45rem; font-weight: 500; color: #009900; text-decoration: none; font-size: 0.89rem; transition: color 0.2s; }
+        .back-link .arrow { left: 0; transition: left 0.2s; }
+        .back-link:hover .arrow { left: -4px; }
+        .top-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: flex-start; align-items: center; padding: 0.6rem 0.4rem; z-index: 15; }
+        @media (max-width: 480px) {
+            .card { max-width: 100%; padding: 0 0.3rem; }
+            .top-bar { padding: 0.4rem 0.4rem; }
+            .divider { margin-bottom: 16px; padding-bottom: 12px; }
+        }
+        .btn-select {
+    background: #fff;
+    color: #009900;
+    font-weight: 600;
+    border: 1.5px solid #009900;
+    border-radius: 0.4rem;
+    padding: 0.7em 0.75em;
+    width: 100%;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    margin-bottom: 0.7rem;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    text-decoration: none;
+}
+.btn-select:hover {
+    background: #009900;
+    color: #fff;
+    border-color: #009900;
+}
+.divider-or {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 18px 0;
+    font-size: 0.93rem;
+    color: #888;
+    gap: 0.7rem;
+}
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+.info-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.89rem;
+    color: #888; /* Muted gray */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="flex-center">
+        <!-- Top Bar with Back Arrow -->
+        <div class="top-bar">
+            <a href="/" class="back-link">
+                <span class="material-symbols-outlined arrow">arrow_back</span>
+                Return to site
+            </a>
+        </div>
+        <div class="card">
+            <!-- Header & Divider -->
+            <div class="divider">
+                <h1 class="header-title">
+                    <span class="header-sub" style="display:block;">{% block header_sub %}Welcome back to{% endblock %}</span>
+                    <span style="font-weight:600;">{% block header_title %}UFP Student{% endblock %}</span>
+                </h1>
+            </div>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
