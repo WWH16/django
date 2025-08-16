@@ -1,136 +1,242 @@
-    {% extends 'accounts/auth_base.html' %}
-    {% load static %}
-
-    {% block title %}Student Login - Sentiment Analysis{% endblock %}
-
-    {% block header_icon %}<i class="fas fa-user-graduate me-2"></i>{% endblock %}
-    {% block header_title %}Student Login{% endblock %}
-    {% block header_subtitle %}Sentiment Analysis Platform{% endblock %}
-
-    {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'accounts/styles/login.css' %}">
-    {% endblock %}
-
-    {% block content %}
-    <!-- Error Messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <!-- Login Form -->
-    <form method="post" action="{% url 'login_student' %}">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger" role="alert">
-                {{ form.non_field_errors|join:"<br>"|safe }}
-            </div>
-        {% endif %}
-        
-        <!-- Student ID Field -->
-        <div class="mb-2">
-            <div class="form-outline" data-mdb-input-init>
-                <input type="text" 
-                    id="student_id" 
-                    name="student_id" 
-                    class="form-control" 
-                    required />
-                <label class="form-label" for="student_id">
-                    <i class="fas fa-id-card me-2"></i>Student ID
-                </label>
-                {% if form.student_id.errors %}
-                    <div class="alert alert-danger mt-2 py-1" role="alert">
-                        {{ form.student_id.errors|join:"<br>"|safe }}
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- Password Field with Toggle -->
-        <div class="mb-4">
-            <div class="form-outline" data-mdb-input-init>
-                <input type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-control" 
-                    required />
-                <label class="form-label" for="password">
-                    <i class="fas fa-lock me-2"></i>Password
-                </label>
-                {% if form.password.errors %}
-                    <div class="alert alert-danger mt-2 py-1" role="alert">
-                        {{ form.password.errors|join:"<br>"|safe }}
-                    </div>
-                {% endif %}
-            </div>
-            <button type="button" 
-                    class="password-toggle" 
-                    onclick="togglePassword()">
-                <i class="fas fa-eye" id="password-icon"></i>
-            </button>
-        </div>
-
-        <!-- re  Field -->
-        <div class="mb-2 captcha-container">
-            {{ form.captcha }}
-            {% if form.captcha.errors %}
-                <div class="text-danger" style="font-size:0.95em;">{{ form.captcha.errors }}</div>
-            {% endif %}
-        </div>
-
-        <!-- Remember Me and Forgot Password -->
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                <label class="form-check-label" for="remember">Remember Me</label>
-            </div>
-        </div>
-
-        <div class="mb-1 text-end">
-            <a href="#" class="text-decoration-underline text-muted small">Forgot Password?</a>
-        </div>
-        <!-- Submit Button -->
-        <div class="d-grid mb-1 mt-1">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-1"></i>Login
-            </button>
-        </div>
-
-    </form>
-    {% endblock %}
-
-    {% block extra_js %}
-    <!-- Password Toggle Script -->
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const passwordIcon = document.getElementById('password-icon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordIcon.classList.remove('fa-eye');
-                passwordIcon.classList.add('fa-eye-slash');
-                passwordIcon.style.color = '#006600';
-            } else {
-                passwordInput.type = 'password';
-                passwordIcon.classList.remove('fa-eye-slash');
-                passwordIcon.classList.add('fa-eye');
-                passwordIcon.style.color = '#6c757d';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} | {% endif %}{{ site_title|default:"UFP Admin" }}</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols (for arrow icons) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+        }
+        .flex-center {
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .card {
+            width: 100%;
+            max-width: 384px;
+            margin: 0 auto;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .divider {
+            border-bottom: 1px solid #e5e7eb;
+            width: 100%;
+            margin: 0 0 30px 0;
+            padding: 0 0 20px 0;
+        }
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #009900;
+            letter-spacing: -0.5px;
+        }
+        .header-sub {
+            color: #000000;
+            font-size: 0.91rem;
+            font-weight: 600;
+            padding-bottom: 2px;
+        }
+        .form-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 2px;
+        }
+        .form-required {
+            color: #ef4444;
+        }
+        .form-input {
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            font-size: 0.92rem;
+            font-weight: 500;
+            border-radius: 0.4rem;
+            padding: 0.5rem 0.6rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+            width: 100%;
+            /*transition: border-color 0.2s;*/
+        }
+        .form-input:focus {
+            border-color: #009900;
+            outline: none;
+            border-width: 2px;
+        }
+        .field-error {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 0.15rem;
+        }
+        .btn-primary {
+            background: #009900;
+            color: #fffffffe;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.4rem;
+            padding: 0.8em 0.75em;
+            width: 100%;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .arrow {
+            font-family: 'Material Symbols Outlined';
+            font-size: 1rem;
+            vertical-align: middle;
+            transition: right 0.2s, left 0.2s;
+            position: relative;
+            right: 0;
+            left: 0;
+        }
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-weight: 500;
+            color: #009900;
+            text-decoration: none;
+            font-size: 0.89rem;
+            transition: color 0.2s;
+        }
+        .back-link .arrow {
+            left: 0;
+            transition: left 0.2s;
+        }
+        .back-link:hover .arrow {
+            left: -4px;
+        }
+        .top-bar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 0.6rem 0.4rem;
+            z-index: 15;
+        }
+        @media (max-width: 480px) {
+            .card {
+                max-width: 100%;
+                padding: 0 0.3rem;
+            }
+            .top-bar {
+                padding: 0.4rem 0.4rem;
+            }
+            .divider {
+                margin-bottom: 16px;
+                padding-bottom: 12px;
             }
         }
-        
-        // MDB Initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize MDB Input components
-            const inputs = document.querySelectorAll('[data-mdb-input-init]');
-            inputs.forEach(function(input) {
-                // MDB will handle the initialization automatically
-            });
-        });
-    </script>
-    {% endblock %}
+    </style>
+</head>
+<body>
+    <div class="flex-center">
+        <!-- Top Bar with Back Arrow -->
+        <div class="top-bar">
+            <a href="/" class="back-link">
+                <span class="material-symbols-outlined arrow">arrow_back</span>
+                Return to site
+            </a>
+        </div>
+        <div class="card">
+            <!-- Header & Divider -->
+            <div class="divider">
+                <h1 class="header-title">
+                    <span class="header-sub" style="display:block;">Welcome back to</span>
+                    <span style="font-weight:600;">UFP Student</span>
+                </h1>
+            </div>
+            <!-- Error Messages -->
+            {% if messages or form.errors or form.non_field_errors %}
+                <div style="margin-bottom: 1rem;">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="field-error">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.errors %}
+                        <div class="field-error">Please correct the errors below.</div>
+                    {% endif %}
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
+            <!-- Login Form -->
+            <form method="post" action="{% url 'login_student' %}">
+                {% csrf_token %}
+                <div style="margin-bottom: 0.9rem;">
+                    <label for="student_id" class="form-label">
+                        Username <span class="form-required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="student_id" 
+                        name="student_id" 
+                        class="form-input{% if form.student_id.errors %} border-red-600{% endif %}" 
+                        required
+                        {% if form.student_id.value %}value="{{ form.student_id.value }}"{% endif %}
+                        autocomplete="username"
+                    >
+                    {% if form.student_id.errors %}
+                        {% for error in form.student_id.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                    <label for="password" class="form-label">
+                        Password <span class="form-required">*</span>
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input{% if form.password.errors %} border-red-600{% endif %}" 
+                        required
+                        autocomplete="current-password"
+                    >
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                    {{ form.captcha }}
+                    {% if form.captcha.errors %}
+                        {% for error in form.captcha.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn-primary">
+                    Log in
+                    <span class="material-symbols-outlined arrow">arrow_forward</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
