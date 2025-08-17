@@ -1,6 +1,45 @@
 {% extends 'studentDashboard/feedback_form.html' %}
 
 {% block dashboard_content %}
+<style>
+  /* Override any parent overlays completely */
+  body > div:not(.dashboard-flex):not(.navbar):not(.modal) {
+    display: none !important;
+  }
+  
+  /* Hide any cooldown overlays from parent template */
+  #feedbackFormContainer,
+  #feedbackFormContainer #cooldownOverlay,
+  .main-content > div > div > div > div > div #cooldownOverlay {
+    display: none !important;
+  }
+  
+  /* Remove any blurring from parent */
+  .blurred {
+    filter: none !important;
+  }
+  
+  /* Custom styles for our overlay */
+  .teacher-eval-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 8px;
+  }
+  
+  .teacher-eval-blur {
+    filter: blur(2px);
+    pointer-events: none;
+  }
+</style>
+
 <div class="container-fluid">
   <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="col-12 col-md-8 col-lg-6">
@@ -20,69 +59,81 @@
               {% endif %}
             {% endfor %}
           {% endif %}
-          <!-- Cooldown Overlay (inside the form, covers only the form) -->
-          <form method="post" id="teacherEvaluationForm" style="position:relative;">
-            {% csrf_token %}
-            <!-- Cooldown Overlay (not blurred) -->
-            <div id="cooldownOverlay" style="display:none; justify-content:center; align-items:center; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); z-index:10; font-size:2.5rem; color:#647060; font-weight:600;">
-              <span id="countdown">{{ cooldown_remaining|default:"0" }}</span>{% if cooldown_remaining|default:0 > 1 %}s{% endif %}
-            </div>
-            <div class="form-fields">
-              <div class="mb-3">
-                <label for="teacher" class="form-label">Teacher</label>
-                <select name="teacher" id="teacher" class="form-select" required>
-                  <option value="" disabled selected>Select a teacher</option>
-                  {% for teacher in teachers %}
-                    <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="department" class="form-label">Department</label>
-                <select name="department" id="department" class="form-select" required>
-                  <option value="" disabled selected>Select a department</option>
-                  {% for department in departments %}
-                    <option value="{{ department.pk }}">{{ department.departmentName }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="program" class="form-label">Program</label>
-                <select name="program" id="program" class="form-select" required>
-                  <option value="" disabled selected>Select a program</option>
-                  {% for program in programs %}
-                    <option value="{{ program.pk }}">{{ program.programName }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="specialization" class="form-label">Specialization</label>
-                <input type="text" name="specialization" id="specialization" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label for="sentiment" class="form-label">Sentiment</label>
-                <select name="sentiment" id="sentiment" class="form-select">
-                  <option value="" selected>Optional</option>
-                  {% for sentiment in sentiments %}
-                    <option value="{{ sentiment.pk }}">{{ sentiment.sentimentName }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="comments" class="form-label">Your Comments</label>
-                <textarea name="comments" id="comments" class="form-control" rows="4" required></textarea>
-              </div>
-              <div class="form-check mb-3">
-                <input type="checkbox" name="is_anonymous" id="is_anonymous" class="form-check-input">
-                <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-success">
-                  <i class="fas fa-paper-plane"></i> Submit Evaluation
-                </button>
+          
+          <!-- Form with relative positioning container -->
+          <div style="position: relative;">
+            <!-- Our custom cooldown overlay -->
+            <div id="teacherCooldownOverlay" class="teacher-eval-overlay" style="display:none;">
+              <div style="text-align: center; color: #647060; font-weight: 600;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">⏱️</div>
+                <div style="font-size: 1.8rem;">Please wait</div>
+                <div style="font-size: 3.5rem; margin: 15px 0;">
+                  <span id="teacherCountdown">{{ cooldown_remaining|default:"0" }}</span>s
+                </div>
+                <div style="font-size: 1rem; opacity: 0.7;">before submitting again</div>
               </div>
             </div>
-          </form>
+            
+            <form method="post" id="teacherEvaluationForm">
+              {% csrf_token %}
+              <div class="form-fields">
+                <div class="mb-3">
+                  <label for="teacher" class="form-label">Teacher</label>
+                  <select name="teacher" id="teacher" class="form-select" required>
+                    <option value="" disabled selected>Select a teacher</option>
+                    {% for teacher in teachers %}
+                      <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="department" class="form-label">Department</label>
+                  <select name="department" id="department" class="form-select" required>
+                    <option value="" disabled selected>Select a department</option>
+                    {% for department in departments %}
+                      <option value="{{ department.pk }}">{{ department.departmentName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="program" class="form-label">Program</label>
+                  <select name="program" id="program" class="form-select" required>
+                    <option value="" disabled selected>Select a program</option>
+                    {% for program in programs %}
+                      <option value="{{ program.pk }}">{{ program.programName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="specialization" class="form-label">Specialization</label>
+                  <input type="text" name="specialization" id="specialization" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label for="sentiment" class="form-label">Sentiment</label>
+                  <select name="sentiment" id="sentiment" class="form-select">
+                    <option value="" selected>Optional</option>
+                    {% for sentiment in sentiments %}
+                      <option value="{{ sentiment.pk }}">{{ sentiment.sentimentName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="comments" class="form-label">Your Comments</label>
+                  <textarea name="comments" id="comments" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="form-check mb-3">
+                  <input type="checkbox" name="is_anonymous" id="is_anonymous" class="form-check-input">
+                  <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-success">
+                    <i class="fas fa-paper-plane"></i> Submit Evaluation
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          
           <hr>
           <div class="text-center text-muted" style="font-size: 0.95em;">
             Your feedback helps us improve our teaching quality. Thank you!
@@ -92,6 +143,7 @@
     </div>
   </div>
 </div>
+
 <!-- Success Modal -->
 {% if messages %}
   {% for message in messages %}
@@ -124,16 +176,34 @@
     {% endif %}
   {% endfor %}
 {% endif %}
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Force hide any parent cooldown overlays
+    var parentOverlays = document.querySelectorAll('#cooldownOverlay, .cooldown-overlay');
+    parentOverlays.forEach(function(overlay) {
+      if (overlay.id !== 'teacherCooldownOverlay') {
+        overlay.style.display = 'none !important';
+        overlay.remove();
+      }
+    });
+    
+    // Remove blurring from any parent elements
+    var blurred = document.querySelectorAll('.blurred');
+    blurred.forEach(function(el) {
+      el.classList.remove('blurred');
+    });
+    
+    // Our cooldown logic
     var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
     var form = document.getElementById('teacherEvaluationForm');
-    var cooldownOverlay = document.getElementById('cooldownOverlay');
-    var countdownElem = document.getElementById('countdown');
+    var cooldownOverlay = document.getElementById('teacherCooldownOverlay');
+    var countdownElem = document.getElementById('teacherCountdown');
+    var formFields = form.querySelector('.form-fields');
     
     if (cooldown > 0) {
       cooldownOverlay.style.display = 'flex';
-      form.querySelector('.form-fields').classList.add('blurred');
+      formFields.classList.add('teacher-eval-blur');
       Array.from(form.elements).forEach(function(el) {
         el.disabled = true;
       });
@@ -145,7 +215,7 @@
         if (cooldown <= 0) {
           clearInterval(interval);
           cooldownOverlay.style.display = 'none';
-          form.querySelector('.form-fields').classList.remove('blurred');
+          formFields.classList.remove('teacher-eval-blur');
           Array.from(form.elements).forEach(function(el) {
             el.disabled = false;
           });
@@ -155,5 +225,3 @@
   });
 </script>
 {% endblock %}
-</body>
-</html>

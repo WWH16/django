@@ -40,6 +40,26 @@
     .btn .material-symbols-outlined {
       font-size: 1.1em; /* Button icons specifically */
     }
+    
+    /* Enhanced cooldown overlay styles */
+    #cooldownOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      border-radius: 8px;
+    }
+    
+    .blurred {
+      filter: blur(2px);
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -141,46 +161,59 @@
                 <!-- ALERTS for form feedback -->
                 {% if messages %}
                   {% for message in messages %}
-                    {% if 'login' not in message.tags %}
-                      <div class="alert alert-{% if 'error' in message.tags %}danger{% elif 'success' in message.tags %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                    {% if 'login' not in message.tags and 'success' not in message.tags %}
+                      <div class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                       </div>
                     {% endif %}
                   {% endfor %}
                 {% endif %}
-                <!-- Cooldown Overlay -->
-                <div id="cooldownOverlay" style="display:none;">
-                  <span id="countdown">{{ cooldown_remaining|default:"0" }}</span>{% if cooldown_remaining|default:0 > 1 %}s{% endif %}
+                
+                <!-- Form with relative positioning container -->
+                <div style="position: relative;">
+                  <!-- Enhanced Cooldown Overlay -->
+                  <div id="cooldownOverlay" style="display:none;">
+                    <div style="text-align: center; color: #647060; font-weight: 600;">
+                      <div style="font-size: 3rem; margin-bottom: 10px;">⏱️</div>
+                      <div style="font-size: 1.8rem;">Please wait</div>
+                      <div style="font-size: 3.5rem; margin: 15px 0;">
+                        <span id="countdown">{{ cooldown_remaining|default:"0" }}</span>s
+                      </div>
+                      <div style="font-size: 1rem; opacity: 0.7;">before submitting again</div>
+                    </div>
+                  </div>
+                  
+                  <form method="post" action="" id="feedbackForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <select class="form-select" id="service" name="service">
+                        <option value="" disabled selected>Select a service</option>
+                        <option value="Wi-Fi">Wi-Fi</option>
+                        <option value="Scholarship">Scholarship</option>
+                        <option value="Library">Library Facility</option>
+                        <option value="Guidance">College Admission Test</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="feedback" class="form-label">Your Feedback</label>
+                      <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Type your feedback here..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="anonymous" class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
+                        Submit as anonymous
+                      </label>
+                    </div>
+                    <!-- Feedback Form Button -->
+                    <div class="d-grid">
+                      <button type="submit" class="btn btn-success" id="submitBtn">
+                        <span class="material-symbols-outlined">send</span> Submit Feedback
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <form method="post" action="" id="feedbackForm">
-                  {% csrf_token %}
-                  <div class="mb-3">
-                    <select class="form-select" id="service" name="service">
-                      <option value="" disabled selected>Select a service</option>
-                      <option value="Wi-Fi">Wi-Fi</option>
-                      <option value="Scholarship">Scholarship</option>
-                      <option value="Library">Library Facility</option>
-                      <option value="Guidance">College Admission Test</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label for="feedback" class="form-label">Your Feedback</label>
-                    <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Type your feedback here..."></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label for="anonymous" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
-                      Submit as anonymous
-                    </label>
-                  </div>
-                  <!-- Feedback Form Button -->
-                  <div class="d-grid">
-                    <button type="submit" class="btn btn-success" id="submitBtn">
-                      <span class="material-symbols-outlined">send</span> Submit Feedback
-                    </button>
-                  </div>
-                </form>
+                
                 <hr>
                 <div class="text-center text-muted" style="font-size: 0.95em;">
                   Your feedback helps us improve our services. Thank you!
@@ -198,77 +231,76 @@
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
 
   <!-- LOGIN SUCCESS MODAL -->
-  {% if messages %}
-    {% for message in messages %}
-      {% if 'login' in message.tags %}
-      <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            
-            <!-- Modal Header -->
-            <div class="modal-header bg-success text-white">
-              <h1 class="modal-title fs-5">
-                <i class="fas fa-check-circle me-2"></i>{{ message }}
-              </h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-      
-            <!-- Modal Body -->
-            <div class="modal-body">
-              You have successfully logged in.
-            </div>
-      
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-      
+  {% for message in messages %}
+    {% if 'login' in message.tags %}
+    <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          
+          <!-- Modal Header -->
+          <div class="modal-header bg-success text-white">
+            <h1 class="modal-title fs-5">
+              <i class="fas fa-check-circle me-2"></i>{{ message }}
+            </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
+    
+          <!-- Modal Body -->
+          <div class="modal-body">
+            You have successfully logged in.
+          </div>
+    
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+    
         </div>
       </div>
-      
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            var modal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
-            modal.show();
-          });
-        </script>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+    </div>
+    {% endif %}
+  {% endfor %}
 
   <!-- FEEDBACK SUCCESS MODAL -->
-  {% if messages %}
-    {% for message in messages %}
-      {% if 'success' in message.tags %}
-      <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-              <h5 class="modal-title" id="successModalLabel">
-                <span class="material-symbols-outlined me-2">check_circle</span>
-                Submitted Successfully
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-              {{ message }}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-            </div>
+  {% for message in messages %}
+    {% if 'success' in message.tags and 'login' not in message.tags %}
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title" id="successModalLabel">
+              <span class="material-symbols-outlined me-2">check_circle</span>
+              Submitted Successfully
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-center">
+            {{ message }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-          successModal.show();
-        });
-      </script>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+    </div>
+    {% endif %}
+  {% endfor %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check which modal to show - prioritize login modal
+      var loginModal = document.getElementById('loginSuccessModal');
+      var successModal = document.getElementById('successModal');
+      
+      if (loginModal) {
+        var modal = new bootstrap.Modal(loginModal);
+        modal.show();
+      } else if (successModal) {
+        var modal = new bootstrap.Modal(successModal);
+        modal.show();
+      }
+    });
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

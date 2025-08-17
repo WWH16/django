@@ -183,7 +183,7 @@ def profile(request):
         return render(request, 'studentDashboard/profile.html', context)
 
 def give_feedback(request):
-    cooldown_seconds = 10
+    cooldown_seconds =5
     now = timezone.now()
 
     # Debug logs
@@ -490,7 +490,7 @@ def change_password(request):
 
 @login_required
 def teacher_evaluation(request):
-    cooldown_seconds = 10
+    cooldown_seconds = 5
     now = timezone.now()
 
     teachers = Teacher.objects.all()
