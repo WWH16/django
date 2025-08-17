@@ -566,7 +566,7 @@ def teacher_evaluation(request):
         else:
             messages.error(request, 'Please fill in all required fields.')
 
-    return render(request, 'studentDashboard/teacher_evaluation_form.html', {
+    return render(request, 'studentDashboard/teacher_evaluation_form.html'), {
         'teachers': teachers,
         'departments': departments,
         'programs': programs,
