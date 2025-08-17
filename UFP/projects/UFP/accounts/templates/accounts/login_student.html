@@ -7,14 +7,14 @@
 {% block content %}
 <!-- Error Messages -->
 {% if messages or form.errors or form.non_field_errors %}
-    <div style="margin-bottom: 1rem;">
+    <div class="messages">
+        {% if form.errors or form.non_field_errors or messages %}
+            <div class="field-error">Please correct the errors below.</div>
+        {% endif %}
         {% if messages %}
             {% for message in messages %}
                 <div class="field-error">{{ message }}</div>
             {% endfor %}
-        {% endif %}
-        {% if form.errors %}
-            <div class="field-error">Please correct the errors below.</div>
         {% endif %}
         {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
@@ -63,11 +63,13 @@
             {% endfor %}
         {% endif %}
     </div>
-    <div style="margin-bottom: 0.8rem;">
+    <div style="margin-bottom: 1rem;">
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
-                <div class="field-error">{{ error }}</div>
+                {% if error != "Please complete the reCAPTCHA verification." %}
+                    <div class="field-error">{{ error }}</div>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div>

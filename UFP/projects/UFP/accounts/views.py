@@ -88,12 +88,7 @@ def login_student_view(request):
                     extra_tags='login'
                 )
         else:
-            if 'captcha' in form.errors:
-                messages.error(
-                    request,
-                    'Please complete the reCAPTCHA verification.',
-                    extra_tags='login'
-                )
+            pass
     else:
         form = StudentLoginForm()
 
