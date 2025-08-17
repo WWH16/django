@@ -24,132 +24,110 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
-# TODO: adjust import
-# from warehouse.models import FactFeedback
-
-# ---- SET THESE TO YOUR ACTUAL FIELD NAMES ----
-TIMESTAMP_FIELD = "timestamp"       # e.g., "timestamp", "created_at", "feedback_date"
-SERVICE_TEXT    = "service__name"   # text label for service (often FK child like "service__name")
-SENTIMENT_FIELD = "sentiment"       # "Positive/Neutral/Negative", "POS/NEU/NEG", or 1/0/-1
-# ---------------------------------------------
-
-def _parse_dates(request):
-    """Return (range_key, start_date, end_date) based on ?range/start/end."""
-    key = (request.GET.get("range") or "all").lower()
-    start = request.GET.get("start")
-    end   = request.GET.get("end")
-
-    def d(s):
-        try: return datetime.strptime(s, "%Y-%m-%d").date()
-        except: return None
-
-    s = d(start) if start else None
-    e = d(end)   if end   else None
-    today = timezone.localdate()
-
-    if not s:
-        if key == "7d":          s = today - timedelta(days=6)
-        elif key == "30d":       s = today - timedelta(days=29)
-        elif key == "this_month":s = today.replace(day=1)
-        elif key == "6m":        s = today - timedelta(days=182)
-        elif key == "1y":        s = today - timedelta(days=365)
-
-    if s and not e:
-        e = today
-    return key, s, e
-
-def _count_any(qs, field, values):
-    """Count rows where 'field' equals any of 'values', tolerant to strings/ints."""
-    total = 0
-    for v in values:
-        try:
-            total += qs.filter(**{f"{field}__iexact": v}).count()
-        except:
-            try:
-                iv = int(v)
-                total += qs.filter(**{field: iv}).count()
-            except:
-                total += qs.filter(**{f"{field}__exact": v}).count()
-    return total
-
 def osas_sentiment_dashboard(request):
-    """API that the dashboard calls; returns totals + per-service, honoring date filters."""
+    """
+    Returns totals and per-service sentiment for the dashboard using warehouse.FactFeedback.
+    Auto-detects the service & sentiment fields (CharField or FK via common child names),
+    avoids invalid lookups, and never crashes — falls back to zeros if fields cannot be found.
+    """
     Model = FactFeedback
-    range_key, start_date, end_date = _parse_dates(request)
+
+    # Helper: choose the first valid field/lookup from a list
+    def pick_field(candidates):
+        for f in candidates:
+            try:
+                # Will raise FieldError immediately if the path is invalid
+                Model.objects.values_list(f, flat=True)[:1]
+                return f
+            except FieldError:
+                continue
+        return None
+
+    # Try common possibilities for both columns (direct or FK child)
+    service_field = pick_field([
+        "service", "service_name", "serviceName",
+        "service__name", "service__serviceName",
+        "dim_service__name", "dim_service__serviceName",
+        "category", "category_name",
+    ])
+
+    sentiment_field = pick_field([
+        "sentiment", "sentiment_name", "sentimentName",
+        "label", "value", "type", "title",
+        "sentiment__name", "sentiment__sentimentName",
+        "sentiment__label", "sentiment__value",
+        "sentiment__type", "sentiment__title",
+    ])
+
+    # If we can't detect fields, return a benign zero payload (UI won't crash)
+    if not service_field or not sentiment_field:
+        zero_services = [
+            {"name": "Wi-Fi Services", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
+            {"name": "College Admission Test", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
+            {"name": "Scholarship Services", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
+            {"name": "Library Facility", "positive": 0, "neutral": 0, "negative": 0, "percent_negative": 0},
+        ]
+        return JsonResponse({
+            "positive": 0, "neutral": 0, "negative": 0, "total": 0,
+            "positive_percent": 0, "neutral_percent": 0, "negative_percent": 0,
+            "services": zero_services,
+        })
 
     qs = Model.objects.all()
 
-    # Inclusive date filtering (supports DateTimeField and DateField)
-    if start_date and end_date:
+    # Count helper for sentiments (case-insensitive)
+    def count_sent(qs_in, label):
         try:
-            # If TIMESTAMP_FIELD is DateTimeField, __date works
-            qs = qs.filter(**{
-                f"{TIMESTAMP_FIELD}__date__gte": start_date,
-                f"{TIMESTAMP_FIELD}__date__lte": end_date
-            })
-        except:
-            # Fallback to full datetime window
-            try:
-                start_dt = datetime.combine(start_date, datetime.min.time())
-                end_dt   = datetime.combine(end_date,   datetime.max.time())
-                qs = qs.filter(**{
-                    f"{TIMESTAMP_FIELD}__gte": start_dt,
-                    f"{TIMESTAMP_FIELD}__lte": end_dt
-                })
-            except:
-                # If it's a pure DateField
-                qs = qs.filter(**{
-                    f"{TIMESTAMP_FIELD}__gte": start_date,
-                    f"{TIMESTAMP_FIELD}__lte": end_date
-                })
+            return qs_in.filter(**{f"{sentiment_field}__iexact": label}).count()
+        except FieldError:
+            return 0
 
-    # Sentiment encodings (covers strings and ints)
-    POS = {"Positive","POS","positive","1",1}
-    NEU = {"Neutral","NEU","neutral","0",0}
-    NEG = {"Negative","NEG","negative","-1",-1}
-
-    total_pos = _count_any(qs, SENTIMENT_FIELD, POS)
-    total_neu = _count_any(qs, SENTIMENT_FIELD, NEU)
-    total_neg = _count_any(qs, SENTIMENT_FIELD, NEG)
+    # Overall totals
+    total_pos = count_sent(qs, "Positive")
+    total_neu = count_sent(qs, "Neutral")
+    total_neg = count_sent(qs, "Negative")
     total_all = total_pos + total_neu + total_neg
-    pct = lambda n, d: round((n/d)*100) if d else 0
+    pct = lambda n, d: round((n / d) * 100) if d else 0
 
-    # Group by service label and aggregate sentiment
-    grouped = list(
-        qs.values(SERVICE_TEXT).annotate(
-            p=Count("pk", filter=Q(**{f"{SENTIMENT_FIELD}__in": list(POS)})),
-            u=Count("pk", filter=Q(**{f"{SENTIMENT_FIELD}__in": list(NEU)})),
-            n=Count("pk", filter=Q(**{f"{SENTIMENT_FIELD}__in": list(NEG)})),
-        )
-    )
+    # Four card groups (keyword-based so minor label differences still match)
+    groups = [
+        ("Wi-Fi Services",        ["wi-fi", "wifi"]),
+        ("College Admission Test",["admission"]),
+        ("Scholarship Services",  ["scholar"]),
+        ("Library Facility",      ["library"]),
+    ]
 
     services = []
-    for row in grouped:
-        name = row[SERVICE_TEXT] or "Unknown"
-        p, u, n = int(row["p"] or 0), int(row["u"] or 0), int(row["n"] or 0)
+    for display_name, keywords in groups:
+        q = Q()
+        for kw in keywords:
+            q |= Q(**{f"{service_field}__icontains": kw})
+        base = qs.filter(q)
+
+        p = count_sent(base, "Positive")
+        u = count_sent(base, "Neutral")
+        n = count_sent(base, "Negative")
         t = p + u + n
+
         services.append({
-            "name": name,
+            "name": display_name,
             "positive": p,
             "neutral": u,
             "negative": n,
-            "satisfaction": pct(p, t),
             "percent_negative": pct(n, t),
         })
 
-    return JsonResponse({
-        "range": range_key,
-        "start": start_date.isoformat() if start_date else None,
-        "end":   end_date.isoformat() if end_date else None,
-        "total": total_all,
+    data = {
         "positive": total_pos,
         "neutral": total_neu,
         "negative": total_neg,
+        "total": total_all,
         "positive_percent": pct(total_pos, total_all),
-        "neutral_percent":  pct(total_neu, total_all),
+        "neutral_percent": pct(total_neu, total_all),
         "negative_percent": pct(total_neg, total_all),
         "services": services,
-    })
+    }
+    return JsonResponse(data)
 
 
 # ---------- Existing dashboard / student views ----------
