@@ -14,9 +14,9 @@ body {
 .login-card {
     background: white;
     border-radius: 16px; /* Increased for modern look */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
+  /*   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); Softer, more modern shadow */
     width: 100%;
-    max-width: 350px;
+    max-width:  450px;
     margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border for definition */
 }
@@ -394,5 +394,80 @@ h1, h2, h3, h4, h5, h6 {
   .selection-btn .btn-subtitle {
     font-size: 0.9rem !important;
   }
+}
+
+/* Form container matches captcha width and is centered */
+form {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    background: #fff;
+    border-radius: 12px;
+}
+
+/* Captcha container centers the widget */
+.captcha-container {
+    background: #fff;
+    
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 304px;
+    max-width: 100%;
+    margin-bottom: 1rem;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 576px) {
+    form {
+        max-width: 100%;
+        padding: 1rem 0.5rem;
+        box-shadow: none;
+    }
+@media (max-width: 576px) {
+    .captcha-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.5rem;
+        background: #fff;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+    .btn, .btn-primary {
+        font-size: 0.95rem;
+        padding: 0.6rem 1rem;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+    .form-label, .form-check-label {
+        font-size: 0.95rem;
+    }
+    .form-control {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+    }
+}
+
+/* Even smaller screens */
+@media (max-width: 400px) {
+    .btn, .btn-primary {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.7rem;
+        min-height: 40px;
+    }
+    .form-label, .form-check-label {
+        font-size: 0.9rem;
+    }
+    .form-control {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.5rem;
+    }
 }
 

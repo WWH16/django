@@ -656,3 +656,36 @@
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+.active-btn {
+    font-weight: 600;
+    opacity: 1;
+}
+.btn-success {
+    background-color: #006600;
+    border-color: #006600;
+    color: #fff;
+}
+.btn-success:hover{
+  opacity: 0.8;
+}
+
+.page-link {
+    color: #006600;
+
+}
+.page-link:hover, .page-link:focus {
+    background-color: #e6f4ea;
+    color: #005500;
+    border-color: #005500;
+}
+.page-item.active .page-link {
+    background-color: #006600;
+    border-color: #006600;
+    color: #fff;
+}
+.page-item.disabled .page-link {
+    color: #b5b5b5;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}

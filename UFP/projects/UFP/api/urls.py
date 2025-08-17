@@ -12,8 +12,6 @@ urlpatterns = [
 
     # sa recent sa osas dashboard
     path('recent-osas-feedback/', views.recent_osas_feedback, name='recent-osas-feedback'),
-
     path('teacher-performance-by-teacher/', views.teacher_performance_by_teacher, name='teacher-performance-by-teacher'),
-
     path('teacher-evaluation-by-semester/', views.teacher_evaluation_by_semester, name='teacher_evaluation_by_semester'),
 ]

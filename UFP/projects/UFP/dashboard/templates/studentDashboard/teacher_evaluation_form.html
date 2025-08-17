@@ -1,6 +1,45 @@
 {% extends 'studentDashboard/feedback_form.html' %}
 
 {% block dashboard_content %}
+<style>
+  /* Override any parent overlays completely */
+  body > div:not(.dashboard-flex):not(.navbar):not(.modal) {
+    display: none !important;
+  }
+  
+  /* Hide any cooldown overlays from parent template */
+  #feedbackFormContainer,
+  #feedbackFormContainer #cooldownOverlay,
+  .main-content > div > div > div > div > div #cooldownOverlay {
+    display: none !important;
+  }
+  
+  /* Remove any blurring from parent */
+  .blurred {
+    filter: none !important;
+  }
+  
+  /* Custom styles for our overlay */
+  .teacher-eval-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 8px;
+  }
+  
+  .teacher-eval-blur {
+    filter: blur(2px);
+    pointer-events: none;
+  }
+</style>
+
 <div class="container-fluid">
   <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="col-12 col-md-8 col-lg-6">
@@ -9,123 +48,91 @@
           <h3 class="mb-4 text-center text-success">
             <i class="fas fa-comment-dots"></i> Teacher Evaluation Form
           </h3>
-
-          {# Flash messages #}
+          <!-- ALERTS for form feedback -->
           {% if messages %}
             {% for message in messages %}
-              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
+              {% if 'login' not in message.tags and 'success' not in message.tags %}
+                <div class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              {% endif %}
             {% endfor %}
           {% endif %}
-
-          <form method="post" novalidate>
-            {% csrf_token %}
-
-            {# Teacher #}
-            <div class="mb-3">
-              <label for="teacher" class="form-label">Teacher</label>
-              <select name="teacher" id="teacher" class="form-select" required>
-                <option value="" disabled {% if not request.POST.teacher %}selected{% endif %}>
-                  Select a teacher
-                </option>
-                {% for teacher in teachers %}
-                  {# Compare as strings to be safe #}
-                  <option value="{{ teacher.pk }}" {% if request.POST.teacher|stringformat:"s" == teacher.pk|stringformat:"s" %}selected{% endif %}>
-                    {{ teacher.teacherName }}
-                  </option>
-                {% endfor %}
-              </select>
+          
+          <!-- Form with relative positioning container -->
+          <div style="position: relative;">
+            <!-- Our custom cooldown overlay -->
+            <div id="teacherCooldownOverlay" class="teacher-eval-overlay" style="display:none;">
+              <div style="text-align: center; color: #647060; font-weight: 600;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">⏱️</div>
+                <div style="font-size: 1.8rem;">Please wait</div>
+                <div style="font-size: 3.5rem; margin: 15px 0;">
+                  <span id="teacherCountdown">{{ cooldown_remaining|default:"0" }}</span>s
+                </div>
+                <div style="font-size: 1rem; opacity: 0.7;">before submitting again</div>
+              </div>
             </div>
-
-            {# Department #}
-            <div class="mb-3">
-              <label for="department" class="form-label">Department</label>
-              <select name="department" id="department" class="form-select" required>
-                <option value="" disabled {% if not request.POST.department %}selected{% endif %}>
-                  Select a department
-                </option>
-                {% for department in departments %}
-                  <option value="{{ department.pk }}" {% if request.POST.department|stringformat:"s" == department.pk|stringformat:"s" %}selected{% endif %}>
-                    {{ department.departmentName }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            {# Program #}
-            <div class="mb-3">
-              <label for="program" class="form-label">Program</label>
-              <select name="program" id="program" class="form-select" required>
-                <option value="" disabled {% if not request.POST.program %}selected{% endif %}>
-                  Select a program
-                </option>
-                {% for program in programs %}
-                  <option value="{{ program.pk }}" {% if request.POST.program|stringformat:"s" == program.pk|stringformat:"s" %}selected{% endif %}>
-                    {{ program.programName }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            {# Specialization #}
-            <div class="mb-3">
-              <label for="specialization" class="form-label">Specialization</label>
-              <input
-                type="text"
-                name="specialization"
-                id="specialization"
-                class="form-control"
-                value="{{ request.POST.specialization|default:'' }}"
-                required
-              >
-            </div>
-
-            {# Sentiment (optional) #}
-            <div class="mb-3">
-              <label for="sentiment" class="form-label">Sentiment</label>
-              <select name="sentiment" id="sentiment" class="form-select">
-                <option value="" {% if not request.POST.sentiment %}selected{% endif %}>Optional</option>
-                {% for sentiment in sentiments %}
-                  <option value="{{ sentiment.pk }}" {% if request.POST.sentiment|stringformat:"s" == sentiment.pk|stringformat:"s" %}selected{% endif %}>
-                    {{ sentiment.sentimentName }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            {# Comments #}
-            <div class="mb-3">
-              <label for="comments" class="form-label">Your Comments</label>
-              <textarea
-                name="comments"
-                id="comments"
-                class="form-control"
-                rows="4"
-                required
-              >{{ request.POST.comments|default:'' }}</textarea>
-            </div>
-
-            {# Anonymous checkbox #}
-            <div class="form-check mb-3">
-              <input
-                type="checkbox"
-                name="is_anonymous"
-                id="is_anonymous"
-                class="form-check-input"
-                {% if request.POST.is_anonymous %}checked{% endif %}
-              >
-              <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
-            </div>
-
-            <div class="d-grid">
-              <button type="submit" class="btn btn-success">
-                <i class="fas fa-paper-plane"></i> Submit Evaluation
-              </button>
-            </div>
-          </form>
-
+            
+            <form method="post" id="teacherEvaluationForm">
+              {% csrf_token %}
+              <div class="form-fields">
+                <div class="mb-3">
+                  <label for="teacher" class="form-label">Teacher</label>
+                  <select name="teacher" id="teacher" class="form-select" required>
+                    <option value="" disabled selected>Select a teacher</option>
+                    {% for teacher in teachers %}
+                      <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="department" class="form-label">Department</label>
+                  <select name="department" id="department" class="form-select" required>
+                    <option value="" disabled selected>Select a department</option>
+                    {% for department in departments %}
+                      <option value="{{ department.pk }}">{{ department.departmentName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="program" class="form-label">Program</label>
+                  <select name="program" id="program" class="form-select" required>
+                    <option value="" disabled selected>Select a program</option>
+                    {% for program in programs %}
+                      <option value="{{ program.pk }}">{{ program.programName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="specialization" class="form-label">Specialization</label>
+                  <input type="text" name="specialization" id="specialization" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label for="sentiment" class="form-label">Sentiment</label>
+                  <select name="sentiment" id="sentiment" class="form-select">
+                    <option value="" selected>Optional</option>
+                    {% for sentiment in sentiments %}
+                      <option value="{{ sentiment.pk }}">{{ sentiment.sentimentName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="comments" class="form-label">Your Comments</label>
+                  <textarea name="comments" id="comments" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="form-check mb-3">
+                  <input type="checkbox" name="is_anonymous" id="is_anonymous" class="form-check-input">
+                  <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-success">
+                    <i class="fas fa-paper-plane"></i> Submit Evaluation
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
           <hr>
           <div class="text-center text-muted" style="font-size: 0.95em;">
             Your feedback helps us improve our teaching quality. Thank you!
@@ -135,4 +142,85 @@
     </div>
   </div>
 </div>
+
+<!-- Success Modal -->
+{% if messages %}
+  {% for message in messages %}
+    {% if 'success' in message.tags %}
+      <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="successModalLabel">
+                <span class="material-symbols-outlined me-2">check_circle</span>
+                Submitted Successfully
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+              {{ message }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+          successModal.show();
+        });
+      </script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Force hide any parent cooldown overlays
+    var parentOverlays = document.querySelectorAll('#cooldownOverlay, .cooldown-overlay');
+    parentOverlays.forEach(function(overlay) {
+      if (overlay.id !== 'teacherCooldownOverlay') {
+        overlay.style.display = 'none !important';
+        overlay.remove();
+      }
+    });
+    
+    // Remove blurring from any parent elements
+    var blurred = document.querySelectorAll('.blurred');
+    blurred.forEach(function(el) {
+      el.classList.remove('blurred');
+    });
+    
+    // Our cooldown logic
+    var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
+    var form = document.getElementById('teacherEvaluationForm');
+    var cooldownOverlay = document.getElementById('teacherCooldownOverlay');
+    var countdownElem = document.getElementById('teacherCountdown');
+    var formFields = form.querySelector('.form-fields');
+    
+    if (cooldown > 0) {
+      cooldownOverlay.style.display = 'flex';
+      formFields.classList.add('teacher-eval-blur');
+      Array.from(form.elements).forEach(function(el) {
+        el.disabled = true;
+      });
+
+      var interval = setInterval(function() {
+        cooldown--;
+        if (cooldown < 0) cooldown = 0;
+        countdownElem.textContent = cooldown;
+        if (cooldown <= 0) {
+          clearInterval(interval);
+          cooldownOverlay.style.display = 'none';
+          formFields.classList.remove('teacher-eval-blur');
+          Array.from(form.elements).forEach(function(el) {
+            el.disabled = false;
+          });
+        }
+      }, 1000);
+    }
+  });
+</script>
 {% endblock %}

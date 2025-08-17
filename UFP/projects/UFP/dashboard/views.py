@@ -195,10 +195,10 @@ def profile(request):
         return render(request, 'studentDashboard/profile.html', context)
 
 def give_feedback(request):
-    cooldown_seconds = 10
+    cooldown_seconds =5
     now = timezone.now()
 
-    # Your debug prints and student fetching - preserved as is
+    # Debug logs
     print('DEBUG: request.user:', request.user)
     print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
     print('DEBUG: All Student IDs:', list(Student.objects.values_list('studentID', flat=True)))
@@ -209,43 +209,36 @@ def give_feedback(request):
         messages.error(request, 'Student profile not found.')
         return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': 0})
 
+    # --- Refactored cooldown logic ---
     last_feedback = StudentFeedback.objects.filter(student=student).order_by('-timestamp').first()
-
-    cooldown_remaining = 0
-    if last_feedback:
-        elapsed = (now - last_feedback.timestamp).total_seconds()
-        if elapsed < cooldown_seconds:
-            cooldown_remaining = int(cooldown_seconds - elapsed)  # Ensure integer here
+    cooldown_remaining = max(
+        0,
+        cooldown_seconds - int((now - last_feedback.timestamp).total_seconds())
+    ) if last_feedback else 0
+    # ---------------------------------
 
     if request.method == 'POST':
-
         if cooldown_remaining > 0:
             messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
             return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': cooldown_remaining})
 
-        # The rest of your POST logic preserved exactly
-
-        # Debug prints
+        # Debug logs
         print('DEBUG: request.user:', request.user)
         print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
         from system.models import Student as StudentModel
         print('DEBUG: All Student IDs:', list(StudentModel.objects.values_list('studentID', flat=True)))
-
 
         service_name = request.POST.get('service')
         feedback_text = request.POST.get('feedback')
 
         if not service_name or not feedback_text:
             messages.error(request, 'Please fill in all required fields.')
-
             return render(request, 'studentDashboard/feedback_form.html')
 
         try:
             student = Student.objects.get(studentID=request.user.username)
-
             service, created = Service.objects.get_or_create(serviceName=service_name)
 
-            # Store with sentiment=None; sentiment will be computed elsewhere
             StudentFeedback.objects.create(
                 student=student,
                 service=service,
@@ -255,14 +248,15 @@ def give_feedback(request):
 
             log_student_activity(student=student, activity_type='Feedback Submit')
             messages.success(request, 'Feedback submitted successfully! Thank you for your input.')
-            return redirect('my_feedback')
+            return redirect('give_feedback')
 
         except Student.DoesNotExist:
             messages.error(request, 'Student profile not found.')
         except Exception as e:
             messages.error(request, f'Error submitting feedback: {str(e)}')
 
-    return render(request, 'studentDashboard/feedback_form.html')
+    return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': cooldown_remaining})
+
 
 from system.models import TeacherEvaluation, Teacher, Department, Program
 from django.shortcuts import render, redirect, get_object_or_404
@@ -508,10 +502,33 @@ def change_password(request):
 
 @login_required
 def teacher_evaluation(request):
+    cooldown_seconds = 5
+    now = timezone.now()
+
     teachers = Teacher.objects.all()
     departments = Department.objects.all()
     programs = Program.objects.all()
     sentiments = Sentiment.objects.all()
+
+    try:
+        student = Student.objects.get(studentID=request.user.username)
+    except Student.DoesNotExist:
+        messages.error(request, 'Student profile not found.')
+        return render(request, 'studentDashboard/teacher_evaluation_form.html', {
+            'teachers': teachers,
+            'departments': departments,
+            'programs': programs,
+            'sentiments': sentiments,
+            'cooldown_remaining': 0,
+        })
+
+    # --- Refactored cooldown logic (same as give_feedback) ---
+    last_evaluation = TeacherEvaluation.objects.filter(submitted_by=request.user.username).order_by('-timestamp').first()
+    cooldown_remaining = max(
+        0,
+        cooldown_seconds - int((now - last_evaluation.timestamp).total_seconds())
+    ) if last_evaluation else 0
+    # ---------------------------------------------------------
 
     if request.method == 'POST':
         comments       = request.POST.get('comments')
@@ -536,8 +553,16 @@ def teacher_evaluation(request):
                 submitted_by=username,           # <- key for filtering later
                 timestamp=timezone.now(),
             )
+            try:
+                student = Student.objects.get(studentID=request.user.username)
+                log_student_activity(
+                    student=student,
+                    activity_type='Feedback Submit'
+                )
+            except Student.DoesNotExist:
+                pass
             messages.success(request, 'Your evaluation has been submitted successfully!')
-            return redirect('my_feedback')
+            return redirect('teacher_evaluation')
         else:
             messages.error(request, 'Please fill in all required fields.')
 
@@ -546,4 +571,6 @@ def teacher_evaluation(request):
         'departments': departments,
         'programs': programs,
         'sentiments': sentiments,
-    })
+        'cooldown_remaining': cooldown_remaining,
+    }
+    return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
