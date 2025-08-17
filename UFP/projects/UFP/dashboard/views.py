@@ -9,12 +9,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 # ---------- Sentiment API (cards/charts) ----------
 from django.http import JsonResponse
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.core.exceptions import FieldError
 from warehouse.models import FactFeedback
 
@@ -132,23 +132,35 @@ def osas_sentiment_dashboard(request):
 
 # ---------- Existing dashboard / student views ----------
 
+def _resolve_username(user):
+    """Use the SAME logic used when saving TeacherEvaluation.submitted_by."""
+    get_un = getattr(user, 'get_username', None)
+    username = get_un() if callable(get_un) else ''
+    if not username:
+        username = getattr(user, 'username', '') or getattr(user, 'email', '') or ''
+    if not username:
+        username = str(getattr(user, 'pk', '') or user) or 'Unknown'
+    return username
+
 @login_required
 def my_feedback(request):
-    # Try to fetch the student's OSAS feedback (optional for teacher evals)
+    username = _resolve_username(request.user)
+
+    # OSAS feedback (optional)
     feedback_list = []
     feedback_count = 0
     try:
-        student = Student.objects.get(studentID=request.user.username)
+        student = Student.objects.get(studentID=username)
         feedback_list = StudentFeedback.objects.filter(student=student).order_by('-timestamp')
         feedback_count = feedback_list.count()
     except Student.DoesNotExist:
-        pass  # Still show teacher evaluations below
+        pass
 
-    # Teacher evaluations by this user (you store username in submitted_by)
+    # Teacher evaluations submitted by this user
     teacher_evaluations = (
         TeacherEvaluation.objects
-        .filter(submitted_by=request.user.username)
-        .select_related('teacher')
+        .filter(submitted_by=username)  # <- ONLY this user's rows
+        .select_related('teacher', 'department', 'program', 'sentiment')
         .annotate(teacher_name=F('teacher__teacherName'))
         .order_by('-timestamp')
     )
@@ -519,24 +531,15 @@ def teacher_evaluation(request):
     # ---------------------------------------------------------
 
     if request.method == 'POST':
-        if cooldown_remaining > 0:
-            messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
-            return render(request, 'studentDashboard/teacher_evaluation_form.html', {
-                'teachers': teachers,
-                'departments': departments,
-                'programs': programs,
-                'sentiments': sentiments,
-                'cooldown_remaining': cooldown_remaining,
-            })
-
-        comments = request.POST.get('comments')
-        teacher_id = request.POST.get('teacher')
-        department_id = request.POST.get('department')
-        program_id = request.POST.get('program')
+        comments       = request.POST.get('comments')
+        teacher_id     = request.POST.get('teacher')
+        department_id  = request.POST.get('department')
+        program_id     = request.POST.get('program')
         specialization = request.POST.get('specialization')
-        sentiment_id = request.POST.get('sentiment')
-        is_anonymous = bool(request.POST.get('is_anonymous'))
-        submitted_by = None if is_anonymous else request.user.username
+        sentiment_id   = request.POST.get('sentiment')
+
+        is_anonymous = 'is_anonymous' in request.POST
+        username = _resolve_username(request.user)  # store this ALWAYS
 
         if comments and teacher_id and department_id and program_id and specialization:
             TeacherEvaluation.objects.create(
@@ -545,9 +548,10 @@ def teacher_evaluation(request):
                 department_id=department_id,
                 program_id=program_id,
                 specialization=specialization,
-                sentiment_id=sentiment_id if sentiment_id else None,
-                submitted_by=submitted_by,
-                timestamp=timezone.now()
+                sentiment_id=sentiment_id or None,
+                is_anonymous=is_anonymous,
+                submitted_by=username,           # <- key for filtering later
+                timestamp=timezone.now(),
             )
             try:
                 student = Student.objects.get(studentID=request.user.username)
@@ -562,7 +566,7 @@ def teacher_evaluation(request):
         else:
             messages.error(request, 'Please fill in all required fields.')
 
-    context = {
+    return render(request, 'studentDashboard/teacher_evaluation_form.html', {
         'teachers': teachers,
         'departments': departments,
         'programs': programs,
