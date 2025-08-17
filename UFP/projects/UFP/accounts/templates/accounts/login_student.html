@@ -1,136 +1,81 @@
-    {% extends 'accounts/auth_base.html' %}
-    {% load static %}
+{% extends 'accounts/login_base.html' %}
 
-    {% block title %}Student Login - Sentiment Analysis{% endblock %}
+{% block title %}Student Login - Sentiment Analysis{% endblock %}
+{% block header_title %}UFP Student{% endblock %}
+{% block header_sub %}Welcome back to{% endblock %}
 
-    {% block header_icon %}<i class="fas fa-user-graduate me-2"></i>{% endblock %}
-    {% block header_title %}Student Login{% endblock %}
-    {% block header_subtitle %}Sentiment Analysis Platform{% endblock %}
-
-    {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'accounts/styles/login.css' %}">
-    {% endblock %}
-
-    {% block content %}
-    <!-- Error Messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <!-- Login Form -->
-    <form method="post" action="{% url 'login_student' %}">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger" role="alert">
-                {{ form.non_field_errors|join:"<br>"|safe }}
-            </div>
+{% block content %}
+<!-- Error Messages -->
+{% if messages or form.errors or form.non_field_errors %}
+    <div class="messages">
+        {% if form.errors or form.non_field_errors or messages %}
+            <div class="field-error">Please correct the errors below.</div>
         {% endif %}
-        
-        <!-- Student ID Field -->
-        <div class="mb-2">
-            <div class="form-outline" data-mdb-input-init>
-                <input type="text" 
-                    id="student_id" 
-                    name="student_id" 
-                    class="form-control" 
-                    required />
-                <label class="form-label" for="student_id">
-                    <i class="fas fa-id-card me-2"></i>Student ID
-                </label>
-                {% if form.student_id.errors %}
-                    <div class="alert alert-danger mt-2 py-1" role="alert">
-                        {{ form.student_id.errors|join:"<br>"|safe }}
-                    </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="field-error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endif %}
+<!-- Login Form -->
+<form method="post" action="{% url 'login_student' %}">
+    {% csrf_token %}
+    <div style="margin-bottom: 0.9rem;">
+        <label for="student_id" class="form-label">
+            Student ID <span class="form-required">*</span>
+        </label>
+        <input 
+            type="text" 
+            id="student_id" 
+            name="student_id" 
+            class="form-input{% if form.student_id.errors %} border-red-600{% endif %}" 
+            required
+            {% if form.student_id.value %}value="{{ form.student_id.value }}"{% endif %}
+            autocomplete="username"
+        >
+        {% if form.student_id.errors %}
+            {% for error in form.student_id.errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div style="margin-bottom: 0.8rem;">
+        <label for="password" class="form-label">
+            Password <span class="form-required">*</span>
+        </label>
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-input{% if form.password.errors %} border-red-600{% endif %}" 
+            required
+            autocomplete="current-password"
+        >
+        {% if form.password.errors %}
+            {% for error in form.password.errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div style="margin-bottom: 1rem;">
+        {{ form.captcha }}
+        {% if form.captcha.errors %}
+            {% for error in form.captcha.errors %}
+                {% if error != "Please complete the reCAPTCHA verification." %}
+                    <div class="field-error">{{ error }}</div>
                 {% endif %}
-            </div>
-        </div>
-        
-        <!-- Password Field with Toggle -->
-        <div class="mb-4">
-            <div class="form-outline" data-mdb-input-init>
-                <input type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-control" 
-                    required />
-                <label class="form-label" for="password">
-                    <i class="fas fa-lock me-2"></i>Password
-                </label>
-                {% if form.password.errors %}
-                    <div class="alert alert-danger mt-2 py-1" role="alert">
-                        {{ form.password.errors|join:"<br>"|safe }}
-                    </div>
-                {% endif %}
-            </div>
-            <button type="button" 
-                    class="password-toggle" 
-                    onclick="togglePassword()">
-                <i class="fas fa-eye" id="password-icon"></i>
-            </button>
-        </div>
-
-        <!-- re  Field -->
-        <div class="mb-2 captcha-container">
-            {{ form.captcha }}
-            {% if form.captcha.errors %}
-                <div class="text-danger" style="font-size:0.95em;">{{ form.captcha.errors }}</div>
-            {% endif %}
-        </div>
-
-        <!-- Remember Me and Forgot Password -->
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                <label class="form-check-label" for="remember">Remember Me</label>
-            </div>
-        </div>
-
-        <div class="mb-1 text-end">
-            <a href="#" class="text-decoration-underline text-muted small">Forgot Password?</a>
-        </div>
-        <!-- Submit Button -->
-        <div class="d-grid mb-1 mt-1">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-1"></i>Login
-            </button>
-        </div>
-
-    </form>
-    {% endblock %}
-
-    {% block extra_js %}
-    <!-- Password Toggle Script -->
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const passwordIcon = document.getElementById('password-icon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordIcon.classList.remove('fa-eye');
-                passwordIcon.classList.add('fa-eye-slash');
-                passwordIcon.style.color = '#006600';
-            } else {
-                passwordInput.type = 'password';
-                passwordIcon.classList.remove('fa-eye-slash');
-                passwordIcon.classList.add('fa-eye');
-                passwordIcon.style.color = '#6c757d';
-            }
-        }
-        
-        // MDB Initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize MDB Input components
-            const inputs = document.querySelectorAll('[data-mdb-input-init]');
-            inputs.forEach(function(input) {
-                // MDB will handle the initialization automatically
-            });
-        });
-    </script>
-    {% endblock %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <button type="submit" class="btn-primary">
+        Log in
+        <span class="material-symbols-outlined arrow">arrow_forward</span>
+    </button>
+</form>
+{% endblock %}

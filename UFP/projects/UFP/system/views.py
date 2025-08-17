@@ -18,33 +18,9 @@ from .models import StudentFeedback, Student, Service, Sentiment
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
 # Create your views here.
-def form(request):
-    return render(request, 'base.html')
 
-def wifi_view(request):
-    return render(request, 'Wifi.html')
-
-def scholar_view(request):
-    return render(request, 'scholar.html')
-
-def library_view(request):
-    return render(request, 'library.html')
-
-def guidance_view(request):
-    return render(request, 'guidance.html')
-def help_view(request):
-    return render(request, 'help.html')
-def home_view(request):
-    return render(request, 'home.html')
-def main(request):
-    return render(request, 'main.html')
-def sample(request):
+def site(request):
     return render(request, 'index.html')
-def jancen(request):
-    return render(request, 'jancen.html')
-def admin_pan(request):
-    return render(request, 'admin_panel.html')
-# Feedback/CRUD-related views have been moved to crud/views.py
 
 
 def error(request):

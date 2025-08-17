@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="{% static 'dashboard/styles/student-sidebar.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
   {% block extra_head %}{% endblock %}
   <style>
     /* Highlight active sidebar link with a green border on the left */
@@ -28,6 +29,16 @@
     }
     .sidebar .nav-link i {
         margin-right: 0rem; /* Minimal space between icon and text */
+    }
+    .material-symbols-outlined {
+      font-size: 1.1em; /* Smaller than default, adjust as needed */
+      vertical-align: middle;
+    }
+    .sidebar .material-symbols-outlined {
+      font-size: 1.1em; /* Sidebar icons specifically */
+    }
+    .btn .material-symbols-outlined {
+      font-size: 1.1em; /* Button icons specifically */
     }
   </style>
 </head>
@@ -60,8 +71,8 @@
         <span class="navbar-brand fw-bold mb-0 ms-2">Student Dashboard</span>
       </div>
       <div class="d-flex align-items-center gap-2">
-        <a href="{% url 'sample' %}" class="btn btn-sm btn-outline-light border-0" title="Visit Website">
-          <i class="fas fa-globe"></i> Visit Website
+        <a href="{% url 'site' %}" class="btn btn-sm btn-outline-light border-0" title="Visit Website">
+          <i class="fas fa-globe"></i> Visit site
         </a>
         <span style="width:1px; height:30px; background:linear-gradient(to bottom, #d4f3e3 60%, #006600 100%); opacity:0.7; border-radius:2px; display:inline-block;"></span>
         <span class="small d-flex align-items-center">
@@ -77,26 +88,26 @@
       <ul class="sidebar-nav flex-column mb-3">
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}" href="{% url 'my_feedback' %}">
-            <i class="fas fa-comments"></i>
+            <i class="material-symbols-outlined">forum</i>
             <span class="sidebar-text">My Feedback</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}">
-            <i class="fas fa-user"></i>
+            <i class="material-symbols-outlined">person</i>
             <span class="sidebar-text">Profile</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}" href="{% url 'give_feedback' %}">
-            <i class="fas fa-edit"></i>
+            <i class="material-symbols-outlined">edit</i>
             <span class="sidebar-text">Give Feedback</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link sidebar-button" href="{% url 'teacher_evaluation' %}">
-            <i class="fas fa-chalkboard-teacher"></i>
-            <span class="sidebar-text">Teacher Evaluation</span>
+              <i class="material-symbols-outlined" style="font-size:1.1em;">school</i>
+              <span class="sidebar-text">Teacher Evaluation</span>
           </a>
         </li>
         <!-- Divider to isolate logout button -->
@@ -106,7 +117,7 @@
         <!-- Logout button: same style and alignment as other sidebar buttons, placed last -->
         <li class="nav-item">
           <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-            <i class="fas fa-sign-out-alt"></i>
+            <i class="material-symbols-outlined">logout</i>
             <span class="sidebar-text">Logout</span>
           </a>
         </li>
@@ -163,9 +174,10 @@
                       Submit as anonymous
                     </label>
                   </div>
+                  <!-- Feedback Form Button -->
                   <div class="d-grid">
                     <button type="submit" class="btn btn-success" id="submitBtn">
-                      <i class="fas fa-paper-plane"></i> Submit Feedback
+                      <span class="material-symbols-outlined">send</span> Submit Feedback
                     </button>
                   </div>
                 </form>
@@ -263,4 +275,4 @@
     });
   </script>
 </body>
-</html> 
+</html>
