@@ -16,9 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from dashboard.views import admin_osas_services
 
 
 urlpatterns = [
+    # Custom admin pages (must be before default admin route)
+    path('admin/osas-services/', admin_osas_services, name='admin_osas_services'),
+
     path('admin/', admin.site.urls),
     path('', include('system.urls')),
     path('dashboard/', include('dashboard.urls')),

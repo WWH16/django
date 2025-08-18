@@ -260,6 +260,12 @@ UNFOLD = {
             "collapsible": True,
             "items": [
                 {
+                    "title": _("OSAS Dashboard"),
+                    "icon": "dashboard",
+                    "link": reverse_lazy("admin_osas_services"),
+                    "permission": lambda request: request.user.is_staff,
+                },
+                {
                     "title": _("Services"),
                     "icon": "build",
                     "link": reverse_lazy("admin:system_service_changelist"),
