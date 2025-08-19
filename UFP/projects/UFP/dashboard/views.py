@@ -11,6 +11,10 @@ from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from datetime import datetime, timedelta
 from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
+from django.template.response import TemplateResponse
+from django.contrib import admin
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 # ---------- Sentiment API (cards/charts) ----------
 from django.http import JsonResponse
@@ -396,8 +400,18 @@ def admin_dashboard(request):
     return render(request, 'adminDashboard/combined-dashboard.html', context)
 
 @login_required
+@xframe_options_exempt
 def osas_services(request):
     return render(request, 'adminDashboard/osas-services.html')
+
+@staff_member_required
+def admin_osas_services(request):
+    """Render OSAS Services dashboard inside Unfold-themed admin shell with admin context."""
+    context = {
+        **admin.site.each_context(request),
+        "title": "OSAS Services Dashboard",
+    }
+    return TemplateResponse(request, 'admin/osas_services.html', context)
 
 @login_required
 def teacher_evaluation_dashboard(request):

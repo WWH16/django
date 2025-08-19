@@ -1,0 +1,230 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}OSAS Dashboard | {{ block.super }}{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'dashboard/js/osas_dashboard.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="osas-wrap">
+  <div class="osas-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="text-dark mb-0">OSAS Services Sentiment Analysis Dashboard</h3>
+      <a id="export-report-btn" class="btn btn-primary d-none d-sm-inline-block" href="#">
+        <i class="fas fa-download fa-sm text-white-50"></i> Export Report
+      </a>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="row">
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card shadow border-start-success">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col me-2">
+                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive Feedback</span></div>
+                <div class="text-dark fw-bold h5 mb-0"><span id="osas-positive-count">0</span></div>
+                <div class="text-xs text-muted"><span id="osas-positive-percent">0</span>% of total feedback</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card shadow border-start-warning">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col me-2">
+                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral Feedback</span></div>
+                <div class="text-dark fw-bold h5 mb-0"><span id="osas-neutral-count">0</span></div>
+                <div class="text-xs text-muted"><span id="osas-neutral-percent">0</span>% of total feedback</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card shadow border-start-danger">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col me-2">
+                <div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative Feedback</span></div>
+                <div class="text-dark fw-bold h5 mb-0"><span id="osas-negative-count">0</span></div>
+                <div class="text-xs text-muted"><span id="osas-negative-percent">0</span>% of total feedback</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card shadow border-start-primary">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col me-2">
+                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total Comments</span></div>
+                <div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
+                <div class="text-xs text-muted">This selection</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row">
+      <div class="col-lg-7 col-xl-8">
+        <div class="card shadow mb-4">
+          <div class="card-header">
+            <h6 class="text-primary fw-bold m-0">
+              Sentiment Distribution by OSAS Services
+              <small class="text-muted" id="active-range-label">· All Time</small>
+            </h6>
+            <div class="dropdown">
+              <button class="btn" type="button"><i class="fas fa-ellipsis-v text-muted"></i></button>
+              <div class="dropdown-menu">
+                <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
+                <a class="dropdown-item osas-range" data-range="all"         href="#">All Time</a>
+                <a class="dropdown-item osas-range" data-range="7d"          href="#">Last 7 Days</a>
+                <a class="dropdown-item osas-range" data-range="30d"         href="#">Last 30 Days</a>
+                <a class="dropdown-item osas-range" data-range="this_month"  href="#">This Month</a>
+                <a class="dropdown-item osas-range" data-range="6m"          href="#">Last 6 Months</a>
+                <a class="dropdown-item osas-range" data-range="1y"          href="#">Last Year</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" id="osas-export-data" href="#">Export Chart View</a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="osasBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 col-xl-4">
+        <div class="card shadow mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
+            <div class="dropdown">
+              <button class="btn" type="button"><i class="fas fa-ellipsis-v text-muted"></i></button>
+              <div class="dropdown-menu">
+                <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
+                <a class="dropdown-item osas-range" data-range="all"         href="#">All Time</a>
+                <a class="dropdown-item osas-range" data-range="7d"          href="#">Last 7 Days</a>
+                <a class="dropdown-item osas-range" data-range="30d"         href="#">Last 30 Days</a>
+                <a class="dropdown-item osas-range" data-range="this_month"  href="#">This Month</a>
+                <a class="dropdown-item osas-range" data-range="6m"          href="#">Last 6 Months</a>
+                <a class="dropdown-item osas-range" data-range="1y"          href="#">Last Year</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" id="osas-generate-report" href="#">Export Report</a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="osasPieChart"></canvas>
+            </div>
+            <div class="text-center small mt-4">
+              <span class="me-2"><i class="fas fa-circle text-success"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+              <span class="me-2"><i class="fas fa-circle text-warning"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+              <span class="me-2"><i class="fas fa-circle text-danger"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header"><h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6></div>
+          <div class="card-body" id="service-priority-list"></div>
+        </div>
+        <div class="card shadow mb-4">
+          <div class="card-header"><h6 class="text-primary fw-bold m-0">Recent Feedback</h6></div>
+          <ul class="list-group list-group-flush" id="recent-feedback-list"></ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div class="card bg-success text-white shadow">
+              <div class="card-body">
+                <h5 class="m-0">Wi-Fi Services</h5>
+                <p class="text-white-50 small m-0">
+                  <span id="wifi-positive">0</span> Positive •
+                  <span id="wifi-neutral">0</span> Neutral •
+                  <span id="wifi-negative">0</span> Negative
+                </p>
+                <div class="mt-2">
+                  <span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span>% Satisfaction</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="card bg-warning shadow">
+              <div class="card-body">
+                <h5 class="m-0">College Admission Test</h5>
+                <p class="text-white-50 small m-0">
+                  <span id="admission-positive">0</span> Positive •
+                  <span id="admission-neutral">0</span> Neutral •
+                  <span id="admission-negative">0</span> Negative
+                </p>
+                <div class="mt-2">
+                  <span class="badge bg-light"><span id="admission-satisfaction">0</span>% Satisfaction</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="card bg-primary text-white shadow">
+              <div class="card-body">
+                <h5 class="m-0">Scholarship Services</h5>
+                <p class="text-white-50 small m-0">
+                  <span id="scholarship-positive">0</span> Positive •
+                  <span id="scholarship-neutral">0</span> Neutral •
+                  <span id="scholarship-negative">0</span> Negative
+                </p>
+                <div class="mt-2">
+                  <span class="badge bg-light"><span id="scholarship-satisfaction">0</span>% Satisfaction</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="card bg-danger text-white shadow">
+              <div class="card-body">
+                <h5 class="m-0">Library Facility</h5>
+                <p class="text-white-50 small m-0">
+                  <span id="library-positive">0</span> Positive •
+                  <span id="library-neutral">0</span> Neutral •
+                  <span id="library-negative">0</span> Negative
+                </p>
+                <div class="mt-2">
+                  <span class="badge bg-light"><span id="library-satisfaction">0</span>% Satisfaction</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12 mb-4">
+            <div class="card shadow">
+              <div class="card-header"><h6 class="text-primary fw-bold m-0">Action Items & Recommendations</h6></div>
+              <div class="card-body" id="action-items"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
