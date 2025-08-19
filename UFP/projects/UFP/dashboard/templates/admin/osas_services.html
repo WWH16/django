@@ -7,6 +7,7 @@
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'dashboard/js/osas_dashboard.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -224,8 +225,6 @@
     </div>
   </div>
 </div>
-
-<script src="{% static 'dashboard/js/osas_admin.js' %}"></script>
 {% endblock %}
 
 
