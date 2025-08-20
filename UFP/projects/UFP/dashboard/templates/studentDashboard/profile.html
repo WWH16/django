@@ -1,5 +1,58 @@
 {% extends 'studentDashboard/feedback_form.html' %}
 {% block dashboard_content %}
+
+<style>
+  /* Mobile modal adjustments */
+  @media (max-width: 576px) {
+    .modal-dialog {
+      width: auto;
+      max-width: 300px;       /* horizontal size */
+      max-height: 60vh;       /* vertical size */
+      margin: 0.5rem auto;    /* reduce top/bottom margin */
+    }
+
+    .modal-content {
+      max-height: 100%;
+      overflow-y: auto;       /* scroll if content exceeds modal height */
+    }
+
+    .modal-header,
+    .modal-footer {
+      padding: 0.25rem 0.75rem;  /* smaller padding */
+    }
+
+    .modal-body {
+      padding: 0.5rem 0.75rem;   /* smaller padding */
+      font-size: 0.9rem;         /* slightly smaller text */
+    }
+
+    /* Keep modal header clean & aligned */
+    .modal-header {
+      display: flex;
+      align-items: center;      /* vertically center items */
+      justify-content: space-between; /* title on left, X on right */
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+    }
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;   /* prevent text wrapping */
+      font-size: 1rem;
+    }
+
+    /* Fix modal close button (X) on mobile */
+    .modal-header .btn-close {
+      font-size: 0.9rem;       /* slightly smaller */
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: auto;       /* push to far right */
+    }
+  }
+</style>
+
 <div class="container py-4" style="background-color: #eeeeee; min-height: 100vh;">
   <h3 class="text-success mb-4" style="font-size: 1.3rem;">
     <i class="fas fa-user-circle"></i> My Profile
