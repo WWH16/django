@@ -16,25 +16,43 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Custom Styles -->
-  <style> 
-    .navbar-toggler-icon {
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
-    }
+ <style>
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+  }
+
+  /* Default: solid background for mobile/small screens */
+  .navbar {
+    transition: background 0.3s, box-shadow 0.3s;
+    background: #212529 !important;
+  }
+
+  .navbar.scrolled {
+    background: #212529 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Desktop: semi-transparent until scroll */
+  @media (min-width: 992px) {
     .navbar {
-      transition: background 0.3s, box-shadow 0.3s;
-      background: #212529 !important; /* solid background for all screens */
+      background: rgba(33, 37, 41, 0.7) !important;
+    }
+  }
+
+  /* Cellphone only: reduce navbar height */
+  @media (max-width: 767px) {
+    .navbar {
+      padding-top: 0.25rem;    /* smaller vertical space */
+      padding-bottom: 0.25rem;
+      background-color: #212529 !important; /* solid background */
     }
 
-    .navbar.scrolled {
-      background: #212529 !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .navbar-toggler {
+      padding: 0.25rem; /* optional: smaller hamburger spacing */
     }
-    @media (min-width: 992px) {
-      .navbar {
-        background: rgba(33, 37, 41, 0.7) !important; /* semi-transparent on desktop */
-      }
-    }
-  </style>
+  }
+</style>
+
 
   {% block extra_head %}{% endblock %}
 </head>
@@ -192,57 +210,71 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const navbar = document.querySelector("nav.navbar");
+    const navbarCollapse = document.getElementById("navbarNav");
 
+    // Navbar background toggle on scroll
     window.addEventListener("scroll", function () {
-        const scrollTop = window.scrollY;
-
-        if (scrollTop > 50) {
+        if (window.scrollY > 50) {
             navbar.classList.add("scrolled");
-        } else {
+        } else if (!navbarCollapse.classList.contains("show")) {
             navbar.classList.remove("scrolled");
         }
     });
-});
 
+    // Force background when mobile collapse opens
+    navbarCollapse.addEventListener("show.bs.collapse", function () {
+        navbar.classList.add("scrolled");
+    });
+    navbarCollapse.addEventListener("hidden.bs.collapse", function () {
+        if (window.scrollY <= 50) navbar.classList.remove("scrolled");
+    });
 
-  const serviceModal = document.getElementById('serviceModal');
-  serviceModal.addEventListener('show.bs.modal', function (event) {
-    const trigger = event.relatedTarget;
-    const title = trigger.getAttribute('data-title');
-    const body = trigger.getAttribute('data-body');
+    // Service modal setup
+    const serviceModal = document.getElementById('serviceModal');
+    if (serviceModal) {
+      serviceModal.addEventListener('show.bs.modal', function (event) {
+        const trigger = event.relatedTarget;
+        serviceModal.querySelector('.modal-title').textContent = trigger.getAttribute('data-title');
+        serviceModal.querySelector('.modal-body').textContent = trigger.getAttribute('data-body');
+      });
+    }
 
-    serviceModal.querySelector('.modal-title').textContent = title;
-    serviceModal.querySelector('.modal-body').textContent = body;
-  });
-
-
+    // Preloader fadeout
     window.addEventListener('load', function () {
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
-      preloader.style.opacity = '0';
-      setTimeout(() => {
-        preloader.style.display = 'none';
-      }, 600); // match the CSS transition time
-    }
-  });
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => { preloader.style.display = 'none'; }, 600);
+      }
+    });
 
-dropdownItems.forEach(item => {
-  item.addEventListener('click', function () {
-    const isModal = this.getAttribute('data-bs-toggle') === 'modal';
-    if (!isModal && navbarCollapse.classList.contains('show')) {
-      new bootstrap.Collapse(navbarCollapse).toggle();
-    }
-  });
-});
-    document.addEventListener("DOMContentLoaded", function () {
+    // Dropdown items auto-close collapse (mobile)
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+      item.addEventListener('click', function () {
+        if (this.getAttribute('data-bs-toggle') !== 'modal' && navbarCollapse.classList.contains('show')) {
+          new bootstrap.Collapse(navbarCollapse).toggle();
+        }
+      });
+    });
+
+    // Mobile nav: underline only on clicked link
+    const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+    navLinks.forEach(link => {
+      link.addEventListener("click", function () {
+        navLinks.forEach(l => l.classList.remove("active"));
+        this.classList.add("active");
+      });
+    });
+
+    // Nested dropdown toggles
     document.querySelectorAll('.toggle-dropdown').forEach(toggle => {
       toggle.addEventListener('click', function (e) {
         e.preventDefault();
-        const parent = this.closest('.dropdown');
-        parent.classList.toggle('dropdown-active');
+        this.closest('.dropdown').classList.toggle('dropdown-active');
       });
     });
-  });
+});
 </script>
 
 
