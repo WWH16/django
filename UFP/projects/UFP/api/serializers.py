@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from warehouse.models import FactFeedback, fact_teacher_evaluation
+from warehouse.models import FactFeedback, FactTeacherEvaluation
 
 class FactFeedbackSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
@@ -14,6 +14,6 @@ class TeacherEvaluationSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     sentiment = serializers.StringRelatedField()
     class Meta:
-        model = fact_teacher_evaluation
+        model = FactTeacherEvaluation
         fields = ['evaluation_id', 'teacher', 'student', 'sentiment', 'timestamp', 'comment_length', 'comments']
 

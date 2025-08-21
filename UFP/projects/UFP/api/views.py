@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from system.models import StudentFeedback
 from .serializers import FactFeedbackSerializer, TeacherEvaluationSerializer
-from warehouse.models import FactFeedback, fact_teacher_evaluation, dim_teacher
+from warehouse.models import FactFeedback, FactTeacherEvaluation, DimTeacher
 from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
@@ -33,14 +33,14 @@ def fact_feedback_list(request):
 def teacher_evaluation_list(request):
     paginator = PageNumberPagination()
     paginator.page_size = int(request.GET.get('page_size', 10))
-    evaluations = fact_teacher_evaluation.objects.select_related('teacher', 'student', 'sentiment').all()
+    evaluations = FactTeacherEvaluation.objects.select_related('teacher', 'student', 'sentiment').all()
     result_page = paginator.paginate_queryset(evaluations, request)
     serializer = TeacherEvaluationSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
 
 @api_view(['GET'])
 def teacher_evaluation_dashboard_stats(request):
-    qs = fact_teacher_evaluation.objects.all()
+    qs = FactTeacherEvaluation.objects.all()
     total = qs.count()
     positive = qs.filter(sentiment__label='Positive').count()
     neutral = qs.filter(sentiment__label='Neutral').count()
@@ -63,7 +63,7 @@ def recent_teacher_evaluations(request):
     limit = int(request.GET.get('limit', 5))  # Default to 5, allow customization
     
     evaluations = (
-        fact_teacher_evaluation.objects
+        FactTeacherEvaluation.objects
         .select_related('teacher', 'sentiment')
         .order_by('-timestamp')[:max(1, min(limit, 20))]  # Limit between 1-20
     )
@@ -100,14 +100,14 @@ def recent_teacher_evaluations(request):
 
 @api_view(['GET'])
 def teacher_performance_by_program(request):
-    from warehouse.models import fact_teacher_evaluation
+    from warehouse.models import FactTeacherEvaluation
     programs = [
         {"name": "BSIT"},
         {"name": "BSCS"},
         {"name": "BSEMC"},
     ]
     for prog in programs:
-        qs = fact_teacher_evaluation.objects.filter(teacher__program_name=prog["name"])
+        qs = FactTeacherEvaluation.objects.filter(teacher__program_name=prog["name"])
         prog["positive"] = qs.filter(sentiment__label="Positive").count()
         prog["neutral"] = qs.filter(sentiment__label="Neutral").count()
         prog["negative"] = qs.filter(sentiment__label="Negative").count()
@@ -115,10 +115,10 @@ def teacher_performance_by_program(request):
 
 @api_view(['GET'])
 def teacher_improvement_priority(request):
-    teachers = dim_teacher.objects.all()
+    teachers = DimTeacher.objects.all()
     priority_list = []
     for teacher in teachers:
-        evaluations = fact_teacher_evaluation.objects.filter(teacher=teacher)
+        evaluations = FactTeacherEvaluation.objects.filter(teacher=teacher)
         total = evaluations.count()
         if total == 0:
             continue
@@ -303,7 +303,7 @@ def recent_osas_feedback(request):
 
 # sa pag export ng teacher evaluation as csv per teacher
 from django.db.models import Count, Q, F, Subquery, OuterRef
-from warehouse.models import fact_teacher_evaluation as Eval
+from warehouse.models import FactTeacherEvaluation as Eval
 from system.models import Teacher
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -368,7 +368,7 @@ from django.db.models import Count, Q, OuterRef, Subquery, F
 from django.db.models.functions import ExtractYear
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from warehouse.models import fact_teacher_evaluation as Eval
+from warehouse.models import FactTeacherEvaluation as Eval
 from system.models import Teacher
 
 # Replace your existing teacher_evaluation_by_semester function with this fixed version:

@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'universityFeedbackPlatform',
@@ -105,8 +105,21 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
     }
-}
+}'''
 
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATABASES = {
+    'default': {   # main DB
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'universityFeedbackPlatform.sqlite3',
+    },
+    'warehouse': {  # warehouse DB
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'warehouse.sqlite3',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -342,12 +355,12 @@ UNFOLD = {
                 {
                     "title": _("DimTeacher"),
                     "icon": "people",
-                    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+                    "link": reverse_lazy("admin:warehouse_dimteacher_changelist"),
                 },
                 {
                     "title": _("FactTeacherEvaluation"),
                     "icon": "rate_review",
-                    "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
+                    "link": reverse_lazy("admin:warehouse_factteacherevaluation_changelist"),
                 },
                 {
                     "title": _("FactFeedback"),
@@ -434,11 +447,11 @@ UNFOLD = {
             },
             {
                 "title": _("DimTeacher"),
-                "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+                "link": reverse_lazy("admin:warehouse_dimteacher_changelist"),
             },
             {
                 "title": _("Fact Teacher Evaluation"),
-                "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
+                "link": reverse_lazy("admin:warehouse_factteacherevaluation_changelist"),
             },
             {
                 "title": _("Fact Feedback"),

@@ -258,7 +258,7 @@ class StudentPasswordResetConfirmView(PasswordResetConfirmView):
     
 # sa pag export ng teacher evaluation as csv per teacher
 from django.db.models import Count, Q, F, Subquery, OuterRef
-from warehouse.models import fact_teacher_evaluation as Eval
+from warehouse.models import FactTeacherEvaluation as Eval
 from system.models import Teacher
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
