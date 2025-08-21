@@ -38,7 +38,60 @@
     filter: blur(2px);
     pointer-events: none;
   }
+
+  @media (max-width: 576px) {
+    /* Success Modal (green one) */
+    #successModal .modal-dialog {
+      width: auto;
+      max-width: 300px;    /* horizontal size */
+      max-height: 60vh;    /* vertical size */
+      margin: 0.5rem auto;
+    }
+
+    #successModal .modal-content {
+      max-height: 100%;
+      overflow-y: auto;    /* scroll if content exceeds height */
+    }
+
+    #successModal .modal-header,
+    #successModal .modal-footer {
+      padding: 0.25rem 0.75rem; /* smaller padding */
+    }
+
+    #successModal .modal-body {
+      padding: 0.5rem 0.75rem;  /* smaller body padding */
+      font-size: 0.9rem;
+    }
+
+    /* Keep header clean & aligned */
+    #successModal .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* title on left, X on right */
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+    }
+
+    #successModal .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      font-size: 1rem;
+    }
+
+    /* Close button fix */
+    #successModal .modal-header .btn-close {
+      font-size: 0.9rem;   /* smaller size */
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: auto;   /* push far right */
+    }
+  }
+
+
 </style>
+
 
 <div class="container-fluid">
   <div class="row justify-content-center align-items-center" style="min-height: 80vh;">

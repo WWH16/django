@@ -114,15 +114,6 @@ def register_view(request):
             program_id = form.cleaned_data['program']
 
             # Password requirements validation
-            if len(password) < 8:
-                messages.error(request, 'Password must be at least 8 characters long.')
-                return redirect('register')
-
-            if not re.search(r'\d', password):
-                messages.error(request, 'Password must contain at least one number.')
-                return redirect('register')
-
-            # Existing validation checks
             if password != confirm_password:
                 messages.error(request, 'Passwords do not match.')
                 return redirect('register')

@@ -188,7 +188,6 @@ def profile(request):
             'user_email': user_email,
             'feedback_count': feedback_count,
         }
-        return render(request, 'studentDashboard/profile.html', context)
     except Student.DoesNotExist:
         context = {
             'student': None,
@@ -196,7 +195,7 @@ def profile(request):
             'user_email': request.user.email,
             'feedback_count': 0,
         }
-        return render(request, 'studentDashboard/profile.html', context)
+    return render(request, 'studentDashboard/profile.html', context)
 
 def give_feedback(request):
     cooldown_seconds =5
@@ -322,11 +321,6 @@ def edit_student_profile(request):
         messages.info(request, "No changes to update.")
     return redirect('profile')
 
-
-@login_required
-def profile(request):
-    # Render profile normally; errors (if any) come from change_password() via context
-    return render(request, "studentDashboard/profile.html", {})
 
 @login_required
 def change_password(request):

@@ -61,6 +61,45 @@
       pointer-events: none;
     }
 
+    /* Mobile modal adjustments */
+    @media (max-width: 576px) {
+      .modal-dialog {
+        width: auto;
+        max-width: 300px;
+        max-height: 70vh;
+        margin: 1.5rem auto;
+      }
+
+      .modal-content {
+        max-height: 100%;
+        overflow-y: auto;
+      }
+
+      .modal-header,
+      .modal-footer {
+        padding: 0.5rem 1rem;
+      }
+
+      .modal-body {
+        padding: 1rem;
+      }
+    }
+
+    /* Make all modal headers a single horizontal line */
+    .modal-header {
+      display: flex;
+      align-items: center;  /* vertically center icon and text */
+      gap: 0.5rem;          /* space between icon and text */
+      flex-wrap: nowrap;    /* prevent wrapping */
+    }
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;  /* prevent text wrapping */
+    }
+
     /* Burger menu animation styles */
     .sidebar-toggle {
       background: none;
