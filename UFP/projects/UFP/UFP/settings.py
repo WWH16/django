@@ -101,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'universityFeedbackPlatform',
         'USER': 'postgres',
-        'PASSWORD': 'Estevesjancen06-16-23',
+        'PASSWORD': 'lattu123',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -260,11 +260,17 @@ UNFOLD = {
             "collapsible":True,
             "items": [
                 {
-                    "title": _("OSAS Dashboard"),
-                    "icon": "dashboard",
-                    "link": reverse_lazy("admin_osas_services"),
-                    "permission": lambda request: request.user.is_staff,
-                },
+    "title": _("OSAS Dashboard"),
+    "icon": "pie_chart",
+    "link": reverse_lazy("admin_osas_services"),
+    "permission": lambda request: request.user.is_staff,
+},
+{
+    "title": _("Teacher's Evaluation"),
+    "icon": "school",
+    "link": reverse_lazy("admin_teachers_evaluation"),
+    "permission": lambda request: request.user.is_staff,
+},
             ],
         },
         {

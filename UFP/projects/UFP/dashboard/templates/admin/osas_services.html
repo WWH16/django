@@ -4,10 +4,10 @@
 {% block title %}OSAS Dashboard | {{ block.super }}{% endblock %}
 
 {% block extrahead %}
-  {{ block.super }}
-  <link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="{% static 'dashboard/js/osas_dashboard.js' %}"></script>
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'dashboard/js/osas_dashboard.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -68,7 +68,7 @@
               <div class="col me-2">
                 <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total Comments</span></div>
                 <div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
-                <div class="text-xs text-muted">This selection</div>
+                <div class="text-xs text-muted">All Time</div>
               </div>
             </div>
           </div>
@@ -89,14 +89,14 @@
               <button class="btn" type="button"><i class="fas fa-ellipsis-v text-muted"></i></button>
               <div class="dropdown-menu">
                 <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
-                <a class="dropdown-item osas-range" data-range="all"         href="#">All Time</a>
-                <a class="dropdown-item osas-range" data-range="7d"          href="#">Last 7 Days</a>
-                <a class="dropdown-item osas-range" data-range="30d"         href="#">Last 30 Days</a>
-                <a class="dropdown-item osas-range" data-range="this_month"  href="#">This Month</a>
-                <a class="dropdown-item osas-range" data-range="6m"          href="#">Last 6 Months</a>
-                <a class="dropdown-item osas-range" data-range="1y"          href="#">Last Year</a>
+                <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
+                <a class="dropdown-item osas-range" data-range="7d" href="#">Last 7 Days</a>
+                <a class="dropdown-item osas-range" data-range="30d" href="#">Last 30 Days</a>
+                <a class="dropdown-item osas-range" data-range="this_month" href="#">This Month</a>
+                <a class="dropdown-item osas-range" data-range="6m" href="#">Last 6 Months</a>
+                <a class="dropdown-item osas-range" data-range="1y" href="#">Last Year</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="osas-export-data" href="#">Export Chart View</a>
+                <a class="dropdown-item" id="osas-export-data" href="#">Export Data</a>
               </div>
             </div>
           </div>
@@ -115,14 +115,14 @@
               <button class="btn" type="button"><i class="fas fa-ellipsis-v text-muted"></i></button>
               <div class="dropdown-menu">
                 <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
-                <a class="dropdown-item osas-range" data-range="all"         href="#">All Time</a>
-                <a class="dropdown-item osas-range" data-range="7d"          href="#">Last 7 Days</a>
-                <a class="dropdown-item osas-range" data-range="30d"         href="#">Last 30 Days</a>
-                <a class="dropdown-item osas-range" data-range="this_month"  href="#">This Month</a>
-                <a class="dropdown-item osas-range" data-range="6m"          href="#">Last 6 Months</a>
-                <a class="dropdown-item osas-range" data-range="1y"          href="#">Last Year</a>
+                <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
+                <a class="dropdown-item osas-range" data-range="7d" href="#">Last 7 Days</a>
+                <a class="dropdown-item osas-range" data-range="30d" href="#">Last 30 Days</a>
+                <a class="dropdown-item osas-range" data-range="this_month" href="#">This Month</a>
+                <a class="dropdown-item osas-range" data-range="6m" href="#">Last 6 Months</a>
+                <a class="dropdown-item osas-range" data-range="1y" href="#">Last Year</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="osas-generate-report" href="#">Export Report</a>
+                <a class="dropdown-item" id="osas-generate-report" href="#">Export Data</a>
               </div>
             </div>
           </div>
@@ -140,91 +140,108 @@
       </div>
     </div>
 
+    <!-- ROW 1: Service Priority + Service Cards -->
+    <div class="row">
+<!-- PRIORITY + RECENT FEEDBACK + ACTIONS -->
+<div class="row equal-bottom-row">
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header"><h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6></div>
+      <div class="card-body" id="service-priority-list"></div>
+    </div>
+
+    <!-- Recent Feedback -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="text-primary fw-bold m-0">Recent Feedback</h6>
+      </div>
+      <ul class="list-group list-group-flush" id="recent-feedback-list">
+        <!-- filled by JS -->
+      </ul>
+    </div>
+  </div>
+
+  <div class="col">
     <div class="row">
       <div class="col-lg-6 mb-4">
-        <div class="card shadow mb-4">
-          <div class="card-header"><h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6></div>
-          <div class="card-body" id="service-priority-list"></div>
-        </div>
-        <div class="card shadow mb-4">
-          <div class="card-header"><h6 class="text-primary fw-bold m-0">Recent Feedback</h6></div>
-          <ul class="list-group list-group-flush" id="recent-feedback-list"></ul>
+        <div class="card bg-success text-white shadow">
+          <div class="card-body">
+            <h5 class="m-0">Wi-Fi Services</h5>
+            <p class="text-white-50 small m-0">
+              <span id="wifi-positive">0</span> Positive •
+              <span id="wifi-neutral">0</span> Neutral •
+              <span id="wifi-negative">0</span> Negative
+            </p>
+            <div class="mt-2">
+              <span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span></span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row">
-          <div class="col-lg-6 mb-4">
-            <div class="card bg-success text-white shadow">
-              <div class="card-body">
-                <h5 class="m-0">Wi-Fi Services</h5>
-                <p class="text-white-50 small m-0">
-                  <span id="wifi-positive">0</span> Positive •
-                  <span id="wifi-neutral">0</span> Neutral •
-                  <span id="wifi-negative">0</span> Negative
-                </p>
-                <div class="mt-2">
-                  <span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span>% Satisfaction</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 mb-4">
-            <div class="card bg-warning shadow">
-              <div class="card-body">
-                <h5 class="m-0">College Admission Test</h5>
-                <p class="text-white-50 small m-0">
-                  <span id="admission-positive">0</span> Positive •
-                  <span id="admission-neutral">0</span> Neutral •
-                  <span id="admission-negative">0</span> Negative
-                </p>
-                <div class="mt-2">
-                  <span class="badge bg-light"><span id="admission-satisfaction">0</span>% Satisfaction</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 mb-4">
-            <div class="card bg-primary text-white shadow">
-              <div class="card-body">
-                <h5 class="m-0">Scholarship Services</h5>
-                <p class="text-white-50 small m-0">
-                  <span id="scholarship-positive">0</span> Positive •
-                  <span id="scholarship-neutral">0</span> Neutral •
-                  <span id="scholarship-negative">0</span> Negative
-                </p>
-                <div class="mt-2">
-                  <span class="badge bg-light"><span id="scholarship-satisfaction">0</span>% Satisfaction</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 mb-4">
-            <div class="card bg-danger text-white shadow">
-              <div class="card-body">
-                <h5 class="m-0">Library Facility</h5>
-                <p class="text-white-50 small m-0">
-                  <span id="library-positive">0</span> Positive •
-                  <span id="library-neutral">0</span> Neutral •
-                  <span id="library-negative">0</span> Negative
-                </p>
-                <div class="mt-2">
-                  <span class="badge bg-light"><span id="library-satisfaction">0</span>% Satisfaction</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="col-lg-12 mb-4">
-            <div class="card shadow">
-              <div class="card-header"><h6 class="text-primary fw-bold m-0">Action Items & Recommendations</h6></div>
-              <div class="card-body" id="action-items"></div>
+      <div class="col-lg-6 mb-4">
+        <div class="card bg-warning text-white shadow">
+          <div class="card-body">
+            <h5 class="m-0">College Admission</h5>
+            <p class="text-white-50 small m-0">
+              <span id="admission-positive">0</span> Positive •
+              <span id="admission-neutral">0</span> Neutral •
+              <span id="admission-negative">0</span> Negative
+            </p>
+            <div class="mt-2">
+                <span class="badge bg-white text-warning fw-bold"><span id="admission-satisfaction">0</span></span>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="col-lg-6 mb-4">
+        <div class="card bg-primary text-white shadow">
+          <div class="card-body">
+            <h5 class="m-0">Scholarship Services</h5>
+            <p class="text-white-50 small m-0">
+              <span id="scholarship-positive">0</span> Positive •
+              <span id="scholarship-neutral">0</span> Neutral •
+              <span id="scholarship-negative">0</span> Negative
+            </p>
+            <div class="mt-2">
+              <span class="badge bg-light"><span id="scholarship-satisfaction">0</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-4">
+        <div class="card bg-danger text-white shadow">
+          <div class="card-body">
+            <h5 class="m-0">Library Facility</h5>
+            <p class="text-white-50 small m-0">
+              <span id="library-positive">0</span> Positive •
+              <span id="library-neutral">0</span> Neutral •
+              <span id="library-negative">0</span> Negative
+            </p>
+            <div class="mt-2">
+              <span class="badge bg-light"><span id="library-satisfaction">0</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="card shadow mb-4">
+        <div class="card-header"><span class="fw-bold">Action Items &amp; Recommendations</span></div>
+        <div class="card-body p-3">
+          <div id="action-items" class="action-items">
+            <div class="action-item is-review"><span class="label">Info:</span> Loading recommendations…</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
+
+
+  </div>
+</div>
 {% endblock %}
-
-
