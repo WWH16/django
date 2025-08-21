@@ -5,15 +5,18 @@
 {% block header_sub %}Welcome back to{% endblock %}
 
 {% block content %}
-<!-- Error Messages -->
+<!-- Messages Section -->
 {% if messages or form.errors or form.non_field_errors %}
     <div class="messages">
-        {% if form.errors or form.non_field_errors or messages %}
+        {% if form.errors or form.non_field_errors %}
             <div class="field-error">Please correct the errors below.</div>
         {% endif %}
         {% if messages %}
             {% for message in messages %}
-                <div class="field-error">{{ message }}</div>
+                <!-- ✅ updated: success vs error -->
+                <div class="{% if message.tags == 'success' %}field-success{% else %}field-error{% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
         {% if form.non_field_errors %}
@@ -23,6 +26,36 @@
         {% endif %}
     </div>
 {% endif %}
+
+<!-- Login Form -->
+<form method="post" action="{% url 'login_student' %}">
+    ...
+</form>
+
+<!-- ✅ Inline CSS for styling messages -->
+<style>
+.field-success {
+    background-color: #d4edda;   /* light green */
+    color: #155724;             /* dark green text */
+    border: 1px solid #c3e6cb;  /* green border */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.field-error {
+    background-color: #f8d7da;  /* light red */
+    color: #721c24;             /* dark red text */
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+</style>
+
+
 <!-- Login Form -->
 <form method="post" action="{% url 'login_student' %}">
     {% csrf_token %}
