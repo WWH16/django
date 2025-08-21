@@ -15,6 +15,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.template.response import TemplateResponse
 from django.contrib import admin
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.cache import never_cache
 
 # ---------- Sentiment API (cards/charts) ----------
 from django.http import JsonResponse
@@ -592,3 +593,9 @@ def teacher_evaluation(request):
     'cooldown_remaining': cooldown_remaining,
 })
     return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
+
+
+@login_required
+@never_cache
+def feedback_form_view(request):
+    return render(request, 'studentDashboard/feedback_form.html')
