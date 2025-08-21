@@ -399,6 +399,15 @@ def osas_services(request):
     return render(request, 'adminDashboard/osas-services.html')
 
 @staff_member_required
+def admin_teachers_evaluation(request):
+    """Render Teacher's Evaluation dashboard inside Unfold-themed admin shell with admin context."""
+    context = {
+        **admin.site.each_context(request),
+        "title": "Teacher's Evaluation Dashboard",
+    }
+    return TemplateResponse(request, 'admin/teachers_evaluation.html', context)
+
+@staff_member_required
 def admin_osas_services(request):
     """Render OSAS Services dashboard inside Unfold-themed admin shell with admin context."""
     context = {
@@ -406,6 +415,7 @@ def admin_osas_services(request):
         "title": "OSAS Services Dashboard",
     }
     return TemplateResponse(request, 'admin/osas_services.html', context)
+
 
 @login_required
 def teacher_evaluation_dashboard(request):

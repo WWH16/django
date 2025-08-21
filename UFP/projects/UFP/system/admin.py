@@ -122,13 +122,13 @@ class DimTeacherAdmin(ModelAdmin):
 
 @admin.register(fact_teacher_evaluation)
 class FactTeacherEvaluationAdmin(ModelAdmin):
-    list_display = ('teacher', 'timestamp', 'comments')
+    list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
     search_fields = ('teacher__teacher_name',)
     list_filter = ('sentiment', 'timestamp') 
 
 @admin.register(FactFeedback)
 class FactFeedbackAdmin(ModelAdmin):
-    list_display = ('student', 'service', 'sentiment', 'timestamp')
+    list_display = ('student', 'service','comments', 'sentiment', 'timestamp')
     search_fields = ('student__student_name', 'service__service_name')
     list_filter = ('service', 'sentiment', 'timestamp')
 
