@@ -29,35 +29,6 @@
 
 <!-- Login Form -->
 <form method="post" action="{% url 'login_student' %}">
-    ...
-</form>
-
-<!-- ✅ Inline CSS for styling messages -->
-<style>
-.field-success {
-    background-color: #d4edda;   /* light green */
-    color: #155724;             /* dark green text */
-    border: 1px solid #c3e6cb;  /* green border */
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.field-error {
-    background-color: #f8d7da;  /* light red */
-    color: #721c24;             /* dark red text */
-    border: 1px solid #f5c6cb;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-</style>
-
-
-<!-- Login Form -->
-<form method="post" action="{% url 'login_student' %}">
     {% csrf_token %}
     <div style="margin-bottom: 0.9rem;">
         <label for="student_id" class="form-label">
@@ -111,4 +82,27 @@
         <span class="material-symbols-outlined arrow">arrow_forward</span>
     </button>
 </form>
-{% endblock %}
+
+<!-- ✅ Inline CSS for styling messages -->
+<style>
+.field-success {
+    background-color: #d4edda;   /* light green */
+    color: #155724;             /* dark green text */
+    border: 1px solid #c3e6cb;  /* green border */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.field-error {
+    background-color: #f8d7da;  /* light red */
+    color: #721c24;             /* dark red text */
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+</style>
+{% endblock content %}
