@@ -428,9 +428,50 @@
     document.addEventListener('DOMContentLoaded', function() {
       const sidebarToggle = document.getElementById('sidebarToggleBtn');
       const sidebar = document.getElementById('studentSidebar');
+      const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+      function isMobile() {
+        return window.innerWidth <= 768;
+      }
+
+      function openSidebar() {
+        sidebar.classList.add('open');
+        sidebarToggle.classList.add('active'); // Animate burger on all screens
+        if (isMobile()) {
+          sidebarBackdrop.style.display = 'block';
+        }
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarToggle.classList.remove('active'); // Animate burger on all screens
+        if (isMobile()) {
+          sidebarBackdrop.style.display = 'none';
+        }
+      }
+
       sidebarToggle.addEventListener('click', function() {
-        sidebarToggle.classList.toggle('active');
-        sidebar.classList.toggle('open'); // Optional: for sidebar open/close logic
+        if (sidebar.classList.contains('open')) {
+          closeSidebar();
+        } else {
+          openSidebar();
+        }
+      });
+
+      sidebarBackdrop.addEventListener('click', function() {
+        closeSidebar();
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('open') && isMobile()) {
+          closeSidebar();
+        }
+      });
+
+      window.addEventListener('resize', function() {
+        if (!isMobile()) {
+          sidebarBackdrop.style.display = 'none';
+        }
       });
     });
   </script>
