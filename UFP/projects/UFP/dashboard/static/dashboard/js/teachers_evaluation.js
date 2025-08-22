@@ -1,6 +1,8 @@
 let barChart, pieChart;
 
-// ---- CSV helpers ----
+// =======================
+// CSV helpers
+// =======================
 function csvEscape(value) {
   const v = value ?? '';
   const s = String(v).replace(/"/g, '""');
@@ -21,16 +23,20 @@ function downloadCsv(filename, csvString) {
   URL.revokeObjectURL(url);
 }
 
+// =======================
 // Data Cache
+// =======================
 const cache = {
-  summary: null,
-  programs: null,
-  improvement: null,
-  recent: null,
-  teachers: null
+  summary: null,     // from /api/teacher-evaluation-dashboard/
+  programs: null,    // { programs: [...] } current (filtered) program performance
+  improvement: null, // from /api/teacher-improvement-priority/
+  recent: null,      // from /api/recent-teacher-evaluations/
+  teachers: null     // current (filtered) teacher performance array
 };
 
-// ---- Chart Colors (match KPI cards) ----
+// =======================
+// Chart Colors (match KPI cards)
+// =======================
 const sharedColors = {
   positive: '#198754',           // success
   neutral:  '#ffc107',           // warning
@@ -40,7 +46,9 @@ const sharedColors = {
   negativeBorder: '#dc3545'
 };
 
-// ---- Charts ----
+// =======================
+// Charts
+// =======================
 function initializeCharts() {
   const barCtx = document.getElementById('barChart').getContext('2d');
   barChart = new Chart(barCtx, {
@@ -83,9 +91,24 @@ function initializeCharts() {
   });
 }
 
-// ---- Year/Semester filter ----
+// Convenience: get current active year/semester from UI
+function getActiveFilter() {
+  const active = document.querySelector('.year-filter.active, .year-semester-filter.active');
+  let year = 'all', semester = null;
+  if (active) {
+    year = active.getAttribute('data-year') || 'all';
+    const s = active.getAttribute('data-semester');
+    if (s) semester = s;
+  }
+  return { year, semester };
+}
+
+// =======================
+// Year/Semester filter (updates charts + caches + recos)
+// =======================
 async function loadYearData(year, semester = null) {
   try {
+    // 1) Programs (for bar/pie + per-program cards + recos)
     let programsData;
     if (year === 'all') {
       const programsRes = await fetch('/api/teacher-performance-by-program/');
@@ -97,6 +120,7 @@ async function loadYearData(year, semester = null) {
       const data = await res.json();
       programsData = { programs: data.programs || [] };
     }
+    cache.programs = programsData;
 
     const programs = programsData.programs || [];
     const labels   = programs.map(p => p.name);
@@ -121,7 +145,25 @@ async function loadYearData(year, semester = null) {
     ];
     pieChart.update();
 
-    // Activate UI filters
+    // Update per-program cards
+    programs.forEach(prog => {
+      const key = (prog.name || '').toLowerCase();
+      const p = Number(prog.positive || 0), u = Number(prog.neutral || 0), n = Number(prog.negative || 0);
+      const t = p + u + n;
+      const rating = t ? Math.round((p / t) * 100) : 0;
+
+      const posEl = document.getElementById(`${key}-positive`);
+      const neuEl = document.getElementById(`${key}-neutral`);
+      const negEl = document.getElementById(`${key}-negative`);
+      const rateEl = document.getElementById(`${key}-rating`);
+
+      if (posEl) posEl.textContent = p.toLocaleString();
+      if (neuEl) neuEl.textContent = u.toLocaleString();
+      if (negEl) negEl.textContent = n.toLocaleString();
+      if (rateEl) rateEl.textContent = rating;
+    });
+
+    // 2) Activate UI filters
     document.querySelectorAll('.year-filter, .year-semester-filter').forEach(f => f.classList.remove('active'));
     if (semester) {
       document.querySelectorAll(`.year-semester-filter[data-year="${year}"][data-semester="${semester}"]`).forEach(el => el.classList.add('active'));
@@ -129,18 +171,25 @@ async function loadYearData(year, semester = null) {
       document.querySelectorAll(`.year-filter[data-year="${year}"]`).forEach(el => el.classList.add('active'));
     }
 
+    // 3) Teachers (for recos + CSV), fetch with same filter
+    await loadTeacherPerformanceData(year, semester);
+
+    // 4) Recompute recommendations using filtered caches
+    loadTeacherRecommendations();
   } catch (err) {
     console.error('Year filter failed:', err);
     alert('Failed to apply year filter. Please try again.');
   }
 }
 
-// ---- CSV Builder ----
-function buildTeacherCsv(cache, filterInfo = {}) {
+// =======================
+// CSV Builder
+// =======================
+function buildTeacherCsv(cacheObj, filterInfo = {}) {
   const now = new Date().toISOString();
   const { year = 'all', semester = null } = filterInfo;
 
-  const s = cache.summary || {};
+  const s = cacheObj.summary || {};
   const total = Number(s.total || 0);
   const pos = Number(s.positive || 0);
   const neu = Number(s.neutral || 0);
@@ -165,7 +214,7 @@ function buildTeacherCsv(cache, filterInfo = {}) {
     []
   ];
 
-  const programs = (cache.programs && cache.programs.programs) ? cache.programs.programs : [];
+  const programs = (cacheObj.programs && cacheObj.programs.programs) ? cacheObj.programs.programs : [];
   const programRows = programs.map(p => {
     const P = Number(p.positive || 0), U = Number(p.neutral || 0), N = Number(p.negative || 0);
     const T = P + U + N;
@@ -182,7 +231,7 @@ function buildTeacherCsv(cache, filterInfo = {}) {
     ...programRows
   ];
 
-  const teachers = Array.isArray(cache.teachers) ? cache.teachers : [];
+  const teachers = Array.isArray(cacheObj.teachers) ? cacheObj.teachers : [];
   const teacherRows = teachers
     .map(t => {
       const name = t.teacher || 'Unknown';
@@ -203,7 +252,9 @@ function buildTeacherCsv(cache, filterInfo = {}) {
   return arrayToCsv([...header, ...summary, ...perProgram, ...perTeacher]);
 }
 
-// ---- KPI + Pie ----
+// =======================
+// KPI + Pie
+// =======================
 function loadEvaluationData(data) {
   cache.summary = data;
 
@@ -220,14 +271,15 @@ function loadEvaluationData(data) {
   document.getElementById('pie-neutral-percent').textContent  = data.neutral_percent  || 0;
   document.getElementById('pie-negative-percent').textContent = data.negative_percent || 0;
 
-  // Pie slice values
   const chartData = [Number(data.positive || 0), Number(data.neutral || 0), Number(data.negative || 0)];
   pieChart.data.datasets[0].data = chartData;
   pieChart.data.datasets[0].backgroundColor = [sharedColors.positive, sharedColors.neutral, sharedColors.negative];
   pieChart.update();
 }
 
-// ---- Recent Evaluations ----
+// =======================
+// Recent Evaluations (sentiment label above comment)
+// =======================
 function loadRecentEvaluations() {
   fetch('/api/recent-teacher-evaluations/')
     .then(r => r.json())
@@ -237,25 +289,33 @@ function loadRecentEvaluations() {
       if (!list) return;
 
       list.innerHTML = '';
-      evaluations.forEach(ev => {
-        let badgeClass = 'bg-secondary', sentimentText = 'Review', textClass = 'text-muted';
-        if (ev.sentiment === 'Positive') { badgeClass = 'bg-success'; sentimentText = 'Good';     textClass = 'text-success'; }
-        else if (ev.sentiment === 'Negative') { badgeClass = 'bg-danger'; sentimentText = 'Critical'; textClass = 'text-danger'; }
-        else if (ev.sentiment === 'Neutral')  { badgeClass = 'bg-warning'; sentimentText = 'Review';  textClass = 'text-warning'; }
 
-        const safeQuote = (ev.comments || '').replace(/"/g, '&quot;');
+      const colorBySentiment = {
+        Positive: 'text-success',
+        Neutral:  'text-warning',
+        Negative: 'text-danger'
+      };
+
+      const labelBySentiment = {
+        Positive: 'Positive Sentiment',
+        Neutral:  'Neutral Sentiment',
+        Negative: 'Negative Sentiment'
+      };
+
+      evaluations.forEach(ev => {
+        const safeQuote   = (ev.comments || '').replace(/"/g, '&quot;');
         const programText = ev.program ? ` - ${ev.program}` : '';
+
+        const colorClass = colorBySentiment[ev.sentiment] || 'text-muted';
+        const labelText  = labelBySentiment[ev.sentiment] || 'Review';
 
         list.insertAdjacentHTML('beforeend', `
           <li class="list-group-item">
             <div class="row align-items-center no-gutters">
               <div class="col me-2">
                 <h6 class="mb-0"><strong>${ev.teacher || 'Teacher'}${programText}</strong></h6>
-                <span class="text-xs ${textClass}">${ev.sentiment || sentimentText} Sentiment</span>
+                <span class="text-xs ${colorClass}">${labelText}</span>
                 <p class="text-xs text-muted mb-0">"${safeQuote}"</p>
-              </div>
-              <div class="col-auto">
-                <span class="badge ${badgeClass}">${sentimentText}</span>
               </div>
             </div>
           </li>
@@ -265,50 +325,24 @@ function loadRecentEvaluations() {
     .catch(error => console.error('Failed to load recent evaluations:', error));
 }
 
-// ---- Program Performance ----
+// =======================
+// Program Performance (fills cache.programs on initial load)
+// =======================
 function loadProgramPerformance() {
-  fetch('/api/teacher-performance-by-program/')
+  return fetch('/api/teacher-performance-by-program/')
     .then(r => r.json())
     .then(data => {
       cache.programs = data;
-      const programs = data.programs || [];
-
-      // Update program cards
-      programs.forEach(prog => {
-        const key = (prog.name || '').toLowerCase();
-        const p = Number(prog.positive || 0), u = Number(prog.neutral || 0), n = Number(prog.negative || 0);
-        const t = p + u + n;
-        const rating = t ? Math.round((p / t) * 100) : 0;
-
-        const posEl = document.getElementById(`${key}-positive`);
-        const neuEl = document.getElementById(`${key}-neutral`);
-        const negEl = document.getElementById(`${key}-negative`);
-        const rateEl = document.getElementById(`${key}-rating`);
-
-        if (posEl) posEl.textContent = p.toLocaleString();
-        if (neuEl) neuEl.textContent = u.toLocaleString();
-        if (negEl) negEl.textContent = n.toLocaleString();
-        if (rateEl) rateEl.textContent = rating;
-      });
-
-      // Bar chart
-      const labels   = programs.map(p => p.name);
-      const positive = programs.map(p => Number(p.positive || 0));
-      const neutral  = programs.map(p => Number(p.neutral  || 0));
-      const negative = programs.map(p => Number(p.negative || 0));
-
-      barChart.data.labels = labels;
-      barChart.data.datasets = [
-        { label: 'Positive', backgroundColor: sharedColors.positive, borderColor: sharedColors.positiveBorder, borderWidth: 0, data: positive },
-        { label: 'Neutral',  backgroundColor: sharedColors.neutral,  borderColor: sharedColors.neutralBorder,  borderWidth: 0, data: neutral  },
-        { label: 'Negative', backgroundColor: sharedColors.negative, borderColor: sharedColors.negativeBorder, borderWidth: 0, data: negative }
-      ];
-      barChart.update();
+      return data;
     })
-    .catch(error => console.error('Failed to load program performance:', error));
+    .catch(error => {
+      console.error('Failed to load program performance:', error);
+    });
 }
 
-// ---- Teacher Improvement Priority ----
+// =======================
+// Teacher Improvement Priority (existing separate list)
+// =======================
 function loadTeacherImprovementPriority() {
   fetch('/api/teacher-improvement-priority/')
     .then(r => r.json())
@@ -338,20 +372,16 @@ function loadTeacherImprovementPriority() {
     .catch(error => console.error('Failed to load teacher improvement priority:', error));
 }
 
-// ---- Events ----
+// =======================
+// Events (Export + Filters)
+// =======================
 function initializeEventHandlers() {
   // Export
   document.querySelectorAll('.export-teacher-report, #export-teacher-report-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       try {
-        const activeFilter = document.querySelector('.year-filter.active, .year-semester-filter.active');
-        let year = 'all', semester = null;
-
-        if (activeFilter) {
-          year = activeFilter.getAttribute('data-year') || 'all';
-          semester = activeFilter.getAttribute('data-semester') || null;
-        }
+        const { year, semester } = getActiveFilter();
 
         let programsData, summaryData, teachersData;
 
@@ -419,7 +449,7 @@ function initializeEventHandlers() {
     el.addEventListener('click', async (e) => {
       e.preventDefault();
       const year = e.currentTarget.getAttribute('data-year');
-      loadYearData(year);
+      await loadYearData(year);
     });
   });
 
@@ -429,36 +459,141 @@ function initializeEventHandlers() {
       e.preventDefault();
       const year = e.currentTarget.getAttribute('data-year');
       const semester = e.currentTarget.getAttribute('data-semester');
-      loadYearData(year, semester);
+      await loadYearData(year, semester);
     });
   });
 }
 
-// ---- Teacher performance list (for CSV detail) ----
-function loadTeacherPerformanceData() {
-  fetch('/api/teacher-performance-by-teacher/')
+// =======================
+// Teacher performance list (supports filters)
+// =======================
+function loadTeacherPerformanceData(year = 'all', semester = null) {
+  let url = '/api/teacher-performance-by-teacher/';
+  if (year && year !== 'all') {
+    url += `?year=${encodeURIComponent(year)}`;
+    if (semester) url += `&semester=${encodeURIComponent(semester)}`;
+  }
+  return fetch(url)
     .then(r => r.json())
-    .then(data => { cache.teachers = data; })
+    .then(data => {
+      cache.teachers = data;
+      return data;
+    })
     .catch(error => console.error('Failed to load teacher performance data:', error));
 }
 
-// ---- Init ----
-window.addEventListener('DOMContentLoaded', () => {
+// =======================
+// Teacher Development Recommendations (JS-only)
+// =======================
+const REC_MIN_SAMPLE = 1; // set to 5 or 10 if you want to ignore tiny samples
+function loadTeacherRecommendations() {
+  const wrap = document.getElementById('static-recos');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  const teachers = Array.isArray(cache.teachers) ? cache.teachers : [];
+  const programs = (cache.programs && cache.programs.programs) ? cache.programs.programs : [];
+
+  // nothing to show
+  if (!teachers.length && !programs.length) {
+    wrap.innerHTML = `<div class="text-muted">No data available</div>`;
+    return;
+  }
+
+  const pct = (num, den) => den ? (num / den) * 100 : 0;
+
+  // pickers
+  const pickMostByShare = (arr, keyName) => {
+    let best = null;
+    arr.forEach(it => {
+      const pos = Number(it.positive || 0);
+      const neu = Number(it.neutral  || 0);
+      const neg = Number(it.negative || 0);
+      const tot = pos + neu + neg;
+      if (tot < REC_MIN_SAMPLE) return;
+      let share = 0;
+      if (keyName === 'positive') share = pct(pos, tot);
+      if (keyName === 'neutral')  share = pct(neu, tot);
+      if (keyName === 'negative') share = pct(neg, tot);
+      if (!best || share > best.share) best = { ...it, total: tot, share };
+    });
+    return best;
+  };
+
+  // build four items
+  const mostNegTeacher = pickMostByShare(teachers, 'negative');
+  const mostNeuTeacher = pickMostByShare(teachers, 'neutral');
+  const mostPosTeacher = pickMostByShare(teachers, 'positive');
+  const mostNegProgram = pickMostByShare(programs, 'negative');
+
+  // render helpers
+  const addItem = (cls, label, text) => {
+    wrap.insertAdjacentHTML('beforeend', `
+      <div class="action-item ${cls}">
+        <span class="label">${label}:</span> ${text}
+      </div>
+    `);
+  };
+
+  if (mostNegTeacher) {
+    addItem(
+      'is-urgent',
+      'Urgent',
+      `Most Negative feedback: ${mostNegTeacher.teacher || 'Teacher'}${mostNegTeacher.program ? ` (${mostNegTeacher.program})` : ''} — ${mostNegTeacher.share.toFixed(0)}% negative`
+    );
+  }
+  if (mostNeuTeacher) {
+    addItem(
+      'is-review',
+      'Review',
+      `Most Neutral teacher: ${mostNeuTeacher.teacher || 'Teacher'}${mostNeuTeacher.program ? ` (${mostNeuTeacher.program})` : ''} — ${mostNeuTeacher.share.toFixed(0)}% neutral`
+    );
+  }
+  if (mostPosTeacher) {
+    addItem(
+      'is-maintain',
+      'Recognize',
+      `Most Positive evaluation: ${mostPosTeacher.teacher || 'Teacher'}${mostPosTeacher.program ? ` (${mostPosTeacher.program})` : ''} — ${mostPosTeacher.share.toFixed(0)}% positive`
+    );
+  }
+  if (mostNegProgram) {
+    addItem(
+      'is-support',
+      'Support',
+      `Most Negative Evaluations Department: ${mostNegProgram.name || mostNegProgram.program || 'Program'} — ${mostNegProgram.share.toFixed(0)}% negative`
+    );
+  }
+
+  // if still empty (e.g., all below sample threshold)
+  if (!wrap.children.length) {
+    wrap.innerHTML = `<div class="text-muted">Insufficient data for recommendations</div>`;
+  }
+}
+
+// =======================
+// Init
+// =======================
+window.addEventListener('DOMContentLoaded', async () => {
   initializeCharts();
   initializeEventHandlers();
 
+  // Load static widgets
+  loadRecentEvaluations();
+  loadTeacherImprovementPriority();
+
+  // Initial summary (KPI + pie percentages)
   fetch('/api/teacher-evaluation-dashboard/')
     .then(res => res.json())
-    .then(data => {
-      loadEvaluationData(data);
-      loadRecentEvaluations();
-      loadProgramPerformance();
-      loadTeacherImprovementPriority();
-      loadTeacherPerformanceData();
-      loadYearData('all'); // default
-    })
+    .then(data => loadEvaluationData(data))
     .catch(error => {
-      console.error('Failed to load dashboard data:', error);
-      alert('Failed to load dashboard data. Please refresh the page.');
+      console.error('Failed to load dashboard summary:', error);
     });
+
+  // Initial program + teacher data (all time) then recos
+  try {
+    await loadYearData('all'); // sets cache.programs, fetches teachers with same filter, then renders recos
+  } catch (e) {
+    console.error('Initial load failed:', e);
+    alert('Failed to load dashboard data. Please refresh the page.');
+  }
 });
