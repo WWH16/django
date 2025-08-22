@@ -64,42 +64,23 @@
     /* Mobile modal adjustments */
     @media (max-width: 576px) {
       .modal-dialog {
-        width: auto;
-        max-width: 300px;
-        max-height: 70vh;
-        margin: 1.5rem auto;
+        width: 90vw;
+        max-width: 95vw;
+        margin: 1rem auto;
       }
-
       .modal-content {
-        max-height: 100%;
-        overflow-y: auto;
+        border-radius: 10px;
+        padding: 0.5rem;
+        font-size: 0.97em;
       }
-
       .modal-header,
       .modal-footer {
         padding: 0.5rem 1rem;
       }
-
       .modal-body {
-        padding: 1rem;
+        padding: 1rem 0.5rem;
       }
     }
-
-    /* Make all modal headers a single horizontal line */
-    .modal-header {
-      display: flex;
-      align-items: center;  /* vertically center icon and text */
-      gap: 0.5rem;          /* space between icon and text */
-      flex-wrap: nowrap;    /* prevent wrapping */
-    }
-
-    .modal-title {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      white-space: nowrap;  /* prevent text wrapping */
-    }
-
     /* Burger menu animation styles */
     .sidebar-toggle {
       background: none;
@@ -140,6 +121,12 @@
     .sidebar-toggle.active .burger-line:nth-child(3) {
       transform: translateY(-7px) rotate(-45deg);
     }
+    /* Only apply these styles on mobile screens */
+@media (max-width: 576px) {
+  .login-toast-mobile {
+    margin-top: 70px !important;
+  }
+}
   </style>
 </head>
 <body>
@@ -314,63 +301,26 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
-
-  <!-- LOGIN SUCCESS MODAL -->
-  {% for message in messages %}
-    {% if 'login' in message.tags %}
-    <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          
-          <!-- Modal Header -->
-          <div class="modal-header bg-success text-white">
-            <h1 class="modal-title fs-5">
-              <i class="fas fa-check-circle me-2"></i>{{ message }}
-            </h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-    
-          <!-- Modal Body -->
-          <div class="modal-body">
-            You have successfully logged in.
-          </div>
-    
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-    
-        </div>
+  <!-- Login Success Toast -->
+{% if show_login_toast %}
+  <div class="toast-container position-fixed top-0 end-0 p-3 login-toast-mobile" style="z-index: 1100;">
+    <div id="loginSuccessToast"
+         class="toast slide-in"
+         role="alert"
+         aria-live="assertive"
+         aria-atomic="true"
+         style="min-height: 110px;">
+      <div class="toast-header bg-success text-white" style="min-height: 30px;">
+        <span class="material-symbols-outlined me-2" style="font-size:1.3em;">check_circle</span>
+        <small class="me-auto">Welcome</small>
+        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body" style="padding: 0.50rem 1rem; color: #333;">
+        You have successfully logged in.
       </div>
     </div>
-    {% endif %}
-  {% endfor %}
-
-  <!-- FEEDBACK SUCCESS MODAL -->
-  {% for message in messages %}
-    {% if 'success' in message.tags and 'login' not in message.tags %}
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title" id="successModalLabel">
-              <span class="material-symbols-outlined me-2">check_circle</span>
-              Submitted Successfully
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body text-center">
-            {{ message }}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-  {% endfor %}
-
+  </div>
+{% endif %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Check which modal to show - prioritize login modal
@@ -475,6 +425,14 @@
         }
       });
     });
+    
+  document.addEventListener('DOMContentLoaded', function() {
+    var loginToastEl = document.getElementById('loginSuccessToast');
+    if (loginToastEl) {
+      var toast = new bootstrap.Toast(loginToastEl, { delay: 3500 });
+      toast.show();
+    }
+  });
   </script>
 
   <script>
