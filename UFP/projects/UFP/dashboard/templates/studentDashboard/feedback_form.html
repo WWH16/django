@@ -255,6 +255,7 @@
                     </div>
                   </div>
                   
+
                   <form method="post" action="" id="feedbackForm">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -431,6 +432,26 @@
       var toast = new bootstrap.Toast(loginToastEl, { delay: 3500 });
       toast.show();
     }
+  });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const logoutModalEl = document.getElementById('logoutModal');
+    const logoutModal = new bootstrap.Modal(logoutModalEl);
+
+    // Push initial state to prevent immediate back navigation
+    history.pushState(null, null, location.href);
+
+    // Detect back navigation
+    window.addEventListener('popstate', function () {
+      if (logoutModalEl) {
+        logoutModal.show(); // Show the modal
+        history.pushState(null, null, location.href); // Prevent further back navigation
+      } else {
+        console.error('Logout modal element not found.');
+      }
+    });
   });
   </script>
 </body>
