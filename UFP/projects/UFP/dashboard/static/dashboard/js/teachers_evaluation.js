@@ -133,7 +133,7 @@ async function loadYearData(year, semester = null) {
     barChart.data.datasets = [
       { label: 'Positive', backgroundColor: sharedColors.positive, borderColor: sharedColors.positiveBorder, borderWidth: 0, data: positive },
       { label: 'Neutral',  backgroundColor: sharedColors.neutral,  borderColor: sharedColors.neutralBorder,  borderWidth: 0, data: neutral  },
-      { label: 'Negative', backgroundColor: sharedColors.negative, borderColor: sharedColors.negativeBorder, borderWidth: 0, data: negative }
+      { label: 'Negative', backgroundColor: sharedColors.negative, borderColor: sharedColors.negativeBorder,  borderWidth: 0, data: negative }
     ];
     barChart.update();
 
@@ -536,31 +536,42 @@ function loadTeacherRecommendations() {
   };
 
   if (mostNegTeacher) {
+    const tLabel = `${mostNegTeacher.teacher || 'Teacher'}${mostNegTeacher.program ? ` (${mostNegTeacher.program})` : ''}`;
+    const percent = mostNegTeacher.share.toFixed(0);
     addItem(
       'is-urgent',
       'Urgent',
-      `Most Negative feedback: ${mostNegTeacher.teacher || 'Teacher'}${mostNegTeacher.program ? ` (${mostNegTeacher.program})` : ''} — ${mostNegTeacher.share.toFixed(0)}% negative`
+      `Professor, ${tLabel} has received the most negative feedback, with ${percent}% of evaluations marked as negative. Immediate action is recommended to address concerns.`
     );
   }
+
   if (mostNeuTeacher) {
+    const tLabel = `${mostNeuTeacher.teacher || 'Teacher'}${mostNeuTeacher.program ? ` (${mostNeuTeacher.program})` : ''}`;
+    const percent = mostNeuTeacher.share.toFixed(0);
     addItem(
       'is-review',
       'Review',
-      `Most Neutral teacher: ${mostNeuTeacher.teacher || 'Teacher'}${mostNeuTeacher.program ? ` (${mostNeuTeacher.program})` : ''} — ${mostNeuTeacher.share.toFixed(0)}% neutral`
+      `Professor, ${tLabel} stands out with the highest neutral feedback at ${percent}%. This suggests a need to review and provide guidance to move evaluations toward more positive outcomes.`
     );
   }
+
   if (mostPosTeacher) {
+    const tLabel = `${mostPosTeacher.teacher || 'Teacher'}${mostPosTeacher.program ? ` (${mostPosTeacher.program})` : ''}`;
+    const percent = mostPosTeacher.share.toFixed(0);
     addItem(
       'is-maintain',
       'Recognize',
-      `Most Positive evaluation: ${mostPosTeacher.teacher || 'Teacher'}${mostPosTeacher.program ? ` (${mostPosTeacher.program})` : ''} — ${mostPosTeacher.share.toFixed(0)}% positive`
+      `Professor, ${tLabel} has received the most positive evaluations, with ${percent}% marked as positive. Recognition and encouragement are recommended to reinforce this performance.`
     );
   }
+
   if (mostNegProgram) {
+    const pLabel = mostNegProgram.name || mostNegProgram.program || 'Program';
+    const percent = mostNegProgram.share.toFixed(0);
     addItem(
       'is-support',
       'Support',
-      `Most Negative Evaluations Department: ${mostNegProgram.name || mostNegProgram.program || 'Program'} — ${mostNegProgram.share.toFixed(0)}% negative`
+      `The ${pLabel} Department, received the highest negative evaluations, with ${percent}% of feedback classified as negative. Department-level support and development initiatives are advised.`
     );
   }
 

@@ -98,6 +98,7 @@ function markActiveChartMenu(key) {
 }
 
 /* ---------------- Action Items (pastel cards) ---------------- */
+/* ---------------- Action Items (pastel cards) ---------------- */
 function renderActionItems(data) {
   const target = document.getElementById('action-items'); if (!target) return;
 
@@ -128,23 +129,38 @@ function renderActionItems(data) {
   const blocks = [];
   const worst = byPctNegDesc[0];
   if (worst && worst.pctNeg >= URGENT_MIN) {
-    blocks.push({ cls: 'is-urgent',  label: 'Urgent:',   text: `${worst.name} Services needs immediate attention – ${worst.pctNeg}% negative feedback` });
+    blocks.push({
+      cls: 'is-urgent',
+      label: 'Urgent:',
+      text: `${worst.name} Services needs immediate attention, receiving ${worst.pctNeg}% negative feedback. Address concerns as soon as possible to improve service quality.`
+    });
   }
+
   const mostNeutral = byNeutralDesc[0];
   if (mostNeutral && mostNeutral.neu > 0) {
-    blocks.push({ cls: 'is-review',  label: 'Review:',   text: `${mostNeutral.name} Services has the most neutral comments, review to convert “meh” experiences into positives` });
+    blocks.push({
+      cls: 'is-review',
+      label: 'Review:',
+      text: `${mostNeutral.name} Services has the highest share of neutral comments. Focus on converting these average experiences into positive outcomes through improvements and engagement.`
+    });
   }
+
   const best = bySatisfactionDesc[0];
   if (best) {
-    blocks.push({ cls: 'is-maintain', label: 'Maintain:', text: `${best.name} Services showing excellent performance – ${best.sat}% satisfaction` });
+    blocks.push({
+      cls: 'is-maintain',
+      label: 'Maintain:',
+      text: `${best.name} Services is showing excellent performance with ${best.sat}% satisfaction. Maintain current practices and recognize this achievement to sustain success.`
+    });
   }
+
   if (!blocks.length) {
     blocks.push({ cls: '', label: 'Info:', text: 'Not enough data to form recommendations yet.' });
   }
 
-  target.innerHTML = blocks.map(b =>
-    `<div class="action-item ${b.cls}"><span class="label">${b.label}</span>${b.text}</div>`
-  ).join('');
+  target.innerHTML = blocks
+    .map(b => `<div class="action-item ${b.cls}"><span class="label">${b.label}</span> ${b.text}</div>`)
+    .join('');
 }
 
 /* ---------------- Recent feedback ---------------- */
