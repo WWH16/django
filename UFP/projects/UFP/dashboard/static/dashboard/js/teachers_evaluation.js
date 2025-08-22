@@ -227,7 +227,7 @@ function loadEvaluationData(data) {
   pieChart.update();
 }
 
-// ---- Recent Evaluations ----
+// ---- Recent Evaluations (show sentiment ABOVE the comment; no pill) ----
 function loadRecentEvaluations() {
   fetch('/api/recent-teacher-evaluations/')
     .then(r => r.json())
@@ -237,25 +237,33 @@ function loadRecentEvaluations() {
       if (!list) return;
 
       list.innerHTML = '';
-      evaluations.forEach(ev => {
-        let badgeClass = 'bg-secondary', sentimentText = 'Review', textClass = 'text-muted';
-        if (ev.sentiment === 'Positive') { badgeClass = 'bg-success'; sentimentText = 'Good';     textClass = 'text-success'; }
-        else if (ev.sentiment === 'Negative') { badgeClass = 'bg-danger'; sentimentText = 'Critical'; textClass = 'text-danger'; }
-        else if (ev.sentiment === 'Neutral')  { badgeClass = 'bg-warning'; sentimentText = 'Review';  textClass = 'text-warning'; }
 
-        const safeQuote = (ev.comments || '').replace(/"/g, '&quot;');
+      const colorBySentiment = {
+        Positive: 'text-success',
+        Neutral:  'text-warning',
+        Negative: 'text-danger'
+      };
+
+      const labelBySentiment = {
+        Positive: 'Positive Sentiment',
+        Neutral:  'Neutral Sentiment',
+        Negative: 'Negative Sentiment'
+      };
+
+      evaluations.forEach(ev => {
+        const safeQuote   = (ev.comments || '').replace(/"/g, '&quot;');
         const programText = ev.program ? ` - ${ev.program}` : '';
+
+        const colorClass = colorBySentiment[ev.sentiment] || 'text-muted';
+        const labelText  = labelBySentiment[ev.sentiment] || 'Review';
 
         list.insertAdjacentHTML('beforeend', `
           <li class="list-group-item">
             <div class="row align-items-center no-gutters">
               <div class="col me-2">
                 <h6 class="mb-0"><strong>${ev.teacher || 'Teacher'}${programText}</strong></h6>
-                <span class="text-xs ${textClass}">${ev.sentiment || sentimentText} Sentiment</span>
+                <span class="text-xs ${colorClass}">${labelText}</span>
                 <p class="text-xs text-muted mb-0">"${safeQuote}"</p>
-              </div>
-              <div class="col-auto">
-                <span class="badge ${badgeClass}">${sentimentText}</span>
               </div>
             </div>
           </li>
@@ -451,7 +459,7 @@ window.addEventListener('DOMContentLoaded', () => {
     .then(res => res.json())
     .then(data => {
       loadEvaluationData(data);
-      loadRecentEvaluations();
+      loadRecentEvaluations();           // now renders without sentiment
       loadProgramPerformance();
       loadTeacherImprovementPriority();
       loadTeacherPerformanceData();
