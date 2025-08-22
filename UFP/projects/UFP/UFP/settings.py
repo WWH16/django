@@ -331,26 +331,6 @@ UNFOLD = {
             "collapsible": True,
             "items": [
                 {
-                    "title": _("DimService"),
-                    "icon": "build",
-                    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
-                },
-                {
-                    "title": _("DimSentiment"),
-                    "icon": "emoji_emotions",
-                    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
-                },
-                {
-                    "title": _("DimStudent"),
-                    "icon": "person",
-                    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
-                },
-                {
-                    "title": _("DimTeacher"),
-                    "icon": "people",
-                    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
-                },
-                {
                     "title": _("FactTeacherEvaluation"),
                     "icon": "rate_review",
                     "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
