@@ -201,7 +201,22 @@ async function fetchRecentFeedback() {
   }
 }
 
-/* ---------------- Charts ---------------- */
+/* ---------------- Charts with Pastel Colors ---------------- */
+function getPastelColors(n) {
+  // Example pastel palette
+  const palette = [
+    'rgba(120,180,255,0.7)', // blue
+    'rgba(255,220,130,0.7)', // yellow
+    'rgba(255,140,140,0.7)', // pink
+    'rgba(180,255,200,0.7)', // mint
+    'rgba(255,180,220,0.7)', // light magenta
+    'rgba(200,180,255,0.7)', // lavender
+    'rgba(255,255,180,0.7)', // light yellow
+  ];
+  // Repeat colors if needed
+  return Array.from({length: n}, (_, i) => palette[i % palette.length]);
+}
+
 function renderCharts(data) {
   if (!data) return;
 
@@ -211,7 +226,7 @@ function renderCharts(data) {
         neg   = Number(data.negative || 0);
   const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
 
-  // PIE
+  // PIE CHART with pastel colors
   const pieCanvas = document.getElementById('osasPieChart');
   if (pieCanvas) {
     const pieCtx = pieCanvas.getContext('2d');
@@ -221,12 +236,41 @@ function renderCharts(data) {
         type: 'pie',
         data: {
           labels: ['Positive', 'Neutral', 'Negative'],
-          datasets: [{ backgroundColor: ['#198754', '#ffc107', '#dc3545'], data: pieData, borderWidth: 0 }]
+          datasets: [{
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.7)',   // pastel blue-green
+              'rgba(255, 205, 86, 0.7)',   // pastel yellow  
+              'rgba(255, 99, 132, 0.7)'    // pastel pink
+            ],
+            borderColor: [
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 205, 86, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            data: pieData, 
+            borderWidth: 1,
+            hoverOffset: 5,
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { position: 'bottom' } 
+          } 
+        }
       });
     } else {
-      osasPieChart.data.datasets[0].backgroundColor = ['#198754', '#ffc107', '#dc3545'];
+      osasPieChart.data.datasets[0].backgroundColor = [
+        'rgba(75, 192, 192, 0.3)',   // pastel blue-green
+        'rgba(255, 205, 86, 0.3)',   // pastel yellow
+        'rgba(255, 99, 132, 0.3)'    // pastel pink
+      ];
+      osasPieChart.data.datasets[0].borderColor = [
+        'rgba(75, 192, 192, 1)',
+        'rgba(255, 205, 86, 1)', 
+        'rgba(255, 99, 132, 1)'
+      ];
       osasPieChart.data.datasets[0].data = pieData;
       osasPieChart.update();
     }
@@ -235,7 +279,7 @@ function renderCharts(data) {
   const np = document.getElementById('osas-pie-neutral-percent');  if (np) np.textContent = pct(neu, total);
   const np2= document.getElementById('osas-pie-negative-percent'); if (np2) np2.textContent = pct(neg, total);
 
-  // BAR
+  // BAR CHART with pastel colors
   const barCanvas = document.getElementById('osasBarChart');
   if (barCanvas) {
     const serviceLabels = (data.services || []).map(s => s.name);
@@ -249,9 +293,30 @@ function renderCharts(data) {
       data: {
         labels: serviceLabels,
         datasets: [
-          { label: 'Positive', data: positiveData, backgroundColor: '#198754', borderWidth: 0, maxBarThickness: 48 },
-          { label: 'Neutral',  data: neutralData,  backgroundColor: '#ffc107', borderWidth: 0, maxBarThickness: 48 },
-          { label: 'Negative', data: negativeData, backgroundColor: '#dc3545', borderWidth: 0, maxBarThickness: 48 }
+          { 
+            label: 'Positive', 
+            data: positiveData, 
+            backgroundColor: 'rgba(75, 192, 192, 0.3)',  // pastel blue-green
+            borderColor: 'rgba(75, 192, 192, 3)',
+            borderWidth: 1, 
+            maxBarThickness: 48 
+          },
+          { 
+            label: 'Neutral',  
+            data: neutralData,  
+            backgroundColor: 'rgba(255, 205, 86, 0.3)',  // pastel yellow
+            borderColor: 'rgba(255, 205, 86, 2)',
+            borderWidth: 1, 
+            maxBarThickness: 48 
+          },
+          { 
+            label: 'Negative', 
+            data: negativeData, 
+            backgroundColor: 'rgba(255, 99, 132, 0.3)',  // pastel pink
+            borderColor: 'rgba(255, 99, 132, 2)',
+            borderWidth: 1, 
+            maxBarThickness: 48 
+          }
         ]
       },
       options: {
@@ -453,3 +518,32 @@ document.addEventListener('DOMContentLoaded', function () {
   const genReportItem = document.getElementById('osas-generate-report');
   if (genReportItem) genReportItem.addEventListener('click', (e) => { e.preventDefault(); exportChartView(); });
 });
+
+function getPriorityColor(priority) {
+  switch (priority) {
+    case 'Urgent':   return '#ff6384'; // pastel red
+    case 'Review':   return '#ffcd56'; // pastel yellow
+    case 'Maintain': return '#4bc0c0'; // pastel blue-green
+    default:         return '#cccccc'; // fallback
+  }
+}
+
+function renderServicePriority(priorities) {
+  const container = document.getElementById('service-priority-list');
+  container.innerHTML = '';
+  priorities.forEach(item => {
+    const color = getPriorityColor(item.status);
+    container.innerHTML += `
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="font-semibold">${item.name}</span>
+          <span class="font-semibold" style="color:${color};">${item.status}</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar" role="progressbar"
+            style="width: ${item.percent}%; background-color: ${color};"></div>
+        </div>
+      </div>
+    `;
+  });
+}

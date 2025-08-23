@@ -1,8 +1,24 @@
-{% extends "admin/base_site.html" %} {% load static %} {% block title %}OSAS
-Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
-}}
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}OSAS Dashboard | {{ block.super }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
 <link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}" />
 <script src="{% static 'dashboard/js/osas_admin.js' %}"></script>
+<style>
+  /* Light mode: white chart background */
+  body:not(.dark) #osasBarChart,
+  body:not(.dark) #osasPieChart {
+    background: #fff;
+  }
+  /* Dark mode: dark chart background */
+  body.dark #osasBarChart,
+  body.dark #osasPieChart {
+    background: #181f2a;
+  }
+</style>
 {% endblock %} {% block content %}
 <div class="osas-wrap">
   <div class="osas-container">
@@ -11,6 +27,7 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
       <div class="d-flex justify-content-between align-items-center mb-4">
         <a
           href="#"
+          id="export-report-btn"
           class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap d-none d-sm-inline-block border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
         >
           <i class="fas fa-download fa-sm text-white-50"></i> Export Report
@@ -31,13 +48,13 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
             >
               Positive Feedback
             </h2>
-            <span class="material-symbols-outlined text-success text-2xl"
+            <span class="material-symbols-outlined text-success text-2xl" style="color: #4bc0c0;"
               >sentiment_satisfied</span
             >
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-success text-xl mb-0">
+            <div class="font-bold text-success text-xl mb-0" style="color: #4bc0c0;">
               <span id="osas-positive-count">0</span>
             </div>
             <div class="text-xs text-muted">
@@ -57,13 +74,13 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
             >
               Neutral Feedback
             </h2>
-            <span class="material-symbols-outlined text-warning text-2xl"
-              >sentiment_neutral</span
-            >
+            <span class="material-symbols-outlined text-warning text-2xl" style="color: #ffcd56;">
+              sentiment_neutral
+            </span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-warning text-xl mb-0">
+            <div class="font-bold text-warning text-xl mb-0" style="color: #ffcd56;">
               <span id="osas-neutral-count">0</span>
             </div>
             <div class="text-xs text-muted">
@@ -83,13 +100,13 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
             >
               Negative Feedback
             </h2>
-            <span class="material-symbols-outlined text-danger text-2xl"
-              >sentiment_dissatisfied</span
-            >
+            <span class="material-symbols-outlined text-danger text-2xl" style="color: #ff6384;">
+              sentiment_dissatisfied
+            </span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-danger text-xl mb-0">
+            <div class="font-bold text-danger text-xl mb-0" style="color: #ff6384;">
               <span id="osas-negative-count">0</span>
             </div>
             <div class="text-xs text-muted">
@@ -109,13 +126,13 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
             >
               Total Comments
             </h2>
-            <span class="material-symbols-outlined text-primary text-2xl"
-              >chat</span
-            >
+            <span class="material-symbols-outlined text-primary text-2xl" style="color: #78b4ff;">
+              chat
+            </span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-primary text-xl mb-0">
+            <div class="font-bold text-primary text-xl mb-0" style="color: #78b4ff;">
               <span id="osas-total-count">0</span>
             </div>
             <div class="text-xs text-muted">All Time</div>
@@ -127,9 +144,9 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
     <!-- CHARTS -->
     <div class="row">
       <div class="col-lg-7 col-xl-8">
-        <div class="card shadow mb-4">
-          <div class="card-header">
-            <h6 class="text-primary fw-bold m-0">
+        <div class="bg-white border border-base-200 rounded-default shadow-xs p-4 mb-4 dark:bg-base-900 dark:border-base-800">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">
               Sentiment Distribution by OSAS Services
               <small class="text-muted" id="active-range-label">· All Time</small>
             </h6>
@@ -138,55 +155,91 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
                 <i class="fas fa-ellipsis-v text-muted"></i>
               </button>
               <div class="dropdown-menu">
-                <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
-                <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
-                <a class="dropdown-item osas-range" data-range="7d" href="#">Last 7 Days</a>
-                <a class="dropdown-item osas-range" data-range="30d" href="#">Last 30 Days</a>
-                <a class="dropdown-item osas-range" data-range="this_month" href="#">This Month</a>
-                <a class="dropdown-item osas-range" data-range="6m" href="#">Last 6 Months</a>
-                <a class="dropdown-item osas-range" data-range="1y" href="#">Last Year</a>
+                <p class="text-center dropdown-header">
+                  Filter Options (Charts Only):
+                </p>
+                <a class="dropdown-item osas-range" data-range="all" href="#"
+                  >All Time</a
+                >
+                <a class="dropdown-item osas-range" data-range="7d" href="#"
+                  >Last 7 Days</a
+                >
+                <a class="dropdown-item osas-range" data-range="30d" href="#"
+                  >Last 30 Days</a
+                >
+                <a
+                  class="dropdown-item osas-range"
+                  data-range="this_month"
+                  href="#"
+                  >This Month</a
+                >
+                <a class="dropdown-item osas-range" data-range="6m" href="#"
+                  >Last 6 Months</a
+                >
+                <a class="dropdown-item osas-range" data-range="1y" href="#"
+                  >Last Year</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="osas-export-data" href="#">Export Data</a>
+                <a class="dropdown-item" id="osas-export-data" href="#"
+                  >Export Data</a
+                >
               </div>
             </div>
           </div>
-          <div class="card-body">
-            <div class="chart-area">
-              <canvas id="osasBarChart"></canvas>
-            </div>
+          <div class="chart-area">
+            <canvas id="osasBarChart" style="width:100%;height:400px;"></canvas>
           </div>
         </div>
       </div>
       <div class="col-lg-5 col-xl-4">
-        <div class="card shadow mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
+        <div class="bg-white border border-base-200 rounded-default shadow-xs p-4 mb-4 dark:bg-base-900 dark:border-base-800">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">
+              Overall Sentiment Distribution
+            </h6>
             <div class="dropdown">
               <button class="btn" type="button">
                 <i class="fas fa-ellipsis-v text-muted"></i>
               </button>
               <div class="dropdown-menu">
-                <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
-                <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
-                <a class="dropdown-item osas-range" data-range="7d" href="#">Last 7 Days</a>
-                <a class="dropdown-item osas-range" data-range="30d" href="#">Last 30 Days</a>
-                <a class="dropdown-item osas-range" data-range="this_month" href="#">This Month</a>
-                <a class="dropdown-item osas-range" data-range="6m" href="#">Last 6 Months</a>
-                <a class="dropdown-item osas-range" data-range="1y" href="#">Last Year</a>
+                <p class="text-center dropdown-header">
+                  Filter Options (Charts Only):
+                </p>
+                <a class="dropdown-item osas-range" data-range="all" href="#"
+                  >All Time</a
+                >
+                <a class="dropdown-item osas-range" data-range="7d" href="#"
+                  >Last 7 Days</a
+                >
+                <a class="dropdown-item osas-range" data-range="30d" href="#"
+                  >Last 30 Days</a
+                >
+                <a
+                  class="dropdown-item osas-range"
+                  data-range="this_month"
+                  href="#"
+                  >This Month</a
+                >
+                <a class="dropdown-item osas-range" data-range="6m" href="#"
+                  >Last 6 Months</a
+                >
+                <a class="dropdown-item osas-range" data-range="1y" href="#"
+                  >Last Year</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="osas-generate-report" href="#">Export Data</a>
+                <a class="dropdown-item" id="osas-generate-report" href="#"
+                  >Export Data</a
+                >
               </div>
             </div>
           </div>
-          <div class="card-body">
-            <div class="chart-area">
-              <canvas id="osasPieChart"></canvas>
-            </div>
-            <div class="text-center small mt-1">
-              <span class="me-1"><i class="fas fa-circle text-success"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
-              <span class="me-1"><i class="fas fa-circle text-warning"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
-              <span class="me-1"><i class="fas fa-circle text-danger"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
-            </div>
+          <div class="chart-area">
+            <canvas id="osasPieChart" style="width:100%;height:400px;"></canvas>
+          </div>
+          <div class="text-center small mt-1">
+            <span class="me-1"><i class="fas fa-circle" style="color:#4bc0c0"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+            <span class="me-1"><i class="fas fa-circle" style="color:#ffcd56"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+            <span class="me-1"><i class="fas fa-circle" style="color:#ff6384"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
           </div>
         </div>
       </div>
@@ -199,86 +252,16 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
         <div
           class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4"
         >
-          <h2 class="font-semibold mb-2 text-primary-600 dark:text-primary-500">
+          <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">
             Service Improvement Priority
           </h2>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-          <div class="flex flex-col gap-4">
-            <!-- Wi-Fi -->
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span
-                  class="text-font-important-light dark:text-font-important-dark text-sm"
-                  >Wi-Fi</span
-                >
-                <span class="text-danger text-xs font-semibold">Urgent</span>
-              </div>
-              <div
-                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
-              >
-                <div
-                  class="h-1.5 bg-danger rounded-default"
-                  style="width: 60%"
-                ></div>
-              </div>
-            </div>
-            <!-- College admission tests -->
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span
-                  class="text-font-important-light dark:text-font-important-dark text-sm"
-                  >College admission tests</span
-                >
-                <span class="text-danger text-xs font-semibold">Urgent</span>
-              </div>
-              <div
-                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
-              >
-                <div
-                  class="h-1.5 bg-danger rounded-default"
-                  style="width: 55%"
-                ></div>
-              </div>
-            </div>
-            <!-- Library facility -->
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span
-                  class="text-font-important-light dark:text-font-important-dark text-sm"
-                  >Library facility</span
-                >
-                <span class="text-danger text-xs font-semibold">Urgent</span>
-              </div>
-              <div
-                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
-              >
-                <div
-                  class="h-1.5 bg-danger rounded-default"
-                  style="width: 80%"
-                ></div>
-              </div>
-            </div>
-            <!-- Scholarship -->
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span
-                  class="text-font-important-light dark:text-font-important-dark text-sm"
-                  >Scholarship</span
-                >
-                <span class="text-danger text-xs font-semibold">Urgent</span>
-              </div>
-              <div
-                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
-              >
-                <div
-                  class="h-1.5 bg-danger rounded-default"
-                  style="width: 75%"
-                ></div>
-              </div>
-            </div>
+          <div class="flex flex-col gap-4" id="service-priority-list">
+            <!-- This will be populated by JavaScript -->
           </div>
         </div>
 
+        
         <!-- Recent Feedback -->
         <div
           class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4"
@@ -306,13 +289,16 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
                 Wi-Fi Services
               </h2>
               <p class="text-xs text-muted mb-2">
-                6,230 Positive • 6,316 Neutral • 6,367 Negative
+                <span id="wifi-positive">0</span> Positive •
+                <span id="wifi-neutral">0</span> Neutral •
+                <span id="wifi-negative">0</span> Negative
               </p>
               <div class="mt-2">
                 <span
                   class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                  id="wifi-satisfaction"
                 >
-                  33% Satisfaction
+                  0% Satisfaction
                 </span>
               </div>
               <span
@@ -331,13 +317,16 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
                 College Admission
               </h2>
               <p class="text-xs text-muted mb-2">
-                6,249 Positive • 6,293 Neutral • 6,296 Negative
+                <span id="admission-positive">0</span> Positive •
+                <span id="admission-neutral">0</span> Neutral •
+                <span id="admission-negative">0</span> Negative
               </p>
               <div class="mt-2">
                 <span
                   class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                  id="admission-satisfaction"
                 >
-                  33% Satisfaction
+                  0% Satisfaction
                 </span>
               </div>
               <span
@@ -356,13 +345,16 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
                 Scholarship Services
               </h2>
               <p class="text-xs text-muted mb-2">
-                6,274 Positive • 6,236 Neutral • 6,206 Negative
+                <span id="scholarship-positive">0</span> Positive •
+                <span id="scholarship-neutral">0</span> Neutral •
+                <span id="scholarship-negative">0</span> Negative
               </p>
               <div class="mt-2">
                 <span
                   class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                  id="scholarship-satisfaction"
                 >
-                  34% Satisfaction
+                  0% Satisfaction
                 </span>
               </div>
               <span
@@ -381,13 +373,16 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
                 Library Facility
               </h2>
               <p class="text-xs text-muted mb-2">
-                6,159 Positive • 6,291 Neutral • 6,086 Negative
+                <span id="library-positive">0</span> Positive •
+                <span id="library-neutral">0</span> Neutral •
+                <span id="library-negative">0</span> Negative
               </p>
               <div class="mt-2">
                 <span
                   class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                  id="library-satisfaction"
                 >
-                  33% Satisfaction
+                  0% Satisfaction
                 </span>
               </div>
               <span
@@ -401,115 +396,31 @@ Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
           <div
             class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4"
           >
-            <h2
-              class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
-            >
-              Action Items &amp; Recommendations
+            <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">
+              Action Items & Recommendations
             </h2>
-            <div id="action-items" class="action-items">
-              <div class="action-item is-review">
-                <span class="label">Info:</span> Loading recommendations…
+            <div class="mt-3">
+              <div class="p-3 rounded-default border-start mb-3" style="border-left: 8px solid #ff6384; background: rgba(255,99,132,0.08);">
+                <strong style="color:#ff6384;">Urgent:</strong>
+                Wi-Fi Services needs immediate attention, receiving 34% negative feedback. Address concerns as soon as possible to improve service quality.
+              </div>
+              <div class="p-3 rounded-default border-start mb-3" style="border-left: 8px solid #ffcd56; background: rgba(255,205,86,0.08);">
+                <strong style="color:#ffcd56;">Review:</strong>
+                Wi-Fi Services has the highest share of neutral comments. Focus on converting these average experiences into positive outcomes through improvements and engagement.
+              </div>
+              <div class="p-3 rounded-default border-start" style="border-left: 8px solid #4bc0c0; background: rgba(75,192,192,0.08);">
+                <strong style="color:#4bc0c0;">Maintain:</strong>
+                Scholarship Services is showing excellent performance with 34% satisfaction. Maintain current practices and recognize this achievement to sustain success.
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-
   </div>
 </div>
 
 <!-- Chart.js Script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Bar Chart
-  const barCtx = document.getElementById('osasBarChart').getContext('2d');
-  const barLabels = [
-    "College admission tests",
-    "Library facility",
-    "Scholarship",
-    "Wi-Fi"
-  ];
-  const barData = {
-    labels: barLabels,
-    datasets: [
-      {
-        label: "Positive",
-        data: [6200, 6100, 6150, 6200],
-        backgroundColor: 'rgba(75, 192, 192, 0.2)', // pastel blue-green
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
-      },
-      {
-        label: "Neutral",
-        data: [6200, 6300, 6200, 6300],
-        backgroundColor: 'rgba(255, 205, 86, 0.2)', // pastel yellow
-        borderColor: 'rgba(255, 205, 86, 1)',
-        borderWidth: 1
-      },
-      {
-        label: "Negative",
-        data: [6200, 6000, 6200, 6300],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)', // pastel pink
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1
-      }
-    ]
-  };
-  const barConfig = {
-    type: 'bar',
-    data: barData,
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: true }
-      },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  };
-  new Chart(barCtx, barConfig);
-
-  // Pie Chart
-  const pieCtx = document.getElementById('osasPieChart').getContext('2d');
-  const pieData = {
-    labels: ['Positive', 'Neutral', 'Negative'],
-    datasets: [{
-      data: [33, 34, 33],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.7)', // pastel blue-green
-        'rgba(255, 205, 86, 0.7)', // pastel yellow
-        'rgba(255, 99, 132, 0.7)'  // pastel pink
-      ],
-      borderColor: [
-        'rgba(75, 192, 192, 1)',
-        'rgba(255, 205, 86, 1)',
-        'rgba(255, 99, 132, 1)'
-      ],
-      borderWidth: 1
-    }]
-  };
-  const pieConfig = {
-    type: 'pie',
-    data: pieData,
-    options: {
-      responsive: false,
-      aspectRatio: 1,
-      plugins: {
-        legend: { display: true, position: 'bottom' }
-      }
-    }
-  };
-  new Chart(pieCtx, pieConfig);
-
-  // Update percentage values below pie chart
-  document.getElementById('osas-pie-positive-percent').textContent = 33;
-  document.getElementById('osas-pie-neutral-percent').textContent = 34;
-  document.getElementById('osas-pie-negative-percent').textContent = 33;
-});
-</script>
 
 {% endblock %}
