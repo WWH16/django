@@ -1,76 +1,124 @@
-{% extends "admin/base_site.html" %}
-{% load static %}
-
-{% block title %}OSAS Dashboard | {{ block.super }}{% endblock %}
-
-{% block extrahead %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% extends "admin/base_site.html" %} {% load static %} {% block title %}OSAS
+Dashboard | {{ block.super }}{% endblock %} {% block extrahead %} {{ block.super
+}}
+<link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}" />
 <script src="{% static 'dashboard/js/osas_admin.js' %}"></script>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="osas-wrap">
   <div class="osas-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3 class="text-dark mb-0">OSAS Services Sentiment Analysis Dashboard</h3>
-      <a id="export-report-btn" class="btn btn-primary d-none d-sm-inline-block" href="#">
-        <i class="fas fa-download fa-sm text-white-50"></i> Export Report
-      </a>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <a
+          href="#"
+          class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap d-none d-sm-inline-block border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
+        >
+          <i class="fas fa-download fa-sm text-white-50"></i> Export Report
+        </a>
+      </div>
     </div>
 
     <!-- KPI CARDS -->
     <div class="row">
+      <!-- Positive Feedback -->
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="card shadow border-start-success">
-          <div class="card-body">
-            <div class="row align-items-center">
-              <div class="col me-2">
-                <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Positive Feedback</span></div>
-                <div class="text-dark fw-bold h5 mb-0"><span id="osas-positive-count">0</span></div>
-                <div class="text-xs text-muted"><span id="osas-positive-percent">0</span>% of total feedback</div>
-              </div>
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h2
+              class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark"
+            >
+              Positive Feedback
+            </h2>
+            <span class="material-symbols-outlined text-success text-2xl"
+              >sentiment_satisfied</span
+            >
+          </div>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <div>
+            <div class="font-bold text-success text-xl mb-0">
+              <span id="osas-positive-count">0</span>
+            </div>
+            <div class="text-xs text-muted">
+              <span id="osas-positive-percent">0</span>% of total feedback
             </div>
           </div>
         </div>
       </div>
+      <!-- Neutral Feedback -->
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="card shadow border-start-warning">
-          <div class="card-body">
-            <div class="row align-items-center">
-              <div class="col me-2">
-                <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span>Neutral Feedback</span></div>
-                <div class="text-dark fw-bold h5 mb-0"><span id="osas-neutral-count">0</span></div>
-                <div class="text-xs text-muted"><span id="osas-neutral-percent">0</span>% of total feedback</div>
-              </div>
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h2
+              class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark"
+            >
+              Neutral Feedback
+            </h2>
+            <span class="material-symbols-outlined text-warning text-2xl"
+              >sentiment_neutral</span
+            >
+          </div>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <div>
+            <div class="font-bold text-warning text-xl mb-0">
+              <span id="osas-neutral-count">0</span>
+            </div>
+            <div class="text-xs text-muted">
+              <span id="osas-neutral-percent">0</span>% of total feedback
             </div>
           </div>
         </div>
       </div>
+      <!-- Negative Feedback -->
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="card shadow border-start-danger">
-          <div class="card-body">
-            <div class="row align-items-center">
-              <div class="col me-2">
-                <div class="text-uppercase text-danger fw-bold text-xs mb-1"><span>Negative Feedback</span></div>
-                <div class="text-dark fw-bold h5 mb-0"><span id="osas-negative-count">0</span></div>
-                <div class="text-xs text-muted"><span id="osas-negative-percent">0</span>% of total feedback</div>
-              </div>
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h2
+              class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark"
+            >
+              Negative Feedback
+            </h2>
+            <span class="material-symbols-outlined text-danger text-2xl"
+              >sentiment_dissatisfied</span
+            >
+          </div>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <div>
+            <div class="font-bold text-danger text-xl mb-0">
+              <span id="osas-negative-count">0</span>
+            </div>
+            <div class="text-xs text-muted">
+              <span id="osas-negative-percent">0</span>% of total feedback
             </div>
           </div>
         </div>
       </div>
+      <!-- Total Comments -->
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="card shadow border-start-primary">
-          <div class="card-body">
-            <div class="row align-items-center">
-              <div class="col me-2">
-                <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Total Comments</span></div>
-                <div class="text-dark fw-bold h5 mb-0"><span id="osas-total-count">0</span></div>
-                <div class="text-xs text-muted">All Time</div>
-              </div>
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h2
+              class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark"
+            >
+              Total Comments
+            </h2>
+            <span class="material-symbols-outlined text-primary text-2xl"
+              >chat</span
+            >
+          </div>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <div>
+            <div class="font-bold text-primary text-xl mb-0">
+              <span id="osas-total-count">0</span>
             </div>
+            <div class="text-xs text-muted">All Time</div>
           </div>
         </div>
       </div>
@@ -86,7 +134,9 @@
               <small class="text-muted" id="active-range-label">· All Time</small>
             </h6>
             <div class="dropdown">
-              <button class="btn" type="button"><i class="fas fa-ellipsis-v text-muted"></i></button>
+              <button class="btn" type="button">
+                <i class="fas fa-ellipsis-v text-muted"></i>
+              </button>
               <div class="dropdown-menu">
                 <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
                 <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
@@ -112,7 +162,9 @@
           <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="text-primary fw-bold m-0">Overall Sentiment Distribution</h6>
             <div class="dropdown">
-              <button class="btn" type="button"><i class="fas fa-ellipsis-v text-muted"></i></button>
+              <button class="btn" type="button">
+                <i class="fas fa-ellipsis-v text-muted"></i>
+              </button>
               <div class="dropdown-menu">
                 <p class="text-center dropdown-header">Filter Options (Charts Only):</p>
                 <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
@@ -130,10 +182,10 @@
             <div class="chart-area">
               <canvas id="osasPieChart"></canvas>
             </div>
-            <div class="text-center small mt-4">
-              <span class="me-2"><i class="fas fa-circle text-success"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
-              <span class="me-2"><i class="fas fa-circle text-warning"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
-              <span class="me-2"><i class="fas fa-circle text-danger"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
+            <div class="text-center small mt-1">
+              <span class="me-1"><i class="fas fa-circle text-success"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+              <span class="me-1"><i class="fas fa-circle text-warning"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+              <span class="me-1"><i class="fas fa-circle text-danger"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
             </div>
           </div>
         </div>
@@ -142,106 +194,322 @@
 
     <!-- ROW 1: Service Priority + Service Cards -->
     <div class="row">
-<!-- PRIORITY + RECENT FEEDBACK + ACTIONS -->
-<div class="row equal-bottom-row">
-  <div class="col-lg-6 mb-4">
-    <div class="card shadow mb-4">
-      <div class="card-header"><h6 class="text-primary fw-bold m-0">Service Improvement Priority</h6></div>
-      <div class="card-body" id="service-priority-list"></div>
+      <div class="col-lg-6 mb-4">
+        <!-- Service Improvement Priority Card -->
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4"
+        >
+          <h2 class="font-semibold mb-2 text-primary-600 dark:text-primary-500">
+            Service Improvement Priority
+          </h2>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <div class="flex flex-col gap-4">
+            <!-- Wi-Fi -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span
+                  class="text-font-important-light dark:text-font-important-dark text-sm"
+                  >Wi-Fi</span
+                >
+                <span class="text-danger text-xs font-semibold">Urgent</span>
+              </div>
+              <div
+                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
+              >
+                <div
+                  class="h-1.5 bg-danger rounded-default"
+                  style="width: 60%"
+                ></div>
+              </div>
+            </div>
+            <!-- College admission tests -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span
+                  class="text-font-important-light dark:text-font-important-dark text-sm"
+                  >College admission tests</span
+                >
+                <span class="text-danger text-xs font-semibold">Urgent</span>
+              </div>
+              <div
+                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
+              >
+                <div
+                  class="h-1.5 bg-danger rounded-default"
+                  style="width: 55%"
+                ></div>
+              </div>
+            </div>
+            <!-- Library facility -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span
+                  class="text-font-important-light dark:text-font-important-dark text-sm"
+                  >Library facility</span
+                >
+                <span class="text-danger text-xs font-semibold">Urgent</span>
+              </div>
+              <div
+                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
+              >
+                <div
+                  class="h-1.5 bg-danger rounded-default"
+                  style="width: 80%"
+                ></div>
+              </div>
+            </div>
+            <!-- Scholarship -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span
+                  class="text-font-important-light dark:text-font-important-dark text-sm"
+                  >Scholarship</span
+                >
+                <span class="text-danger text-xs font-semibold">Urgent</span>
+              </div>
+              <div
+                class="bg-gray-100 dark:bg-base-800 rounded-default overflow-hidden"
+              >
+                <div
+                  class="h-1.5 bg-danger rounded-default"
+                  style="width: 75%"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Feedback -->
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4"
+        >
+          <h2
+            class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
+          >
+            Recent Feedbacks
+          </h2>
+          <ul class="list-group list-group-flush" id="recent-feedback-list">
+            <!-- filled by JS -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+            >
+              <h2
+                class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
+              >
+                Wi-Fi Services
+              </h2>
+              <p class="text-xs text-muted mb-2">
+                6,230 Positive • 6,316 Neutral • 6,367 Negative
+              </p>
+              <div class="mt-2">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                >
+                  33% Satisfaction
+                </span>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl"
+                >wifi</span
+              >
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+            >
+              <h2
+                class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
+              >
+                College Admission
+              </h2>
+              <p class="text-xs text-muted mb-2">
+                6,249 Positive • 6,293 Neutral • 6,296 Negative
+              </p>
+              <div class="mt-2">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                >
+                  33% Satisfaction
+                </span>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl"
+                >school</span
+              >
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+            >
+              <h2
+                class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
+              >
+                Scholarship Services
+              </h2>
+              <p class="text-xs text-muted mb-2">
+                6,274 Positive • 6,236 Neutral • 6,206 Negative
+              </p>
+              <div class="mt-2">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                >
+                  34% Satisfaction
+                </span>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl"
+                >volunteer_activism</span
+              >
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800"
+            >
+              <h2
+                class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
+              >
+                Library Facility
+              </h2>
+              <p class="text-xs text-muted mb-2">
+                6,159 Positive • 6,291 Neutral • 6,086 Negative
+              </p>
+              <div class="mt-2">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold"
+                >
+                  33% Satisfaction
+                </span>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl"
+                >local_library</span
+              >
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div
+            class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4"
+          >
+            <h2
+              class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark"
+            >
+              Action Items &amp; Recommendations
+            </h2>
+            <div id="action-items" class="action-items">
+              <div class="action-item is-review">
+                <span class="label">Info:</span> Loading recommendations…
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Recent Feedback -->
-    <div class="card shadow mb-4">
-      <div class="card-header py-3">
-        <h6 class="text-primary fw-bold m-0">Recent Feedbacks</h6>
-      </div>
-      <ul class="list-group list-group-flush" id="recent-feedback-list">
-        <!-- filled by JS -->
-      </ul>
-    </div>
-  </div>
 
-  <div class="col">
-    <div class="row">
-      <div class="col-lg-6 mb-4">
-        <div class="card bg-success text-white shadow">
-          <div class="card-body">
-            <h5 class="m-0">Wi-Fi Services</h5>
-            <p class="text-white-50 small m-0">
-              <span id="wifi-positive">0</span> Positive •
-              <span id="wifi-neutral">0</span> Neutral •
-              <span id="wifi-negative">0</span> Negative
-            </p>
-            <div class="mt-2">
-              <span class="badge bg-light text-success"><span id="wifi-satisfaction">0</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6 mb-4">
-        <div class="card bg-warning text-white shadow">
-          <div class="card-body">
-            <h5 class="m-0">College Admission</h5>
-            <p class="text-white-50 small m-0">
-              <span id="admission-positive">0</span> Positive •
-              <span id="admission-neutral">0</span> Neutral •
-              <span id="admission-negative">0</span> Negative
-            </p>
-            <div class="mt-2">
-                <span class="badge bg-white text-warning fw-bold"><span id="admission-satisfaction">0</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6 mb-4">
-        <div class="card bg-primary text-white shadow">
-          <div class="card-body">
-            <h5 class="m-0">Scholarship Services</h5>
-            <p class="text-white-50 small m-0">
-              <span id="scholarship-positive">0</span> Positive •
-              <span id="scholarship-neutral">0</span> Neutral •
-              <span id="scholarship-negative">0</span> Negative
-            </p>
-            <div class="mt-2">
-              <span class="badge bg-light"><span id="scholarship-satisfaction">0</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6 mb-4">
-        <div class="card bg-danger text-white shadow">
-          <div class="card-body">
-            <h5 class="m-0">Library Facility</h5>
-            <p class="text-white-50 small m-0">
-              <span id="library-positive">0</span> Positive •
-              <span id="library-neutral">0</span> Neutral •
-              <span id="library-negative">0</span> Negative
-            </p>
-            <div class="mt-2">
-              <span class="badge bg-light"><span id="library-satisfaction">0</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="card shadow mb-4">
-        <div class="card-header"><h6 class="text-primary fw-bold m-0">Action Items &amp; Recommendations</h6></div>
-        <div class="card-body p-3">
-          <div id="action-items" class="action-items">
-            <div class="action-item is-review"><span class="label">Info:</span> Loading recommendations…</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
   </div>
 </div>
 
+<!-- Chart.js Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Bar Chart
+  const barCtx = document.getElementById('osasBarChart').getContext('2d');
+  const barLabels = [
+    "College admission tests",
+    "Library facility",
+    "Scholarship",
+    "Wi-Fi"
+  ];
+  const barData = {
+    labels: barLabels,
+    datasets: [
+      {
+        label: "Positive",
+        data: [6200, 6100, 6150, 6200],
+        backgroundColor: 'rgba(75, 192, 192, 0.2)', // pastel blue-green
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      },
+      {
+        label: "Neutral",
+        data: [6200, 6300, 6200, 6300],
+        backgroundColor: 'rgba(255, 205, 86, 0.2)', // pastel yellow
+        borderColor: 'rgba(255, 205, 86, 1)',
+        borderWidth: 1
+      },
+      {
+        label: "Negative",
+        data: [6200, 6000, 6200, 6300],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // pastel pink
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }
+    ]
+  };
+  const barConfig = {
+    type: 'bar',
+    data: barData,
+    options: {
+      responsive: false,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  };
+  new Chart(barCtx, barConfig);
 
-  </div>
-</div>
+  // Pie Chart
+  const pieCtx = document.getElementById('osasPieChart').getContext('2d');
+  const pieData = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      data: [33, 34, 33],
+      backgroundColor: [
+        'rgba(75, 192, 192, 0.7)', // pastel blue-green
+        'rgba(255, 205, 86, 0.7)', // pastel yellow
+        'rgba(255, 99, 132, 0.7)'  // pastel pink
+      ],
+      borderColor: [
+        'rgba(75, 192, 192, 1)',
+        'rgba(255, 205, 86, 1)',
+        'rgba(255, 99, 132, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+  const pieConfig = {
+    type: 'pie',
+    data: pieData,
+    options: {
+      responsive: false,
+      aspectRatio: 1,
+      plugins: {
+        legend: { display: true, position: 'bottom' }
+      }
+    }
+  };
+  new Chart(pieCtx, pieConfig);
+
+  // Update percentage values below pie chart
+  document.getElementById('osas-pie-positive-percent').textContent = 33;
+  document.getElementById('osas-pie-neutral-percent').textContent = 34;
+  document.getElementById('osas-pie-negative-percent').textContent = 33;
+});
+</script>
+
 {% endblock %}
