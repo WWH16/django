@@ -15,6 +15,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.template.response import TemplateResponse
 from django.contrib import admin
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.cache import never_cache
 
 # ---------- Sentiment API (cards/charts) ----------
 from django.http import JsonResponse
@@ -198,10 +199,9 @@ def profile(request):
     return render(request, 'studentDashboard/profile.html', context)
 
 def give_feedback(request):
-    cooldown_seconds =5
+    cooldown_seconds = 5
     now = timezone.now()
 
-    # Debug logs
     print('DEBUG: request.user:', request.user)
     print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
     print('DEBUG: All Student IDs:', list(Student.objects.values_list('studentID', flat=True)))
@@ -212,20 +212,27 @@ def give_feedback(request):
         messages.error(request, 'Student profile not found.')
         return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': 0})
 
-    # --- Refactored cooldown logic ---
     last_feedback = StudentFeedback.objects.filter(student=student).order_by('-timestamp').first()
     cooldown_remaining = max(
         0,
         cooldown_seconds - int((now - last_feedback.timestamp).total_seconds())
     ) if last_feedback else 0
-    # ---------------------------------
+
+    # Detect if we just logged in (message with 'login' tag)
+    show_login_toast = False
+    for message in messages.get_messages(request):
+        if 'login' in message.tags and message.level_tag == 'success':
+            show_login_toast = True
+            break
 
     if request.method == 'POST':
         if cooldown_remaining > 0:
             messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
-            return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': cooldown_remaining})
+            return render(request, 'studentDashboard/feedback_form.html', {
+                'cooldown_remaining': cooldown_remaining,
+                'show_login_toast': show_login_toast
+            })
 
-        # Debug logs
         print('DEBUG: request.user:', request.user)
         print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
         from system.models import Student as StudentModel
@@ -236,7 +243,10 @@ def give_feedback(request):
 
         if not service_name or not feedback_text:
             messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'studentDashboard/feedback_form.html')
+            return render(request, 'studentDashboard/feedback_form.html', {
+                'cooldown_remaining': cooldown_remaining,
+                'show_login_toast': show_login_toast
+            })
 
         try:
             student = Student.objects.get(studentID=request.user.username)
@@ -258,7 +268,10 @@ def give_feedback(request):
         except Exception as e:
             messages.error(request, f'Error submitting feedback: {str(e)}')
 
-    return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': cooldown_remaining})
+    return render(request, 'studentDashboard/feedback_form.html', {
+        'cooldown_remaining': cooldown_remaining,
+        'show_login_toast': show_login_toast
+    })
 
 
 from system.models import TeacherEvaluation, Teacher, Department, Program
@@ -592,3 +605,9 @@ def teacher_evaluation(request):
     'cooldown_remaining': cooldown_remaining,
 })
     return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
+
+
+@login_required
+@never_cache
+def feedback_form_view(request):
+    return render(request, 'studentDashboard/feedback_form.html')

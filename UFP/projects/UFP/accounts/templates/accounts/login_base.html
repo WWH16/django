@@ -20,86 +20,79 @@
         .form-required { color: #ef4444; }
         .form-input { border: 1px solid #e5e7eb; background: #fff; border-width: 2px; font-size: 0.92rem; font-weight: 500; border-radius: 0.4rem; padding: 0.5rem 0.6rem; margin-top: 0.25rem; margin-bottom: 0.25rem; width: 100%; }
         .form-input:focus { border-color: #009900; outline: none; border-width: 2px; }
-.field-error {
-    padding: 12px;
-    border-radius: 6px;
-    background-color: #ffdcdc;
-    border: 1px solid #ffdcdc;
-    color: #b91c1c;
-    font-size: 0.890rem;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    width: 100%;
-    box-sizing: border-box;
-}
-
+        .field-error {
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #ffdcdc;
+            border: 1px solid #ffdcdc;
+            color: #b91c1c;
+            font-size: 0.890rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
         .btn-primary { background: #009900; color: #fff; font-weight: 600; border: none; border-radius: 0.4rem; padding: 0.8em 0.75em; width: 100%; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; cursor: pointer; transition: background 0.2s; }
-        .btn-primary .arrow {
-    left: 0;
-    transition: left 0.2s;
-    position: relative;
-}
-.btn-primary:hover .arrow {
-    left: 4px;
-}
+        .btn-primary .arrow { left: 0; transition: left 0.2s; position: relative; }
+        .btn-primary:hover .arrow { left: 4px; }
+
         .arrow { font-family: 'Material Symbols Outlined'; font-size: 1rem; vertical-align: middle; transition: right 0.2s, left 0.2s; position: relative; right: 0; left: 0; }
         .back-link { display: flex; align-items: center; gap: 0.45rem; font-weight: 500; color: #009900; text-decoration: none; font-size: 0.89rem; transition: color 0.2s; }
         .back-link .arrow { left: 0; transition: left 0.2s; }
         .back-link:hover .arrow { left: -4px; }
+
         .top-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: flex-start; align-items: center; padding: 0.6rem 0.4rem; z-index: 15; }
+
         @media (max-width: 480px) {
             .card { max-width: 100%; padding: 0 0.3rem; }
             .top-bar { padding: 0.4rem 0.4rem; }
             .divider { margin-bottom: 16px; padding-bottom: 12px; }
+            /* Fix overlap with header on small screens */
+            .flex-center { padding-top: 3.2rem; }
         }
+
         .btn-select {
-    background: #fff;
-    color: #009900;
-    font-weight: 600;
-    border: 1.5px solid #009900;
-    border-radius: 0.4rem;
-    padding: 0.7em 0.75em;
-    width: 100%;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    cursor: pointer;
-    margin-bottom: 0.7rem;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-    text-decoration: none;
-}
-.btn-select:hover {
-    background: #009900;
-    color: #fff;
-    border-color: #009900;
-}
-.divider-or {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 18px 0;
-    font-size: 0.93rem;
-    color: #888;
-    gap: 0.7rem;
-}
-.divider-line {
-    flex: 1;
-    height: 1px;
-    background: #e5e7eb;
-}
-.info-text {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 0.89rem;
-    color: #888; /* Muted gray */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-}
+            background: #fff;
+            color: #009900;
+            font-weight: 600;
+            border: 1.5px solid #009900;
+            border-radius: 0.4rem;
+            padding: 0.7em 0.75em;
+            width: 100%;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            text-decoration: none;
+        }
+        .btn-select:hover { background: #009900; color: #fff; border-color: #009900; }
+
+        .divider-or {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 18px 0;
+            font-size: 0.93rem;
+            color: #888;
+            gap: 0.7rem;
+        }
+        .divider-line { flex: 1; height: 1px; background: #e5e7eb; }
+
+        .info-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.89rem;
+            color: #888; /* Muted gray */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
 
     </style>
     {% block extra_css %}{% endblock %}

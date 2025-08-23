@@ -98,7 +98,6 @@ function markActiveChartMenu(key) {
 }
 
 /* ---------------- Action Items (pastel cards) ---------------- */
-/* ---------------- Action Items (pastel cards) ---------------- */
 function renderActionItems(data) {
   const target = document.getElementById('action-items'); if (!target) return;
 
