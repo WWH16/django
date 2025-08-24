@@ -6,8 +6,9 @@
   {% block extrahead %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}" />
+  <!-- Load Chart.js first so osas_admin.js can register plugins and use Chart API -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="{% static 'dashboard/js/osas_admin.js' %}"></script>
-  </style>
   {% endblock %} {% block content %}
   <div class="osas-wrap">
     <div class="osas-container">
@@ -409,7 +410,5 @@
     </div>
   </div>
 
-  <!-- Chart.js Script -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script>
-
+  <!-- Chart.js already loaded in the head. Removed duplicate include. -->
   {% endblock %}

@@ -6,9 +6,51 @@ let chartData = null;
 let isChartLoading = false;
 let chartRange = { key: 'all', start: null, end: null };
 
+/* ---------------- Debug panel (temporary) ---------------- */
+function ensureDebugPanel() {
+  if (document.getElementById('osas-debug-panel')) return;
+  try {
+    const d = document.createElement('div');
+    d.id = 'osas-debug-panel';
+    d.style.position = 'fixed';
+    d.style.right = '12px';
+    d.style.bottom = '12px';
+    d.style.zIndex = '99999';
+    d.style.background = 'rgba(0,0,0,0.7)';
+    d.style.color = '#fff';
+    d.style.fontSize = '12px';
+    d.style.padding = '8px 10px';
+    d.style.borderRadius = '6px';
+    d.style.maxWidth = '360px';
+    d.style.maxHeight = '40vh';
+    d.style.overflow = 'auto';
+    d.style.boxShadow = '0 6px 18px rgba(0,0,0,0.3)';
+    d.innerText = 'OSAS debug panel';
+    document.body.appendChild(d);
+  } catch (e) { /* ignore if DOM not ready */ }
+}
+
+function setDebugInfo(msg) {
+  try {
+    ensureDebugPanel();
+    const d = document.getElementById('osas-debug-panel');
+    if (!d) return;
+    const time = new Date().toLocaleTimeString();
+    d.innerText = `[${time}] ${msg}`;
+  } catch (e) { /* ignore */ }
+}
+
 /* ---------------- Dark mode detection ---------------- */
 function isDarkMode() {
-  return document.body.classList.contains('dark');
+  // robust detection: check body, html/documentElement classes and system preference
+  try {
+    if (document && document.body && document.body.classList.contains('dark')) return true;
+    if (document && document.documentElement && document.documentElement.classList.contains('dark')) return true;
+    if (window && window.matchMedia) return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  } catch (e) {
+    // ignore errors and fall back to false
+  }
+  return false;
 }
 
 function getChartColors() {
@@ -16,30 +58,52 @@ function getChartColors() {
   
   return {
     // Chart background
-    chartBackground: darkMode ? '#181f2a' : '#fff',
+    chartBackground: darkMode ? '#0b1220' : '#ffffff',
     
     // Text colors
     textColor: darkMode ? '#e5e7eb' : '#374151',
-    gridColor: darkMode ? '#374151' : '#e5e7eb',
+    gridColor: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(55,65,81,0.06)',
     
     // Sentiment colors (pastel versions)
     positive: {
-      background: 'rgba(75, 192, 192, 0.7)',
+      background: 'rgba(75, 192, 192, 0.75)',
       border: 'rgba(75, 192, 192, 1)',
-      backgroundLight: 'rgba(75, 192, 192, 0.3)'
+      backgroundLight: 'rgba(75, 192, 192, 0.28)'
     },
     neutral: {
-      background: 'rgba(255, 205, 86, 0.7)',
+      background: 'rgba(255, 205, 86, 0.75)',
       border: 'rgba(255, 205, 86, 1)', 
-      backgroundLight: 'rgba(255, 205, 86, 0.3)'
+      backgroundLight: 'rgba(255, 205, 86, 0.28)'
     },
     negative: {
-      background: 'rgba(255, 99, 132, 0.7)',
+      background: 'rgba(255, 99, 132, 0.75)',
       border: 'rgba(255, 99, 132, 1)',
-      backgroundLight: 'rgba(255, 99, 132, 0.3)'
+      backgroundLight: 'rgba(255, 99, 132, 0.28)'
     }
   };
 }
+
+/* Canvas background plugin: fills the chartArea with theme-appropriate color so the canvas interior isn't white in dark mode */
+const canvasBackgroundPlugin = {
+  id: 'canvasBackground',
+  beforeDraw: (chart, args, options) => {
+    const colors = getChartColors();
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+    if (!chartArea) return;
+    ctx.save();
+    ctx.fillStyle = colors.chartBackground || '#ffffff';
+    ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+    ctx.restore();
+  }
+};
+
+// Register the plugin if Chart is available and not already registered
+try {
+  if (window && window.Chart && Chart && !(Chart.registry && Chart.registry.plugins && Chart.registry.plugins.get && Chart.registry.plugins.get('canvasBackground'))) {
+    Chart.register(canvasBackgroundPlugin);
+  }
+} catch (e) { /* ignore registration errors */ }
 
 /* ---------------- Date helpers ---------------- */
 function toISODate(d) { const pad = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -420,7 +484,7 @@ function renderCharts(data) {
 
 /* ---------------- Theme change observer ---------------- */
 function observeThemeChanges() {
-  // Create a MutationObserver to watch for theme changes
+  // Create a MutationObserver to watch for theme class changes on body or documentElement
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -432,11 +496,23 @@ function observeThemeChanges() {
     });
   });
 
-  // Start observing the body element for class changes
-  observer.observe(document.body, {
-    attributes: true,
-    attributeFilter: ['class']
-  });
+  // Observe both body and documentElement in case theme toggles apply to either
+  try {
+    if (document.body) observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    if (document.documentElement) observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  } catch (e) { /* ignore */ }
+
+  // Also listen for system preference changes
+  try {
+    if (window && window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq && mq.addEventListener) {
+        mq.addEventListener('change', () => { if (chartData || baselineData) renderCharts(chartData || baselineData); });
+      } else if (mq && mq.addListener) {
+        mq.addListener(() => { if (chartData || baselineData) renderCharts(chartData || baselineData); });
+      }
+    }
+  } catch (e) { /* ignore */ }
 }
 
 /* ---------------- Baseline (KPIs, cards, priority) ---------------- */
@@ -526,13 +602,19 @@ function renderBaseline(data) {
 async function fetchBaselineThenRender() {
   if (isBaselineLoading) return; isBaselineLoading = true;
   try {
-    const response = await fetch(buildBaselineApiUrl(), { headers: { 'Accept': 'application/json' } });
+    const url = buildBaselineApiUrl();
+    console.debug('[OSAS] fetchBaseline URL:', url);
+    setDebugInfo(`Fetching baseline: ${url}`);
+    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    setDebugInfo(`Baseline response: ${response.status} ${response.statusText}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     baselineData = await response.json();
+    setDebugInfo(`Baseline JSON received: ${Object.keys(baselineData || {}).length} top-level keys`);
     renderBaseline(baselineData);
     renderCharts(baselineData);
   } catch (err) {
     console.error('Failed to load baseline dashboard:', err);
+    setDebugInfo(`Baseline error: ${err.message}`);
     alert('Sorry—failed to load the dashboard. Please refresh the page.');
   } finally {
     isBaselineLoading = false;
@@ -543,12 +625,18 @@ async function fetchChartsThenRender() {
   if (isChartLoading) return; isChartLoading = true;
   markActiveChartMenu(chartRange.key); setChartRangeLabel();
   try {
-    const response = await fetch(buildChartApiUrl(), { headers: { 'Accept': 'application/json' } });
+    const url = buildChartApiUrl();
+    console.debug('[OSAS] fetchChart URL:', url);
+    setDebugInfo(`Fetching chart view: ${url}`);
+    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    setDebugInfo(`Chart response: ${response.status} ${response.statusText}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     chartData = await response.json();
+    setDebugInfo(`Chart JSON received: ${Object.keys(chartData || {}).length} top-level keys`);
     renderCharts(chartData);
   } catch (err) {
     console.error('Failed to load chart data:', err);
+    setDebugInfo(`Chart error: ${err.message}`);
     alert('Sorry—failed to load the chart view. Charts kept at previous view.');
   } finally {
     isChartLoading = false;
@@ -574,7 +662,8 @@ function applyChartRange(key) {
 
 /* ---------------- Init ---------------- */
 document.addEventListener('DOMContentLoaded', function () {
-  // Set up theme change observer
+  // Set up debug panel and theme change observer
+  ensureDebugPanel();
   observeThemeChanges();
   
   // initial label state
