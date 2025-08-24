@@ -46,29 +46,70 @@ const sharedColors = {
   negativeBorder: '#dc3545'
 };
 
+// Add dark mode support and dynamic chart updates
+function getChartColors() {
+  const darkMode = document.body.classList.contains('dark');
+
+  return {
+    chartBackground: darkMode ? '#0b1220' : '#ffffff',
+    textColor: darkMode ? '#e5e7eb' : '#374151',
+    gridColor: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(55,65,81,0.06)',
+    positive: {
+      background: 'rgba(75, 192, 192, 0.75)',
+      border: 'rgba(75, 192, 192, 1)'
+    },
+    neutral: {
+      background: 'rgba(255, 205, 86, 0.75)',
+      border: 'rgba(255, 205, 86, 1)'
+    },
+    negative: {
+      background: 'rgba(255, 99, 132, 0.75)',
+      border: 'rgba(255, 99, 132, 1)'
+    }
+  };
+}
+
+const canvasBackgroundPlugin = {
+  id: 'canvasBackground',
+  beforeDraw: (chart) => {
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+    const colors = getChartColors();
+
+    ctx.save();
+    ctx.fillStyle = colors.chartBackground;
+    ctx.fillRect(chartArea.left, chartArea.top, chartArea.width, chartArea.height);
+    ctx.restore();
+  }
+};
+
 // =======================
 // Charts
 // =======================
 function initializeCharts() {
+  const colors = getChartColors();
+
   const barCtx = document.getElementById('barChart').getContext('2d');
   barChart = new Chart(barCtx, {
     type: 'bar',
     data: {
       labels: [],
       datasets: [
-        { label: 'Positive', backgroundColor: sharedColors.positive, borderColor: sharedColors.positiveBorder, borderWidth: 0, data: [] },
-        { label: 'Neutral',  backgroundColor: sharedColors.neutral,  borderColor: sharedColors.neutralBorder,  borderWidth: 0, data: [] },
-        { label: 'Negative', backgroundColor: sharedColors.negative, borderColor: sharedColors.negativeBorder, borderWidth: 0, data: [] }
+        { label: 'Positive', backgroundColor: colors.positive.background, borderColor: colors.positive.border, data: [] },
+        { label: 'Neutral', backgroundColor: colors.neutral.background, borderColor: colors.neutral.border, data: [] },
+        { label: 'Negative', backgroundColor: colors.negative.background, borderColor: colors.negative.border, data: [] }
       ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: 'top' } },
+      plugins: { legend: { position: 'top' }, canvasBackground: {} },
       scales: {
-        y: { beginAtZero: true, ticks: { precision: 0, min: 0 } }
+        y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { color: colors.textColor } },
+        x: { grid: { color: colors.gridColor }, ticks: { color: colors.textColor } }
       }
-    }
+    },
+    plugins: [canvasBackgroundPlugin]
   });
 
   const pieCtx = document.getElementById('pieChart').getContext('2d');
@@ -78,20 +119,22 @@ function initializeCharts() {
       labels: ['Positive', 'Neutral', 'Negative'],
       datasets: [{
         data: [0, 0, 0],
-        backgroundColor: [sharedColors.positive, sharedColors.neutral, sharedColors.negative],
-        borderColor:    [sharedColors.positiveBorder, sharedColors.neutralBorder, sharedColors.negativeBorder],
-        borderWidth: 0
+        backgroundColor: [colors.positive.background, colors.neutral.background, colors.negative.background],
+        borderColor: [colors.positive.border, colors.neutral.border, colors.negative.border]
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } }
-    }
+      plugins: { legend: { position: 'bottom' }, canvasBackground: {} }
+    },
+    plugins: [canvasBackgroundPlugin]
   });
 }
 
+// =======================
 // Convenience: get current active year/semester from UI
+// =======================
 function getActiveFilter() {
   const active = document.querySelector('.year-filter.active, .year-semester-filter.active');
   let year = 'all', semester = null;
@@ -528,8 +571,25 @@ function loadTeacherRecommendations() {
 
   // render helpers
   const addItem = (cls, label, text) => {
+    let borderColor = '';
+    let backgroundColor = '';
+
+    if (cls === 'is-urgent') {
+      borderColor = '#ff6384';
+      backgroundColor = 'rgba(255,99,132,0.08)';
+    } else if (cls === 'is-review') {
+      borderColor = '#ffcd56';
+      backgroundColor = 'rgba(255,205,86,0.08)';
+    } else if (cls === 'is-recognize') {
+      borderColor = '#4bc0c0';
+      backgroundColor = 'rgba(75,192,192,0.08)';
+    } else if (cls === 'is-support') {
+      borderColor = '#3b82f6';
+      backgroundColor = 'rgba(59,130,246,0.08)';
+    }
+
     wrap.insertAdjacentHTML('beforeend', `
-      <div class="action-item ${cls}">
+      <div class="action-item ${cls}" style="border-left: 8px solid ${borderColor}; background: ${backgroundColor};">
         <span class="label">${label}:</span> ${text}
       </div>
     `);
@@ -586,7 +646,7 @@ function loadTeacherRecommendations() {
 // =======================
 window.addEventListener('DOMContentLoaded', async () => {
   initializeCharts();
-  initializeEventHandlers();
+  observeThemeChanges();
 
   // Load static widgets
   loadRecentEvaluations();
