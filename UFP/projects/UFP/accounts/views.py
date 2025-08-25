@@ -17,35 +17,6 @@ from django.contrib.auth.views import PasswordResetConfirmView
 def select_view(request):
     return render(request, 'accounts/select.html')
 
-# Admin 
-def login_admin_view(request):
-    if request.method == 'POST':
-        form = AdminLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user and user.is_staff:
-                auth_login(request, user)
-                # Log admin login
-                LogEntry.objects.log_action(
-                    user_id=user.pk,
-                    content_type_id=ContentType.objects.get_for_model(User).pk,
-                    object_id=user.pk,
-                    object_repr=str(user),
-                    action_flag=ADDITION,
-                    change_message="Admin logged in."
-                )
-                return redirect('admin_dashboard')
-            else:
-                # Add a generic error to the form
-                form.add_error(None, 'Invalid username or password.')
-        # If form is invalid, fall through to render with errors
-    else:
-        form = AdminLoginForm()
-    return render(request, 'accounts/login_admin.html', {'form': form})
-
-
 # Student Login
 def login_student_view(request):
     if request.method == 'POST':
@@ -256,41 +227,3 @@ class StudentPasswordResetConfirmView(PasswordResetConfirmView):
             pass
         return response
     
-# sa pag export ng teacher evaluation as csv per teacher
-from django.db.models import Count, Q, F, Subquery, OuterRef
-from warehouse.models import fact_teacher_evaluation as Eval
-from system.models import Teacher
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.http import JsonResponse
-
-def teacher_performance_by_teacher(request):
-    # Join to get the display name from system_teacher (teacherName)
-    name_sq = Subquery(
-        Teacher.objects
-        .filter(teacher_id=OuterRef('teacher_id'))
-        .values('teacherName')[:1]
-    )
-
-    qs = (
-        Eval.objects
-        .values('teacher_id')
-        .annotate(
-            teacher_name=name_sq,
-            positive=Count('evaluation_id', filter=Q(sentiment_id=1)),
-            negative=Count('evaluation_id', filter=Q(sentiment_id=2)),
-            neutral =Count('evaluation_id', filter=Q(sentiment_id=3)),
-            total=Count('evaluation_id'),
-        )
-        .order_by('teacher_name', 'teacher_id')
-    )
-
-    data = [{
-        "teacher": r.get("teacher_name") or r["teacher_id"],
-        "positive": int(r["positive"] or 0),
-        "neutral":  int(r["neutral"]  or 0),
-        "negative": int(r["negative"] or 0),
-        "total":    int(r["total"]    or 0),
-    } for r in qs]
-
-    return JsonResponse(data, safe=False)
