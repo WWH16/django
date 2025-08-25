@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('osas-pie-neutral-percent').textContent = percent(data.neutral, data.total);
       document.getElementById('osas-pie-negative-percent').textContent = percent(data.negative, data.total);
 
+      // determine dark mode for readable legend/tick colors
+      const isDark = document.documentElement.classList.contains('dark')
+        || document.body.classList.contains('dark')
+        || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const legendFontColor = isDark ? '#e5e7eb' : '#858796';
+      const tickFontColor   = isDark ? '#e5e7eb' : '#858796';
+      const gridLineColor   = isDark ? 'rgba(229,231,235,0.06)' : 'rgb(234, 236, 244)';
+
       // Bar Chart: Three bars per service (positive, neutral, negative)
       new Chart(document.getElementById('osasBarChart'), {
         type: 'bar',
@@ -63,18 +71,25 @@ document.addEventListener('DOMContentLoaded', function() {
           ]
         },
         options: {
-          indexAxis: 'x', // vertical bars
+          indexAxis: 'x',
           plugins: {
-            legend: { display: true }
+            legend: { display: true, labels: { fontColor: legendFontColor, fontStyle: 'normal' } }
           },
           scales: {
-            x: { beginAtZero: true },
-            y: { grid: { display: false } }
+            x: { 
+              beginAtZero: true,
+              ticks: { fontColor: tickFontColor },
+              grid: { color: gridLineColor, drawOnChartArea: false }
+            },
+            y: { 
+              grid: { display: true, color: gridLineColor },
+              ticks: { fontColor: tickFontColor }
+            }
           }
         }
       });
 
-      // Pie Chart (unchanged)
+      // Pie Chart (unchanged data, legend color adjusted)
       new Chart(document.getElementById('osasPieChart'), {
         type: 'pie',
         data: {
@@ -82,21 +97,17 @@ document.addEventListener('DOMContentLoaded', function() {
           datasets: [{
             data: [data.positive, data.neutral, data.negative],
             backgroundColor: [
-              'rgba(54, 162, 235, 0.5)',   // blue
-              'rgba(255, 206, 86, 0.5)',   // yellow
-              'rgba(255, 99, 132, 0.5)'    // red
+              'rgba(54, 162, 235, 0.5)',
+              'rgba(255, 206, 86, 0.5)',
+              'rgba(255, 99, 132, 0.5)'
             ],
-            borderColor: [
-              'rgba(54, 162, 235, 0.1)',
-              'rgba(255, 206, 86, 0.1)',
-              'rgba(255, 99, 132, 0.1)'
-            ],
+            borderColor: ['rgba(54,162,235,0.1)', 'rgba(255,206,86,0.1)', 'rgba(255,99,132,0.1)'],
             borderWidth: 0
           }]
         },
         options: {
           plugins: {
-            legend: { position: 'bottom' }
+            legend: { position: 'bottom', labels: { fontColor: legendFontColor } }
           }
         }
       });

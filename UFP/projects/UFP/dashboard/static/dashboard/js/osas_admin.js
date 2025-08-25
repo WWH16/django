@@ -40,71 +40,6 @@ function setDebugInfo(msg) {
   } catch (e) { /* ignore */ }
 }
 
-/* ---------------- Dark mode detection ---------------- */
-function isDarkMode() {
-  // robust detection: check body, html/documentElement classes and system preference
-  try {
-    if (document && document.body && document.body.classList.contains('dark')) return true;
-    if (document && document.documentElement && document.documentElement.classList.contains('dark')) return true;
-    if (window && window.matchMedia) return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  } catch (e) {
-    // ignore errors and fall back to false
-  }
-  return false;
-}
-
-function getChartColors() {
-  const darkMode = isDarkMode();
-  
-  return {
-    // Chart background
-    chartBackground: darkMode ? '#0b1220' : '#ffffff',
-    
-    // Text colors
-    textColor: darkMode ? '#e5e7eb' : '#374151',
-    gridColor: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(55,65,81,0.06)',
-    
-    // Sentiment colors (pastel versions)
-    positive: {
-      background: 'rgba(75, 192, 192, 0.75)',
-      border: 'rgba(75, 192, 192, 1)',
-      backgroundLight: 'rgba(75, 192, 192, 0.28)'
-    },
-    neutral: {
-      background: 'rgba(255, 205, 86, 0.75)',
-      border: 'rgba(255, 205, 86, 1)', 
-      backgroundLight: 'rgba(255, 205, 86, 0.28)'
-    },
-    negative: {
-      background: 'rgba(255, 99, 132, 0.75)',
-      border: 'rgba(255, 99, 132, 1)',
-      backgroundLight: 'rgba(255, 99, 132, 0.28)'
-    }
-  };
-}
-
-/* Canvas background plugin: fills the chartArea with theme-appropriate color so the canvas interior isn't white in dark mode */
-const canvasBackgroundPlugin = {
-  id: 'canvasBackground',
-  beforeDraw: (chart, args, options) => {
-    const colors = getChartColors();
-    const ctx = chart.ctx;
-    const chartArea = chart.chartArea;
-    if (!chartArea) return;
-    ctx.save();
-    ctx.fillStyle = colors.chartBackground || '#ffffff';
-    ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-    ctx.restore();
-  }
-};
-
-// Register the plugin if Chart is available and not already registered
-try {
-  if (window && window.Chart && Chart && !(Chart.registry && Chart.registry.plugins && Chart.registry.plugins.get && Chart.registry.plugins.get('canvasBackground'))) {
-    Chart.register(canvasBackgroundPlugin);
-  }
-} catch (e) { /* ignore registration errors */ }
-
 /* ---------------- Date helpers ---------------- */
 function toISODate(d) { const pad = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function today() { return new Date(); }
@@ -300,219 +235,360 @@ async function fetchRecentFeedback() {
   }
 }
 
-/* ---------------- Charts with Dark Mode Support ---------------- */
-function updateChartCanvasBackground() {
-  const colors = getChartColors();
+/* ---------------- Theme-Responsive Chart Colors (FIXED) ---------------- */
+function detectDarkMode() {
+  // Check for common dark mode indicators
+  const html = document.documentElement;
+  const body = document.body;
   
-  // Update pie chart canvas
-  const pieCanvas = document.getElementById('osasPieChart');
-  if (pieCanvas) {
-    pieCanvas.style.backgroundColor = colors.chartBackground;
+  // Method 1: Check for dark mode classes
+  if (html.classList.contains('dark') || 
+      html.classList.contains('dark-mode') ||
+      body.classList.contains('dark') || 
+      body.classList.contains('dark-mode')) {
+    return true;
   }
   
-  // Update bar chart canvas
-  const barCanvas = document.getElementById('osasBarChart');
-  if (barCanvas) {
-    barCanvas.style.backgroundColor = colors.chartBackground;
+  // Method 2: Check data attributes
+  if (html.getAttribute('data-theme') === 'dark' || 
+      html.getAttribute('data-bs-theme') === 'dark' ||
+      body.getAttribute('data-theme') === 'dark' ||
+      body.getAttribute('data-bs-theme') === 'dark') {
+    return true;
+  }
+  
+  // Method 3: Check computed background color
+  const htmlBg = window.getComputedStyle(html).backgroundColor;
+  const bodyBg = window.getComputedStyle(body).backgroundColor;
+  
+  // Parse rgb values and check if background is dark
+  const isDarkBackground = (bgColor) => {
+    if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') return false;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      const [, r, g, b] = match.map(Number);
+      // Calculate luminance (perceived brightness)
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance < 0.5; // Dark if luminance is less than 50%
+    }
+    return false;
+  };
+  
+  return isDarkBackground(bodyBg) || isDarkBackground(htmlBg);
+}
+
+function getChartColors() {
+  const isDark = detectDarkMode();
+  
+  if (isDark) {
+    // Dark mode colors - light text on dark background
+    return {
+      textColor: '#e5e7eb',           // Light gray text
+      axisColor: '#d1d5db',           // Light gray axis labels
+      legendColor: '#f3f4f6',         // Very light gray legend text
+      gridColor: 'rgba(209, 213, 219, 0.2)', // Light gray grid lines
+      
+      // Chart colors (same for both themes)
+      positive: {
+        background: 'rgba(75, 192, 192, 0.75)',
+        border: 'rgba(75, 192, 192, 1)',
+        backgroundLight: 'rgba(75, 192, 192, 0.28)'
+      },
+      neutral: {
+        background: 'rgba(255, 205, 86, 0.75)',
+        border: 'rgba(255, 205, 86, 1)',
+        backgroundLight: 'rgba(255, 205, 86, 0.28)'
+      },
+      negative: {
+        background: 'rgba(255, 99, 132, 0.75)',
+        border: 'rgba(255, 99, 132, 1)',
+        backgroundLight: 'rgba(255, 99, 132, 0.28)'
+      },
+      
+      // Tooltip colors for dark mode
+      tooltipBackground: '#1f2937',
+      tooltipTextColor: '#f9fafb',
+      tooltipBorderColor: 'rgba(209, 213, 219, 0.3)'
+    };
+  } else {
+    // Light mode colors - dark text on light background
+    return {
+      textColor: '#374151',           // Dark gray text
+      axisColor: '#374151',           // Dark gray axis labels
+      legendColor: '#374151',         // Dark gray legend text
+      gridColor: 'rgba(55, 65, 81, 0.2)', // Light gray grid lines
+      
+      // Chart colors (same for both themes)
+      positive: {
+        background: 'rgba(75, 192, 192, 0.75)',
+        border: 'rgba(75, 192, 192, 1)',
+        backgroundLight: 'rgba(75, 192, 192, 0.28)'
+      },
+      neutral: {
+        background: 'rgba(255, 205, 86, 0.75)',
+        border: 'rgba(255, 205, 86, 1)',
+        backgroundLight: 'rgba(255, 205, 86, 0.28)'
+      },
+      negative: {
+        background: 'rgba(255, 99, 132, 0.75)',
+        border: 'rgba(255, 99, 132, 1)',
+        backgroundLight: 'rgba(255, 99, 132, 0.28)'
+      },
+      
+      // Tooltip colors for light mode
+      tooltipBackground: '#ffffff',
+      tooltipTextColor: '#0f172a',
+      tooltipBorderColor: 'rgba(55, 65, 81, 0.2)'
+    };
   }
 }
 
+/* ---------------- Charts with Theme-Responsive Colors (FIXED) ---------------- */
 function renderCharts(data) {
-  if (!data) return;
+  try {
+    if (!data) return;
 
-  const colors = getChartColors();
-  const total = Number(data.total || 0),
-        pos   = Number(data.positive || 0),
-        neu   = Number(data.neutral  || 0),
-        neg   = Number(data.negative || 0);
-  const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
+    // Get theme-responsive colors
+    const CHART_COLORS = getChartColors();
 
-  // Update canvas backgrounds
-  updateChartCanvasBackground();
+    const total = Number(data.total || 0),
+          pos   = Number(data.positive || 0),
+          neu   = Number(data.neutral  || 0),
+          neg   = Number(data.negative || 0);
+    const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
 
-  // PIE CHART with dark mode support
-  const pieCanvas = document.getElementById('osasPieChart');
-  if (pieCanvas) {
-    const pieCtx = pieCanvas.getContext('2d');
-    const pieData = [pos, neu, neg];
-    
-    const pieOptions = {
-      responsive: true, 
-      maintainAspectRatio: false,
-      plugins: { 
-        legend: { 
-          position: 'bottom',
-          labels: {
-            color: colors.textColor
+    // PIE CHART with theme-responsive colors
+    const pieCanvas = document.getElementById('osasPieChart');
+    if (pieCanvas && pieCanvas.getContext) {
+      const pieCtx = pieCanvas.getContext('2d');
+      if (pieCtx) {
+        const pieData = [pos, neu, neg];
+        
+        const pieOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: CHART_COLORS.legendColor,  // FIXED: Theme-responsive color
+                usePointStyle: true,               // show circular marker for pie legend
+                pointStyle: 'circle',
+                boxWidth: 12,
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
           }
+        };
+
+        if (osasPieChart) {
+          try { osasPieChart.destroy(); } catch (e) { /* ignore */ }
+          osasPieChart = null;
         }
+
+        osasPieChart = new Chart(pieCtx, {
+          type: 'pie',
+          data: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+              backgroundColor: [
+                CHART_COLORS.positive.background,
+                CHART_COLORS.neutral.background,
+                CHART_COLORS.negative.background
+              ],
+              borderColor: [
+                CHART_COLORS.positive.border,
+                CHART_COLORS.neutral.border,
+                CHART_COLORS.negative.border
+              ],
+              data: pieData, 
+              borderWidth: 1,
+              hoverOffset: 5,
+            }]
+          },
+          options: pieOptions
+        });
       }
-    };
-    
-    if (!osasPieChart) {
-      osasPieChart = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-          labels: ['Positive', 'Neutral', 'Negative'],
-          datasets: [{
-            backgroundColor: [
-              colors.positive.background,
-              colors.neutral.background,
-              colors.negative.background
-            ],
-            borderColor: [
-              colors.positive.border,
-              colors.neutral.border,
-              colors.negative.border
-            ],
-            data: pieData, 
-            borderWidth: 1,
-            hoverOffset: 5,
-          }]
-        },
-        options: pieOptions
-      });
-    } else {
-      // Update existing chart with new colors
-      osasPieChart.data.datasets[0].backgroundColor = [
-        colors.positive.background,
-        colors.neutral.background,
-        colors.negative.background
-      ];
-      osasPieChart.data.datasets[0].borderColor = [
-        colors.positive.border,
-        colors.neutral.border,
-        colors.negative.border
-      ];
-      osasPieChart.data.datasets[0].data = pieData;
-      osasPieChart.options = pieOptions;
-      osasPieChart.update();
     }
-  }
-  
-  const pp = document.getElementById('osas-pie-positive-percent'); if (pp) pp.textContent = pct(pos, total);
-  const np = document.getElementById('osas-pie-neutral-percent');  if (np) np.textContent = pct(neu, total);
-  const np2= document.getElementById('osas-pie-negative-percent'); if (np2) np2.textContent = pct(neg, total);
 
-  // BAR CHART with dark mode support
-  const barCanvas = document.getElementById('osasBarChart');
-  if (barCanvas) {
-    const serviceLabels = (data.services || []).map(s => s.name);
-    const positiveData  = (data.services || []).map(s => Number(s.positive || 0));
-    const neutralData   = (data.services || []).map(s => Number(s.neutral  || 0));
-    const negativeData  = (data.services || []).map(s => Number(s.negative || 0));
+    const pp = document.getElementById('osas-pie-positive-percent'); if (pp) pp.textContent = pct(pos, total);
+    const np = document.getElementById('osas-pie-neutral-percent');  if (np) np.textContent = pct(neu, total);
+    const np2= document.getElementById('osas-pie-negative-percent'); if (np2) np2.textContent = pct(neg, total);
 
-    const barOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { 
-        legend: { 
-          position: 'top',
-          labels: {
-            color: colors.textColor
+    // BAR CHART with theme-responsive colors
+    const barCanvas = document.getElementById('osasBarChart');
+    if (barCanvas && barCanvas.getContext) {
+      const ctx = barCanvas.getContext('2d');
+      if (ctx) {
+        const serviceLabels = (data.services || []).map(s => s.name);
+        const positiveData  = (data.services || []).map(s => Number(s.positive || 0));
+        const neutralData   = (data.services || []).map(s => Number(s.neutral  || 0));
+        const negativeData  = (data.services || []).map(s => Number(s.negative || 0));
+
+        const barOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: CHART_COLORS.legendColor,  // FIXED: Theme-responsive color
+                usePointStyle: false, // standard box markers instead of circles
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { 
+                display: false, 
+                color: CHART_COLORS.gridColor 
+              },
+              stacked: false, 
+              offset: true,
+              ticks: { 
+                color: CHART_COLORS.axisColor,  // FIXED: Theme-responsive color
+                font: {
+                  size: 11
+                }
+              }
+            },
+            y: {
+              beginAtZero: true, 
+              min: 0, 
+              stacked: false,
+              ticks: { 
+                precision: 0, 
+                color: CHART_COLORS.axisColor,  // FIXED: Theme-responsive color
+                font: {
+                  size: 11
+                }
+              },
+              grid: { 
+                drawBorder: false, 
+                color: CHART_COLORS.gridColor 
+              }
+            }
           }
-        }, 
-        tooltip: { mode: 'index', intersect: false } 
-      },
-      scales: {
-        x: { 
-          grid: { 
-            display: false,
-            color: colors.gridColor
-          }, 
-          stacked: false, 
-          offset: true,
-          ticks: {
-            color: colors.textColor
-          }
-        },
-        y: { 
-          beginAtZero: true, 
-          min: 0, 
-          stacked: false, 
-          ticks: { 
-            precision: 0,
-            color: colors.textColor
-          }, 
-          grid: { 
-            drawBorder: false,
-            color: colors.gridColor
-          } 
+        };
+
+        if (osasBarChart) { 
+          try { osasBarChart.destroy(); } catch (e) { /* ignore */ } 
+          osasBarChart = null; 
         }
+
+        osasBarChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: serviceLabels,
+            datasets: [
+              { 
+                label: 'Positive', 
+                data: positiveData, 
+                backgroundColor: CHART_COLORS.positive.backgroundLight, 
+                borderColor: CHART_COLORS.positive.border, 
+                borderWidth: 1, 
+                maxBarThickness: 48 
+              },
+              { 
+                label: 'Neutral',  
+                data: neutralData,  
+                backgroundColor: CHART_COLORS.neutral.backgroundLight,  
+                borderColor: CHART_COLORS.neutral.border,  
+                borderWidth: 1, 
+                maxBarThickness: 48 
+              },
+              { 
+                label: 'Negative', 
+                data: negativeData, 
+                backgroundColor: CHART_COLORS.negative.backgroundLight, 
+                borderColor: CHART_COLORS.negative.border, 
+                borderWidth: 1, 
+                maxBarThickness: 48 
+              }
+            ]
+          },
+          options: barOptions
+        });
       }
-    };
+    }
 
-    if (osasBarChart) { try { osasBarChart.destroy(); } catch { /* noop */ } osasBarChart = null; }
-    osasBarChart = new Chart(barCanvas.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: serviceLabels,
-        datasets: [
-          { 
-            label: 'Positive', 
-            data: positiveData, 
-            backgroundColor: colors.positive.backgroundLight,
-            borderColor: colors.positive.border,
-            borderWidth: 1, 
-            maxBarThickness: 48 
-          },
-          { 
-            label: 'Neutral',  
-            data: neutralData,  
-            backgroundColor: colors.neutral.backgroundLight,
-            borderColor: colors.neutral.border,
-            borderWidth: 1, 
-            maxBarThickness: 48 
-          },
-          { 
-            label: 'Negative', 
-            data: negativeData, 
-            backgroundColor: colors.negative.backgroundLight,
-            borderColor: colors.negative.border,
-            borderWidth: 1, 
-            maxBarThickness: 48 
-          }
-        ]
-      },
-      options: barOptions
-    });
+    setChartRangeLabel();
+    renderActionItems(data);
+  } catch (err) {
+    console.error('renderCharts error:', err);
+    setDebugInfo(`renderCharts error: ${err.message}`);
   }
-
-  setChartRangeLabel();
-  renderActionItems(data);
 }
 
-/* ---------------- Theme change observer ---------------- */
+/* ---------------- Theme Change Observer (BONUS) ---------------- */
 function observeThemeChanges() {
-  // Create a MutationObserver to watch for theme class changes on body or documentElement
+  // Observer for class/attribute changes that might indicate theme switches
   const observer = new MutationObserver((mutations) => {
+    let shouldRerender = false;
     mutations.forEach((mutation) => {
-      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-        // Theme changed, update charts
-        if (chartData || baselineData) {
-          renderCharts(chartData || baselineData);
-        }
+      if (mutation.type === 'attributes' && 
+          (mutation.attributeName === 'class' || 
+           mutation.attributeName === 'data-theme' || 
+           mutation.attributeName === 'data-bs-theme')) {
+        shouldRerender = true;
       }
     });
-  });
-
-  // Observe both body and documentElement in case theme toggles apply to either
-  try {
-    if (document.body) observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    if (document.documentElement) observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  } catch (e) { /* ignore */ }
-
-  // Also listen for system preference changes
-  try {
-    if (window && window.matchMedia) {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      if (mq && mq.addEventListener) {
-        mq.addEventListener('change', () => { if (chartData || baselineData) renderCharts(chartData || baselineData); });
-      } else if (mq && mq.addListener) {
-        mq.addListener(() => { if (chartData || baselineData) renderCharts(chartData || baselineData); });
-      }
+    
+    if (shouldRerender) {
+      // Small delay to ensure theme change is fully applied
+      setTimeout(() => {
+        if (baselineData) renderCharts(baselineData);
+        if (chartData) renderCharts(chartData);
+      }, 100);
     }
-  } catch (e) { /* ignore */ }
+  });
+  
+  // Observe both html and body for theme changes
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'data-bs-theme']
+  });
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'data-bs-theme']
+  });
 }
 
 /* ---------------- Baseline (KPIs, cards, priority) ---------------- */
@@ -662,8 +738,10 @@ function applyChartRange(key) {
 
 /* ---------------- Init ---------------- */
 document.addEventListener('DOMContentLoaded', function () {
-  // Set up debug panel and theme change observer
+  // Set up debug panel
   ensureDebugPanel();
+  
+  // Set up theme change observer (BONUS FEATURE)
   observeThemeChanges();
   
   // initial label state

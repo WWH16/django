@@ -1,4 +1,4 @@
-  {% extends "admin/base_site.html" %}
+{% extends "admin/base_site.html" %}
   {% load static %}
 
   {% block title %}OSAS Dashboard | {{ block.super }}{% endblock %}
@@ -13,7 +13,7 @@
   <div class="osas-wrap">
     <div class="osas-container">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-dark mb-0">OSAS Services Sentiment Analysis Dashboard</h3>
+        <h3 class="mb-0 text-font-important-light dark:text-font-important-dark">OSAS Services Sentiment Analysis Dashboard</h3>
         <div class="d-flex justify-content-between align-items-center mb-4">
           <a
             href="#"
@@ -138,11 +138,11 @@
             <div class="d-flex align-items-center justify-content-between mb-3">
               <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">
                 Sentiment Distribution by OSAS Services
-                <small class="text-muted" id="active-range-label">· All Time</small>
+                <small class="text-muted text-font-important-light dark:text-font-important-dark" id="active-range-label">· All Time</small>
               </h6>
               <div class="dropdown">
                 <button class="btn" type="button">
-                  <i class="fas fa-ellipsis-v text-muted"></i>
+                  <i class="fas fa-ellipsis-v text-muted text-font-important-light dark:text-font-important-dark"></i>
                 </button>
                 <div class="dropdown-menu">
                   <p class="text-center dropdown-header">
@@ -189,7 +189,7 @@
               </h6>
               <div class="dropdown">
                 <button class="btn" type="button">
-                  <i class="fas fa-ellipsis-v text-muted"></i>
+                  <i class="fas fa-ellipsis-v text-muted text-font-important-light dark:text-font-important-dark"></i>
                 </button>
                 <div class="dropdown-menu">
                   <p class="text-center dropdown-header">
@@ -227,9 +227,9 @@
               <canvas id="osasPieChart" style="width:100%;height:400px;"></canvas>
             </div>
             <div class="text-center small mt-1">
-              <span class="me-1"><i class="fas fa-circle" style="color:#4bc0c0"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
-              <span class="me-1"><i class="fas fa-circle" style="color:#ffcd56"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
-              <span class="me-1"><i class="fas fa-circle" style="color:#ff6384"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
+              <span class="me-1 text-font-important-light dark:text-font-important-dark"><i class="fas fa-circle" style="color:#4bc0c0"></i> Positive (<span id="osas-pie-positive-percent">0</span>%)</span>
+              <span class="me-1 text-font-important-light dark:text-font-important-dark"><i class="fas fa-circle" style="color:#ffcd56"></i> Neutral (<span id="osas-pie-neutral-percent">0</span>%)</span>
+              <span class="me-1 text-font-important-light dark:text-font-important-dark"><i class="fas fa-circle" style="color:#ff6384"></i> Negative (<span id="osas-pie-negative-percent">0</span>%)</span>
             </div>
           </div>
         </div>
@@ -261,7 +261,7 @@
             >
               Recent Feedbacks
             </h2>
-            <ul class="list-group list-group-flush" id="recent-feedback-list">
+            <ul class="list-group list-group-flush text-font-important-light dark:text-font-important-dark" id="recent-feedback-list">
               <!-- filled by JS -->
             </ul>
           </div>
