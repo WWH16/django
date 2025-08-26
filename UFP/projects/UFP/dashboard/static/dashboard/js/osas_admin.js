@@ -1,10 +1,44 @@
-/* OSAS dashboard scripts — fixed & polished */
+/* OSAS dashboard scripts — fixed & polished with dark mode support */
 let osasPieChart, osasBarChart;
 let baselineData = null;
 let isBaselineLoading = false;
 let chartData = null;
 let isChartLoading = false;
 let chartRange = { key: 'all', start: null, end: null };
+
+/* ---------------- Debug panel (temporary) ---------------- */
+function ensureDebugPanel() {
+  if (document.getElementById('osas-debug-panel')) return;
+  try {
+    const d = document.createElement('div');
+    d.id = 'osas-debug-panel';
+    d.style.position = 'fixed';
+    d.style.right = '12px';
+    d.style.bottom = '12px';
+    d.style.zIndex = '99999';
+    d.style.background = 'rgba(0,0,0,0.7)';
+    d.style.color = '#fff';
+    d.style.fontSize = '12px';
+    d.style.padding = '8px 10px';
+    d.style.borderRadius = '6px';
+    d.style.maxWidth = '360px';
+    d.style.maxHeight = '40vh';
+    d.style.overflow = 'auto';
+    d.style.boxShadow = '0 6px 18px rgba(0,0,0,0.3)';
+    d.innerText = 'OSAS debug panel';
+    document.body.appendChild(d);
+  } catch (e) { /* ignore if DOM not ready */ }
+}
+
+function setDebugInfo(msg) {
+  try {
+    ensureDebugPanel();
+    const d = document.getElementById('osas-debug-panel');
+    if (!d) return;
+    const time = new Date().toLocaleTimeString();
+    d.innerText = `[${time}] ${msg}`;
+  } catch (e) { /* ignore */ }
+}
 
 /* ---------------- Date helpers ---------------- */
 function toISODate(d) { const pad = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -201,73 +235,360 @@ async function fetchRecentFeedback() {
   }
 }
 
-/* ---------------- Charts ---------------- */
-function renderCharts(data) {
-  if (!data) return;
-
-  const total = Number(data.total || 0),
-        pos   = Number(data.positive || 0),
-        neu   = Number(data.neutral  || 0),
-        neg   = Number(data.negative || 0);
-  const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
-
-  // PIE
-  const pieCanvas = document.getElementById('osasPieChart');
-  if (pieCanvas) {
-    const pieCtx = pieCanvas.getContext('2d');
-    const pieData = [pos, neu, neg];
-    if (!osasPieChart) {
-      osasPieChart = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-          labels: ['Positive', 'Neutral', 'Negative'],
-          datasets: [{ backgroundColor: ['#198754', '#ffc107', '#dc3545'], data: pieData, borderWidth: 0 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-      });
-    } else {
-      osasPieChart.data.datasets[0].backgroundColor = ['#198754', '#ffc107', '#dc3545'];
-      osasPieChart.data.datasets[0].data = pieData;
-      osasPieChart.update();
-    }
+/* ---------------- Theme-Responsive Chart Colors (FIXED) ---------------- */
+function detectDarkMode() {
+  // Check for common dark mode indicators
+  const html = document.documentElement;
+  const body = document.body;
+  
+  // Method 1: Check for dark mode classes
+  if (html.classList.contains('dark') || 
+      html.classList.contains('dark-mode') ||
+      body.classList.contains('dark') || 
+      body.classList.contains('dark-mode')) {
+    return true;
   }
-  const pp = document.getElementById('osas-pie-positive-percent'); if (pp) pp.textContent = pct(pos, total);
-  const np = document.getElementById('osas-pie-neutral-percent');  if (np) np.textContent = pct(neu, total);
-  const np2= document.getElementById('osas-pie-negative-percent'); if (np2) np2.textContent = pct(neg, total);
+  
+  // Method 2: Check data attributes
+  if (html.getAttribute('data-theme') === 'dark' || 
+      html.getAttribute('data-bs-theme') === 'dark' ||
+      body.getAttribute('data-theme') === 'dark' ||
+      body.getAttribute('data-bs-theme') === 'dark') {
+    return true;
+  }
+  
+  // Method 3: Check computed background color
+  const htmlBg = window.getComputedStyle(html).backgroundColor;
+  const bodyBg = window.getComputedStyle(body).backgroundColor;
+  
+  // Parse rgb values and check if background is dark
+  const isDarkBackground = (bgColor) => {
+    if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') return false;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      const [, r, g, b] = match.map(Number);
+      // Calculate luminance (perceived brightness)
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance < 0.5; // Dark if luminance is less than 50%
+    }
+    return false;
+  };
+  
+  return isDarkBackground(bodyBg) || isDarkBackground(htmlBg);
+}
 
-  // BAR
-  const barCanvas = document.getElementById('osasBarChart');
-  if (barCanvas) {
-    const serviceLabels = (data.services || []).map(s => s.name);
-    const positiveData  = (data.services || []).map(s => Number(s.positive || 0));
-    const neutralData   = (data.services || []).map(s => Number(s.neutral  || 0));
-    const negativeData  = (data.services || []).map(s => Number(s.negative || 0));
-
-    if (osasBarChart) { try { osasBarChart.destroy(); } catch { /* noop */ } osasBarChart = null; }
-    osasBarChart = new Chart(barCanvas.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: serviceLabels,
-        datasets: [
-          { label: 'Positive', data: positiveData, backgroundColor: '#198754', borderWidth: 0, maxBarThickness: 48 },
-          { label: 'Neutral',  data: neutralData,  backgroundColor: '#ffc107', borderWidth: 0, maxBarThickness: 48 },
-          { label: 'Negative', data: negativeData, backgroundColor: '#dc3545', borderWidth: 0, maxBarThickness: 48 }
-        ]
+function getChartColors() {
+  const isDark = detectDarkMode();
+  
+  if (isDark) {
+    // Dark mode colors - light text on dark background
+    return {
+      textColor: '#e5e7eb',           // Light gray text
+      axisColor: '#d1d5db',           // Light gray axis labels
+      legendColor: '#f3f4f6',         // Very light gray legend text
+      gridColor: 'rgba(209, 213, 219, 0.2)', // Light gray grid lines
+      
+      // Chart colors (same for both themes)
+      positive: {
+        background: 'rgba(75, 192, 192, 0.75)',
+        border: 'rgba(75, 192, 192, 1)',
+        backgroundLight: 'rgba(75, 192, 192, 0.28)'
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } },
-        scales: {
-          x: { grid: { display: false }, stacked: false, offset: true },
-          y: { beginAtZero: true, min: 0, stacked: false, ticks: { precision: 0 }, grid: { drawBorder: false } }
+      neutral: {
+        background: 'rgba(255, 205, 86, 0.75)',
+        border: 'rgba(255, 205, 86, 1)',
+        backgroundLight: 'rgba(255, 205, 86, 0.28)'
+      },
+      negative: {
+        background: 'rgba(255, 99, 132, 0.75)',
+        border: 'rgba(255, 99, 132, 1)',
+        backgroundLight: 'rgba(255, 99, 132, 0.28)'
+      },
+      
+      // Tooltip colors for dark mode
+      tooltipBackground: '#1f2937',
+      tooltipTextColor: '#f9fafb',
+      tooltipBorderColor: 'rgba(209, 213, 219, 0.3)'
+    };
+  } else {
+    // Light mode colors - dark text on light background
+    return {
+      textColor: '#374151',           // Dark gray text
+      axisColor: '#374151',           // Dark gray axis labels
+      legendColor: '#374151',         // Dark gray legend text
+      gridColor: 'rgba(55, 65, 81, 0.2)', // Light gray grid lines
+      
+      // Chart colors (same for both themes)
+      positive: {
+        background: 'rgba(75, 192, 192, 0.75)',
+        border: 'rgba(75, 192, 192, 1)',
+        backgroundLight: 'rgba(75, 192, 192, 0.28)'
+      },
+      neutral: {
+        background: 'rgba(255, 205, 86, 0.75)',
+        border: 'rgba(255, 205, 86, 1)',
+        backgroundLight: 'rgba(255, 205, 86, 0.28)'
+      },
+      negative: {
+        background: 'rgba(255, 99, 132, 0.75)',
+        border: 'rgba(255, 99, 132, 1)',
+        backgroundLight: 'rgba(255, 99, 132, 0.28)'
+      },
+      
+      // Tooltip colors for light mode
+      tooltipBackground: '#ffffff',
+      tooltipTextColor: '#0f172a',
+      tooltipBorderColor: 'rgba(55, 65, 81, 0.2)'
+    };
+  }
+}
+
+/* ---------------- Charts with Theme-Responsive Colors (FIXED) ---------------- */
+function renderCharts(data) {
+  try {
+    if (!data) return;
+
+    // Get theme-responsive colors
+    const CHART_COLORS = getChartColors();
+
+    const total = Number(data.total || 0),
+          pos   = Number(data.positive || 0),
+          neu   = Number(data.neutral  || 0),
+          neg   = Number(data.negative || 0);
+    const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
+
+    // PIE CHART with theme-responsive colors
+    const pieCanvas = document.getElementById('osasPieChart');
+    if (pieCanvas && pieCanvas.getContext) {
+      const pieCtx = pieCanvas.getContext('2d');
+      if (pieCtx) {
+        const pieData = [pos, neu, neg];
+        
+        const pieOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: CHART_COLORS.legendColor,  // FIXED: Theme-responsive color
+                usePointStyle: true,               // show circular marker for pie legend
+                pointStyle: 'circle',
+                boxWidth: 12,
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          }
+        };
+
+        if (osasPieChart) {
+          try { osasPieChart.destroy(); } catch (e) { /* ignore */ }
+          osasPieChart = null;
         }
+
+        osasPieChart = new Chart(pieCtx, {
+          type: 'pie',
+          data: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+              backgroundColor: [
+                CHART_COLORS.positive.background,
+                CHART_COLORS.neutral.background,
+                CHART_COLORS.negative.background
+              ],
+              borderColor: [
+                CHART_COLORS.positive.border,
+                CHART_COLORS.neutral.border,
+                CHART_COLORS.negative.border
+              ],
+              data: pieData, 
+              borderWidth: 1,
+              hoverOffset: 5,
+            }]
+          },
+          options: pieOptions
+        });
+      }
+    }
+
+    const pp = document.getElementById('osas-pie-positive-percent'); if (pp) pp.textContent = pct(pos, total);
+    const np = document.getElementById('osas-pie-neutral-percent');  if (np) np.textContent = pct(neu, total);
+    const np2= document.getElementById('osas-pie-negative-percent'); if (np2) np2.textContent = pct(neg, total);
+
+    // BAR CHART with theme-responsive colors
+    const barCanvas = document.getElementById('osasBarChart');
+    if (barCanvas && barCanvas.getContext) {
+      const ctx = barCanvas.getContext('2d');
+      if (ctx) {
+        const serviceLabels = (data.services || []).map(s => s.name);
+        const positiveData  = (data.services || []).map(s => Number(s.positive || 0));
+        const neutralData   = (data.services || []).map(s => Number(s.neutral  || 0));
+        const negativeData  = (data.services || []).map(s => Number(s.negative || 0));
+
+        const barOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: CHART_COLORS.legendColor,  // FIXED: Theme-responsive color
+                usePointStyle: false, // standard box markers instead of circles
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 12
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { 
+                display: false, 
+                color: CHART_COLORS.gridColor 
+              },
+              stacked: false, 
+              offset: true,
+              ticks: { 
+                color: CHART_COLORS.axisColor,  // FIXED: Theme-responsive color
+                font: {
+                  size: 11
+                }
+              }
+            },
+            y: {
+              beginAtZero: true, 
+              min: 0, 
+              stacked: false,
+              ticks: { 
+                precision: 0, 
+                color: CHART_COLORS.axisColor,  // FIXED: Theme-responsive color
+                font: {
+                  size: 11
+                }
+              },
+              grid: { 
+                drawBorder: false, 
+                color: CHART_COLORS.gridColor 
+              }
+            }
+          }
+        };
+
+        if (osasBarChart) { 
+          try { osasBarChart.destroy(); } catch (e) { /* ignore */ } 
+          osasBarChart = null; 
+        }
+
+        osasBarChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: serviceLabels,
+            datasets: [
+              { 
+                label: 'Positive', 
+                data: positiveData, 
+                backgroundColor: CHART_COLORS.positive.backgroundLight, 
+                borderColor: CHART_COLORS.positive.border, 
+                borderWidth: 1, 
+                maxBarThickness: 48 
+              },
+              { 
+                label: 'Neutral',  
+                data: neutralData,  
+                backgroundColor: CHART_COLORS.neutral.backgroundLight,  
+                borderColor: CHART_COLORS.neutral.border,  
+                borderWidth: 1, 
+                maxBarThickness: 48 
+              },
+              { 
+                label: 'Negative', 
+                data: negativeData, 
+                backgroundColor: CHART_COLORS.negative.backgroundLight, 
+                borderColor: CHART_COLORS.negative.border, 
+                borderWidth: 1, 
+                maxBarThickness: 48 
+              }
+            ]
+          },
+          options: barOptions
+        });
+      }
+    }
+
+    setChartRangeLabel();
+    renderActionItems(data);
+  } catch (err) {
+    console.error('renderCharts error:', err);
+    setDebugInfo(`renderCharts error: ${err.message}`);
+  }
+}
+
+/* ---------------- Theme Change Observer (BONUS) ---------------- */
+function observeThemeChanges() {
+  // Observer for class/attribute changes that might indicate theme switches
+  const observer = new MutationObserver((mutations) => {
+    let shouldRerender = false;
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && 
+          (mutation.attributeName === 'class' || 
+           mutation.attributeName === 'data-theme' || 
+           mutation.attributeName === 'data-bs-theme')) {
+        shouldRerender = true;
       }
     });
-  }
-
-  setChartRangeLabel();
-  renderActionItems(data);
+    
+    if (shouldRerender) {
+      // Small delay to ensure theme change is fully applied
+      setTimeout(() => {
+        if (baselineData) renderCharts(baselineData);
+        if (chartData) renderCharts(chartData);
+      }, 100);
+    }
+  });
+  
+  // Observe both html and body for theme changes
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'data-bs-theme']
+  });
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'data-bs-theme']
+  });
 }
 
 /* ---------------- Baseline (KPIs, cards, priority) ---------------- */
@@ -357,13 +678,19 @@ function renderBaseline(data) {
 async function fetchBaselineThenRender() {
   if (isBaselineLoading) return; isBaselineLoading = true;
   try {
-    const response = await fetch(buildBaselineApiUrl(), { headers: { 'Accept': 'application/json' } });
+    const url = buildBaselineApiUrl();
+    console.debug('[OSAS] fetchBaseline URL:', url);
+    setDebugInfo(`Fetching baseline: ${url}`);
+    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    setDebugInfo(`Baseline response: ${response.status} ${response.statusText}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     baselineData = await response.json();
+    setDebugInfo(`Baseline JSON received: ${Object.keys(baselineData || {}).length} top-level keys`);
     renderBaseline(baselineData);
     renderCharts(baselineData);
   } catch (err) {
     console.error('Failed to load baseline dashboard:', err);
+    setDebugInfo(`Baseline error: ${err.message}`);
     alert('Sorry—failed to load the dashboard. Please refresh the page.');
   } finally {
     isBaselineLoading = false;
@@ -374,12 +701,18 @@ async function fetchChartsThenRender() {
   if (isChartLoading) return; isChartLoading = true;
   markActiveChartMenu(chartRange.key); setChartRangeLabel();
   try {
-    const response = await fetch(buildChartApiUrl(), { headers: { 'Accept': 'application/json' } });
+    const url = buildChartApiUrl();
+    console.debug('[OSAS] fetchChart URL:', url);
+    setDebugInfo(`Fetching chart view: ${url}`);
+    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    setDebugInfo(`Chart response: ${response.status} ${response.statusText}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     chartData = await response.json();
+    setDebugInfo(`Chart JSON received: ${Object.keys(chartData || {}).length} top-level keys`);
     renderCharts(chartData);
   } catch (err) {
     console.error('Failed to load chart data:', err);
+    setDebugInfo(`Chart error: ${err.message}`);
     alert('Sorry—failed to load the chart view. Charts kept at previous view.');
   } finally {
     isChartLoading = false;
@@ -405,6 +738,12 @@ function applyChartRange(key) {
 
 /* ---------------- Init ---------------- */
 document.addEventListener('DOMContentLoaded', function () {
+  // Set up debug panel
+  ensureDebugPanel();
+  
+  // Set up theme change observer (BONUS FEATURE)
+  observeThemeChanges();
+  
   // initial label state
   setChartRangeLabel(); markActiveChartMenu('all');
 
@@ -453,3 +792,32 @@ document.addEventListener('DOMContentLoaded', function () {
   const genReportItem = document.getElementById('osas-generate-report');
   if (genReportItem) genReportItem.addEventListener('click', (e) => { e.preventDefault(); exportChartView(); });
 });
+
+function getPriorityColor(priority) {
+  switch (priority) {
+    case 'Urgent':   return '#ff6384'; // pastel red
+    case 'Review':   return '#ffcd56'; // pastel yellow
+    case 'Maintain': return '#4bc0c0'; // pastel blue-green
+    default:         return '#cccccc'; // fallback
+  }
+}
+
+function renderServicePriority(priorities) {
+  const container = document.getElementById('service-priority-list');
+  container.innerHTML = '';
+  priorities.forEach(item => {
+    const color = getPriorityColor(item.status);
+    container.innerHTML += `
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="font-semibold">${item.name}</span>
+          <span class="font-semibold" style="color:${color};">${item.status}</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar" role="progressbar"
+            style="width: ${item.percent}%; background-color: ${color};"></div>
+        </div>
+      </div>
+    `;
+  });
+}
