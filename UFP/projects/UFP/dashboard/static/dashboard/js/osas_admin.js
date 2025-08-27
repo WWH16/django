@@ -821,3 +821,177 @@ function renderServicePriority(priorities) {
     `;
   });
 }
+
+/* ---------------- Enhanced Action Items (Updated to match your styling) ---------------- */
+function renderActionItems(data) {
+  // Try dynamic container first, fallback to static
+  const dynamicTarget = document.getElementById('dynamic-action-items');
+  const staticTarget = document.getElementById('action-items');
+  const target = dynamicTarget || staticTarget;
+  
+  if (!target) {
+    console.warn('No action items container found');
+    return;
+  }
+
+  const svcs = (data?.services || []).map(s => {
+    const p = Number(s.positive || 0);
+    const u = Number(s.neutral  || 0);
+    const n = Number(s.negative || 0);
+    const t = p + u + n;
+    return {
+      name: s.name || 'Unknown',
+      pos: p, 
+      neu: u, 
+      neg: n,
+      total: t,
+      pctNeg: Number(s.percent_negative || (t ? Math.round((n / t) * 100) : 0)),
+      pctNeu: t ? Math.round((u / t) * 100) : 0,
+      pctPos: t ? Math.round((p / t) * 100) : 0,
+      sat: t ? Math.round((p / t) * 100) : 0
+    };
+  }).filter(s => s.total > 0); // Only include services with feedback
+
+  if (!svcs.length) {
+    target.innerHTML = createRecommendationCard('info', 'Info', 
+      'Add feedback to generate personalized recommendations for service improvements.', 
+      '#6c757d');
+    return;
+  }
+
+  const recommendations = generateOSASRecommendations(svcs);
+
+  if (!recommendations.length) {
+    target.innerHTML = createRecommendationCard('excellent', 'Excellent', 
+      'All OSAS services are performing within acceptable ranges. Continue maintaining current service quality standards.', 
+      '#4bc0c0');
+    return;
+  }
+
+  // Render dynamic recommendations using the exact styling format you provided
+  target.innerHTML = recommendations.map((rec, index) => {
+    const isLast = index === recommendations.length - 1;
+    const marginClass = isLast ? '' : ' mb-3';
+    
+    return createRecommendationCard(rec.type, rec.label, rec.message, rec.color, marginClass);
+  }).join('');
+}
+
+function createRecommendationCard(type, label, message, color, extraClass = '') {
+  // Convert hex color to rgba with low opacity for background
+  const rgbaBackground = hexToRgba(color, 0.08);
+  
+  return `
+    <div class="p-3 rounded-default border-start${extraClass}" 
+         style="border-left: 8px solid ${color}; background: ${rgbaBackground};">
+      <strong style="color: ${color};">${label}:</strong>
+      ${message}
+    </div>
+  `;
+}
+
+// Helper function to convert hex to rgba
+function hexToRgba(hex, alpha) {
+  // Remove # if present
+  hex = hex.replace('#', '');
+  
+  // Parse hex values
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function generateOSASRecommendations(services) {
+  const recommendations = [];
+  
+  // Configuration thresholds
+  const config = {
+    urgent: { negativeThreshold: 15, minSample: 3 },
+    review: { neutralThreshold: 20, minSample: 5 }, 
+    maintain: { positiveThreshold: 50, minSample: 3 }, // Lowered from 70% to 50%
+    engagement: { totalFeedbackMin: 30 }
+  };
+
+  // Sort services by different criteria
+  const byNegativeDesc = [...services].sort((a, b) => b.pctNeg - a.pctNeg);
+  const byNeutralDesc = [...services].sort((a, b) => b.pctNeu - a.pctNeu);
+  const byPositiveDesc = [...services].sort((a, b) => b.sat - a.sat);
+
+  // 1. URGENT: Service with highest negative feedback (if above threshold)
+  const mostNegative = byNegativeDesc[0];
+  if (mostNegative && 
+      mostNegative.pctNeg >= config.urgent.negativeThreshold && 
+      mostNegative.total >= config.urgent.minSample) {
+    recommendations.push({
+      type: 'urgent',
+      priority: 1,
+      label: 'Urgent',
+      message: `${mostNegative.name} needs immediate attention, receiving ${mostNegative.pctNeg}% negative feedback. Address concerns as soon as possible to improve service quality.`,
+      color: '#ff6384'
+    });
+  }
+
+  // 2. REVIEW: Service with highest neutral feedback (if significant)
+  const mostNeutral = byNeutralDesc[0];
+  if (mostNeutral && 
+      mostNeutral.pctNeu >= config.review.neutralThreshold && 
+      mostNeutral.total >= config.review.minSample &&
+      !recommendations.find(r => r.message.includes(mostNeutral.name))) {
+    recommendations.push({
+      type: 'review',
+      priority: 2,
+      label: 'Review',
+      message: `${mostNeutral.name} has ${mostNeutral.pctNeu}% neutral feedback. Focus on converting these average experiences into positive outcomes through targeted improvements and engagement.`,
+      color: '#ffcd56'
+    });
+  }
+
+  // 3. MAINTAIN: Service with most positive feedback (always show if services exist)
+  const mostPositive = byPositiveDesc[0];
+  if (mostPositive && mostPositive.total >= config.maintain.minSample) {
+    recommendations.push({
+      type: 'maintain',
+      priority: 3,
+      label: 'Maintain',
+      message: `${mostPositive.name} is showing excellent performance with ${mostPositive.sat}% satisfaction. Maintain current practices and recognize this achievement to sustain success.`,
+      color: '#4bc0c0'
+    });
+  }
+
+  // 4. ENGAGEMENT: Low feedback participation
+  const totalFeedback = services.reduce((sum, s) => sum + s.total, 0);
+  if (totalFeedback < config.engagement.totalFeedbackMin) {
+    recommendations.push({
+      type: 'engagement',
+      priority: 4,
+      label: 'Engagement',
+      message: `Limited feedback participation detected (${totalFeedback} total responses). Consider implementing strategies to increase student engagement and feedback collection across all services.`,
+      color: '#8b5cf6'
+    });
+  }
+
+  // 5. BALANCE: Significant performance gaps between services
+  if (services.length > 1) {
+    const avgSatisfaction = services.reduce((sum, s) => sum + s.sat, 0) / services.length;
+    const underperforming = services.filter(s => s.sat < (avgSatisfaction - 20) && s.total >= 3);
+    
+    if (underperforming.length > 0) {
+      const serviceNames = underperforming.length === 1 
+        ? underperforming[0].name
+        : underperforming.slice(0, -1).map(s => s.name).join(', ') + ' and ' + underperforming[underperforming.length - 1].name;
+        
+      recommendations.push({
+        type: 'balance',
+        priority: 5,
+        label: 'Balance',
+        message: `Performance gaps detected: ${serviceNames} may benefit from adopting best practices from higher-performing services to achieve more consistent quality across OSAS offerings.`,
+        color: '#3b82f6'
+      });
+    }
+  }
+
+  // Sort by priority and return
+  return recommendations.sort((a, b) => a.priority - b.priority);
+}
