@@ -1283,7 +1283,7 @@ function loadTeacherRecommendations() {
     itemCount++;
     const pLabel = mostNegProgram.name || mostNegProgram.program || 'Program';
     const percent = Math.round(mostNegProgram.share);
-    addItem('is-support', 'Support', `The ${pLabel} Department received the highest negative evaluations, with ${percent}% of feedback classified as negative. Department-level support and development initiatives are advised.`, itemCount === totalItems);
+    addItem('is-support', 'Support', `The ${pLabel} Department, received the highest negative evaluations, with ${percent}% of evaluations classified as negative. Support and Development initiatives are advised.`, itemCount === totalItems);
   }
 
   if (!wrap.children.length) {
