@@ -246,20 +246,25 @@ def teacher_evaluation_by_semester(request):
     year = request.GET.get("year")
     program = request.GET.get("program")  
     semester = request.GET.get("semester")  
+    all_time = request.GET.get("all_time", "false").lower() == "true"
 
-    if not year:
-        return Response({"error": "Missing required parameter: year"}, status=400)
+    # Handle "all time" case
+    if all_time:
+        evaluations = Eval.objects.select_related("teacher")
+    else:
+        if not year:
+            return Response({"error": "Missing required parameter: year"}, status=400)
 
-    try:
-        year = int(year)
-    except ValueError:
-        return Response({"error": "Invalid year format"}, status=400)
+        try:
+            year = int(year)
+        except ValueError:
+            return Response({"error": "Invalid year format"}, status=400)
 
-    evaluations = (
-        Eval.objects.annotate(evaluation_year=ExtractYear("timestamp"))
-        .filter(evaluation_year=year)
-        .select_related("teacher")
-    )
+        evaluations = (
+            Eval.objects.annotate(evaluation_year=ExtractYear("timestamp"))
+            .filter(evaluation_year=year)
+            .select_related("teacher")
+        )
 
     if semester:
         if semester == '1':  
