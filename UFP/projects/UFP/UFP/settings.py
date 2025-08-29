@@ -101,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'universityFeedbackPlatform',
         'USER': 'postgres',
-        'PASSWORD': 'Estevesjancen06-16-23',
+        'PASSWORD': 'kiminonawa12345',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -167,7 +167,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'estevesjancen388@gmail.com'
+EMAIL_HOST_USER = 'kiminonawa12345'
 EMAIL_HOST_PASSWORD = 'sqyo mcxz rhjm mewu'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

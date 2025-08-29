@@ -1,0 +1,315 @@
+/* =========================
+   Scoped utilities (renamed wrappers)
+   ========================= */
+:root{
+  /* Fallbacks if your theme vars are missing */
+  --border-color: #e5e7eb;
+}
+
+.teacher-eval-wrap { padding: 12px 0 24px; }
+.teacher-eval-container { max-width: 1400px; margin: 0 auto; padding: 0 12px; }
+.row { display: flex; flex-wrap: wrap; margin-left: -12px; margin-right: -12px; }
+.row > [class^="col-"], .row > .col { padding-left: 12px; padding-right: 12px; box-sizing: border-box; }
+
+.mb-4 { margin-bottom: 1.25rem; }
+.mb-0 { margin-bottom: 0 !important; }
+.mt-2 { margin-top: .5rem; }
+.mt-4 { margin-top: 1rem; }
+.me-2 { margin-right: .5rem; }
+.d-flex { display: flex; }
+.justify-content-between { justify-content: space-between; }
+.align-items-center { align-items: center; }
+.d-none { display: none; }
+.d-sm-inline-block { display: inline-block; }
+.text-center { text-align: center; }
+.text-end { text-align: right; }
+.text-muted { color: #6b7280; }
+.text-dark { color: var(--body-fg); }
+.text-primary { color: #0d6efd; }
+.text-success { color: #198754; }
+.text-warning { color: #ffc107; }
+.text-danger  { color: #dc3545; }
+.fw-bold { font-weight: 600; }
+.h5 { font-size: 1.25rem; }
+.small { font-size: .875rem; }
+.text-xs { font-size: .8rem; }
+
+/* Extra utilities referenced by HTML */
+.m-0 { margin: 0 !important; }
+.mt-1 { margin-top: .25rem !important; }
+.gap-2 { gap: .5rem !important; }
+.no-gutters { margin-left: 0 !important; margin-right: 0 !important; }
+.no-gutters > .col, .no-gutters > [class^="col-"] { padding-left: 0 !important; padding-right: 0 !important; }
+.col-auto { flex: 0 0 auto; width: auto; }
+.px-3 { padding-left: 1rem !important; padding-right: 1rem !important; }
+.py-2 { padding-top: .5rem !important; padding-bottom: .5rem !important; }
+.py-3 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+.text-gray-300 { color: #d1d5db !important; }
+.text-gray-400 { color: #9ca3af !important; }
+.text-uppercase { text-transform: uppercase !important; letter-spacing: .02em; }
+
+/* =========================
+   Columns
+   ========================= */
+.col { flex: 1 0 0%; }
+.col-md-6,.col-xl-3,.col-lg-7,.col-xl-8,.col-lg-5,.col-xl-4 { width: 100%; }
+@media (min-width: 768px){ .col-md-6{ width:50%; } }
+@media (min-width: 992px){
+  .col-lg-6{ width:50%; }
+  .col-lg-8{ width:66.6667%; }
+  .col-lg-4{ width:33.3333%; }
+}
+@media (min-width: 1200px){
+  .col-xl-3{ width:25%; }
+  .col-xl-8{ width:66.6667%; }
+  .col-xl-4{ width:33.3333%; }
+}
+
+/* =========================
+   Cards
+   ========================= */
+.card {
+  background: var(--body-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.card-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-body { padding: 16px; }
+.shadow { box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.1); }
+
+/* KPI card borders */
+.border-start-success { border-left: 4px solid #198754; }
+.border-start-warning { border-left: 4px solid #ffc107; }
+.border-start-danger  { border-left: 4px solid #dc3545; }
+.border-start-primary { border-left: 4px solid #0d6efd; }
+
+/* =========================
+   Buttons
+   ========================= */
+.btn { display:inline-flex; align-items:center; gap:6px; border-radius:8px; padding:8px 12px; text-decoration:none; cursor:pointer; border:1px solid transparent; }
+.btn-primary { background:#0d6efd; color:#fff; }
+.btn-link.btn-sm { background:transparent; border:0; padding:4px 6px; line-height:1; cursor:pointer; }
+
+/* =========================
+   Badges + colored service cards
+   ========================= */
+.badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:.75rem; }
+.bg-light { background:#f3f4f6; }
+.bg-success { background:#198754 !important; }
+.bg-warning { background:#ffc107 !important; color:#111827; }
+.bg-primary { background:#0d6efd !important; }
+.bg-danger  { background:#dc3545 !important; }
+.text-white { color:#fff; }
+.text-white-50 { color:rgba(255,255,255,0.75); }
+
+.bg-success .badge.bg-light { color:#198754 !important; font-weight:600; }
+.bg-warning .badge.bg-light { color:#111827 !important; font-weight:600; }
+.bg-primary .badge.bg-light { color:#0d6efd !important; font-weight:600; }
+.bg-danger  .badge.bg-light { color:#dc3545 !important; font-weight:600; }
+
+/* =========================
+   Progress bars
+   ========================= */
+.progress { width:100%; height:8px; background:#e5e7eb; border-radius:6px; overflow:hidden; }
+.progress-bar { height:100%; }
+
+/* =========================
+   Dropdown
+   ========================= */
+.dropdown { position: relative; }
+.dropdown-menu {
+  position:absolute; right:0; top:100%; min-width:220px;
+  background:var(--body-bg); border:1px solid var(--border-color);
+  border-radius:8px; padding:6px 0; box-shadow:0 8px 16px rgba(0,0,0,.08);
+  display:none; z-index:10;
+}
+.dropdown:hover .dropdown-menu { display:block; }
+.dropdown-item { display:block; padding:8px 12px; color:var(--body-fg); text-decoration:none; }
+.dropdown-divider { height:1px; background:var(--border-color); margin:6px 0; }
+.dropdown-header { color:#6b7280; font-size:.8rem; margin:6px 0; }
+.dropdown-menu-end { right: 0; left: auto; }
+.animated--fade-in { animation: fadeIn .16s ease-in; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+
+/* =========================
+   Chart sizing
+   ========================= */
+.chart-area { position: relative; width: 100%; height: clamp(320px, 48vh, 72vh); }
+.chart-area > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+
+/* =========================
+   Action Items & Recommendations
+   ========================= */
+.action-items { display:flex; flex-direction:column; gap:18px; margin: 6px 2px 2px; }
+.action-item {
+  padding:20px 22px; border-radius:14px; border:1px solid var(--border-color);
+  background:var(--body-bg); line-height:1.55; box-shadow:0 1px 2px rgba(0,0,0,0.04);
+  border-left-width:8px;
+}
+.action-item .label { font-weight:700; margin-right:10px; }
+
+.action-item.is-urgent   { background:#fde2e2 !important; border-left:8px solid #dc3545; color:#111827 !important; }
+.action-item.is-review   { background:#fff3cd !important; border-left:8px solid #ffc107; color:#111827 !important; }
+.action-item.is-maintain { background:#d1fae5 !important; border-left:8px solid #198754; color:#111827 !important; }
+.action-item.is-support  { background:#dbeafe !important; border-left:8px solid #3b82f6; color:#111827 !important; }
+.action-item.is-support .label,
+.action-item.is-support * { color:#111827 !important; }
+
+/* =========================
+   Recent Feedback — base
+   ========================= */
+#recent-feedback-list { margin: 8px 10px 12px; padding: 0; list-style: none; }
+#recent-feedback-list .list-group-item { border: 0; line-height: 1.55; overflow-wrap: anywhere; word-break: break-word; }
+#recent-feedback-list h6 { margin: 0 0 8px; font-size: 1rem; font-weight: 700; }
+#recent-feedback-list span.text-xs { display: inline-block; margin-bottom: 8px; }
+#recent-feedback-list p.text-xs { display: block; margin: 0 0 8px; color: #6b7280; }
+#recent-feedback-list small { display: block; margin-top: 2px; color: #9ca3af; }
+
+/* =========================
+   Equal-height layout helpers
+   ========================= */
+@media (min-width: 992px) {
+  .equal-row { display: flex; align-items: stretch; gap: 24px; }
+  .equal-row > .col-lg-6, .equal-row > .col { display: flex; flex-direction: column; }
+  .equal-row .card { height: 100%; }
+}
+
+/* =================================================================
+   RECENT FEEDBACK — COMPACT
+   ================================================================= */
+#recent-feedback-list.list-group{ margin: 4px 8px 6px !important; padding: 0 !important; list-style: none !important; }
+#recent-feedback-list.list-group .list-group-item{
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  line-height: 1.4 !important;
+  background: transparent !important;
+}
+#recent-feedback-list.list-group .list-group-item:last-child{ border-bottom: 0 !important; }
+#recent-feedback-list.list-group h6{ margin: 0 0 2px !important; font-size: .95rem !important; font-weight: 700 !important; }
+#recent-feedback-list.list-group span.text-xs{ display: inline-block !important; margin: 0 0 2px !important; font-size: .76rem !important; }
+#recent-feedback-list.list-group p.text-xs{
+  margin: 0 0 2px !important; color: #6b7280 !important;
+  display: -webkit-box !important; display: box !important;
+  -webkit-box-orient: vertical !important; box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important; line-clamp: 2 !important;
+  overflow: hidden !important; text-overflow: ellipsis !important;
+  line-height: 1.4 !important; max-height: 3.1em !important;
+}
+#recent-feedback-list.list-group small{ display: block !important; margin: 0 !important; font-size: .72rem !important; color: #9ca3af !important; }
+.card .card-body:has(#recent-feedback-list){ padding: 10px !important; }
+.card .card-header:has(+ .card-body #recent-feedback-list){ padding: 10px 12px !important; }
+.rf-compact .card-body { padding: 10px !important; }
+.rf-compact .card-header { padding: 10px 12px !important; }
+@media (min-width: 992px){ #recent-feedback-list.list-group .list-group-item{ padding: 10px 12px !important; } }
+
+/* ==========================================================
+   RECENT TEACHER REVIEWS — COMPACT (match Recent Feedback)
+   ========================================================== */
+#recent-evaluations-list.list-group{
+  margin: 4px 8px 6px !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+#recent-evaluations-list.list-group .list-group-item{
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  line-height: 1.4 !important;
+  background: transparent !important;
+}
+#recent-evaluations-list.list-group .list-group-item:last-child{
+  border-bottom: 0 !important;
+}
+#recent-evaluations-list.list-group h6{
+  margin: 0 0 2px !important;
+  font-size: .95rem !important;
+  font-weight: 700 !important;
+}
+#recent-evaluations-list.list-group span.text-xs{
+  display: inline-block !important;
+  margin: 0 0 2px !important;
+  font-size: .76rem !important; /* sentiment line */
+}
+#recent-evaluations-list.list-group p.text-xs{
+  margin: 0 0 2px !important;
+  color: #6b7280 !important;
+  display: -webkit-box !important;
+  display: box !important;
+  -webkit-box-orient: vertical !important;
+  box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.4 !important;
+  max-height: 3.1em !important;
+}
+#recent-evaluations-list.list-group small{
+  display: block !important;
+  margin: 0 !important;
+  font-size: .72rem !important;
+  color: #9ca3af !important;
+}
+.card .card-body:has(#recent-evaluations-list){ padding: 10px !important; }
+.card .card-header:has(+ .card-body #recent-evaluations-list){ padding: 10px 12px !important; }
+@media (min-width: 992px){
+  #recent-evaluations-list.list-group .list-group-item{ padding: 10px 12px !important; }
+}
+
+/* =========================
+   Teacher’s Evaluation – Priority list
+   ========================= */
+.priority-scroll{
+  max-height:300px;
+  overflow-y:auto;
+  scrollbar-gutter: stable both-edges;
+  padding-right:12px;
+}
+.priority-scroll::-webkit-scrollbar{ width:10px; }
+.priority-scroll::-webkit-scrollbar-thumb{ background:#c9c9c9; border-radius:8px; }
+.priority-scroll::-webkit-scrollbar-track{ background:transparent; }
+
+/* Basis: neutral rows that adapt to theme; keep badge colors */
+#teacher-priority-list { margin: 4px 2px 8px; padding: 0; list-style: none; }
+#teacher-priority-list .priority-item{
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  padding:16px 20px;
+  border:0;
+  border-bottom:1px solid var(--border-color);
+  background: var(--body-bg);
+  color: var(--body-fg);
+  border-left:0;           /* no colored bar */
+  border-radius:12px;      /* subtle card feel */
+  padding-right:6px;
+}
+
+/* ensure any “variant” classes don’t reintroduce tints */
+#teacher-priority-list .priority-item.is-urgent,
+#teacher-priority-list .priority-item.is-review,
+#teacher-priority-list .priority-item.is-maintain,
+#teacher-priority-list .priority-item.is-support{
+  background: inherit !important;
+  color: inherit !important;
+  border-left: 0 !important;
+}
+
+/* text subtleties remain muted */
+#teacher-priority-list .priority-item .text-muted{ color:#6b7280 !important; }
+
+/* Dark-mode hard fallbacks if theme tokens are absent */
+@media (prefers-color-scheme: dark){
+  #teacher-priority-list .priority-item{
+    background: var(--body-bg, #0f172a);
+    color: var(--body-fg, #e5e7eb);
+    border-bottom: 1px solid var(--border-color, #273244);
+  }
+}

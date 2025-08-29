@@ -201,14 +201,14 @@
   {% for message in messages %}
     {% if 'success' in message.tags %}
       <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog" style="margin-top: 50px;"> <!-- removed modal-dialog-centered, added top margin -->
           <div class="modal-content">
             <div class="modal-header bg-success text-white">
               <h5 class="modal-title" id="successModalLabel">
                 <span class="material-symbols-outlined me-2">check_circle</span>
                 Submitted Successfully
               </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <!-- X button removed -->
             </div>
             <div class="modal-body text-center">
               {{ message }}
@@ -228,6 +228,8 @@
     {% endif %}
   {% endfor %}
 {% endif %}
+
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
