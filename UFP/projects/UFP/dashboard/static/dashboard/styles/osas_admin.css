@@ -236,26 +236,149 @@
 }
 
 
-.filter-btn-green {
-  background-color: #f0fdf4;
-  border-color: #bbf7d0;
-  color: #15803d;
-  transition: all 0.2s ease;
-}
+              /* Blur overlay */
+              #blur-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.4);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease;
+              }
 
-.filter-btn-green:hover {
-  background-color: #dcfce7;
-  border-color: #86efac;
-  color: #166534;
-}
+              #blur-overlay.active {
+                opacity: 1;
+                visibility: visible;
+              }
 
-.dark .filter-btn-green {
-  background-color: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #4ade80;
-}
+              /* Filter drawer base */
+              .offcanvas-end {
+                position: fixed;
+                top: 1rem;
+                right: -340px;
+                /* hidden offscreen */
+                margin-right: 1rem;
+                width: 320px;
+                height: calc(100vh - 2rem);
+                border-radius: 0.40rem;
+                background: #fff;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                font-size: 0.60rem;
+                transition: right 0.3s ease;
+                z-index: 1060;
+              }
 
-.dark .filter-btn-green:hover {
-  background-color: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.4);
-}
+              .offcanvas-end.show {
+                right: 0;
+              }
+
+              .dark .offcanvas-end {
+                background: #1a202c;
+                border-left-color: #2d3748;
+              }
+
+              /* Filter section */
+              .filter-section {
+                margin-bottom: 1.5rem;
+              }
+
+              .filter-section h6 {
+                font-size: 0.95rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: #111;
+              }
+
+              .dark .filter-section h6 {
+                color: #e2e8f0;
+              }
+
+              /* Filter options */
+              .filter-section ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.5rem;
+                overflow: hidden;
+              }
+
+              .dark .filter-section ul {
+                border: 1px solid #374151;
+              }
+
+              .filter-option {
+                padding: 0.7rem 1rem;
+                font-size: 0.9rem;
+                color: #374151;
+                cursor: pointer;
+                transition: background 0.15s ease;
+              }
+
+              .filter-option+.filter-option {
+                border-top: 1px solid #e5e7eb;
+              }
+
+              .dark .filter-option+.filter-option {
+                border-top: 1px solid #374151;
+              }
+
+              .filter-option:hover {
+                background: #f9fafb;
+              }
+
+              .filter-option.active {
+                color: #16a34a;
+                font-weight: 500;
+                background: #fff;
+              }
+
+              .dark .filter-option {
+                color: #cbd5e1;
+              }
+
+              .dark .filter-option:hover {
+                background: #2d3748;
+              }
+
+              .dark .filter-option.active {
+                color: #22c55e;
+                background: transparent;
+              }
+
+              /* Footer button */
+              .offcanvas-footer {
+                border-top: 1px solid #e5e7eb;
+                padding: 1rem;
+              }
+
+              .offcanvas-footer button {
+                width: 100%;
+                background: #fff;
+                border: 1px solid #d1d5db;
+                padding: 0.7rem;
+                border-radius: 0.5rem;
+                color: #111;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: background 0.15s ease;
+              }
+
+              .offcanvas-footer button:hover {
+                background: #f3f4f6;
+              }
+
+              .dark .offcanvas-footer {
+                border-top: 1px solid #2d3748;
+              }
+
+              .dark .offcanvas-footer button {
+                background: transparent;
+                border-color: #374151;
+                color: #e2e8f0;
+              }
+
+              .dark .offcanvas-footer button:hover {
+                background: #2d3748;
+              }
+              

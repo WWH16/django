@@ -16,6 +16,12 @@
       <h3 class="mb-0 text-font-important-light dark:text-font-important-dark">OSAS Services Sentiment Analysis
         Dashboard</h3>
       <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Filter Button -->
+        <button id="filter-btn"
+          class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
+          type="button">
+          <i class="fas fa-filter"></i> Filter
+        </button>
         <a href="#" id="export-report-btn"
           class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap d-none d-sm-inline-block border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer">
           <i class="fas fa-download fa-sm text-white-50"></i> Export Report
@@ -23,6 +29,213 @@
       </div>
     </div>
 
+    <!-- FILTER DRAWER -->
+    <div class="blur-overlay" id="blur-overlay"></div>
+
+    <div class="offcanvas-end" id="filter-drawer" aria-labelledby="filterDrawerLabel">
+      <div class="offcanvas-body">
+        <!-- By Year -->
+        <div class="filter-section">
+          <h6>By Year</h6>
+          <ul id="year-filter">
+            <li class="filter-option active" data-value="all">All Time</li>
+            <li class="filter-option" data-value="2023">2023</li>
+            <li class="filter-option" data-value="2024">2024</li>
+            <li class="filter-option" data-value="2025">2025</li>
+            <li class="filter-option" data-value="-">-</li>
+          </ul>
+        </div>
+
+        <!-- By Semester -->
+        <div class="filter-section">
+          <h6>By Semester</h6>
+          <ul id="semester-filter">
+            <li class="filter-option active" data-value="all">All Semesters</li>
+            <li class="filter-option" data-value="1">1st Semester</li>
+            <li class="filter-option" data-value="2">2nd Semester</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="offcanvas-footer">
+        <button id="apply-filters">Show counts</button>
+      </div>
+    </div>
+
+    <style>
+      /* Blur overlay */
+      .blur-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .blur-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Filter drawer base */
+      .offcanvas-end {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 280px;
+        height: calc(100vh - 40px);
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        font-size: 14px;
+        display: none;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        z-index: 1060;
+      }
+
+      .offcanvas-end.show {
+        display: flex;
+        transform: translateX(0);
+      }
+
+      .dark .offcanvas-end {
+        background: #1a202c;
+        border-color: #2d3748;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      .offcanvas-body {
+        flex: 1;
+        padding: 24px 20px;
+        overflow-y: auto;
+      }
+
+      /* Filter section */
+      .filter-section {
+        margin-bottom: 24px;
+      }
+
+      .filter-section h6 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #111;
+      }
+
+      .dark .filter-section h6 {
+        color: #e2e8f0;
+      }
+
+      /* Filter options */
+      .filter-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .dark .filter-section ul {
+        border: 1px solid #374151;
+        background: #1e2329;
+      }
+
+      .filter-option {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #374151;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .filter-option:last-child {
+        border-bottom: none;
+      }
+
+      .dark .filter-option {
+        color: #94a3b8;
+        border-bottom-color: #3a4553;
+      }
+
+      .filter-option:hover {
+        background: #f9fafb;
+        color: #111;
+      }
+
+      .dark .filter-option:hover {
+        background: #374151;
+        color: #e2e8f0;
+      }
+
+      .filter-option.active {
+        color: #16a34a;
+        background: #f0fdf4;
+        font-weight: 500;
+      }
+
+      .dark .filter-option.active {
+        color: #22c55e;
+        background: #1e2329;
+      }
+
+      /* Footer button */
+      .offcanvas-footer {
+        border-top: 1px solid #e5e7eb;
+        padding: 20px;
+      }
+
+      .dark .offcanvas-footer {
+        border-top: 1px solid #2d3748;
+      }
+
+      .offcanvas-footer button {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        padding: 12px 16px;
+        border-radius: 8px;
+        color: #111;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .offcanvas-footer button:hover {
+        background: #f3f4f6;
+      }
+
+      .dark .offcanvas-footer button {
+        background: transparent;
+        border-color: #374151;
+        color: #e2e8f0;
+      }
+
+      .dark .offcanvas-footer button:hover {
+        background: #2d3748;
+      }
+
+      /* Prevent scrolling when filter is open */
+      body.filter-open {
+        overflow: hidden;
+      }
+    </style>
+
+    <script>
+
+    </script>
     <!-- KPI CARDS -->
     <div class="row">
       <!-- Positive Feedback -->
@@ -42,7 +255,7 @@
               <span id="osas-positive-count">0</span>
             </div>
             <div class="text-xs text-muted">
-              <span id="osas-positive-percent">0</span>% of total feedback
+              <span id="osas-positive-percent">0</span>
             </div>
           </div>
         </div>
@@ -65,7 +278,7 @@
               <span id="osas-neutral-count">0</span>
             </div>
             <div class="text-xs text-muted">
-              <span id="osas-neutral-percent">0</span>% of total feedback
+              <span id="osas-neutral-percent">0</span>
             </div>
           </div>
         </div>
@@ -88,11 +301,12 @@
               <span id="osas-negative-count">0</span>
             </div>
             <div class="text-xs text-muted">
-              <span id="osas-negative-percent">0</span>% of total feedback
+              <span id="osas-negative-percent">0</span>
             </div>
           </div>
         </div>
       </div>
+
       <!-- Total Comments -->
       <div class="col-md-6 col-xl-3 mb-4">
         <div
@@ -110,7 +324,8 @@
             <div class="font-bold text-primary text-xl mb-0" style="color: #78b4ff;">
               <span id="osas-total-count">0</span>
             </div>
-            <div class="text-xs text-muted">All Time</div>
+            <!-- FIXED: Added id="osas-total-description" -->
+            <div class="text-xs text-muted" id="osas-total-description">All Time</div>
           </div>
         </div>
       </div>
@@ -124,27 +339,6 @@
           <div class="d-flex align-items-center justify-content-between mb-3">
             <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">
               Sentiment Distribution by OSAS Services
-              <small class="text-muted text-font-important-light dark:text-font-important-dark"
-                id="active-range-label">· All Time</small>
-            </h6>
-            <div class="dropdown">
-              <button class="btn" type="button">
-                <i class="fas fa-ellipsis-v text-muted text-font-important-light dark:text-font-important-dark"></i>
-              </button>
-              <div class="dropdown-menu">
-                <p class="text-center dropdown-header">
-                  Filter Options (Charts Only):
-                </p>
-                <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
-                <a class="dropdown-item osas-range" data-range="7d" href="#">Last 7 Days</a>
-                <a class="dropdown-item osas-range" data-range="30d" href="#">Last 30 Days</a>
-                <a class="dropdown-item osas-range" data-range="this_month" href="#">This Month</a>
-                <a class="dropdown-item osas-range" data-range="6m" href="#">Last 6 Months</a>
-                <a class="dropdown-item osas-range" data-range="1y" href="#">Last Year</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="osas-export-data" href="#">Export Data</a>
-              </div>
-            </div>
           </div>
           <div class="chart-area">
             <canvas id="osasBarChart" style="width:100%;height:400px;"></canvas>
@@ -162,19 +356,6 @@
               <button class="btn" type="button">
                 <i class="fas fa-ellipsis-v text-muted text-font-important-light dark:text-font-important-dark"></i>
               </button>
-              <div class="dropdown-menu">
-                <p class="text-center dropdown-header">
-                  Filter Options (Charts Only):
-                </p>
-                <a class="dropdown-item osas-range" data-range="all" href="#">All Time</a>
-                <a class="dropdown-item osas-range" data-range="7d" href="#">Last 7 Days</a>
-                <a class="dropdown-item osas-range" data-range="30d" href="#">Last 30 Days</a>
-                <a class="dropdown-item osas-range" data-range="this_month" href="#">This Month</a>
-                <a class="dropdown-item osas-range" data-range="6m" href="#">Last 6 Months</a>
-                <a class="dropdown-item osas-range" data-range="1y" href="#">Last Year</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" id="osas-generate-report" href="#">Export Data</a>
-              </div>
             </div>
           </div>
           <div class="chart-area">

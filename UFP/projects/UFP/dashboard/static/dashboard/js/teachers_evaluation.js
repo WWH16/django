@@ -1236,6 +1236,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   }, 100);
 });
 
+
+
 // Make functions globally accessible
 window.loadYearData = loadYearData;
 window.exportFilteredData = exportFilteredData;

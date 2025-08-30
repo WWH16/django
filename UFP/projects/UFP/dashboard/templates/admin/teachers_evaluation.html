@@ -554,9 +554,9 @@
         <li class="filter-option" data-value="2023">2023</li>
         <li class="filter-option" data-value="2024">2024</li>
         <li class="filter-option" data-value="2025">2025</li>
+        <li class="filter-option" data-value="-">-</li>
       </ul>
     </div>
-
     <!-- By Semester -->
     <div class="filter-section">
       <h6>By Semester</h6>
@@ -736,124 +736,159 @@ body.filter-open {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Initialize filter drawer functionality
-    const filterBtn = document.getElementById('filter-btn');
-    const filterDrawer = document.getElementById('filter-drawer');
-    const blurOverlay = document.getElementById('blur-overlay');
-    const yearFilter = document.getElementById('year-filter');
-    const semesterFilter = document.getElementById('semester-filter');
-    const applyFiltersBtn = document.getElementById('apply-filters');
-    const closeBtn = filterDrawer.querySelector('.btn-close');
+ document.addEventListener('DOMContentLoaded', function () {
+   // Initialize filter drawer functionality
+   const filterBtn = document.getElementById('filter-btn');
+   const filterDrawer = document.getElementById('filter-drawer');
+   const blurOverlay = document.getElementById('blur-overlay');
+   const yearFilter = document.getElementById('year-filter');
+   const semesterFilter = document.getElementById('semester-filter');
+   const applyFiltersBtn = document.getElementById('apply-filters');
+   const closeBtn = filterDrawer.querySelector('.btn-close');
 
-    // Show drawer function
-    function showDrawer() {
-      filterDrawer.classList.add('show');
-      blurOverlay.classList.add('show');
-      document.body.classList.add('filter-open');
-    }
+   // Show drawer function
+   function showDrawer() {
+     filterDrawer.classList.add('show');
+     blurOverlay.classList.add('show');
+     document.body.classList.add('filter-open');
+   }
 
-    // Hide drawer function
-    function hideDrawer() {
-      filterDrawer.classList.remove('show');
-      blurOverlay.classList.remove('show');
-      document.body.classList.remove('filter-open');
-    }
+   // Hide drawer function
+   function hideDrawer() {
+     filterDrawer.classList.remove('show');
+     blurOverlay.classList.remove('show');
+     document.body.classList.remove('filter-open');
+   }
 
-    // Open filter drawer when filter button is clicked
-    filterBtn.addEventListener('click', function () {
-      showDrawer();
-    });
+   // Instant reset and apply filters
+   function instantResetFilters() {
+     // Reset year filter to "All Time"
+     yearFilter.querySelectorAll('.filter-option').forEach(item => {
+       item.classList.remove('active');
+       if (item.getAttribute('data-value') === 'all') {
+         item.classList.add('active');
+       }
+     });
+     
+     // Reset semester filter to "All Semesters"
+     semesterFilter.querySelectorAll('.filter-option').forEach(item => {
+       item.classList.remove('active');
+       if (item.getAttribute('data-value') === 'all') {
+         item.classList.add('active');
+       }
+     });
+     
+     console.log('Filters instantly reset and applied');
+     
+     // Close the drawer immediately
+     hideDrawer();
 
-    // Close drawer when clicking the close button
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        hideDrawer();
-      });
-    }
+     // Apply the reset filters immediately
+     try {
+       if (typeof window.applyYearFilter === 'function') {
+         window.applyYearFilter('all', 'all');
+       } else if (typeof window.loadYearData === 'function') {
+         window.loadYearData('all', 'all');
+       } else {
+         console.log('Filter functions not found. Applied reset: Year: all, Semester: all');
+         // Fallback: trigger a custom event
+         const filterEvent = new CustomEvent('filtersApplied', {
+           detail: { year: 'all', semester: 'all' }
+         });
+         document.dispatchEvent(filterEvent);
+       }
+     } catch (error) {
+       console.error('Error applying reset filters:', error);
+     }
+   }
 
-    // Close drawer when clicking outside
-    blurOverlay.addEventListener('click', function() {
-      hideDrawer();
-    });
+   // Open filter drawer when filter button is clicked
+   filterBtn.addEventListener('click', function () {
+     showDrawer();
+   });
 
-    // Also handle ESC key to close drawer
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape' && filterDrawer.classList.contains('show')) {
-        hideDrawer();
-      }
-    });
+   // Close drawer when clicking the close button
+   if (closeBtn) {
+     closeBtn.addEventListener('click', function () {
+       hideDrawer();
+     });
+   }
 
-    // Handle year filter selection
-    yearFilter.addEventListener('click', function (e) {
-      if (e.target.classList.contains('filter-option')) {
-        // Remove active class from all year items
-        yearFilter.querySelectorAll('.filter-option').forEach(item => {
-          item.classList.remove('active');
-        });
-        // Add active class to clicked item
-        e.target.classList.add('active');
-      }
-    });
+   // Close drawer when clicking outside
+   blurOverlay.addEventListener('click', function() {
+     hideDrawer();
+   });
 
-    // Handle semester filter selection
-    semesterFilter.addEventListener('click', function (e) {
-      if (e.target.classList.contains('filter-option')) {
-        // Remove active class from all semester items
-        semesterFilter.querySelectorAll('.filter-option').forEach(item => {
-          item.classList.remove('active');
-        });
-        // Add active class to clicked item
-        e.target.classList.add('active');
-      }
-    });
+   // Also handle ESC key to close drawer
+   document.addEventListener('keydown', function(event) {
+     if (event.key === 'Escape' && filterDrawer.classList.contains('show')) {
+       hideDrawer();
+     }
+   });
 
-    // Handle apply filters button
-    applyFiltersBtn.addEventListener('click', function () {
-      const selectedYear = yearFilter.querySelector('.filter-option.active')?.getAttribute('data-value');
-      const selectedSemester = semesterFilter.querySelector('.filter-option.active')?.getAttribute('data-value');
+   // Handle year filter selection
+   yearFilter.addEventListener('click', function (e) {
+     if (e.target.classList.contains('filter-option')) {
+       const selectedValue = e.target.getAttribute('data-value');
+       
+       // Check if "Reset Filter" was clicked
+       if (selectedValue === '-') {
+         // Instantly reset and apply filters
+         instantResetFilters();
+       } else {
+         // Remove active class from all year items
+         yearFilter.querySelectorAll('.filter-option').forEach(item => {
+           item.classList.remove('active');
+         });
+         // Add active class to clicked item
+         e.target.classList.add('active');
+       }
+     }
+   });
 
-      console.log('Applying filters - Year:', selectedYear, 'Semester:', selectedSemester);
+   // Handle semester filter selection
+   semesterFilter.addEventListener('click', function (e) {
+     if (e.target.classList.contains('filter-option')) {
+       // Remove active class from all semester items
+       semesterFilter.querySelectorAll('.filter-option').forEach(item => {
+         item.classList.remove('active');
+       });
+       // Add active class to clicked item
+       e.target.classList.add('active');
+     }
+   });
 
-      // Close the drawer
-      hideDrawer();
+   // Handle apply filters button
+   applyFiltersBtn.addEventListener('click', function () {
+     const selectedYear = yearFilter.querySelector('.filter-option.active')?.getAttribute('data-value');
+     const selectedSemester = semesterFilter.querySelector('.filter-option.active')?.getAttribute('data-value');
 
-      // Apply the filters using existing functionality
-      try {
-        if (typeof window.applyYearFilter === 'function') {
-          window.applyYearFilter(selectedYear, selectedSemester);
-        } else if (typeof window.loadYearData === 'function') {
-          window.loadYearData(selectedYear, selectedSemester);
-        } else {
-          console.log('Filter functions not found. Selected Year:', selectedYear, 'Selected Semester:', selectedSemester);
-          // Fallback: trigger a custom event that other scripts can listen to
-          const filterEvent = new CustomEvent('filtersApplied', {
-            detail: { year: selectedYear, semester: selectedSemester }
-          });
-          document.dispatchEvent(filterEvent);
-        }
-      } catch (error) {
-        console.error('Error applying filters:', error);
-      }
-    });
+     console.log('Applying filters - Year:', selectedYear, 'Semester:', selectedSemester);
 
-    // Initialize default state
-    console.log('Filter drawer initialized');
-  });
+     // Close the drawer
+     hideDrawer();
 
-  // Export function (if not defined elsewhere)
-  function exportFilteredData() {
-    try {
-      if (typeof window.exportData === 'function') {
-        window.exportData();
-      } else {
-        console.log('Export functionality not implemented');
-        alert('Export functionality will be implemented soon.');
-      }
-    } catch (error) {
-      console.error('Error exporting data:', error);
-    }
-  }
+     // Apply the filters using existing functionality
+     try {
+       if (typeof window.applyYearFilter === 'function') {
+         window.applyYearFilter(selectedYear, selectedSemester);
+       } else if (typeof window.loadYearData === 'function') {
+         window.loadYearData(selectedYear, selectedSemester);
+       } else {
+         console.log('Filter functions not found. Selected Year:', selectedYear, 'Selected Semester:', selectedSemester);
+         // Fallback: trigger a custom event that other scripts can listen to
+         const filterEvent = new CustomEvent('filtersApplied', {
+           detail: { year: selectedYear, semester: selectedSemester }
+         });
+         document.dispatchEvent(filterEvent);
+       }
+     } catch (error) {
+       console.error('Error applying filters:', error);
+     }
+   });
+
+   // Initialize default state
+   console.log('Filter drawer initialized');
+ });
 </script>
-
 {% endblock %}
