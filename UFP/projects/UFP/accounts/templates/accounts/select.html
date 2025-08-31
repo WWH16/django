@@ -5,22 +5,23 @@
 {% block header_sub %}Welcome{% endblock %}
 
 {% block content %}
-    <a href="{% url 'login_admin' %}" class="btn-select">
-        Admin Login
-    </a>
-    <a href="{% url 'login_student' %}" class="btn-select">
-        Student Login
-    </a>
-    <div class="divider-or">
-        <span class="divider-line"></span>
-        Or
-        <span class="divider-line"></span>
-    </div>
-    <a href="{% url 'register' %}" class="btn-select">
-        Register as Student
-    </a>
-    <div class="info-text">
-        <i class="material-symbols-outlined" style="font-size:1rem; color: #888;">info</i>
-        Choose the appropriate option based on your role
-    </div>
+<a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="btn-select">
+    Admin Login
+</a>
+
+<a href="{% url 'login_student' %}" class="btn-select">
+    Student Login
+</a>
+<div class="divider-or">
+    <span class="divider-line"></span>
+    Or
+    <span class="divider-line"></span>
+</div>
+<a href="{% url 'register' %}" class="btn-select">
+    Register as Student
+</a>
+<div class="info-text">
+    <i class="material-symbols-outlined" style="font-size:1rem; color: #888;">info</i>
+    Choose the appropriate option based on your role
+</div>
 {% endblock %}

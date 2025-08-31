@@ -43,6 +43,7 @@ env/
 venv/
 ENV/
 myenv/
+venv312/
 .venv/
 .env
 .env.*
