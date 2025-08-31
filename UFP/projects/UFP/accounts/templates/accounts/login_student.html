@@ -72,7 +72,7 @@
     </div>
 
     <!-- Captcha -->
-    <div style="margin-bottom: 1rem;">
+    <div style="margin-bottom: 1rem; display:flex; justify-content:center; align-items:center;">
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
