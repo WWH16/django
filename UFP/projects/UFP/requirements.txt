@@ -6,8 +6,9 @@ django-recaptcha==4.1.0
 django-simple-history==3.10.1
 django-unfold==0.64.2
 djangorestframework==3.16.0
-pip==25.1.1
 psycopg2==2.9.10
+setuptools==80.9.0
 sqlparse==0.5.3
 tablib==3.8.0
 tzdata==2025.2
+wheel==0.45.1
