@@ -89,6 +89,9 @@
     }
   }
 
+  /* Remove modal footer top border for a cleaner modern look */
+  .modal-footer { border-top: none !important; }
+
 
 </style>
 
@@ -153,7 +156,8 @@
                   <select name="program" id="program" class="form-select" required>
                     <option value="" disabled selected>Select a program</option>
                     {% for program in programs %}
-                      <option value="{{ program.pk }}">{{ program.programName }}</option>
+                      {# expect Program has a FK to Department as `department` #}
+                      <option value="{{ program.pk }}" data-department="{{ program.department.pk|default:'' }}">{{ program.programName }}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -275,5 +279,60 @@
       }, 1000);
     }
   });
+</script>
+<script>
+  // Filter programs based on selected department
+  (function() {
+    function filterPrograms() {
+      var deptSelect = document.getElementById('department');
+      var progSelect = document.getElementById('program');
+      if (!deptSelect || !progSelect) return;
+
+      var selectedDept = deptSelect.value;
+      var options = Array.from(progSelect.querySelectorAll('option[data-department]'));
+
+      // Remember previously selected value
+      var prev = progSelect.value;
+
+      // Clear and repopulate visible options
+      options.forEach(function(opt) {
+        if (!selectedDept) {
+          opt.hidden = true;
+          opt.disabled = true;
+        } else if (opt.getAttribute('data-department') === selectedDept) {
+          opt.hidden = false;
+          opt.disabled = false;
+        } else {
+          opt.hidden = true;
+          opt.disabled = true;
+        }
+      });
+
+      // Set placeholder and enable/disable select
+      var placeholder = progSelect.querySelector('option[value=""]');
+      if (!selectedDept) {
+        progSelect.value = '';
+        progSelect.setAttribute('disabled', 'disabled');
+        if (placeholder) placeholder.selected = true;
+      } else {
+        progSelect.removeAttribute('disabled');
+        // try to restore previous selection only if it is still visible
+        var stillVisible = progSelect.querySelector('option[value="' + prev + '"]:not([hidden])');
+        if (stillVisible) {
+          progSelect.value = prev;
+        } else {
+          if (placeholder) placeholder.selected = true;
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var dept = document.getElementById('department');
+      if (!dept) return;
+      dept.addEventListener('change', filterPrograms);
+      // initialize on load
+      filterPrograms();
+    });
+  })();
 </script>
 {% endblock %}
