@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'accounts.apps.LoginConfig',
     'dashboard.apps.DashboardConfig',
     'system.apps.SystemConfig',
-    'crud.apps.CrudConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
