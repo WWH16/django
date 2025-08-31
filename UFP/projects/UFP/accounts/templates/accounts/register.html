@@ -156,7 +156,7 @@
         {% endif %}
     </div>
 
-    <div style="margin-bottom: 0.8rem;">
+    <div style="margin-bottom: 0.8rem; display:flex; justify-content:center; align-items:center;">
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
