@@ -78,11 +78,12 @@ ROOT_URLCONF = 'UFP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+    'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -148,10 +149,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticFiles'),
+    BASE_DIR / 'staticFiles',
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'assets')  # usually used in production for collectstatic
+# STATIC_ROOT is the destination for `collectstatic`. Keep it separate from
+# STATICFILES_DIRS. Using Path objects (BASE_DIR is a Path) is supported.
+STATIC_ROOT = BASE_DIR / 'assets'  # usually used in production for collectstatic
 
 
 # Default primary key field type
