@@ -1,8 +1,8 @@
-/* OSAS Dashboard - Complete Implementation with Fixed Filter Export
+/* OSAS Dashboard - Production Implementation
    - Proper filter state management
    - Cached filtered data for consistent exports
    - Theme-responsive charts with dark mode support
-   - Comprehensive error handling and debugging
+   - Comprehensive error handling
 */
 (function () {
   'use strict';
@@ -25,33 +25,6 @@
 
   // Cache for filtered data - ensures export uses the same data as display
   let cachedFilteredData = null;
-
-  /* ---------------- Debug Panel ---------------- */
-  function ensureDebugPanel() {
-    if (document.getElementById('osas-debug-panel')) return;
-    try {
-      const d = document.createElement('div');
-      d.id = 'osas-debug-panel';
-      d.style.cssText = `
-        position: fixed; right: 12px; bottom: 12px; z-index: 99999;
-        background: rgba(0,0,0,0.8); color: #fff; font-size: 11px;
-        padding: 8px 10px; border-radius: 6px; max-width: 320px;
-        max-height: 30vh; overflow: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      `;
-      d.innerText = 'OSAS Debug Panel';
-      document.body.appendChild(d);
-    } catch (e) { /* ignore if DOM not ready */ }
-  }
-
-  function setDebugInfo(msg) {
-    try {
-      ensureDebugPanel();
-      const d = document.getElementById('osas-debug-panel');
-      if (!d) return;
-      const time = new Date().toLocaleTimeString();
-      d.innerText = `[${time}] ${msg}`;
-    } catch (e) { /* ignore */ }
-  }
 
   /* ---------------- Date Helpers ---------------- */
   function toISODate(d) {
@@ -131,7 +104,6 @@
 
       const requestUrl = apiUrl + '?' + queryParams.toString();
       console.log('OSAS Filter API Request:', requestUrl);
-      setDebugInfo(`Fetching filtered data: Y=${selectedYear}, S=${selectedSemester}`);
 
       const response = await fetch(requestUrl, {
         method: 'GET',
@@ -159,12 +131,10 @@
         }
       };
 
-      setDebugInfo(`Filtered data cached: ${data.services?.length || 0} services`);
       return data;
 
     } catch (error) {
       console.error('OSAS Filter API Error:', error);
-      setDebugInfo(`Filter API error: ${error.message}`);
       throw error;
     }
   }
@@ -284,7 +254,6 @@
   /* ---------------- Dashboard Update Functions ---------------- */
   function updateOsasCards(responseData) {
     if (!responseData || !Array.isArray(responseData.services)) {
-      setDebugInfo('Invalid response data for cards update');
       return;
     }
 
@@ -321,9 +290,9 @@
       const negPercent = Math.round((totalNegative / grandTotal) * 100);
 
       const percentElements = [
-        { id: 'osas-positive-percent', value: `${posPercent}% of the evaluations` },
-        { id: 'osas-neutral-percent', value: `${neuPercent}% of the evaluations` },
-        { id: 'osas-negative-percent', value: `${negPercent}% of the evaluations` },
+        { id: 'osas-positive-percent', value: `${posPercent}% of the feedbacks` },
+        { id: 'osas-neutral-percent', value: `${neuPercent}% of the feedbacks` },
+        { id: 'osas-negative-percent', value: `${negPercent}% of the feedbacks` },
         { id: 'osas-pie-positive-percent', value: posPercent },
         { id: 'osas-pie-neutral-percent', value: neuPercent },
         { id: 'osas-pie-negative-percent', value: negPercent }
@@ -370,19 +339,16 @@
     });
 
     updateTotalDescription();
-    setDebugInfo(`Cards updated: ${responseData.services.length} services, ${grandTotal} total feedback`);
   }
 
   /* ---------------- Chart Rendering ---------------- */
   function renderCharts(data) {
     try {
       if (!data) {
-        setDebugInfo('No data provided for chart rendering');
         return;
       }
 
       const CHART_COLORS = getChartColors();
-      setDebugInfo('Rendering charts with theme-responsive colors');
 
       // Calculate totals for pie chart
       let total = 0, pos = 0, neu = 0, neg = 0;
@@ -551,12 +517,10 @@
         });
       }
 
-      setDebugInfo(`Charts rendered: Pie (${pos}/${neu}/${neg}), Bar (${data.services?.length || 0} services)`);
       renderActionItems(data);
 
     } catch (err) {
       console.error('Chart rendering error:', err);
-      setDebugInfo(`Chart error: ${err.message}`);
     }
   }
 
@@ -607,7 +571,6 @@
     currentFilters.year = 'all';
     currentFilters.semester = 'all';
 
-    setDebugInfo('Filters reset to all time');
     applyCurrentFilters();
     hideDrawer();
   }
@@ -617,25 +580,30 @@
       const yearFilter = document.getElementById('year-filter');
       const semesterFilter = document.getElementById('semester-filter');
       
-      const activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-      const activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+      let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+      let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+
+      // Clean semester value - convert display values to API values
+      if (activeSemester && activeSemester !== 'all') {
+        // Convert display values like "1st", "2nd", "3rd" to numeric values
+        activeSemester = activeSemester.replace(/[^\d]/g, ''); // Remove non-digits
+        if (!activeSemester || activeSemester === '') {
+          activeSemester = 'all';
+        }
+      }
 
       // CRITICAL: Update current filters state
       currentFilters.year = activeYear;
       currentFilters.semester = activeSemester;
 
       console.log('Applying OSAS filters:', currentFilters);
-      setDebugInfo(`Applying filters: Y=${activeYear}, S=${activeSemester}`);
 
       const data = await fetchFilteredOsasData(activeYear, activeSemester);
       updateOsasCards(data);
       renderCharts(data);
 
-      setDebugInfo('Filters applied successfully');
-
     } catch (error) {
       console.error('Failed to apply OSAS filters:', error);
-      setDebugInfo(`Filter error: ${error.message}`);
       alert('Failed to load OSAS data: ' + error.message);
     }
   }
@@ -703,7 +671,6 @@
   async function exportFilteredOsasData() {
     try {
       console.log('Exporting OSAS data with filters:', currentFilters);
-      setDebugInfo(`Starting export: Y=${currentFilters.year}, S=${currentFilters.semester}`);
 
       // Use cached data if available and matches current filters
       let exportData = cachedFilteredData;
@@ -713,7 +680,6 @@
           exportData._filterMeta.year !== currentFilters.year ||
           exportData._filterMeta.semester !== currentFilters.semester) {
         
-        setDebugInfo('Fetching fresh data for export...');
         exportData = await fetchFilteredOsasData(currentFilters.year, currentFilters.semester);
       }
 
@@ -743,12 +709,10 @@
       // Download CSV
       downloadCsv(filename, csvContent);
 
-      setDebugInfo(`Export completed: ${filename}`);
       console.log('OSAS export completed successfully:', filename);
 
     } catch (error) {
       console.error('OSAS export failed:', error);
-      setDebugInfo(`Export error: ${error.message}`);
       alert(`Export failed: ${error.message}. Please try again.`);
     }
   }
@@ -946,7 +910,6 @@
     
     try {
       const url = buildBaselineApiUrl();
-      setDebugInfo(`Fetching baseline: ${url}`);
       
       const response = await fetch(url, { 
         headers: { 'Accept': 'application/json' } 
@@ -958,11 +921,8 @@
       renderBaseline(baselineData);
       renderCharts(baselineData);
       
-      setDebugInfo(`Baseline loaded: ${baselineData?.services?.length || 0} services`);
-      
     } catch (err) {
       console.error('Failed to load baseline dashboard:', err);
-      setDebugInfo(`Baseline error: ${err.message}`);
       alert('Sorry—failed to load the dashboard. Please refresh the page.');
     } finally {
       isBaselineLoading = false;
@@ -978,7 +938,6 @@
     
     try {
       const url = buildChartApiUrl();
-      setDebugInfo(`Fetching chart view: ${url}`);
       
       const response = await fetch(url, { 
         headers: { 'Accept': 'application/json' } 
@@ -989,11 +948,8 @@
       chartData = await response.json();
       renderCharts(chartData);
       
-      setDebugInfo(`Chart data loaded: ${chartData?.services?.length || 0} services`);
-      
     } catch (err) {
       console.error('Failed to load chart data:', err);
-      setDebugInfo(`Chart error: ${err.message}`);
       alert('Sorry—failed to load the chart view. Charts kept at previous view.');
     } finally {
       isChartLoading = false;
@@ -1239,8 +1195,6 @@
         await exportFilteredOsasData();
       });
     }
-
-    setDebugInfo('Event handlers initialized');
   }
 
   /* ---------------- Global Compatibility Functions ---------------- */
@@ -1336,10 +1290,8 @@
   /* ---------------- Main Initialization ---------------- */
   document.addEventListener('DOMContentLoaded', function () {
     console.log('OSAS Dashboard initializing...');
-    setDebugInfo('Dashboard starting...');
 
     // Initialize systems
-    ensureDebugPanel();
     observeThemeChanges();
     initializeEventHandlers();
     setChartRangeLabel();
@@ -1354,8 +1306,7 @@
       applyCurrentFilters();
     }, 100);
 
-    setDebugInfo('OSAS Dashboard initialized successfully');
-    console.log('OSAS Dashboard with Fixed Filter Export initialized successfully');
+    console.log('OSAS Dashboard initialized successfully');
   });
 
 })();
