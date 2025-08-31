@@ -30,7 +30,6 @@ urlpatterns = [
     path('', include('system.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('accounts.urls')),
-    path('crud/', include('crud.urls')),
     path('api/', include('api.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]   

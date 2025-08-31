@@ -156,7 +156,7 @@
         {% endif %}
     </div>
 
-    <div style="margin-bottom: 0.8rem;">
+    <div style="margin-bottom: 0.8rem; display:flex; justify-content:center; align-items:center;">
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
@@ -165,7 +165,7 @@
         {% endif %}
     </div>
 
-    <button type="submit" class="btn-primary">
+    <button id="register-submit" type="submit" class="btn-primary">
         Register
         <span class="material-symbols-outlined arrow">arrow_forward</span>
     </button>
@@ -235,6 +235,49 @@
             }
         });
     });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const submit = document.getElementById('register-submit');
+    if(!submit) return;
+    const form = submit.closest('form');
+    // start disabled until grecaptcha shows a response
+    submit.disabled = true;
+
+    function checkGRecaptcha(){
+        try{
+            if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse){
+                const resp = grecaptcha.getResponse();
+                submit.disabled = !(resp && resp.length > 0);
+                return !submit.disabled;
+            }
+        }catch(e){
+            console.error('recaptcha check error', e);
+        }
+        return false;
+    }
+
+    const poll = setInterval(function(){
+        if(checkGRecaptcha()){
+            clearInterval(poll);
+        }
+    }, 400);
+
+    form.addEventListener('submit', function(e){
+        try{
+            if (!(typeof grecaptcha !== 'undefined' && grecaptcha.getResponse && grecaptcha.getResponse().length > 0)){
+                e.preventDefault();
+                alert('Please complete the reCAPTCHA verification before registering.');
+                return false;
+            }
+        }catch(err){
+            e.preventDefault();
+            alert('reCAPTCHA not ready. Please try again in a moment.');
+            return false;
+        }
+    });
+});
 </script>
 
 {% endblock %}

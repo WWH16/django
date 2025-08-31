@@ -72,7 +72,7 @@
     </div>
 
     <!-- Captcha -->
-    <div style="margin-bottom: 1rem;">
+    <div style="margin-bottom: 1rem; display:flex; justify-content:center; align-items:center;">
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" class="btn-primary">
+    <button id="login-submit" type="submit" class="btn-primary">
         Log in
         <span class="material-symbols-outlined arrow">arrow_forward</span>
     </button>
@@ -119,4 +119,50 @@
     font-weight: 500;
 }
 </style>
+<!-- Enable submit only when reCAPTCHA is completed -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const submit = document.getElementById('login-submit');
+    if(!submit) return;
+    const form = submit.closest('form');
+    // start disabled until grecaptcha shows a response
+    submit.disabled = true;
+
+    function checkGRecaptcha(){
+        try{
+            if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse){
+                const resp = grecaptcha.getResponse();
+                submit.disabled = !(resp && resp.length > 0);
+                return !submit.disabled;
+            }
+        }catch(e){
+            console.error('recaptcha check error', e);
+        }
+        return false;
+    }
+
+    // Poll until grecaptcha becomes available and a response exists
+    const poll = setInterval(function(){
+        if(checkGRecaptcha()){
+            clearInterval(poll);
+        }
+    }, 400);
+
+    // Prevent submit if reCAPTCHA not completed
+    form.addEventListener('submit', function(e){
+        try{
+            if (!(typeof grecaptcha !== 'undefined' && grecaptcha.getResponse && grecaptcha.getResponse().length > 0)){
+                e.preventDefault();
+                // Friendly inline message instead of blocking silently
+                alert('Please complete the reCAPTCHA verification before logging in.');
+                return false;
+            }
+        }catch(err){
+            e.preventDefault();
+            alert('reCAPTCHA not ready. Please try again in a moment.');
+            return false;
+        }
+    });
+});
+</script>
 {% endblock content %}
