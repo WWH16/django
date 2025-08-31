@@ -16,12 +16,18 @@
   <div class="osas-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3 class="text-dark mb-0">Teacher's Evaluation</h3>
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <a
-          id="export-report-btn"
-          class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap d-none d-sm-inline-block border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
-          href="#"
-        >
+      <div class="d-flex gap-2">
+        <!-- Filter Button -->
+        <button id="filter-btn"
+          class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
+          type="button">
+          <i class="fas fa-filter"></i> Filter
+        </button>
+
+        <!-- Export Report Button -->
+        <a id="export-report-btn"
+          class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
+          href="javascript:void(0);" onclick="exportFilteredData()">
           <i class="fas fa-download fa-sm text-white-50"></i> Export Report
         </a>
       </div>
@@ -30,57 +36,72 @@
     <!-- KPI CARDS -->
     <div class="row">
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Positive Feedback</h2>
-            <span class="material-symbols-outlined text-success text-2xl" style="color: #4bc0c0;">sentiment_satisfied</span>
+            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Positive
+              Evaluation</h2>
+            <span class="material-symbols-outlined text-success text-2xl"
+              style="color: #4bc0c0;">sentiment_satisfied</span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-success text-xl mb-0" style="color: #4bc0c0;"><span id="positive-count">0</span></div>
+            <div class="font-bold text-success text-xl mb-0" style="color: #4bc0c0;"><span id="positive-count">0</span>
+            </div>
             <div class="text-xs text-muted"><span id="positive-percent">0</span></div>
           </div>
         </div>
       </div>
 
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Neutral Feedback</h2>
-            <span class="material-symbols-outlined text-warning text-2xl" style="color: #ffcd56;">sentiment_neutral</span>
+            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Neutral
+              Evaluation</h2>
+            <span class="material-symbols-outlined text-warning text-2xl"
+              style="color: #ffcd56;">sentiment_neutral</span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-warning text-xl mb-0" style="color: #ffcd56;"><span id="neutral-count">0</span></div>
+            <div class="font-bold text-warning text-xl mb-0" style="color: #ffcd56;"><span id="neutral-count">0</span>
+            </div>
             <div class="text-xs text-muted"><span id="neutral-percent">0</span></div>
           </div>
         </div>
       </div>
-
+      
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Negative Feedback</h2>
-            <span class="material-symbols-outlined text-danger text-2xl" style="color: #ff6384;">sentiment_dissatisfied</span>
+            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Negative
+              Evaluation</h2>
+            <span class="material-symbols-outlined text-danger text-2xl"
+              style="color: #ff6384;">sentiment_dissatisfied</span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-danger text-xl mb-0" style="color: #ff6384;"><span id="negative-count">0</span></div>
+            <div class="font-bold text-danger text-xl mb-0" style="color: #ff6384;"><span id="negative-count">0</span>
+            </div>
             <div class="text-xs text-muted"><span id="negative-percent">0</span></div>
           </div>
         </div>
       </div>
 
       <div class="col-md-6 col-xl-3 mb-4">
-        <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Total Comments</h2>
+            <h2 class="font-semibold text-[15px] text-font-important-light dark:text-font-important-dark">Total Comments
+            </h2>
             <span class="material-symbols-outlined text-primary text-2xl" style="color: #78b4ff;">chat</span>
           </div>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
           <div>
-            <div class="font-bold text-primary text-xl mb-0" style="color: #78b4ff;"><span id="total-count">0</span></div>
-            <div class="text-xs text-muted">All Time</div>
+            <div class="font-bold text-primary text-xl mb-0" style="color: #78b4ff;"><span id="total-count">0</span>
+            </div>
+            <div class="text-xs text-muted"><span id="total-description">All Time</span></div>
           </div>
         </div>
       </div>
@@ -89,9 +110,11 @@
     <!-- CHARTS -->
     <div class="row">
       <div class="col-lg-7 col-xl-8">
-        <div class="bg-white border border-base-200 rounded-default shadow-xs p-4 mb-4 dark:bg-base-900 dark:border-base-800">
+        <div
+          class="bg-white border border-base-200 rounded-default shadow-xs p-4 mb-4 dark:bg-base-900 dark:border-base-800">
           <div class="d-flex align-items-center justify-content-between mb-3">
-            <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">Teacher Performance by Program</h6>
+            <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">Teacher Performance
+              by Program</h6>
           </div>
           <div class="chart-area">
             <canvas id="barChart"></canvas>
@@ -100,17 +123,22 @@
       </div>
 
       <div class="col-lg-5 col-xl-4">
-        <div class="bg-white border border-base-200 rounded-default shadow-xs p-4 mb-4 dark:bg-base-900 dark:border-base-800">
+        <div
+          class="bg-white border border-base-200 rounded-default shadow-xs p-4 mb-4 dark:bg-base-900 dark:border-base-800">
           <div class="d-flex align-items-center justify-content-between mb-3">
-            <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">Overall Teacher Rating Distribution</h6>
+            <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">Overall Teacher
+              Rating Distribution</h6>
           </div>
           <div class="chart-area">
             <canvas id="pieChart"></canvas>
           </div>
           <div class="text-center small mt-1" id="pie-chart-percentages">
-            <span class="me-1"><i class="fas fa-circle" style="color:#4bc0c0"></i> Positive (<span id="pie-positive-percent">0</span>%)</span>
-            <span class="me-1"><i class="fas fa-circle" style="color:#ffcd56"></i> Neutral (<span id="pie-neutral-percent">0</span>%)</span>
-            <span class="me-1"><i class="fas fa-circle" style="color:#ff6384"></i> Negative (<span id="pie-negative-percent">0</span>%)</span>
+            <span class="me-1"><i class="fas fa-circle" style="color:#4bc0c0"></i> Positive (<span
+                id="pie-positive-percent">0</span>%)</span>
+            <span class="me-1"><i class="fas fa-circle" style="color:#ffcd56"></i> Neutral (<span
+                id="pie-neutral-percent">0</span>%)</span>
+            <span class="me-1"><i class="fas fa-circle" style="color:#ff6384"></i> Negative (<span
+                id="pie-negative-percent">0</span>%)</span>
           </div>
         </div>
       </div>
@@ -119,102 +147,21 @@
     <!-- Lists -->
     <div class="row">
       <div class="col-lg-6 mb-4">
-        <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
-          <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">Teacher Improvement Priority</h2>
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
+          <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">Teacher Improvement
+            Priority</h2>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-          <style>
-            /* Unfold-like priority rows: style direct children so existing JS does not need changes */
-            #teacher-priority-list {
-              max-height: 320px;
-              overflow: auto;
-              padding: 0.5rem;
-              border-radius: 0.5rem;
-            }
-
-            /* Style any direct child inserted by your JS to look like the screenshot */
-            #teacher-priority-list > * {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              gap: 1rem;
-              padding: 0.85rem 0.9rem;
-              background: rgba(255,255,255,0.01);
-              border: 1px solid rgba(0,0,0,0.06);
-              border-radius: 0.6rem;
-              margin-bottom: 0.6rem;
-              box-shadow: 0 0 0 1px rgba(0,0,0,0.00) inset;
-            }
-
-            /* Left block (name + meta) */
-            #teacher-priority-list > * .priority-left,
-            #teacher-priority-list > * .left {
-              display: block;
-            }
-            #teacher-priority-list > * .priority-name,
-            #teacher-priority-list > * .name {
-              font-weight: 700;
-              text-transform: uppercase;
-              font-size: 0.95rem;
-              letter-spacing: 0.2px;
-            }
-            #teacher-priority-list > * .priority-meta,
-            #teacher-priority-list > * .meta {
-              color: rgba(0,0,0,0.45);
-              font-size: 0.86rem;
-              margin-top: 0.15rem;
-            }
-
-            /* Right-aligned badge */
-            #teacher-priority-list > * .priority-badge,
-            #teacher-priority-list > * .badge-urgent,
-            #teacher-priority-list > * .urgent {
-              display: inline-block;
-              background: #e55353;
-              color: #fff;
-              padding: 0.35rem 0.7rem;
-              border-radius: 999px;
-              font-size: 0.78rem;
-              font-weight: 600;
-            }
-
-            /* last child spacing */
-            #teacher-priority-list > *:last-child { margin-bottom: 0; }
-
-            /* Dark mode tweaks */
-            body.dark #teacher-priority-list,
-            .dark #teacher-priority-list {
-              background: transparent;
-            }
-            body.dark #teacher-priority-list > *,
-            .dark #teacher-priority-list > * {
-              background: rgba(255,255,255,0.02);
-              border: 1px solid rgba(255,255,255,0.03);
-            }
-            body.dark #teacher-priority-list > * .priority-meta,
-            .dark #teacher-priority-list > * .priority-meta {
-              color: rgba(255,255,255,0.55);
-            }
-          </style>
           <div id="teacher-priority-list" class="" aria-live="polite">
-            <!-- JS inserts priority rows. For best visuals, wrap left content in a .left or .priority-left element and add a .priority-badge/.urgent for the pill on the right. Existing plain children will be styled automatically. -->
+            <!-- JS inserts priority rows -->
           </div>
         </div>
 
-        <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-4 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
-          <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">Recent Teacher Reviews</h2>
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-4 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+          <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">Recent Teacher Reviews
+          </h2>
           <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-          <style>
-            /* Make recent review rows spaced with a subtle divider (match OSAS look) */
-            #recent-evaluations-list { padding: 0; margin: 0; list-style: none; }
-            #recent-evaluations-list > * {
-              padding: 0.75rem 0;
-              border-bottom: 1px solid rgba(0,0,0,0.06);
-              margin: 0;
-            }
-            #recent-evaluations-list > *:last-child { border-bottom: none; }
-            /* Dark mode tweak */
-            body.dark #recent-evaluations-list > *, .dark #recent-evaluations-list > * { border-bottom-color: rgba(255,255,255,0.03); }
-          </style>
           <ul id="recent-evaluations-list" class="list-group list-group-flush">
             <!-- JS inserts recent rows -->
           </ul>
@@ -224,15 +171,19 @@
       <div class="col">
         <div class="row">
           <div class="col-lg-6 mb-4">
-            <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <div class="d-flex items-center justify-content-between mb-2">
                 <h5 class="font-semibold text-font-important-light dark:text-font-important-dark">BSIT Program</h5>
-                <span class="material-symbols-outlined text-font-important-light dark:text-font-important-dark text-3xl">code</span>
+                <span
+                  class="material-symbols-outlined text-font-important-light dark:text-font-important-dark text-3xl">code</span>
               </div>
               <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-              <p class="text-xs text-muted mb-2"><span id="bsit-positive">0</span> Positive • <span id="bsit-neutral">0</span> Neutral • <span id="bsit-negative">0</span> Negative</p>
+              <p class="text-xs text-muted mb-2"><span id="bsit-positive">0</span> Positive • <span
+                  id="bsit-neutral">0</span> Neutral • <span id="bsit-negative">0</span> Negative</p>
               <div class="mt-2">
-                <span class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold">
                   <span id="bsit-rating">0</span>% Positive Sentiments
                 </span>
               </div>
@@ -240,15 +191,19 @@
           </div>
 
           <div class="col-lg-6 mb-4">
-            <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <div class="d-flex items-center justify-content-between mb-2">
                 <h5 class="font-semibold text-font-important-light dark:text-font-important-dark">BSCS Program</h5>
-                <span class="material-symbols-outlined text-font-important-light dark:text-font-important-dark text-3xl">memory</span>
+                <span
+                  class="material-symbols-outlined text-font-important-light dark:text-font-important-dark text-3xl">memory</span>
               </div>
               <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-              <p class="text-xs text-muted mb-2"><span id="bscs-positive">0</span> Positive • <span id="bscs-neutral">0</span> Neutral • <span id="bscs-negative">0</span> Negative</p>
+              <p class="text-xs text-muted mb-2"><span id="bscs-positive">0</span> Positive • <span
+                  id="bscs-neutral">0</span> Neutral • <span id="bscs-negative">0</span> Negative</p>
               <div class="mt-2">
-                <span class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold">
                   <span id="bscs-rating">0</span>% Positive Sentiments
                 </span>
               </div>
@@ -256,35 +211,478 @@
           </div>
 
           <div class="col-lg-6 mb-4">
-            <div class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+            <div
+              class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <div class="d-flex items-center justify-content-between mb-2">
                 <h5 class="font-semibold text-font-important-light dark:text-font-important-dark">BSEMC Program</h5>
-                <span class="material-symbols-outlined text-font-important-light dark:text-font-important-dark text-3xl">sports_esports</span>
+                <span
+                  class="material-symbols-outlined text-font-important-light dark:text-font-important-dark text-3xl">sports_esports</span>
               </div>
               <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-              <p class="text-xs text-muted mb-2"><span id="bsemc-positive">0</span> Positive • <span id="bsemc-neutral">0</span> Neutral • <span id="bsemc-negative">0</span> Negative</p>
+              <p class="text-xs text-muted mb-2"><span id="bsemc-positive">0</span> Positive • <span
+                  id="bsemc-neutral">0</span> Neutral • <span id="bsemc-negative">0</span> Negative</p>
               <div class="mt-2">
-                <span class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold">
+                <span
+                  class="bg-gray-200 dark:bg-base-800 text-font-important-light dark:text-font-important-dark px-2 py-1 rounded font-semibold">
                   <span id="bsemc-rating">0</span>% Positive Sentiments
                 </span>
               </div>
             </div>
           </div>
 
-<!-- Replace this section in your HTML template -->
-<div class="col-lg-12 mb-4">
-  <div class="bg-white block border border-base-200 p-4 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
-    <h6 class="font-semibold mb-3 text-font-important-light dark:text-font-important-dark">
-      Teacher Development Recommendations
-    </h6>
-    <!-- Fix: Change id from "recommendations" to "static-recos" -->
-    <div id="static-recos" class="action-items"></div>
-  </div>
-</div>
-
+          <div class="col-lg-12 mb-4">
+            <div
+              class="bg-white block border border-base-200 p-4 rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+              <h6 class="font-semibold mb-3 text-font-important-light dark:text-font-important-dark">
+                Teacher Development Recommendations
+              </h6>
+              <div id="static-recos" class="action-items"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- FILTER DRAWER -->
+<!-- Blur overlay -->
+<div class="blur-overlay" id="blur-overlay"></div>
+
+<div class="offcanvas-end" id="filter-drawer" aria-labelledby="filterDrawerLabel">
+
+  <div class="offcanvas-body">
+    <!-- By Year -->
+    <div class="filter-section">
+      <h6>By Year</h6>
+      <ul id="year-filter">
+        <li class="filter-option active" data-value="all">All Time</li>
+        <li class="filter-option" data-value="2023">2023</li>
+        <li class="filter-option" data-value="2024">2024</li>
+        <li class="filter-option" data-value="2025">2025</li>
+        <li class="filter-option" data-value="-">-</li>
+      </ul>
+    </div>
+    <!-- By Semester -->
+    <div class="filter-section">
+      <h6>By Semester</h6>
+      <ul id="semester-filter">
+        <li class="filter-option active" data-value="all">All Semesters</li>
+        <li class="filter-option" data-value="1">1st Semester</li>
+        <li class="filter-option" data-value="2">2nd Semester</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="offcanvas-footer">
+    <button id="apply-filters">Show counts</button>
+  </div>
+</div>
+
+<style>
+/* Light mode (default) */
+:root {
+  --drawer-bg: #ffffff;
+  --drawer-border: #e5e7eb;
+  --drawer-text: #374151;
+  --drawer-active: #16a34a;
+  --drawer-reset: #dc2626;
+  --footer-bg: #f9fafb;
+
+  --btn-bg: #ffffff;
+  --btn-text: #374151;
+  --btn-border: #d1d5db;
+  --btn-hover: #f3f4f6;
+
+  --option-bg: #ffffff;
+}
+
+/* Dark mode */
+[data-theme="dark"],
+.dark {
+  --drawer-bg: #1e293b;      /* whole drawer */
+  --drawer-border: #374151;  /* borders */
+  --drawer-text: #e5e7eb;    /* text */
+  --drawer-active: #16a34a;  /* active filter green */
+  --drawer-reset: #ef4444;   /* reset red */
+  --footer-bg: #1e293b;      /* footer matches drawer */
+
+  --btn-bg: #1e293b;         /* button matches drawer */
+  --btn-text: #e5e7eb;
+  --btn-border: #374151;
+  --btn-hover: #1e293b;      /* keep same so no color shift */
+}
+
+/* Ensure the WHOLE drawer uses the same bg */
+#filter-drawer,
+#filter-drawer .offcanvas-body,
+#filter-drawer .filter-section,
+#filter-drawer .filter-option,
+#filter-drawer .filter-footer,
+#filter-drawer button {
+  background-color: var(--drawer-bg) !important;
+}
+
+/* =====================================
+   DRAWER BASE
+   ===================================== */
+.blur-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1040;
+}
+.blur-overlay.show {
+  display: block;
+}
+
+.offcanvas-end {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 320px;
+  height: calc(100vh - 2rem);
+  border-radius: 0.6rem;
+  background: var(--drawer-bg);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1050;
+  transform: translateX(110%);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.offcanvas-end.show {
+  transform: translateX(0);
+}
+
+.offcanvas-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  font-size: 13px;
+}
+
+/* =====================================
+   FILTER SECTIONS
+   ===================================== */
+.filter-section {
+  margin-bottom: 1.25rem;
+}
+.filter-section h6 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 13px;
+  color: var(--drawer-text);
+}
+.filter-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--drawer-border);
+  border-radius: 0.4rem;
+  background: var(--drawer-bg);
+}
+.filter-option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 13px;
+  border-bottom: 1px solid var(--drawer-border);
+  color: var(--drawer-text);
+  background: var(--drawer-bg);
+  user-select: none;
+  transition: background 0.2s, color 0.2s;
+}
+.filter-option:last-child {
+  border-bottom: none;
+}
+/* Hover stays neutral now */
+.filter-option:hover {
+  background: var(--drawer-bg);
+  color: var(--drawer-text);
+}
+.filter-option.active {
+  color: var(--drawer-active);
+  font-weight: 600;
+}
+.filter-option.reset {
+  color: var(--drawer-reset);
+  font-weight: 500;
+}
+
+/* =====================================
+   FOOTER / BUTTON
+   ===================================== */
+.offcanvas-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--drawer-border);
+  background: var(--footer-bg);
+}
+.offcanvas-footer button {
+  width: 100%;
+  height: 36px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--btn-text);
+  border-radius: 0.5rem;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.offcanvas-footer button:hover {
+  background: var(--btn-hover);
+}
+
+  /* Priority list styling */
+  #teacher-priority-list {
+    max-height: 320px;
+    overflow: auto;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  #teacher-priority-list > * {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0.9rem;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0.6rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.00) inset;
+  }
+
+  #teacher-priority-list > * .priority-left,
+  #teacher-priority-list > * .left {
+    display: block;
+  }
+
+  #teacher-priority-list > * .priority-name,
+  #teacher-priority-list > * .name {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    letter-spacing: 0.2px;
+  }
+
+  #teacher-priority-list > * .priority-meta,
+  #teacher-priority-list > * .meta {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 0.86rem;
+    margin-top: 0.15rem;
+  }
+
+  #teacher-priority-list > * .priority-badge,
+  #teacher-priority-list > * .badge-urgent,
+  #teacher-priority-list > * .urgent {
+    display: inline-block;
+    background: #e55353;
+    color: #fff;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  #teacher-priority-list > *:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Dark mode for priority list */
+  .dark #teacher-priority-list {
+    background: transparent;
+  }
+
+  .dark #teacher-priority-list > * {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .dark #teacher-priority-list > * .priority-meta {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* Recent evaluations styling */
+  #recent-evaluations-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  #recent-evaluations-list > * {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    margin: 0;
+  }
+
+  #recent-evaluations-list > *:last-child {
+    border-bottom: none;
+  }
+
+  .dark #recent-evaluations-list > * {
+    border-bottom-color: rgba(255, 255, 255, 0.03);
+  }
+</style>
+
+<script>
+ document.addEventListener('DOMContentLoaded', function () {
+   // Initialize filter drawer functionality
+   const filterBtn = document.getElementById('filter-btn');
+   const filterDrawer = document.getElementById('filter-drawer');
+   const blurOverlay = document.getElementById('blur-overlay');
+   const yearFilter = document.getElementById('year-filter');
+   const semesterFilter = document.getElementById('semester-filter');
+   const applyFiltersBtn = document.getElementById('apply-filters');
+   const closeBtn = filterDrawer.querySelector('.btn-close');
+
+   // Show drawer function
+   function showDrawer() {
+     filterDrawer.classList.add('show');
+     blurOverlay.classList.add('show');
+     document.body.classList.add('filter-open');
+   }
+
+   // Hide drawer function
+   function hideDrawer() {
+     filterDrawer.classList.remove('show');
+     blurOverlay.classList.remove('show');
+     document.body.classList.remove('filter-open');
+   }
+
+   // Instant reset and apply filters
+   function instantResetFilters() {
+     // Reset year filter to "All Time"
+     yearFilter.querySelectorAll('.filter-option').forEach(item => {
+       item.classList.remove('active');
+       if (item.getAttribute('data-value') === 'all') {
+         item.classList.add('active');
+       }
+     });
+     
+     // Reset semester filter to "All Semesters"
+     semesterFilter.querySelectorAll('.filter-option').forEach(item => {
+       item.classList.remove('active');
+       if (item.getAttribute('data-value') === 'all') {
+         item.classList.add('active');
+       }
+     });
+     
+     console.log('Filters instantly reset and applied');
+     
+     // Close the drawer immediately
+     hideDrawer();
+
+     // Apply the reset filters immediately
+     try {
+       if (typeof window.applyYearFilter === 'function') {
+         window.applyYearFilter('all', 'all');
+       } else if (typeof window.loadYearData === 'function') {
+         window.loadYearData('all', 'all');
+       } else {
+         console.log('Filter functions not found. Applied reset: Year: all, Semester: all');
+         // Fallback: trigger a custom event
+         const filterEvent = new CustomEvent('filtersApplied', {
+           detail: { year: 'all', semester: 'all' }
+         });
+         document.dispatchEvent(filterEvent);
+       }
+     } catch (error) {
+       console.error('Error applying reset filters:', error);
+     }
+   }
+
+   // Open filter drawer when filter button is clicked
+   filterBtn.addEventListener('click', function () {
+     showDrawer();
+   });
+
+   // Close drawer when clicking the close button
+   if (closeBtn) {
+     closeBtn.addEventListener('click', function () {
+       hideDrawer();
+     });
+   }
+
+   // Close drawer when clicking outside
+   blurOverlay.addEventListener('click', function() {
+     hideDrawer();
+   });
+
+   // Also handle ESC key to close drawer
+   document.addEventListener('keydown', function(event) {
+     if (event.key === 'Escape' && filterDrawer.classList.contains('show')) {
+       hideDrawer();
+     }
+   });
+
+   // Handle year filter selection
+   yearFilter.addEventListener('click', function (e) {
+     if (e.target.classList.contains('filter-option')) {
+       const selectedValue = e.target.getAttribute('data-value');
+       
+       // Check if "Reset Filter" was clicked
+       if (selectedValue === '-') {
+         // Instantly reset and apply filters
+         instantResetFilters();
+       } else {
+         // Remove active class from all year items
+         yearFilter.querySelectorAll('.filter-option').forEach(item => {
+           item.classList.remove('active');
+         });
+         // Add active class to clicked item
+         e.target.classList.add('active');
+       }
+     }
+   });
+
+   // Handle semester filter selection
+   semesterFilter.addEventListener('click', function (e) {
+     if (e.target.classList.contains('filter-option')) {
+       // Remove active class from all semester items
+       semesterFilter.querySelectorAll('.filter-option').forEach(item => {
+         item.classList.remove('active');
+       });
+       // Add active class to clicked item
+       e.target.classList.add('active');
+     }
+   });
+
+   // Handle apply filters button
+   applyFiltersBtn.addEventListener('click', function () {
+     const selectedYear = yearFilter.querySelector('.filter-option.active')?.getAttribute('data-value');
+     const selectedSemester = semesterFilter.querySelector('.filter-option.active')?.getAttribute('data-value');
+
+     console.log('Applying filters - Year:', selectedYear, 'Semester:', selectedSemester);
+
+     // Close the drawer
+     hideDrawer();
+
+     // Apply the filters using existing functionality
+     try {
+       if (typeof window.applyYearFilter === 'function') {
+         window.applyYearFilter(selectedYear, selectedSemester);
+       } else if (typeof window.loadYearData === 'function') {
+         window.loadYearData(selectedYear, selectedSemester);
+       } else {
+         console.log('Filter functions not found. Selected Year:', selectedYear, 'Selected Semester:', selectedSemester);
+         // Fallback: trigger a custom event that other scripts can listen to
+         const filterEvent = new CustomEvent('filtersApplied', {
+           detail: { year: selectedYear, semester: selectedSemester }
+         });
+         document.dispatchEvent(filterEvent);
+       }
+     } catch (error) {
+       console.error('Error applying filters:', error);
+     }
+   });
+
+   // Initialize default state
+   console.log('Filter drawer initialized');
+ });
+</script>
 {% endblock %}

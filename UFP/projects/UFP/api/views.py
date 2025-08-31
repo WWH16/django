@@ -47,7 +47,6 @@ def fact_feedback_list(request):
     serializer = FactFeedbackSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
 
-
 # ============================================================
 # Teacher Evaluation APIs
 # ============================================================
@@ -246,20 +245,25 @@ def teacher_evaluation_by_semester(request):
     year = request.GET.get("year")
     program = request.GET.get("program")  
     semester = request.GET.get("semester")  
+    all_time = request.GET.get("all_time", "false").lower() == "true"
 
-    if not year:
-        return Response({"error": "Missing required parameter: year"}, status=400)
+    # Handle "all time" case
+    if all_time:
+        evaluations = Eval.objects.select_related("teacher")
+    else:
+        if not year:
+            return Response({"error": "Missing required parameter: year"}, status=400)
 
-    try:
-        year = int(year)
-    except ValueError:
-        return Response({"error": "Invalid year format"}, status=400)
+        try:
+            year = int(year)
+        except ValueError:
+            return Response({"error": "Invalid year format"}, status=400)
 
-    evaluations = (
-        Eval.objects.annotate(evaluation_year=ExtractYear("timestamp"))
-        .filter(evaluation_year=year)
-        .select_related("teacher")
-    )
+        evaluations = (
+            Eval.objects.annotate(evaluation_year=ExtractYear("timestamp"))
+            .filter(evaluation_year=year)
+            .select_related("teacher")
+        )
 
     if semester:
         if semester == '1':  
@@ -551,3 +555,75 @@ def recent_osas_feedback(request):
             "comments": comments,
         })
     return Response(data)
+
+@api_view(['GET'])
+def service_feedback_by_semester(request, semester_slug=None):
+    year = request.GET.get("year")
+    all_time = request.GET.get("all_time", "false").lower() == "true"
+
+    # Map slug to numeric semester
+    semester_map = {
+        "1st-semester": "1",
+        "2nd-semester": "2",
+    }
+    # Accept either slug or query param (?semester=1|2)
+    semester = semester_map.get(semester_slug) if semester_slug else request.GET.get("semester")
+
+    # Base queryset with joins for efficiency
+    feedbacks = FactFeedback.objects.select_related("service", "sentiment")
+
+    if not all_time:
+        if not year:
+            return Response({"error": "Missing required parameter: year"}, status=400)
+
+        try:
+            year = int(year)
+        except ValueError:
+            return Response({"error": "Invalid year format"}, status=400)
+
+        feedbacks = feedbacks.annotate(feedback_year=ExtractYear("timestamp")).filter(feedback_year=year)
+
+    # Semester filtering (Aug–Dec = 1st; Jan–May = 2nd)
+    if semester in ("1", "2"):
+        if semester == "1":
+            feedbacks = feedbacks.filter(timestamp__month__gte=8, timestamp__month__lte=12)
+        else:  # "2"
+            feedbacks = feedbacks.filter(timestamp__month__gte=1, timestamp__month__lte=5)
+    elif semester is not None:
+        # Invalid semester value supplied
+        return Response({"error": "Invalid semester. Use '1st-semester', '2nd-semester' or ?semester=1|2."}, status=400)
+
+    # Group by the related service name on the dimension table
+    grouped = (
+        feedbacks.values("service__service_name")
+        .annotate(
+            service_name=F("service__service_name"),
+            positive=Count("feedback_id", filter=Q(sentiment__label="Positive")),
+            neutral=Count("feedback_id", filter=Q(sentiment__label="Neutral")),
+            negative=Count("feedback_id", filter=Q(sentiment__label="Negative")),
+            total=Count("feedback_id"),
+        )
+        .order_by("service__service_name")
+    )
+
+    results = []
+    for r in grouped:
+        total = r["total"] or 0
+        denom = total if total else 1  # avoid zero-division
+        results.append({
+            "service": r.get("service_name") or "Unknown Service",
+            "positive": r["positive"] or 0,
+            "neutral": r["neutral"] or 0,
+            "negative": r["negative"] or 0,
+            "total": total,
+            "positive_percent": round((r["positive"] / denom) * 100) if total else 0,
+            "neutral_percent": round((r["neutral"] / denom) * 100) if total else 0,
+            "negative_percent": round((r["negative"] / denom) * 100) if total else 0,
+        })
+
+    return Response({
+        "year": year if not all_time else "all",
+        "semester": semester,
+        "program": None,
+        "services": results
+    })
