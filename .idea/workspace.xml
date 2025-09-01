@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd206fe5-ef0f-4338-8003-2c9ad8274cce" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/UFP/projects/UFP/accounts/templates/accounts/login_student.html" beforeDir="false" afterPath="$PROJECT_DIR$/UFP/projects/UFP/accounts/templates/accounts/login_student.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UFP/projects/UFP/dashboard/templates/studentDashboard/feedback_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/UFP/projects/UFP/dashboard/templates/studentDashboard/feedback_form.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +40,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "recaptcha",
+    "git-widget-placeholder": "modal",
     "ignore.virus.scanning.warn.message": "true",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
@@ -67,6 +67,7 @@
       <option name="presentableId" value="Default" />
       <updated>1746922953116</updated>
       <workItem from="1756630811381" duration="124000" />
+      <workItem from="1756703047719" duration="77000" />
     </task>
     <servers />
   </component>

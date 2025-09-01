@@ -448,24 +448,28 @@
   });
   </script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const logoutModalEl = document.getElementById('logoutModal');
-    const logoutModal = new bootstrap.Modal(logoutModalEl);
-
-    // Push initial state to prevent immediate back navigation
-    history.pushState(null, null, location.href);
-
-    // Detect back navigation
-    window.addEventListener('popstate', function () {
-      if (logoutModalEl) {
-        logoutModal.show(); // Show the modal
-        history.pushState(null, null, location.href); // Prevent further back navigation
-      } else {
-        console.error('Logout modal element not found.');
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Force browser history to always have at least one entry
+    if (history.length === 1) {
+      history.pushState({ dashboard: true }, '', location.href);
+    }
+    
+    // Always push our own state
+    history.pushState({ preventBack: true }, '', location.href);
+    
+    // Listen for any popstate event
+    window.addEventListener('popstate', function(e) {
+      // Find and click the existing logout button to reuse its SweetAlert
+      const logoutBtn = document.querySelector('a.nav-link[href="#"]');
+      if (logoutBtn) {
+        logoutBtn.click();
       }
+      
+      // Always push state back to prevent navigation
+      history.pushState({ preventBack: true }, '', location.href);
     });
   });
-  </script>
+</script>
 </body>
-</html>
+</html> 
