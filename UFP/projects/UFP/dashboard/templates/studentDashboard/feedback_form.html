@@ -13,8 +13,7 @@
   {% block extra_head %}{% endblock %}
   <style>
     /* Highlight active sidebar link with a green border on the left */
-    .sidebar .nav-link.active {
-			background-color: rgba(255,255,255,0.2) !important;
+    .sidebar .nav-link.active {background-color: rgba(255,255,255,0.2) !important;
 			border-left: 3px solid white !important;
 			color: white !important;
 		}
@@ -308,23 +307,20 @@
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
   <!-- Login Success Toast -->
 {% if show_login_toast %}
-  <div class="toast-container position-fixed top-0 end-0 p-3 login-toast-mobile" style="z-index: 1100;">
-    <div id="loginSuccessToast"
-         class="toast slide-in"
-         role="alert"
-         aria-live="assertive"
-         aria-atomic="true"
-         style="min-height: 110px;">
-      <div class="toast-header bg-success text-white" style="min-height: 30px;">
-        <span class="material-symbols-outlined me-2" style="font-size:1.3em;">check_circle</span>
-        <small class="me-auto">Welcome</small>
-        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body" style="padding: 0.50rem 1rem; color: #333;">
-        You have successfully logged in.
-      </div>
-    </div>
-  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        iconColor: 'white',
+        customClass: { popup: 'colored-toast' },
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+      });
+      Toast.fire({ icon: 'success', title: 'You have successfully logged in.' });
+    });
+  </script>
 {% endif %}
 
 {% if messages %}
