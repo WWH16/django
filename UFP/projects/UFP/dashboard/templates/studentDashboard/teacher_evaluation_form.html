@@ -2,11 +2,10 @@
 
 {% block dashboard_content %}
 <style>
-  /* Override any parent overlays completely */
-  body > div:not(.dashboard-flex):not(.navbar):not(.modal) {
-    display: none !important;
-  }
-  
+  #feedbackFormContainer #cooldownOverlay,
+.main-content #cooldownOverlay {
+  display: none !important;
+}
   /* Hide any cooldown overlays from parent template */
   #feedbackFormContainer,
   #feedbackFormContainer #cooldownOverlay,
@@ -38,59 +37,6 @@
     filter: blur(2px);
     pointer-events: none;
   }
-
-  @media (max-width: 576px) {
-    /* Success Modal (green one) */
-    #successModal .modal-dialog {
-      width: auto;
-      max-width: 300px;    /* horizontal size */
-      max-height: 60vh;    /* vertical size */
-      margin: 0.5rem auto;
-    }
-
-    #successModal .modal-content {
-      max-height: 100%;
-      overflow-y: auto;    /* scroll if content exceeds height */
-    }
-
-    #successModal .modal-header,
-    #successModal .modal-footer {
-      padding: 0.25rem 0.75rem; /* smaller padding */
-    }
-
-    #successModal .modal-body {
-      padding: 0.5rem 0.75rem;  /* smaller body padding */
-      font-size: 0.9rem;
-    }
-
-    /* Keep header clean & aligned */
-    #successModal .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between; /* title on left, X on right */
-      gap: 0.5rem;
-      flex-wrap: nowrap;
-    }
-
-    #successModal .modal-title {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      white-space: nowrap;
-      font-size: 1rem;
-    }
-
-    /* Close button fix */
-    #successModal .modal-header .btn-close {
-      font-size: 0.9rem;   /* smaller size */
-      width: 1.2rem;
-      height: 1.2rem;
-      margin-left: auto;   /* push far right */
-    }
-  }
-
-  /* Remove modal footer top border for a cleaner modern look */
-  .modal-footer { border-top: none !important; }
 
 
 </style>
@@ -199,40 +145,6 @@
     </div>
   </div>
 </div>
-
-<!-- Success Modal -->
-{% if messages %}
-  {% for message in messages %}
-    {% if 'success' in message.tags %}
-      <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-              <h5 class="modal-title" id="successModalLabel">
-                <span class="material-symbols-outlined me-2">check_circle</span>
-                Submitted Successfully
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-              {{ message }}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-          successModal.show();
-        });
-      </script>
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Force hide any parent cooldown overlays

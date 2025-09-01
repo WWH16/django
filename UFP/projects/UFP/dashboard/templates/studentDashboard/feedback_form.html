@@ -13,8 +13,7 @@
   {% block extra_head %}{% endblock %}
   <style>
     /* Highlight active sidebar link with a green border on the left */
-    .sidebar .nav-link.active {
-			background-color: rgba(255,255,255,0.2) !important;
+    .sidebar .nav-link.active {background-color: rgba(255,255,255,0.2) !important;
 			border-left: 3px solid white !important;
 			color: white !important;
 		}
@@ -135,22 +134,7 @@
 </head>
 <body>
   <!-- Logout Confirmation Modal (Bootstrap basic) -->
-  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to log out?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- SweetAlert2 Logout Modal will be triggered by JS -->
 
   <!-- Top Navbar -->
   <nav class="navbar student-navbar fixed-top">
@@ -304,67 +288,71 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
-  <!-- Login Success Toast -->
-{% if show_login_toast %}
-  <div class="toast-container position-fixed top-0 end-0 p-3 login-toast-mobile" style="z-index: 1100;">
-    <div id="loginSuccessToast"
-         class="toast slide-in"
-         role="alert"
-         aria-live="assertive"
-         aria-atomic="true"
-         style="min-height: 110px;">
-      <div class="toast-header bg-success text-white" style="min-height: 30px;">
-        <span class="material-symbols-outlined me-2" style="font-size:1.3em;">check_circle</span>
-        <small class="me-auto">Welcome</small>
-        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body" style="padding: 0.50rem 1rem; color: #333;">
-        You have successfully logged in.
-      </div>
-    </div>
-  </div>
-{% endif %}
-{% if messages %}
-  {% for message in messages %}
-  {% if 'success' in message.tags and 'login' not in message.tags %}
-      <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-              <h5 class="modal-title" id="successModalLabel">
-                <span class="material-symbols-outlined me-2">check_circle</span>
-                Submitted Successfully
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-              {{ message }}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-  {% endif %}
-  {% endfor %}
-{% endif %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Check which modal to show - prioritize login modal
-      var loginModal = document.getElementById('loginSuccessModal');
-      var successModal = document.getElementById('successModal');
-      
-      if (loginModal) {
-        var modal = new bootstrap.Modal(loginModal);
-        modal.show();
-      } else if (successModal) {
-        var modal = new bootstrap.Modal(successModal);
-        modal.show();
+      var logoutBtn = document.querySelector('a.nav-link[href="#"][data-bs-toggle="modal"]');
+      if (logoutBtn) {
+        logoutBtn.removeAttribute('data-bs-toggle');
+        logoutBtn.removeAttribute('data-bs-target');
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          Swal.fire({
+            title: "Are you sure?",
+            text: "You will be logged out.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, logout!",
+            reverseButtons: true
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "{% url 'logout' %}";
+            }
+          });
+        });
       }
     });
   </script>
+  <!-- Login Success Toast -->
+{% if show_login_toast %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      color: '#006600',
+      didOpen: (toast) => { 
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+      Toast.fire({ icon: 'success', title: 'Signed in successfully"' });
+    });
+  </script>
+{% endif %}
+
+{% if messages %}
+  {% for message in messages %}
+    {% if 'login' not in message.tags %}
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          Swal.fire({
+            title: "{{ message.extra_tags|default:'Success'|escapejs }}",
+            text: "{{ message|escapejs }}",
+            icon: "{% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% elif 'info' in message.tags %}info{% else %}question{% endif %}",
+            confirmButtonColor: '#006600', // Set SweetAlert2 OK button color to green
+          });
+        });
+      </script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -454,34 +442,30 @@
         }
       });
     });
-    
-  document.addEventListener('DOMContentLoaded', function() {
-    var loginToastEl = document.getElementById('loginSuccessToast');
-    if (loginToastEl) {
-      var toast = new bootstrap.Toast(loginToastEl, { delay: 3500 });
-      toast.show();
-    }
-  });
   </script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const logoutModalEl = document.getElementById('logoutModal');
-    const logoutModal = new bootstrap.Modal(logoutModalEl);
-
-    // Push initial state to prevent immediate back navigation
-    history.pushState(null, null, location.href);
-
-    // Detect back navigation
-    window.addEventListener('popstate', function () {
-      if (logoutModalEl) {
-        logoutModal.show(); // Show the modal
-        history.pushState(null, null, location.href); // Prevent further back navigation
-      } else {
-        console.error('Logout modal element not found.');
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Force browser history to always have at least one entry
+    if (history.length === 1) {
+      history.pushState({ dashboard: true }, '', location.href);
+    }
+    
+    // Always push our own state
+    history.pushState({ preventBack: true }, '', location.href);
+    
+    // Listen for any popstate event
+    window.addEventListener('popstate', function(e) {
+      // Find and click the existing logout button to reuse its SweetAlert
+      const logoutBtn = document.querySelector('a.nav-link[href="#"]');
+      if (logoutBtn) {
+        logoutBtn.click();
       }
+      
+      // Always push state back to prevent navigation
+      history.pushState({ preventBack: true }, '', location.href);
     });
   });
-  </script>
+</script>
 </body>
-</html>
+</html> 
