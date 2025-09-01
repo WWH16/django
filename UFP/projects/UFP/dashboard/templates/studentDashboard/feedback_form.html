@@ -304,6 +304,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
   <!-- Login Success Toast -->
 {% if show_login_toast %}
@@ -325,46 +326,22 @@
     </div>
   </div>
 {% endif %}
+
 {% if messages %}
   {% for message in messages %}
-  {% if 'success' in message.tags and 'login' not in message.tags %}
-      <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-              <h5 class="modal-title" id="successModalLabel">
-                <span class="material-symbols-outlined me-2">check_circle</span>
-                Submitted Successfully
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-              {{ message }}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-  {% endif %}
+    {% if 'success' in message.tags and 'login' not in message.tags %}
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          Swal.fire({
+            title: "Thank You!",
+            text: "{{ message|escapejs }}",
+            icon: "success"
+          });
+        });
+      </script>
+    {% endif %}
   {% endfor %}
 {% endif %}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Check which modal to show - prioritize login modal
-      var loginModal = document.getElementById('loginSuccessModal');
-      var successModal = document.getElementById('successModal');
-      
-      if (loginModal) {
-        var modal = new bootstrap.Modal(loginModal);
-        modal.show();
-      } else if (successModal) {
-        var modal = new bootstrap.Modal(successModal);
-        modal.show();
-      }
-    });
-  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
