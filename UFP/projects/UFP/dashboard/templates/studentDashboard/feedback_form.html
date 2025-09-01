@@ -320,17 +320,20 @@
 {% if show_login_toast %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        iconColor: 'white',
-        customClass: { popup: 'colored-toast' },
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true,
-    background: '#006600', // Set toast background color to green
-      });
-      Toast.fire({ icon: 'success', title: 'You have successfully logged in.' });
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      timerProgressBarColor: '#006600',
+      color: '#006600',
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+      Toast.fire({ icon: 'success', title: 'Signed in successfully"' });
     });
   </script>
 {% endif %}
@@ -440,14 +443,6 @@
         }
       });
     });
-    
-  document.addEventListener('DOMContentLoaded', function() {
-    var loginToastEl = document.getElementById('loginSuccessToast');
-    if (loginToastEl) {
-      var toast = new bootstrap.Toast(loginToastEl, { delay: 3500 });
-      toast.show();
-    }
-  });
   </script>
 
 <script>
