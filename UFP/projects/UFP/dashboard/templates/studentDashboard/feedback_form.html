@@ -325,13 +325,13 @@
 
 {% if messages %}
   {% for message in messages %}
-    {% if 'success' in message.tags and 'login' not in message.tags %}
+    {% if 'login' not in message.tags %}
       <script>
         document.addEventListener('DOMContentLoaded', function() {
           Swal.fire({
-            title: "Thank You!",
+            title: "{{ message.extra_tags|default:'Success'|escapejs }}",
             text: "{{ message|escapejs }}",
-            icon: "success"
+            icon: "{% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% elif 'info' in message.tags %}info{% else %}question{% endif %}"
           });
         });
       </script>
