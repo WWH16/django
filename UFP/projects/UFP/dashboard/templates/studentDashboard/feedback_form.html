@@ -326,9 +326,8 @@
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      timerProgressBarColor: '#006600',
       color: '#006600',
-      didOpen: (toast) => {
+      didOpen: (toast) => { 
         toast.onmouseenter = Swal.stopTimer;
         toast.onmouseleave = Swal.resumeTimer;
       }

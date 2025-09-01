@@ -1,3 +1,7 @@
+/* Force SweetAlert2 toast timer progress bar color to theme green */
+.colored-toast .swal2-timer-progress-bar {
+  background: #006600 !important;
+}
 /* Student Dashboard Sidebar CSS */
 body {
   background: #eeeeee;
