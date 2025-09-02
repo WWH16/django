@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get['*']
+ALLOWED_HOSTS = ['*']
 
 # Make sure you have this in settings.py
 LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
