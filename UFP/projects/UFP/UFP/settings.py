@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get['*']
 
 # Make sure you have this in settings.py
 LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
@@ -99,15 +99,15 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 
 # Use dj-database-url for more flexible database configuration
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"postgresql://{os.environ.get('DB_USER', 'ufp_user')}:"
-                f"{os.environ.get('DB_PASS', 'Estevesjancen06-16-23')}@"
-                f"{os.environ.get('DB_HOST', 'localhost')}:"
-                f"{os.environ.get('DB_PORT', '5432')}/"
-                f"{os.environ.get('DB_NAME', 'ufp_db')}"
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_db_name',
+        'USER': 'your_db_user',
+        'PASSWORD': 'Estevesjancen06-16-23',
+        'HOST': '157.230.243.90',  # or your server IP
+        'PORT': '5432',
+    }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
