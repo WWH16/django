@@ -29,7 +29,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']   # allow all hosts (dev only)
+# or
+# ALLOWED_HOSTS = ['157.230.243.90', 'your-domain.com']  # production
 
 # Make sure you have this in settings.py
 LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
@@ -101,10 +103,10 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'your_db_name',
-        'USER': 'your_db_user',
+        'NAME': 'ufp_db',
+        'USER': 'ufp_user',
         'PASSWORD': 'Estevesjancen06-16-23',
-        'HOST': '157.230.243.90',  # or your server IP
+        'HOST': 'localhost',   # <-- important
         'PORT': '5432',
     }
 }
