@@ -10,24 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-du6e5_pr6n+edya3kso!$c*7z73jfl6&fql432^dhk#4^7)br='
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$c*7z73jfl6&fql432^dhk#4^7)br=')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*']
-
-# ALLOWED_HOSTS = ['yourdomain.com', 'your_server_ip']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # Make sure you have this in settings.py
 LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
@@ -35,7 +33,6 @@ STUDENT_LOGIN_REDIRECT_URL = 'give_feedback'  # After successful login
 STUDENT_LOGOUT_REDIRECT_URL = 'login_student'  # After logout
 
 # Application definition
-
 INSTALLED_APPS = [
     "unfold",  # before django.contrib.admin
     "unfold.contrib.filters",  # optional, if special filters are needed
@@ -64,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,7 +75,7 @@ ROOT_URLCONF = 'UFP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -92,21 +90,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'UFP.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Use dj-database-url for more flexible database configuration
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'ufp_db'),
-        'USER': os.environ.get('DB_USER', 'ufp_user'),
-        'PASSWORD': os.environ.get('DB_PASS', 'Estevesjancen06-16-23'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=f"postgresql://{os.environ.get('DB_USER', 'ufp_user')}:"
+                f"{os.environ.get('DB_PASS', 'Estevesjancen06-16-23')}@"
+                f"{os.environ.get('DB_HOST', 'localhost')}:"
+                f"{os.environ.get('DB_PORT', '5432')}/"
+                f"{os.environ.get('DB_NAME', 'ufp_db')}"
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -129,38 +125,44 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Manila'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     BASE_DIR / 'staticFiles',
 ]
 
-# STATIC_ROOT is the destination for `collectstatic`. Keep it separate from
-# STATICFILES_DIRS. Using Path objects (BASE_DIR is a Path) is supported.
-STATIC_ROOT = BASE_DIR / 'assets'  # usually used in production for collectstatic
+# Static files configuration for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Configure WhiteNoise for static file serving
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Production security settings
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 RECAPTCHA_PUBLIC_KEY = '6LeOH4YrAAAAAOoWOgDh9tE8zifaY4GlUBBuiqrO'
 RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
@@ -211,7 +213,7 @@ UNFOLD = {
             "100": "200, 255, 200",  # lighter green
             "200": "170, 255, 170",  # light green
             "300": "140, 255, 140",  # medium-light green
-            "400": "100, 230, 100",  # medium green
+            "400": "100, 230, 100",  # medium greenpsy
             "500": "51, 204, 51",    # brighter main green
             "600": "0, 153, 0",      # accent green
             "700": "0, 128, 0",      # slightly darker
@@ -233,211 +235,210 @@ UNFOLD = {
             "900": "0, 51, 0",
         }
     },
-"SIDEBAR": {
-    "show_search": True,  # Search in applications and models names
-    "command_search": True,  # Replace the sidebar search with the command search
-    "show_all_applications": True,  # Dropdown with all applications and models
-    "navigation": [
+    "SIDEBAR": {
+        "show_search": True,  # Search in applications and models names
+        "command_search": True,  # Replace the sidebar search with the command search
+        "show_all_applications": True,  # Dropdown with all applications and models
+        "navigation": [
+            {
+                "title": _("Authentication and Authorization"),
+                "separator": True,  # Top border
+                # "collapsible": True,  # Collapsible group of links (optional)
+                "items": [
+                    {
+                        "title": _("Users"),
+                        "icon": "people",
+                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": _("Groups"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Dashboard"),
+                "separator": True,
+                "collapsible":True,
+                "items": [
+                    {
+                        "title": _("OSAS Dashboard"),
+                        "icon": "pie_chart",
+                        "link": reverse_lazy("admin_osas_services"),
+                        "permission": lambda request: request.user.is_staff,
+                    },
+                    {
+                        "title": _("Teacher's Evaluation"),
+                        "icon": "school",
+                        "link": reverse_lazy("admin_teachers_evaluation"),
+                        "permission": lambda request: request.user.is_staff,
+                    },
+                ],
+            },
+            {
+                "title": _("System"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Services"),
+                        "icon": "build",
+                        "link": reverse_lazy("admin:system_service_changelist"),
+                    },
+                    {
+                        "title": _("Departments"),
+                        "icon": "apartment",
+                        "link": reverse_lazy("admin:system_department_changelist"),
+                    },
+                    {
+                        "title": _("Sentiments"),
+                        "icon": "emoji_emotions",
+                        "link": reverse_lazy("admin:system_sentiment_changelist"),
+                    },
+                    {
+                        "title": _("Programs"),
+                        "icon": "school",
+                        "link": reverse_lazy("admin:system_program_changelist"),
+                    },
+                    {
+                        "title": _("Students"),
+                        "icon": "person",
+                        "link": reverse_lazy("admin:system_student_changelist"),
+                    },
+                    {
+                        "title": _("Feedback"),
+                        "icon": "feedback",
+                        "link": reverse_lazy("admin:system_studentfeedback_changelist"),
+                    },
+                    {
+                        "title": _("Teachers"),
+                        "icon": "people",
+                        "link": reverse_lazy("admin:system_teacher_changelist"),
+                    },
+                    {
+                        "title": _("Teacher Evaluation"),
+                        "icon": "rate_review",
+                        "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
+                    },
+                    {
+                        "title": _("Student Activity Log"),
+                        "icon": "history",
+                        "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Warehouse"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("FactTeacherEvaluation"),
+                        "icon": "rate_review",
+                        "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
+                    },
+                    {
+                        "title": _("FactFeedback"),
+                        "icon": "feedback",
+                        "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
+                    },
+                ],
+            },
+        ],
+    },
+    "TABS": [
         {
-            "title": _("Authentication and Authorization"),
-            "separator": True,  # Top border
-            # "collapsible": True,  # Collapsible group of links (optional)
-            "items": [
-                {
-                    "title": _("Users"),
-                    "icon": "people",
-                    "link": reverse_lazy("admin:auth_user_changelist"),
-                    "permission": lambda request: request.user.is_superuser,
-                },
-                {
-                    "title": _("Groups"),
-                    "icon": "group",
-                    "link": reverse_lazy("admin:auth_group_changelist"),
-                },
+            "models": [
+                "system.service",
+                "system.department",
+                "system.sentiment",
+                "system.program",
+                "system.student",
+                "system.studentfeedback",
+                "system.teacher",
+                "system.teacherevaluation",
+                "system.studentactivitylog",
             ],
-        },
-        {
-            "title": _("Dashboard"),
-            "separator": True,
-            "collapsible":True,
-            "items": [
-                {
-    "title": _("OSAS Dashboard"),
-    "icon": "pie_chart",
-    "link": reverse_lazy("admin_osas_services"),
-    "permission": lambda request: request.user.is_staff,
-},
-{
-    "title": _("Teacher's Evaluation"),
-    "icon": "school",
-    "link": reverse_lazy("admin_teachers_evaluation"),
-    "permission": lambda request: request.user.is_staff,
-},
-            ],
-        },
-        {
-            "title": _("System"),
-            "separator": True,
-            "collapsible": True,
             "items": [
                 {
                     "title": _("Services"),
-                    "icon": "build",
                     "link": reverse_lazy("admin:system_service_changelist"),
                 },
                 {
                     "title": _("Departments"),
-                    "icon": "apartment",
                     "link": reverse_lazy("admin:system_department_changelist"),
                 },
                 {
                     "title": _("Sentiments"),
-                    "icon": "emoji_emotions",
                     "link": reverse_lazy("admin:system_sentiment_changelist"),
                 },
                 {
                     "title": _("Programs"),
-                    "icon": "school",
                     "link": reverse_lazy("admin:system_program_changelist"),
                 },
                 {
                     "title": _("Students"),
-                    "icon": "person",
                     "link": reverse_lazy("admin:system_student_changelist"),
                 },
                 {
                     "title": _("Feedback"),
-                    "icon": "feedback",
                     "link": reverse_lazy("admin:system_studentfeedback_changelist"),
                 },
                 {
                     "title": _("Teachers"),
-                    "icon": "people",
                     "link": reverse_lazy("admin:system_teacher_changelist"),
                 },
                 {
                     "title": _("Teacher Evaluation"),
-                    "icon": "rate_review",
                     "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
                 },
                 {
                     "title": _("Student Activity Log"),
-                    "icon": "history",
                     "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
                 },
             ],
         },
         {
-            "title": _("Warehouse"),
-            "separator": True,
-            "collapsible": True,
+            "models": [
+                "warehouse.dimservice",
+                "warehouse.dimsentiment",
+                "warehouse.dimstudent",
+                "warehouse.dim_teacher",
+                "warehouse.fact_teacher_evaluation",
+                "warehouse.factfeedback",
+            ],
             "items": [
                 {
-                    "title": _("FactTeacherEvaluation"),
-                    "icon": "rate_review",
+                    "title": _("DimService"),
+                    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
+                },
+                {
+                    "title": _("DimSentiment"),
+                    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
+                },
+                {
+                    "title": _("DimStudent"),
+                    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
+                },
+                {
+                    "title": _("DimTeacher"),
+                    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+                },
+                {
+                    "title": _("Fact Teacher Evaluation"),
                     "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
                 },
                 {
-                    "title": _("FactFeedback"),
-                    "icon": "feedback",
+                    "title": _("Fact Feedback"),
                     "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
                 },
             ],
         },
     ],
-},
-"TABS": [
-    {
-        "models": [
-            "system.service",
-            "system.department",
-            "system.sentiment",
-            "system.program",
-            "system.student",
-            "system.studentfeedback",
-            "system.teacher",
-            "system.teacherevaluation",
-            "system.studentactivitylog",
-        ],
-        "items": [
-            {
-                "title": _("Services"),
-                "link": reverse_lazy("admin:system_service_changelist"),
-            },
-            {
-                "title": _("Departments"),
-                "link": reverse_lazy("admin:system_department_changelist"),
-            },
-            {
-                "title": _("Sentiments"),
-                "link": reverse_lazy("admin:system_sentiment_changelist"),
-            },
-            {
-                "title": _("Programs"),
-                "link": reverse_lazy("admin:system_program_changelist"),
-            },
-            {
-                "title": _("Students"),
-                "link": reverse_lazy("admin:system_student_changelist"),
-            },
-            {
-                "title": _("Feedback"),
-                "link": reverse_lazy("admin:system_studentfeedback_changelist"),
-            },
-            {
-                "title": _("Teachers"),
-                "link": reverse_lazy("admin:system_teacher_changelist"),
-            },
-            {
-                "title": _("Teacher Evaluation"),
-                "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
-            },
-            {
-                "title": _("Student Activity Log"),
-                "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
-            },
-        ],
-    },
-    {
-        "models": [
-            "warehouse.dimservice",
-            "warehouse.dimsentiment",
-            "warehouse.dimstudent",
-            "warehouse.dim_teacher",
-            "warehouse.fact_teacher_evaluation",
-            "warehouse.factfeedback",
-        ],
-        "items": [
-            {
-                "title": _("DimService"),
-                "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
-            },
-            {
-                "title": _("DimSentiment"),
-                "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
-            },
-            {
-                "title": _("DimStudent"),
-                "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
-            },
-            {
-                "title": _("DimTeacher"),
-                "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
-            },
-            {
-                "title": _("Fact Teacher Evaluation"),
-                "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
-            },
-            {
-                "title": _("Fact Feedback"),
-                "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
-            },
-        ],
-    },
-],
 
-
-        # Your callbacks here:
+    # Your callbacks here:
     #"ENVIRONMENT": "system.views.environment_callback",
     #"ENVIRONMENT_TITLE_PREFIX": None,
     #"DASHBOARD_CALLBACK": "system.views.dashboard_callback",
