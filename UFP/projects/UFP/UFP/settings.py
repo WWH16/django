@@ -143,16 +143,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+# settings.py
+
+# URL paths for browser
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+# Absolute paths on the server where files will be collected
+STATIC_ROOT = '/root/app/django/UFP/projects/UFP/static/'
+MEDIA_ROOT = '/root/app/django/UFP/projects/UFP/media/'
+
+# Optional: if you still have local static folders during development
 STATICFILES_DIRS = [
-    BASE_DIR / 'staticFiles',
+    BASE_DIR / 'staticFiles',  # only for development; keep if needed
 ]
 
-# Static files configuration for production
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Configure WhiteNoise for static file serving
+# Use WhiteNoise for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Production security settings
 #if not DEBUG:
