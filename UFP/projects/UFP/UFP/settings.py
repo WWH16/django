@@ -149,14 +149,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-# Absolute paths on the server where files will be collected
-STATIC_ROOT = '/root/app/django/UFP/projects/UFP/static/'
-MEDIA_ROOT = '/root/app/django/UFP/projects/UFP/media/'
+STATIC_ROOT = '/var/www/ufp/static/'
+MEDIA_ROOT = '/var/www/ufp/media/'
 
-# Optional: if you still have local static folders during development
+# Optional: additional static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'staticFiles',  # only for development; keep if needed
+    BASE_DIR / 'staticFiles',  # if exists
 ]
+
 
 # Use WhiteNoise for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
