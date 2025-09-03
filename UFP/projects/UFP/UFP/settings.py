@@ -149,17 +149,22 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = '/var/www/ufp/static/'
-MEDIA_ROOT = '/var/www/ufp/media/'
+
 
 # Optional: additional static files
 STATICFILES_DIRS = [
     BASE_DIR / 'staticFiles',  # if exists
 ]
 
+# Comment out or remove WhiteNoise
+# 'whitenoise.middleware.WhiteNoiseMiddleware',
 
-# Use WhiteNoise for serving static files in production
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Update static settings
+STATIC_ROOT = '/root/app/django/UFP/projects/UFP/static/'  # Match your project structure
+MEDIA_ROOT = '/root/app/django/UFP/projects/UFP/media/'
+
+# Remove WhiteNoise storage
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Production security settings
