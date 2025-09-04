@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']   # allow all hosts (dev only)
 # or
@@ -149,21 +149,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-
+STATIC_ROOT = '/var/www/ufp/assets/'
+MEDIA_ROOT = '/var/www/ufp/media/'
 
 # Optional: additional static files
 STATICFILES_DIRS = [
     BASE_DIR / 'staticFiles',  # if exists
 ]
 
-# Comment out or remove WhiteNoise
-# 'whitenoise.middleware.WhiteNoiseMiddleware',
-
-# Update static settings
-STATIC_ROOT = '/root/app/django/UFP/projects/UFP/static/'  # Match your project structure
-MEDIA_ROOT = '/root/app/django/UFP/projects/UFP/media/'
-
-# Remove WhiteNoise storage
+STATIC_ROOT = BASE_DIR / 'assets'
+# Use WhiteNoise for serving static files in production
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
