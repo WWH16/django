@@ -249,10 +249,9 @@
                     <div class="mb-3">
                       <select class="form-select" id="service" name="service">
                         <option value="" disabled selected>Select a service</option>
-                        <option value="Wi-Fi">Wi-Fi</option>
-                        <option value="Scholarship">Scholarship</option>
-                        <option value="Library">Library Facility</option>
-                        <option value="Guidance">College Admission Test</option>
+                        {% for service in services %}
+                          <option value="{{ service.serviceID }}">{{ service.serviceName }}</option>
+                        {% endfor %}
                       </select>
                     </div>
                     <div class="mb-3">
