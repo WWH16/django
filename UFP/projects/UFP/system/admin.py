@@ -60,7 +60,7 @@ class StudentAdmin(ModelAdmin):
 
 @admin.register(StudentFeedback)
 class StudentFeedbackAdmin(ModelAdmin):
-    list_display = ('student', 'service', 'sentiment', 'timestamp')
+    list_display = ('student', 'comments', 'service', 'sentiment', 'timestamp')
     search_fields = ('student__studentName', 'service__serviceName')
     list_filter = ('service', 'sentiment', 'timestamp') 
 class DepartmentFilter(admin.SimpleListFilter):
