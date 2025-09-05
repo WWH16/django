@@ -202,10 +202,7 @@ def give_feedback(request):
     cooldown_seconds = 5
     now = timezone.now()
 
-    print('DEBUG: request.user:', request.user)
-    print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
-    print('DEBUG: All Student IDs:', list(Student.objects.values_list('studentID', flat=True)))
-
+    services = Service.objects.all().order_by('serviceName')
     try:
         student = Student.objects.get(studentID=request.user.username)
     except Student.DoesNotExist:
@@ -230,7 +227,8 @@ def give_feedback(request):
             messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
             return render(request, 'studentDashboard/feedback_form.html', {
                 'cooldown_remaining': cooldown_remaining,
-                'show_login_toast': show_login_toast
+                'show_login_toast': show_login_toast,
+                'services': services
             })
 
         print('DEBUG: request.user:', request.user)
@@ -259,7 +257,7 @@ def give_feedback(request):
                 comments=feedback_text
             )
 
-            log_student_activity(student=student, activity_type='Feedback Submit')
+            log_student_activity(student=student, activity_type='StudentProvidedFeedback')
             messages.success(request, 'Feedback submitted successfully! Thank you for your input.')
             return redirect('give_feedback')
 
@@ -270,7 +268,8 @@ def give_feedback(request):
 
     return render(request, 'studentDashboard/feedback_form.html', {
         'cooldown_remaining': cooldown_remaining,
-        'show_login_toast': show_login_toast
+        'show_login_toast': show_login_toast,
+        'services': services
     })
 
 
@@ -588,7 +587,7 @@ def teacher_evaluation(request):
                 student = Student.objects.get(studentID=request.user.username)
                 log_student_activity(
                     student=student,
-                    activity_type='Feedback Submit'
+                    activity_type='StudentProvidedFeedback'
                 )
             except Student.DoesNotExist:
                 pass
@@ -606,8 +605,9 @@ def teacher_evaluation(request):
 })
     return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
 
-
+from system.models import Service
 @login_required
 @never_cache
 def feedback_form_view(request):
-    return render(request, 'studentDashboard/feedback_form.html')
+    services = Service.objects.all().order_by('serviceName')
+    return render(request, 'studentDashboard/feedback_form.html', {'services': services})

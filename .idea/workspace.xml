@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd206fe5-ef0f-4338-8003-2c9ad8274cce" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/UFP/projects/UFP/dashboard/templates/studentDashboard/feedback_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/UFP/projects/UFP/dashboard/templates/studentDashboard/feedback_form.html" afterDir="false" />
-    </list>
+    <list default="true" id="cd206fe5-ef0f-4338-8003-2c9ad8274cce" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,7 +38,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "modal",
+    "git-widget-placeholder": "DO",
     "ignore.virus.scanning.warn.message": "true",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
@@ -68,6 +66,7 @@
       <updated>1746922953116</updated>
       <workItem from="1756630811381" duration="124000" />
       <workItem from="1756703047719" duration="77000" />
+      <workItem from="1756828793487" duration="35000" />
     </task>
     <servers />
   </component>

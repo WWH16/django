@@ -28,7 +28,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('', include('system.urls')),
-    path('dashboard/', include('dashboard.urls')),
+    path('student/', include('dashboard.urls')),
     path('accounts/', include('accounts.urls')),
     path('api/', include('api.urls')),
     path('api-auth/', include('rest_framework.urls')),

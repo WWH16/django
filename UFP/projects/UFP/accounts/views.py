@@ -117,7 +117,7 @@ def register_view(request):
 
                 log_student_activity(
                     student=student,
-                    activity_type='StudentProvidedFeedback'
+                    activity_type='AccountCreated'
                 )
 
                 messages.success(request, 'Student account created successfully! You can now login.')

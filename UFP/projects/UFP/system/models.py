@@ -56,12 +56,13 @@ class StudentFeedback(models.Model):
 
 class StudentActivityLog(models.Model):
     ACTIVITY_CHOICES = [
-        ('StudentLoggedIn', 'StudentLoggedIn'),
-        ('StudentLoggedOut', 'StudentLoggedOut'),
-        ('Feedback Submit', 'Feedback Submit'),
+        ('StudentLoggedIn', 'Student logged in'),
+        ('StudentLoggedOut', 'Student logged out'),
+        ('StudentProvidedFeedback', 'Student provided feedback'),
         ('Profile updated.', 'Profile updated.'),
         ('Password changed.', 'Password changed.'),
         ('Student changed password.', 'Student changed password.'),
+	('AccountCreated', 'Account created'),
     ]
 
     logID = models.AutoField(primary_key=True)
