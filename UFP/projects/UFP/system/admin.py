@@ -109,11 +109,14 @@ class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
 # Warehouse models
 # ------------------------------
 @admin.register(FactFeedback)
-class FactFeedbackAdmin(ModelAdmin):
+class FactFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactFeedbackResource
     list_display = ('student', 'service','comments', 'sentiment', 'timestamp')
     search_fields = ('student__student_name', 'service__service_name')
     list_filter = ('service', 'sentiment', 'timestamp')
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
 
 @admin.register(fact_teacher_evaluation)
 class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
@@ -121,6 +124,9 @@ class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
     search_fields = ('teacher__teacher_name',)
     list_filter = ('sentiment', 'timestamp') 
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
 # ------------------------------
 # for the admin
 # ------------------------------
