@@ -426,22 +426,6 @@ UNFOLD = {
             ],
             "items": [
                 {
-                    "title": _("DimService"),
-                    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
-                },
-                {
-                    "title": _("DimSentiment"),
-                    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
-                },
-                {
-                    "title": _("DimStudent"),
-                    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
-                },
-                {
-                    "title": _("DimTeacher"),
-                    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
-                },
-                {
                     "title": _("Fact Teacher Evaluation"),
                     "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
                 },
