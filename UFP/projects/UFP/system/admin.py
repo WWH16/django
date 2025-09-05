@@ -23,6 +23,8 @@ from warehouse.models import (
     DimService, DimSentiment, DimStudent, dim_teacher,
     fact_teacher_evaluation, FactFeedback
 )
+from .resources import (TeacherResource, TeacherEvaluationResource, StudentFeedbackResource,
+                        FactFeedbackResource, FactTeacherEvaluationResource)
 
 admin.site.unregister(User)
 admin.site.unregister(Group)
@@ -59,10 +61,14 @@ class StudentAdmin(ModelAdmin):
     list_filter = ('program',)
 
 @admin.register(StudentFeedback)
-class StudentFeedbackAdmin(ModelAdmin):
+class StudentFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = StudentFeedbackResource
     list_display = ('student', 'comments', 'service', 'sentiment', 'timestamp')
     search_fields = ('student__studentName', 'service__serviceName')
     list_filter = ('service', 'sentiment', 'timestamp') 
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
 class DepartmentFilter(admin.SimpleListFilter):
     title = 'department'  # filter title
     parameter_name = 'department'  # URL query param
@@ -78,6 +84,7 @@ class DepartmentFilter(admin.SimpleListFilter):
         return queryset
 @admin.register(Teacher)
 class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = TeacherResource 
     list_display = ('teacher_id', 'teacherName', 'department', 'program')
     search_fields = ('teacherName',)
     list_filter = (DepartmentFilter, 'program')
@@ -89,50 +96,31 @@ class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
 
 
 @admin.register(TeacherEvaluation)
-class TeacherEvaluationAdmin(ModelAdmin):
+class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = TeacherEvaluationResource
     list_display = ('teacher', 'timestamp', 'comments','specialization','program','submitted_by')
     search_fields = ('teacher__teacherName',)
     list_filter = ('sentiment', 'timestamp','specialization','program') 
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
 
 # ------------------------------
 # Warehouse models
 # ------------------------------
-
-@admin.register(DimService)
-class DimServiceAdmin(ModelAdmin):
-    list_display = ('service_id', 'service_name')
-    search_fields = ('service_name',)
-
-@admin.register(DimSentiment)
-class DimSentimentAdmin(ModelAdmin):
-    list_display = ('sentiment_id', 'label')
-    search_fields = ('label',)
-
-@admin.register(DimStudent)
-class DimStudentAdmin(ModelAdmin):
-    list_display = ('student_id', 'student_name', 'program_name', 'department_name')
-    search_fields = ('student_name','program_name','department_name')
-    list_filter = ('program_name', 'department_name')
-
-@admin.register(dim_teacher)
-class DimTeacherAdmin(ModelAdmin):
-    list_display = ('teacher_id', 'teacher_name', 'program_name', 'department_name')
-    search_fields = ('teacher_name',)
-    list_filter = ('program_name', 'department_name')
-
-@admin.register(fact_teacher_evaluation)
-class FactTeacherEvaluationAdmin(ModelAdmin):
-    list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
-    search_fields = ('teacher__teacher_name',)
-    list_filter = ('sentiment', 'timestamp') 
-
 @admin.register(FactFeedback)
 class FactFeedbackAdmin(ModelAdmin):
+    resource_class = FactFeedbackResource
     list_display = ('student', 'service','comments', 'sentiment', 'timestamp')
     search_fields = ('student__student_name', 'service__service_name')
     list_filter = ('service', 'sentiment', 'timestamp')
 
-
+@admin.register(fact_teacher_evaluation)
+class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = FactTeacherEvaluationResource
+    list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
+    search_fields = ('teacher__teacher_name',)
+    list_filter = ('sentiment', 'timestamp') 
 # ------------------------------
 # for the admin
 # ------------------------------
