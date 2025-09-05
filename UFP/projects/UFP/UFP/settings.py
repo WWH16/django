@@ -157,7 +157,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'staticFiles',  # if exists
 ]
 
-STATIC_ROOT = BASE_DIR / 'assets'
+#STATIC_ROOT = BASE_DIR / 'assets'
 # Use WhiteNoise for serving static files in production
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
