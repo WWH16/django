@@ -58,7 +58,7 @@ class StudentActivityLog(models.Model):
     ACTIVITY_CHOICES = [
         ('StudentLoggedIn', 'Student logged in'),
         ('StudentLoggedOut', 'Student logged out'),
-        ('Feedback Submit', 'Student provided feedback'),
+        ('StudentProvidedFeedback', 'Student provided feedback'),
         ('Profile updated.', 'Profile updated.'),
         ('Password changed.', 'Password changed.'),
         ('Student changed password.', 'Student changed password.'),
