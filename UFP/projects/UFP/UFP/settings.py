@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']   # allow all hosts (dev only)
+ALLOWED_HOSTS = ['ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
 # ALLOWED_HOSTS = ['157.230.243.90', 'your-domain.com']  # production
 
@@ -111,6 +111,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
