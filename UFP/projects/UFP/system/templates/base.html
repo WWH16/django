@@ -75,7 +75,7 @@
 
         <!-- Services Dropdown -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#services" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle toggle-dropdown" href="#services" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Services
           </a>
           <ul class="dropdown-menu" data-aos="fade-up">
@@ -273,6 +273,48 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         this.closest('.dropdown').classList.toggle('dropdown-active');
       });
+    });
+
+    // --- Dynamic AOS Animation Duration Based on Scroll Speed ---
+    let lastScrollY = window.scrollY;
+    let lastTime = Date.now();
+    let scrollSpeed = 0;
+    let minDuration = 200; // ms
+    let maxDuration = 1200; // ms
+
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    window.addEventListener('scroll', function () {
+      const now = Date.now();
+      const deltaY = Math.abs(window.scrollY - lastScrollY);
+      const deltaT = now - lastTime;
+      if (deltaT > 0) {
+        scrollSpeed = deltaY / deltaT; // px/ms
+      }
+      lastScrollY = window.scrollY;
+      lastTime = now;
+    });
+
+    // Patch AOS to use dynamic duration
+    function updateAOSDuration() {
+      // Higher scroll speed = shorter duration
+      // Lower scroll speed = longer duration
+      // Invert and scale: fast scroll = minDuration, slow scroll = maxDuration
+      let duration = clamp(maxDuration - scrollSpeed * 2000, minDuration, maxDuration);
+      document.querySelectorAll('[data-aos]').forEach(el => {
+        el.setAttribute('data-aos-duration', duration);
+      });
+    }
+
+    // Update duration before AOS refresh/animation
+    setInterval(updateAOSDuration, 100);
+
+    // Initialize AOS
+    AOS.init({
+      // duration will be overridden by data-aos-duration
+      once: false
     });
 });
 </script>
