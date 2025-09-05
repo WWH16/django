@@ -257,7 +257,7 @@ def give_feedback(request):
                 comments=feedback_text
             )
 
-            log_student_activity(student=student, activity_type='Feedback Submit')
+            log_student_activity(student=student, activity_type='StudentProvidedFeedback')
             messages.success(request, 'Feedback submitted successfully! Thank you for your input.')
             return redirect('give_feedback')
 
@@ -587,7 +587,7 @@ def teacher_evaluation(request):
                 student = Student.objects.get(studentID=request.user.username)
                 log_student_activity(
                     student=student,
-                    activity_type='Feedback Submit'
+                    activity_type='StudentProvidedFeedback'
                 )
             except Student.DoesNotExist:
                 pass
