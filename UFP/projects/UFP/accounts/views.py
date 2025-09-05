@@ -19,9 +19,17 @@ def select_view(request):
 
 # Student Login
 def login_student_view(request):
+    # 🔹 Skip login form only if "Remember Me" was checked before
+    if request.user.is_authenticated and request.session.get('remember_me', False):
+        try:
+            Student.objects.get(studentID=request.user.username)
+            return redirect('give_feedback')  # student dashboard
+        except Student.DoesNotExist:
+            pass
+
     if request.method == 'POST':
         form = StudentLoginForm(request.POST)
-        if form.is_valid():  # Validates captcha too
+        if form.is_valid():
             student_id = form.cleaned_data['student_id']
             password = form.cleaned_data['password']
             remember = request.POST.get('remember') == 'on'
@@ -31,7 +39,7 @@ def login_student_view(request):
             if user and user.is_active and not user.is_staff:
                 auth_login(request, user)
 
-                # Log student login activity
+                # 🔹 Log student login activity
                 try:
                     student = Student.objects.get(studentID=user.username)
                     log_student_activity(
@@ -41,10 +49,13 @@ def login_student_view(request):
                 except Student.DoesNotExist:
                     pass
 
+                # 🔹 Handle Remember Me session
                 if remember:
-                    request.session.set_expiry(604800)  # 7 days
+                    request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
+                    request.session['remember_me'] = True
                 else:
-                    request.session.set_expiry(0)  # Browser close
+                    request.session.set_expiry(0)  # Until browser closes
+                    request.session['remember_me'] = False
 
                 messages.success(
                     request,
@@ -58,8 +69,6 @@ def login_student_view(request):
                     'Invalid student ID or password.',
                     extra_tags='login'
                 )
-        else:
-            pass
     else:
         form = StudentLoginForm()
 
