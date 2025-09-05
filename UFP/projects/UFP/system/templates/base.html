@@ -2,332 +2,483 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>{% block title %}University Feedback Platform{% endblock %}</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>{% block title %}University Feedback Platform{% endblock %}</title>
 
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'system/styles/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'system/vendor/aos/aos.css' %}" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Google Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
 
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="{% static 'system/styles/main.css' %}">
-  <link rel="stylesheet" href="{% static 'system/vendor/aos/aos.css' %}">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Google Material Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Favicon: logo1, logo2, logo3 (uncomment to try each) -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'system/images/logo1.png' %}"
+      id="favicon-logo1png"
+    />
 
-  <!-- Favicon: logo1, logo2, logo3 (uncomment to try each) -->
-  <link rel="icon" type="image/png" href="{% static 'system/images/logo1.png' %}" id="favicon-logo1png">
+    <!-- Custom Styles -->
+    <style>
+      .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+      }
 
-  <!-- Custom Styles -->
- <style>
-  .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
-  }
+      /* Default: solid background for mobile/small screens */
+      .navbar {
+        transition: background 0.3s, box-shadow 0.3s;
+        background: #212529 !important;
+      }
 
-  /* Default: solid background for mobile/small screens */
-  .navbar {
-    transition: background 0.3s, box-shadow 0.3s;
-    background: #212529 !important;
-  }
+      .navbar.scrolled {
+        background: #212529 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-  .navbar.scrolled {
-    background: #212529 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
+      /* Desktop: semi-transparent until scroll */
+      @media (min-width: 992px) {
+        .navbar {
+          background: rgba(33, 37, 41, 0.7) !important;
+        }
+      }
 
-  /* Desktop: semi-transparent until scroll */
-  @media (min-width: 992px) {
-    .navbar {
-      background: rgba(33, 37, 41, 0.7) !important;
-    }
-  }
+      /* Cellphone only: reduce navbar height */
+      @media (max-width: 767px) {
+        .navbar {
+          padding-top: 0.25rem; /* smaller vertical space */
+          padding-bottom: 0.25rem;
+          background-color: #212529 !important; /* solid background */
+        }
 
-  /* Cellphone only: reduce navbar height */
-  @media (max-width: 767px) {
-    .navbar {
-      padding-top: 0.25rem;    /* smaller vertical space */
-      padding-bottom: 0.25rem;
-      background-color: #212529 !important; /* solid background */
-    }
+        .navbar-toggler {
+          padding: 0.25rem; /* optional: smaller hamburger spacing */
+        }
+      }
+    </style>
 
-    .navbar-toggler {
-      padding: 0.25rem; /* optional: smaller hamburger spacing */
-    }
-  }
-</style>
-
-
-  {% block extra_head %}{% endblock %}
-</head>
-<body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-  <!-- Try logo1, logo2, logo3 by changing src below -->
-  <img src="{% static 'system/images/logo1.png' %}" alt="Logo" width="50" height="50" class="me-2 align-middle" id="navbar-logo">
-  <span class="site-title">Feedback Platform</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav align-items-lg-center">
-        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
-
-        <!-- Services Dropdown -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle toggle-dropdown" href="#services" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Services
-          </a>
-          <ul class="dropdown-menu" data-aos="fade-up">
-            <li>
-              <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#serviceModal"
-                 data-title="Wi-Fi Services"
-                 data-body="The Office of Student Affairs and Services (OSAS), in collaboration with the Department of Information and Communications Technology (DICT), provides free internet access to students in designated Wi-Fi zones on campus. These hotspots are strategically located to support academic activities such as research, online classes, and digital communication.">
-                Wi-Fi Services
-              </a>
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <!-- Try logo1, logo2, logo3 by changing src below -->
+          <img
+            src="{% static 'system/images/logo1.png' %}"
+            alt="Logo"
+            width="50"
+            height="50"
+            class="me-2 align-middle"
+            id="navbar-logo"
+          />
+          <span class="site-title">Feedback Platform</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav align-items-lg-center">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Home</a>
             </li>
-            <li>
-              <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#serviceModal"
-                 data-title="Library Facilities"
-                 data-body="The OSAS supports students' academic success by ensuring access to the university library’s resources — including textbooks, research materials, and study spaces. As an added gesture of care, the library sometimes offers free coffee and bread in the morning, fostering a welcoming and focused study environment for early risers.">
-                Library Facilities
+            <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
+
+            <!-- Services Dropdown -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle toggle-dropdown"
+                href="#services"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Services
               </a>
+              <ul class="dropdown-menu" data-aos="fade-up">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#serviceModal"
+                    data-title="Wi-Fi Services"
+                    data-body="The Office of Student Affairs and Services (OSAS), in collaboration with the Department of Information and Communications Technology (DICT), provides free internet access to students in designated Wi-Fi zones on campus. These hotspots are strategically located to support academic activities such as research, online classes, and digital communication."
+                  >
+                    Wi-Fi Services
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#serviceModal"
+                    data-title="Library Facilities"
+                    data-body="The OSAS supports students' academic success by ensuring access to the university library’s resources — including textbooks, research materials, and study spaces. As an added gesture of care, the library sometimes offers free coffee and bread in the morning, fostering a welcoming and focused study environment for early risers."
+                  >
+                    Library Facilities
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#serviceModal"
+                    data-title="Scholarship Assistance"
+                    data-body="The OSAS constantly provides updates on available scholarship programs through their official Facebook page, ensuring students stay informed in real time. They also post visual aids and announcements on the bulletin board outside their office — covering a wide range of opportunities, from government-funded to institutional and higher education scholarships. All you name it, OSAS makes sure you're aware and guided."
+                  >
+                    Scholarship Services
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#serviceModal"
+                    data-title="College Admission Tests"
+                    data-body="The OSAS helps students prepare for and navigate the College Admission Test process. They provide schedules, guidelines, and reminders — whether you're a senior high school applicant or a transferee. Through advisories posted on bulletin boards and their Facebook page, they ensure students stay informed and equipped for this important academic milestone."
+                  >
+                    College Admission Tests
+                  </a>
+                </li>
+              </ul>
             </li>
-            <li>
-              <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#serviceModal"
-                 data-title="Scholarship Assistance"
-                 data-body="The OSAS constantly provides updates on available scholarship programs through their official Facebook page, ensuring students stay informed in real time. They also post visual aids and announcements on the bulletin board outside their office — covering a wide range of opportunities, from government-funded to institutional and higher education scholarships. All you name it, OSAS makes sure you're aware and guided.">
-                Scholarship Services
-              </a>
+
+            <!-- Other Nav Items -->
+            <li class="nav-item">
+              <a class="nav-link" href="#about">About</a>
             </li>
-            <li>
-              <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#serviceModal"
-                 data-title="College Admission Tests"
-                 data-body="The OSAS helps students prepare for and navigate the College Admission Test process. They provide schedules, guidelines, and reminders — whether you're a senior high school applicant or a transferee. Through advisories posted on bulletin boards and their Facebook page, they ensure students stay informed and equipped for this important academic milestone.">
-                College Admission Tests
-              </a>
+            <li class="nav-item"><a class="nav-link" href="#help">Help</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#footer">Contact</a>
+            </li>
+            <!-- Give Feedback Button: visible on mobile and desktop inside collapse -->
+            <li class="nav-item d-lg-none mt-2">
+              <a
+                class="btn btn-warning fw-bold px-4 py-2 w-100"
+                href="{% url 'select' %}"
+                >Give Feedback</a
+              >
             </li>
           </ul>
-        </li>
-
-        <!-- Other Nav Items -->
-        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="#help">Help</a></li>
-        <li class="nav-item"><a class="nav-link" href="#footer">Contact</a></li>
-        <!-- Give Feedback Button: visible on mobile and desktop inside collapse -->
-        <li class="nav-item d-lg-none mt-2">
-          <a class="btn btn-warning fw-bold px-4 py-2 w-100" href="{% url 'select' %}">Give Feedback</a>
-        </li>
-      </ul>
-      <!-- Give Feedback Button: visible only on desktop, outside collapse -->
-      <a class="btn btn-warning fw-bold px-4 py-2 ms-lg-3 d-none d-lg-block" href="{% url 'select' %}">Give Feedback</a>
-    </div>
-  </div>
-</nav>
-
-
-<!-- Page Content -->
-<main>
-  {% block content %}
-  <!-- Page-specific content goes here -->
-  {% endblock %}
-</main>
-{% block footer %}
-<!-- Footer -->
-<footer id="footer" class="footer position-relative dark-background">
-  <div class="container footer-top">
-    <div class="row gy-4">
-      <div class="col-lg-4 col-md-6 footer-about">
-        <a href="#" class="logo d-flex align-items-center">
-          <span class="sitename">Isabela State University-Cauayan Campus</span>
-        </a>
-        <div class="footer-contact pt-3">
-          <p>San Fermin, Cauayan City, Isabela</p>
-          <p>Philippines 3305</p>
-          <p class="mt-3"><strong>Phone:</strong> <span>xxxx-xxx-xxxx</span></p>
-          <p><strong>Email:</strong> <span>osas.isucauayan@isu.edu.ph</span></p>
-        </div>
-        <div class="social-links d-flex mt-4">
-          <a href="https://x.com/isucyncampus"><i class="bi bi-twitter-x"></i></a>
-          <a href="https://www.facebook.com/ISUCAUAYANOSAS/"><i class="bi bi-facebook"></i></a>
-          <a href="https://www.instagram.com/"><i class="bi bi-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/isabela-state-university-cauayan-campus/"><i class="bi bi-linkedin"></i></a>
+          <!-- Give Feedback Button: visible only on desktop, outside collapse -->
+          <a
+            class="btn btn-warning fw-bold px-4 py-2 ms-lg-3 d-none d-lg-block"
+            href="{% url 'select' %}"
+            >Give Feedback</a
+          >
         </div>
       </div>
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Useful Links</h4>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About us</a></li>
-          <li><a href="#">Services</a></li>
-          <li><a href="#">Terms of service</a></li>
-          <li><a href="#">Privacy policy</a></li>
-        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <main>
+      {% block content %}
+      <!-- Page-specific content goes here -->
+      {% endblock %}
+    </main>
+    {% block footer %}
+    <!-- Footer -->
+    <footer id="footer" class="footer position-relative dark-background">
+      <div class="container footer-top">
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-6 footer-about">
+            <a href="#" class="logo d-flex align-items-center">
+              <span class="sitename"
+                >Isabela State University-Cauayan Campus</span
+              >
+            </a>
+            <div class="footer-contact pt-3">
+              <p>San Fermin, Cauayan City, Isabela</p>
+              <p>Philippines 3305</p>
+              <p class="mt-3">
+                <strong>Phone:</strong> <span>xxxx-xxx-xxxx</span>
+              </p>
+              <p>
+                <strong>Email:</strong> <span>osas.isucauayan@isu.edu.ph</span>
+              </p>
+            </div>
+            <div class="social-links d-flex mt-4">
+              <a href="https://x.com/isucyncampus"
+                ><i class="bi bi-twitter-x"></i
+              ></a>
+              <a href="https://www.facebook.com/ISUCAUAYANOSAS/"
+                ><i class="bi bi-facebook"></i
+              ></a>
+              <a href="https://www.instagram.com/"
+                ><i class="bi bi-instagram"></i
+              ></a>
+              <a
+                href="https://www.linkedin.com/company/isabela-state-university-cauayan-campus/"
+                ><i class="bi bi-linkedin"></i
+              ></a>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-3 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">About us</a></li>
+              <li><a href="#">Services</a></li>
+              <li><a href="#">Terms of service</a></li>
+              <li><a href="#">Privacy policy</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-3 footer-links">
+            <h4>OSAS Services</h4>
+            <ul>
+              <li><a href="#">Student Feedback</a></li>
+              <li><a href="#">Guidance & Counseling</a></li>
+              <li><a href="#">Scholarship Assistance</a></li>
+              <li><a href="#">Student Organizations</a></li>
+              <li><a href="#">Career Support</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-3 footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li>
+                <a href="https://www.isu.edu.ph/cauayan-campus/" target="_blank"
+                  >About Cauayan Campus</a
+                >
+              </li>
+              <li>
+                <a href="https://www.isu.edu.ph/contact-us/" target="_blank"
+                  >Contact ISU</a
+                >
+              </li>
+              <li>
+                <a href="https://www.facebook.com/tkcisucc/" target="_blank"
+                  >University News</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.facebook.com/ISUCauayanOfficial/"
+                  target="_blank"
+                  >Announcements</a
+                >
+              </li>
+              <li>
+                <a href="https://isu.edu.ph/school-calendar/" target="_blank"
+                  >School Calendar</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>OSAS Services</h4>
-        <ul>
-          <li><a href="#">Student Feedback</a></li>
-          <li><a href="#">Guidance & Counseling</a></li>
-          <li><a href="#">Scholarship Assistance</a></li>
-          <li><a href="#">Student Organizations</a></li>
-          <li><a href="#">Career Support</a></li>
-        </ul>
+      <div class="container copyright text-center">
+        <p>
+          &copy; <span>Copyright</span>
+          <strong class="sitename">University Feedback Platform</strong>. All
+          Rights Reserved
+        </p>
+        <div class="credits">
+          Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+        <!-- PositiveSSL TrustLogo Script -->
+        <script type="text/javascript">
+          //<![CDATA[
+          var tlJsHost =
+            window.location.protocol == "https:"
+              ? "https://secure.trust-provider.com/"
+              : "http://www.trustlogo.com/";
+          document.write(
+            unescape(
+              "%3Cscript src='" +
+                tlJsHost +
+                "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"
+            )
+          );
+          //]]>
+        </script>
+        <script language="JavaScript" type="text/javascript">
+          TrustLogo(
+            "https://www.positivessl.com/images/seals/positivessl_trust_seal_lg_222x54.png",
+            "POSDV",
+            "none"
+          );
+        </script>
+        {% block extra_scripts %}{% endblock %}
       </div>
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Quick Links</h4>
-        <ul>
-          <li><a href="https://www.isu.edu.ph/cauayan-campus/" target="_blank">About Cauayan Campus</a></li>
-          <li><a href="https://www.isu.edu.ph/contact-us/" target="_blank">Contact ISU</a></li>
-          <li><a href="https://www.facebook.com/tkcisucc/" target="_blank">University News</a></li>
-          <li><a href="https://www.facebook.com/ISUCauayanOfficial/" target="_blank">Announcements</a></li>
-          <li><a href="https://isu.edu.ph/school-calendar/" target="_blank">School Calendar</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="container copyright text-center">
-    <p>&copy; <span>Copyright</span> <strong class="sitename">University Feedback Platform</strong>. All Rights Reserved</p>
-    <div class="credits">
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div>
-  </div>
-</footer>
-{% endblock %}
+    </footer>
+    {% endblock %}
 
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-<div id="preloader"></div>
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+    <div id="preloader"></div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{% static 'system/vendor/aos/aos.js' %}"></script>
-<script src="{% static 'system/vendor/glightbox/js/glightbox.min.js' %}"></script>
-<script src="{% static 'system/vendor/swiper/swiper-bundle.min.js' %}"></script>
-<script src="{% static 'system/vendor/purecounter/purecounter_vanilla.js' %}"></script>
-<script src="{% static 'system/js/main.js' %}"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'system/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'system/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'system/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'system/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+    <script src="{% static 'system/js/main.js' %}"></script>
 
-<!-- Inline JS Script for Navbar, Modal, and Preloader -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const navbar = document.querySelector("nav.navbar");
-    const navbarCollapse = document.getElementById("navbarNav");
+    <!-- Inline JS Script for Navbar, Modal, and Preloader -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const navbar = document.querySelector("nav.navbar");
+        const navbarCollapse = document.getElementById("navbarNav");
 
-    // Navbar background toggle on scroll
-    window.addEventListener("scroll", function () {
-        if (window.scrollY > 50) {
+        // Navbar background toggle on scroll
+        window.addEventListener("scroll", function () {
+          if (window.scrollY > 50) {
             navbar.classList.add("scrolled");
-        } else if (!navbarCollapse.classList.contains("show")) {
+          } else if (!navbarCollapse.classList.contains("show")) {
             navbar.classList.remove("scrolled");
+          }
+        });
+
+        // Force background when mobile collapse opens
+        navbarCollapse.addEventListener("show.bs.collapse", function () {
+          navbar.classList.add("scrolled");
+        });
+        navbarCollapse.addEventListener("hidden.bs.collapse", function () {
+          if (window.scrollY <= 50) navbar.classList.remove("scrolled");
+        });
+
+        // Service modal setup
+        const serviceModal = document.getElementById("serviceModal");
+        if (serviceModal) {
+          serviceModal.addEventListener("show.bs.modal", function (event) {
+            const trigger = event.relatedTarget;
+            serviceModal.querySelector(".modal-title").textContent =
+              trigger.getAttribute("data-title");
+            serviceModal.querySelector(".modal-body").textContent =
+              trigger.getAttribute("data-body");
+          });
         }
-    });
 
-    // Force background when mobile collapse opens
-    navbarCollapse.addEventListener("show.bs.collapse", function () {
-        navbar.classList.add("scrolled");
-    });
-    navbarCollapse.addEventListener("hidden.bs.collapse", function () {
-        if (window.scrollY <= 50) navbar.classList.remove("scrolled");
-    });
+        // Preloader fadeout
+        window.addEventListener("load", function () {
+          const preloader = document.getElementById("preloader");
+          if (preloader) {
+            preloader.style.opacity = "0";
+            setTimeout(() => {
+              preloader.style.display = "none";
+            }, 600);
+          }
+        });
 
-    // Service modal setup
-    const serviceModal = document.getElementById('serviceModal');
-    if (serviceModal) {
-      serviceModal.addEventListener('show.bs.modal', function (event) {
-        const trigger = event.relatedTarget;
-        serviceModal.querySelector('.modal-title').textContent = trigger.getAttribute('data-title');
-        serviceModal.querySelector('.modal-body').textContent = trigger.getAttribute('data-body');
-      });
-    }
+        // Dropdown items auto-close collapse (mobile)
+        const dropdownItems = document.querySelectorAll(".dropdown-item");
+        dropdownItems.forEach((item) => {
+          item.addEventListener("click", function () {
+            if (
+              this.getAttribute("data-bs-toggle") !== "modal" &&
+              navbarCollapse.classList.contains("show")
+            ) {
+              new bootstrap.Collapse(navbarCollapse).toggle();
+            }
+          });
+        });
 
-    // Preloader fadeout
-    window.addEventListener('load', function () {
-      const preloader = document.getElementById('preloader');
-      if (preloader) {
-        preloader.style.opacity = '0';
-        setTimeout(() => { preloader.style.display = 'none'; }, 600);
-      }
-    });
+        // Mobile nav: underline only on clicked link
+        const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navLinks.forEach((l) => l.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
 
-    // Dropdown items auto-close collapse (mobile)
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-    dropdownItems.forEach(item => {
-      item.addEventListener('click', function () {
-        if (this.getAttribute('data-bs-toggle') !== 'modal' && navbarCollapse.classList.contains('show')) {
-          new bootstrap.Collapse(navbarCollapse).toggle();
+        // Nested dropdown toggles
+        document.querySelectorAll(".toggle-dropdown").forEach((toggle) => {
+          toggle.addEventListener("click", function (e) {
+            e.preventDefault();
+            this.closest(".dropdown").classList.toggle("dropdown-active");
+          });
+        });
+
+        // --- Dynamic AOS Animation Duration Based on Scroll Speed ---
+        let lastScrollY = window.scrollY;
+        let lastTime = Date.now();
+        let scrollSpeed = 0;
+        let minDuration = 200; // ms
+        let maxDuration = 1200; // ms
+
+        function clamp(val, min, max) {
+          return Math.max(min, Math.min(max, val));
         }
+
+        window.addEventListener("scroll", function () {
+          const now = Date.now();
+          const deltaY = Math.abs(window.scrollY - lastScrollY);
+          const deltaT = now - lastTime;
+          if (deltaT > 0) {
+            scrollSpeed = deltaY / deltaT; // px/ms
+          }
+          lastScrollY = window.scrollY;
+          lastTime = now;
+        });
+
+        // Patch AOS to use dynamic duration
+        function updateAOSDuration() {
+          // Higher scroll speed = shorter duration
+          // Lower scroll speed = longer duration
+          // Invert and scale: fast scroll = minDuration, slow scroll = maxDuration
+          let duration = clamp(
+            maxDuration - scrollSpeed * 2000,
+            minDuration,
+            maxDuration
+          );
+          document.querySelectorAll("[data-aos]").forEach((el) => {
+            el.setAttribute("data-aos-duration", duration);
+          });
+        }
+
+        // Update duration before AOS refresh/animation
+        setInterval(updateAOSDuration, 100);
+
+        // Initialize AOS
+        AOS.init({
+          // duration will be overridden by data-aos-duration
+          once: false,
+        });
       });
-    });
-
-    // Mobile nav: underline only on clicked link
-    const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
-    navLinks.forEach(link => {
-      link.addEventListener("click", function () {
-        navLinks.forEach(l => l.classList.remove("active"));
-        this.classList.add("active");
-      });
-    });
-
-    // Nested dropdown toggles
-    document.querySelectorAll('.toggle-dropdown').forEach(toggle => {
-      toggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        this.closest('.dropdown').classList.toggle('dropdown-active');
-      });
-    });
-
-    // --- Dynamic AOS Animation Duration Based on Scroll Speed ---
-    let lastScrollY = window.scrollY;
-    let lastTime = Date.now();
-    let scrollSpeed = 0;
-    let minDuration = 200; // ms
-    let maxDuration = 1200; // ms
-
-    function clamp(val, min, max) {
-      return Math.max(min, Math.min(max, val));
-    }
-
-    window.addEventListener('scroll', function () {
-      const now = Date.now();
-      const deltaY = Math.abs(window.scrollY - lastScrollY);
-      const deltaT = now - lastTime;
-      if (deltaT > 0) {
-        scrollSpeed = deltaY / deltaT; // px/ms
-      }
-      lastScrollY = window.scrollY;
-      lastTime = now;
-    });
-
-    // Patch AOS to use dynamic duration
-    function updateAOSDuration() {
-      // Higher scroll speed = shorter duration
-      // Lower scroll speed = longer duration
-      // Invert and scale: fast scroll = minDuration, slow scroll = maxDuration
-      let duration = clamp(maxDuration - scrollSpeed * 2000, minDuration, maxDuration);
-      document.querySelectorAll('[data-aos]').forEach(el => {
-        el.setAttribute('data-aos-duration', duration);
-      });
-    }
-
-    // Update duration before AOS refresh/animation
-    setInterval(updateAOSDuration, 100);
-
-    // Initialize AOS
-    AOS.init({
-      // duration will be overridden by data-aos-duration
-      once: false
-    });
-});
-</script>
-
-
-
-{% block extra_scripts %}{% endblock %}
-</body>
+    </script>
+  </body>
 </html>
