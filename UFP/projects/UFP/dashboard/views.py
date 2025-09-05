@@ -198,6 +198,7 @@ def profile(request):
         }
     return render(request, 'studentDashboard/profile.html', context)
 
+@login_required
 def give_feedback(request):
     cooldown_seconds = 5
     now = timezone.now()
@@ -207,7 +208,10 @@ def give_feedback(request):
         student = Student.objects.get(studentID=request.user.username)
     except Student.DoesNotExist:
         messages.error(request, 'Student profile not found.')
-        return render(request, 'studentDashboard/feedback_form.html', {'cooldown_remaining': 0})
+        return render(request, 'studentDashboard/feedback_form.html', {
+            'cooldown_remaining': 0,
+            'services': services,
+        })
 
     last_feedback = StudentFeedback.objects.filter(student=student).order_by('-timestamp').first()
     cooldown_remaining = max(
@@ -228,50 +232,42 @@ def give_feedback(request):
             return render(request, 'studentDashboard/feedback_form.html', {
                 'cooldown_remaining': cooldown_remaining,
                 'show_login_toast': show_login_toast,
-                'services': services
+                'services': services,
             })
 
-        print('DEBUG: request.user:', request.user)
-        print('DEBUG: request.user.username:', getattr(request.user, 'username', None))
-        from system.models import Student as StudentModel
-        print('DEBUG: All Student IDs:', list(StudentModel.objects.values_list('studentID', flat=True)))
-
-        service_name = request.POST.get('service')
+        service_id = request.POST.get('service')
         feedback_text = request.POST.get('feedback')
 
-        if not service_name or not feedback_text:
+        if not service_id or not feedback_text:
             messages.error(request, 'Please fill in all required fields.')
             return render(request, 'studentDashboard/feedback_form.html', {
                 'cooldown_remaining': cooldown_remaining,
-                'show_login_toast': show_login_toast
+                'show_login_toast': show_login_toast,
+                'services': services,
             })
 
         try:
-            student = Student.objects.get(studentID=request.user.username)
-            service, created = Service.objects.get_or_create(serviceName=service_name)
-
+            service = Service.objects.get(pk=service_id)
             StudentFeedback.objects.create(
                 student=student,
                 service=service,
                 sentiment=None,
                 comments=feedback_text
             )
-
             log_student_activity(student=student, activity_type='StudentProvidedFeedback')
-            messages.success(request, 'Feedback submitted successfully! Thank you for your input.')
+            messages.success(request, 'Thank you for your input.')
             return redirect('give_feedback')
 
-        except Student.DoesNotExist:
-            messages.error(request, 'Student profile not found.')
+        except Service.DoesNotExist:
+            messages.error(request, 'Selected service does not exist.')
         except Exception as e:
             messages.error(request, f'Error submitting feedback: {str(e)}')
 
     return render(request, 'studentDashboard/feedback_form.html', {
         'cooldown_remaining': cooldown_remaining,
         'show_login_toast': show_login_toast,
-        'services': services
+        'services': services,
     })
-
 
 from system.models import TeacherEvaluation, Teacher, Department, Program
 from django.shortcuts import render, redirect, get_object_or_404
