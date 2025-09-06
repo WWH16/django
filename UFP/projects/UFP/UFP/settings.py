@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
     "unfold.contrib.location_field",  # optional, if django-location-field package is used
     "unfold.contrib.constance",  # optional, if django-constance package is used
-    'accounts.apps.LoginConfig',
+    'accounts.apps.AccountsConfig',
     'dashboard.apps.DashboardConfig',
     'system.apps.SystemConfig',
     'django.contrib.admin',
@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'warehouse.apps.WarehouseConfig',
+    'rest_framework.authtoken',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +113,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -183,15 +186,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 RECAPTCHA_PUBLIC_KEY = '6LeOH4YrAAAAAOoWOgDh9tE8zifaY4GlUBBuiqrO'
 RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "mail.privateemail.com"
+EMAIL_PORT = 587               # use 587 with TLS
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'estevesjancen388@gmail.com'
-EMAIL_HOST_PASSWORD = 'sqyo mcxz rhjm mewu'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_USE_SSL = False          # ⚠️ must be False if TLS is True
+EMAIL_HOST_USER = "no-reply@ufplatform.com"   # your Namecheap mailbox
+EMAIL_HOST_PASSWORD = "Ge!O56!=Ujes"
+DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
+
+
+
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -220,7 +231,7 @@ UNFOLD = {
             "rel": "icon",
             "sizes": "32x32",
             "type": "image/svg+xml",
-            "href": lambda request: static("favicon.svg"),
+            "href": lambda request: static("system/images/logo1.png"),
         },
     ],
     "COLORS": {

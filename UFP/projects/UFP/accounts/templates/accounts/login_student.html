@@ -72,7 +72,7 @@
     </div>
 
     <!-- Captcha -->
-    <div style="margin-bottom: 1rem; display:flex; justify-content:center; align-items:center;">
+    <div style="margin-top: 1rem; display: flex; justify-content: center;"> <!-- Centered reCAPTCHA -->
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
@@ -84,18 +84,22 @@
     </div>
 
     <!-- Remember Me -->
-    <div style="margin-bottom: 1rem;">
-        <label>
-            <input type="checkbox" name="remember"> Remember Me
-        </label>
+    <div style="margin-top: 1rem; display: flex; align-items: center;">
+        <input type="checkbox" id="remember_me" name="remember_me" style="margin-right: 0.5rem;">
+        <label for="remember_me" style="font-size: 0.85rem;">Remember Me</label>
     </div>
 
     <!-- Submit Button -->
-    <button id="login-submit" type="submit" class="btn-primary">
+    <button id="login-submit" type="submit" class="btn-primary" style="margin-top: 1rem;">
         Log in
         <span class="material-symbols-outlined arrow">arrow_forward</span>
     </button>
 </form>
+
+<!-- Forgot Password Link -->
+<p style="margin-top: 1rem; font-size: 0.85rem; color: #555;"> <!-- Styled tertiary action -->
+    <a href="{% url 'password_reset' %}" style="color: #009900; text-decoration: underline;">Forgot Password?</a>
+</p>
 
 <!-- ✅ Inline CSS for styling messages -->
 <style>
