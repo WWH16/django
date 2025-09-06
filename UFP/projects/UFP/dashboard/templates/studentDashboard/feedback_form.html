@@ -124,14 +124,35 @@
       transform: translateY(-7px) rotate(-45deg);
     }
     /* Only apply these styles on mobile screens */
-@media (max-width: 576px) {
-  .login-toast-mobile {
-    margin-top: 70px !important;
+    @media (max-width: 576px) {
+      .login-toast-mobile {
+        margin-top: 70px !important;
+      }
+    }
+    /* Remove the thin top border line in modal footers on this page */
+    .modal-footer {
+      border-top: none !important;
+    }
+
+    @media (max-width: 576px) {
+  .main-content .container-fluid {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
   }
-}
-/* Remove the thin top border line in modal footers on this page */
-.modal-footer {
-  border-top: none !important;
+
+  .main-content .col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .main-content .card {
+    border-radius: 8px;
+  }
+
+  .main-content .row {
+  min-height: auto !important; /* remove the tall spacing */
+  margin-top: 15px !important; /* just below fixed navbar */
+  }
 }
   </style>
 </head>
