@@ -13,7 +13,7 @@
         body { font-family: 'Inter', Arial, sans-serif; background: #fff; min-height: 100vh; }
         .flex-center { display: flex; min-height: 100vh; align-items: flex-start; justify-content: center; position: relative; padding-top: 5%; } /* Adjusted alignment and added padding */
         .card { width: 100%; max-width: 384px; margin: 0 auto; background: #fff; box-sizing: border-box; }
-        .divider { border-bottom: 1px solid #e5e7eb; width: 100%; margin: 0 0 30px 0; padding: 0 0 20px 0; }
+        .divider { border-bottom: 1px solid #e5e7eb; width: 100%; margin: 0 0 0px 0; padding: 0 0 0px 0; } /* Reduced margin and padding to decrease space */
         .header-title { font-size: 1.1rem; font-weight: 600; color: #009900; letter-spacing: -0.5px; }
         .header-sub { color: #000000; font-size: 0.85rem; font-weight: 600; padding-bottom: 2px; }
         .form-label { font-size: 0.9rem; font-weight: 600; color: #222; margin-bottom: 2px; }
@@ -42,11 +42,9 @@
         .back-link .arrow { left: 0; transition: left 0.2s; }
         .back-link:hover .arrow { left: -4px; }
 
-        .top-bar { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: flex-start; align-items: center; padding: 0.6rem 0.4rem; z-index: 15; }
 
         @media (max-width: 480px) {
             .card { max-width: 100%; padding: 0 0.5rem; }
-            .top-bar { padding: 0.5rem; }
             .divider { margin-bottom: 16px; padding-bottom: 12px; }
             .header-title { font-size: 1.125rem; }  /* 18px - better hierarchy */
             .form-label { font-size: 0.85rem; }    /* 14px - more readable */
@@ -91,18 +89,11 @@
 </head>
 <body>
     <div class="flex-center">
-        <!-- Top Bar with Back Arrow -->
-        <div class="top-bar">
-            <a href="/" class="back-link">
-                <span class="material-symbols-outlined arrow">arrow_back</span>
-                Return to site
-            </a>
-        </div>
         <div class="card">
             <!-- Header & Divider -->
             <div class="divider">
                 <h1 class="header-title">
-                    <span header-sub style="font-weight:600; margin-bottom: 0%;">{% block header_title %}Forgot Password{% endblock %}</span>
+                    <span header-sub style="font-weight:600; margin-bottom: 0%">{% block header_title %}Forgot Password{% endblock %}</span>
                 </h1>
             </div>
             {% block content %}{% endblock %}
