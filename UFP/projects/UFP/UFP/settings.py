@@ -231,7 +231,7 @@ UNFOLD = {
             "rel": "icon",
             "sizes": "32x32",
             "type": "image/svg+xml",
-            "href": lambda request: static("favicon.svg"),
+            "href": lambda request: static("system/images/logo1.png"),
         },
     ],
     "COLORS": {
