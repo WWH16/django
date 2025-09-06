@@ -225,14 +225,36 @@ def edit_profile(request):
         messages.success(request, 'Profile updated successfully!')
     return redirect('profile')
 
-class StudentPasswordResetConfirmView(PasswordResetConfirmView):
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        user = self.user
-        try:
-            student = Student.objects.get(studentID=user.username)
-            log_student_activity(student=student, activity_type='PasswordReset')
-        except Student.DoesNotExist:
-            pass
-        return response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import update_session_auth_hash
+from .serializers import ChangePasswordSerializer
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_withEmail(request):
+    if request.method == 'POST':
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if user.check_password(serializer.data.get('old_password')):
+                user.set_password(serializer.data.get('new_password'))
+                user.save()
+                update_session_auth_hash(request, user)  # To update session after password change
+                return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+            return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+from django.shortcuts import render
+
+def test_password_reset_email(request):
+    context = {
+        'current_user': request.user,
+        'username': request.user.username if request.user.is_authenticated else 'testuser',
+        'email': request.user.email if request.user.is_authenticated else 'testuser@example.com',
+        'reset_password_url': 'http://example.com/reset-password?token=exampletoken',
+    }
+    return render(request, 'email/password_reset_email.html', context)
