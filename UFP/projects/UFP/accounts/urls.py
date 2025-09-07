@@ -1,7 +1,7 @@
 from django.urls import path, include # Add include
 from . import views
 from .views import change_password_withEmail
-from .api_views import ForgotPasswordView
+
 
 urlpatterns = [
     path('select/', views.select_view, name='select'),
