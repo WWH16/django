@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,10 +29,32 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 DEBUG = False
-
-ALLOWED_HOSTS = ['ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
+FRONTEND_URL = 'https://ufplatform.com/accounts/password_reset/'  # Used in email link
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
 # ALLOWED_HOSTS = ['157.230.243.90', 'your-domain.com']  # production
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'accounts': {  # Your app name
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Make sure you have this in settings.py
 LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
@@ -113,6 +135,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

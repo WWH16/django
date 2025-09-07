@@ -258,3 +258,10 @@ def test_password_reset_email(request):
         'reset_password_url': 'http://example.com/reset-password?token=exampletoken',
     }
     return render(request, 'email/password_reset_email.html', context)
+
+# Add this function to your views.py
+def password_reset_form_view(request):
+    """
+    Simple view to render your password reset form
+    """
+    return render(request, 'accounts/email/password_reset_form.html')
