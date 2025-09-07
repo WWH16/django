@@ -185,18 +185,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 RECAPTCHA_PUBLIC_KEY = '6LeOH4YrAAAAAOoWOgDh9tE8zifaY4GlUBBuiqrO'
 RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
 
-# Email settings
+# Namecheap PrivateEmail SMTP
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-#EMAIL_HOST = "smtp.mailgun.org"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-#EMAIL_HOST_USER = "postmaster@ufplatform.com"  # Mailgun gives this after domain is verified
-#EMAIL_HOST_PASSWORD = "e33db767e0375cd7443356c69e6bb493-1ae02a08-08f65baa"  # from Mailgun dashboard
+EMAIL_HOST = "mail.privateemail.com"
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True     # ✅ because port 465 requires SSL
+EMAIL_USE_TLS = False    # ⚠️ must be False when using SSL
+EMAIL_HOST_USER = "no-reply@ufplatform.com"
+EMAIL_HOST_PASSWORD = "Ge!O56!=Ujes"
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'estevesjancen388@gmail.com'
-EMAIL_HOST_PASSWORD = 'mfze vnet bcne pcne'
 DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
+
 
 
 
