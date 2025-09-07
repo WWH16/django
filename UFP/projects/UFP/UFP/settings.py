@@ -187,11 +187,15 @@ RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
 
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.mailgun.org"
+#EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "postmaster@ufplatform.com"  # Mailgun gives this after domain is verified
-EMAIL_HOST_PASSWORD = "e33db767e0375cd7443356c69e6bb493-1ae02a08-08f65baa"  # from Mailgun dashboard
+#EMAIL_HOST_USER = "postmaster@ufplatform.com"  # Mailgun gives this after domain is verified
+#EMAIL_HOST_PASSWORD = "e33db767e0375cd7443356c69e6bb493-1ae02a08-08f65baa"  # from Mailgun dashboard
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'estevesjancen388@gmail.com'
+EMAIL_HOST_PASSWORD = 'mfze vnet bcne pcne'
 DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
 
 
