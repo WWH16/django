@@ -33,28 +33,6 @@ FRONTEND_URL = 'https://ufplatform.com/accounts/password_reset/'  # Used in emai
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
 # ALLOWED_HOSTS = ['157.230.243.90', 'your-domain.com']  # production
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'accounts': {  # Your app name
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
 
 # Make sure you have this in settings.py
 LOGIN_URL = '/accounts/select/'   # The name of your login URL pattern
