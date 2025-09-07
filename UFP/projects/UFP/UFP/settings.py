@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
-#load_dotenv()
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
@@ -186,16 +186,16 @@ RECAPTCHA_PUBLIC_KEY = '6LeOH4YrAAAAAOoWOgDh9tE8zifaY4GlUBBuiqrO'
 RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
 
 # Namecheap PrivateEmail SMTP
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mail.privateemail.com"
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True     # ✅ because port 465 requires SSL
-EMAIL_USE_TLS = False    # ⚠️ must be False when using SSL
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+#EMAIL_HOST = "mail.privateemail.com"
+#EMAIL_PORT = 587
+SENDGRID_API_KEY = "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"
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 EMAIL_HOST_USER = "no-reply@ufplatform.com"
 EMAIL_HOST_PASSWORD = "Ge!O56!=Ujes"
 
 DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
-
 
 
 
