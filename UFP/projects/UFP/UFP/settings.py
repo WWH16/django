@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -106,13 +106,14 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ufp_db',
-        'USER': 'ufp_user',
+        'NAME': 'universityFeedbackPlatform',
+        'USER': 'postgres',
         'PASSWORD': 'Estevesjancen06-16-23',
-        'HOST': 'localhost',   # <-- important
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
 
 
 # Password validation
@@ -188,13 +189,13 @@ RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
 
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mail.privateemail.com"
-EMAIL_PORT = 587               # use 587 with TLS
+EMAIL_HOST = "smtp.mailgun.org"
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False          # ⚠️ must be False if TLS is True
-EMAIL_HOST_USER = "no-reply@ufplatform.com"   # your Namecheap mailbox
-EMAIL_HOST_PASSWORD = "Ge!O56!=Ujes"
+EMAIL_HOST_USER = "brad@ufplatform.com"  # Mailgun gives this after domain is verified
+EMAIL_HOST_PASSWORD = "e33db767e0375cd7443356c69e6bb493-1ae02a08-08f65baa"  # from Mailgun dashboard
 DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
+
 
 
 
