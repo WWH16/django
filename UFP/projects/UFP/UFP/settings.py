@@ -114,7 +114,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -191,7 +190,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "brad@ufplatform.com"  # Mailgun gives this after domain is verified
+EMAIL_HOST_USER = "postmaster@ufplatform.com"  # Mailgun gives this after domain is verified
 EMAIL_HOST_PASSWORD = "e33db767e0375cd7443356c69e6bb493-1ae02a08-08f65baa"  # from Mailgun dashboard
 DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
 
