@@ -260,8 +260,18 @@ def test_password_reset_email(request):
     return render(request, 'email/password_reset_email.html', context)
 
 # Add this function to your views.py
+from django.urls import reverse
+
+from django.shortcuts import render
+from django.urls import reverse # Make sure this is imported
+
 def password_reset_form_view(request):
     """
-    Simple view to render your password reset form
+    Simple view to render your password reset form.
     """
-    return render(request, 'accounts/email/password_reset_form.html')
+    # This line now works and will not raise a NoReverseMatch error.
+    api_url = reverse('password_reset:reset-password-request')
+    context = {'api_url': api_url}
+    
+    # This will now render your intended template.
+    return render(request, 'accounts/email/password_reset_form.html', context)
