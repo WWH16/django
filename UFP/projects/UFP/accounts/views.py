@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
@@ -225,53 +226,125 @@ def edit_profile(request):
         messages.success(request, 'Profile updated successfully!')
     return redirect('profile')
 
+from django.shortcuts import render
+from django.urls import reverse
+from django.core.mail import EmailMultiAlternatives
+from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django_rest_passwordreset.signals import reset_password_token_created
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import update_session_auth_hash
 from .serializers import ChangePasswordSerializer
+import logging
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def change_password_withEmail(request):
-    if request.method == 'POST':
-        serializer = ChangePasswordSerializer(data=request.data)
-        if serializer.is_valid():
-            user = request.user
-            if user.check_password(serializer.data.get('old_password')):
-                user.set_password(serializer.data.get('new_password'))
-                user.save()
-                update_session_auth_hash(request, user)  # To update session after password change
-                return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
-            return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+logger = logging.getLogger(__name__)
 
-from django.shortcuts import render
+# ------------------------------
+# Signal for sending reset email
+# ------------------------------
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    logger.info(f"Signal triggered for user: {reset_password_token.user.email}")
 
-def test_password_reset_email(request):
+    reset_url = "{}?token={}".format(
+        instance.request.build_absolute_uri(reverse('reset_password_confirm_view')),
+        reset_password_token.key
+    )
+
     context = {
-        'current_user': request.user,
-        'username': request.user.username if request.user.is_authenticated else 'testuser',
-        'email': request.user.email if request.user.is_authenticated else 'testuser@example.com',
-        'reset_password_url': 'http://example.com/reset-password?token=exampletoken',
+        'current_user': reset_password_token.user,
+        'username': reset_password_token.user.username,
+        'email': reset_password_token.user.email,
+        'reset_password_url': reset_url
     }
-    return render(request, 'email/password_reset_email.html', context)
 
-# Add this function to your views.py
-from django.urls import reverse
+    # Render email
+    email_html_message = render_to_string('accounts/email/password_reset_email.html', context)
+    email_plaintext_message = render_to_string('accounts/email/password_reset_email.txt', context)
 
+    msg = EmailMultiAlternatives(
+        subject="Password Reset for University Feedback Platform",
+        body=email_plaintext_message,
+        from_email="no-reply@ufplatform.com",
+        to=[reset_password_token.user.email]
+    )
+    msg.attach_alternative(email_html_message, "text/html")
+    msg.send()
+
+# ------------------------------
+# Reset password confirmation page
+# ------------------------------
 from django.shortcuts import render
-from django.urls import reverse # Make sure this is imported
+from django.urls import reverse
 
 def password_reset_form_view(request):
     """
-    Simple view to render your password reset form.
+    Handles the password reset form submission.
     """
-    # This line now works and will not raise a NoReverseMatch error.
     api_url = reverse('password_reset:reset-password-request')
-    context = {'api_url': api_url}
     
-    # This will now render your intended template.
-    return render(request, 'accounts/email/password_reset_form.html', context)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+
+        if not email:
+            return render(request, 'accounts/email/password_reset_form.html', {
+                'api_url': api_url,
+                'error': 'Please enter an email address.'
+            })
+
+        # Check if user exists
+        if not User.objects.filter(email=email).exists():
+            return render(request, 'accounts/email/password_reset_form.html', {
+                'api_url': api_url,
+                'error': 'No user found with that email address.'
+            })
+
+        # Call DRF API
+        from rest_framework.test import APIClient
+        client = APIClient()
+        response = client.post(api_url, {'email': email}, format='json')
+
+        if response.status_code == 200:
+            return redirect('password_reset_done_view')
+        else:
+            return render(request, 'accounts/email/password_reset_form.html', {
+                'api_url': api_url,
+                'error': 'An error occurred. Please try again.'
+            })
+
+    return render(request, 'accounts/email/password_reset_form.html', {'api_url': api_url})
+
+from django.shortcuts import render
+
+def reset_password_confirm_view(request):
+    """
+    Renders the password reset confirmation form.
+    Reads the token from the URL query parameters.
+    """
+    token = request.GET.get('token', '')
+    context = {'token': token}
+    return render(request, 'accounts/email/password_reset_confirm.html', context)
+
+
+
+
+# ------------------------------
+# Change password API (authenticated users)
+# ------------------------------
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_withEmail(request):
+    serializer = ChangePasswordSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user
+        if user.check_password(serializer.data.get('old_password')):
+            user.set_password(serializer.data.get('new_password'))
+            user.save()
+            update_session_auth_hash(request, user)
+            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
