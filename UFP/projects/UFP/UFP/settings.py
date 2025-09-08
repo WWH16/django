@@ -212,6 +212,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+DJANGO_REST_PASSWORDRESET_USE_JSON = True
+
+# Custom email template
+DJANGO_REST_PASSWORDRESET_EMAIL_TEMPLATE_NAME = 'accounts/email/password_reset_email.html'
+
+
 # django unfold config 
 from django.templatetags.static import static
 from django.urls import reverse_lazy

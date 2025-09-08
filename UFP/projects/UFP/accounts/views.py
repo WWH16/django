@@ -279,17 +279,23 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 # ------------------------------
 from django.shortcuts import render
 from django.urls import reverse
-
+from rest_framework.test import APIClient
 def password_reset_form_view(request):
     """
     Handles the password reset form submission.
     """
+    # DRF password reset API endpoint
     api_url = reverse('password_reset:reset-password-request')
-    
+
     if request.method == 'POST':
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            data = request.POST
+
         email = data.get('email', '').strip()
 
+        # Validate email input
         if not email:
             return render(request, 'accounts/email/password_reset_form.html', {
                 'api_url': api_url,
@@ -303,19 +309,30 @@ def password_reset_form_view(request):
                 'error': 'No user found with that email address.'
             })
 
-        # Call DRF API
-        from rest_framework.test import APIClient
+        # Call DRF password reset API without sending default email
         client = APIClient()
-        response = client.post(api_url, {'email': email}, format='json')
+        response = client.post(api_url, {'email': email, 'send_email': False}, format='json')
 
-        if response.status_code == 200:
-            return redirect('password_reset_done_view')
+        if response.status_code in [200, 201]:  # Success
+            return redirect('password_reset_sent')  # Redirect to custom success page
         else:
+            # Extract error from DRF response
+            error_msg = 'An error occurred. Please try again.'
+            try:
+                data = response.json()
+                if 'email' in data and len(data['email']) > 0:
+                    error_msg = data['email'][0]
+                elif 'non_field_errors' in data:
+                    error_msg = ' '.join(data['non_field_errors'])  
+            except Exception:
+                pass
+
             return render(request, 'accounts/email/password_reset_form.html', {
                 'api_url': api_url,
-                'error': 'An error occurred. Please try again.'
+                'error': error_msg
             })
 
+    # GET request: render the form
     return render(request, 'accounts/email/password_reset_form.html', {'api_url': api_url})
 
 from django.shortcuts import render
