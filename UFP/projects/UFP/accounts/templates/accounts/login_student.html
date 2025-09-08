@@ -51,19 +51,24 @@
         {% endif %}
     </div>
 
-    <!-- Password -->
+    <!-- Password with Eye Icon -->
     <div style="margin-bottom: 0.8rem;">
         <label for="password" class="form-label">
             Password <span class="form-required">*</span>
         </label>
-        <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            class="form-input{% if form.password.errors %} border-red-600{% endif %}" 
-            required
-            autocomplete="current-password"
-        >
+        <div class="password-container">
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-input password-input{% if form.password.errors %} border-red-600{% endif %}" 
+                required
+                autocomplete="current-password"
+            >
+            <button type="button" class="password-toggle" onclick="togglePassword()">
+                <span class="material-symbols-outlined" id="eye-icon">visibility_off</span>
+            </button>
+        </div>
         {% if form.password.errors %}
             {% for error in form.password.errors %}
                 <div class="field-error">{{ error }}</div>
@@ -97,7 +102,7 @@
     </button>
 </form>
 
-<!-- ✅ Inline CSS for styling messages -->
+<!-- ✅ Inline CSS for styling messages and password container -->
 <style>
 .field-success {
     background-color: #d4edda;   /* light green */
@@ -119,12 +124,69 @@
     font-weight: 500;
 }
 
+/* Password Container Styling */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input {
+    padding-right: 45px !important; /* Make room for the eye icon */
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: #374151;
+}
+
+.password-toggle:focus {
+    outline: none;
+}
+
+#eye-icon {
+    font-size: 20px;
+    user-select: none;
+}
+
 /* Adjust Disabled State for Login Button */
 .btn-primary:disabled {
     opacity: 0.5; /* Reduce opacity to indicate disabled state */
     cursor: not-allowed;
 }
 </style>
+
+<!-- Password Toggle Script -->
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.textContent = 'visibility';
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.textContent = 'visibility_off';
+    }
+}
+</script>
+
 <!-- Enable submit only when reCAPTCHA is completed -->
 <script>
 document.addEventListener('DOMContentLoaded', function(){

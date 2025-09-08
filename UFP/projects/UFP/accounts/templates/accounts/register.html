@@ -124,15 +124,21 @@
         {% endif %}
     </div>
 
-    <div style="margin-bottom: 0.9rem; position: relative;">
+    <!-- Password with Eye Icon -->
+    <div style="margin-bottom: 0.9rem;">
         <label for="password" class="form-label">
             Password <span class="form-required">*</span>
         </label>
-        <input type="password"
-               id="password"
-               name="password"
-               class="form-input{% if form.password.errors %} border-red-600{% endif %}"
-               required>
+        <div class="password-container">
+            <input type="password"
+                   id="password"
+                   name="password"
+                   class="form-input password-input{% if form.password.errors %} border-red-600{% endif %}"
+                   required>
+            <button type="button" class="password-toggle" onclick="togglePassword('password', 'eye-icon-password')">
+                <span class="material-symbols-outlined" id="eye-icon-password">visibility_off</span>
+            </button>
+        </div>
         {% if form.password.errors %}
             {% for error in form.password.errors %}
                 <div class="field-error">{{ error }}</div>
@@ -140,15 +146,21 @@
         {% endif %}
     </div>
 
-    <div style="margin-bottom: 1.1rem; position: relative;">
+    <!-- Confirm Password with Eye Icon -->
+    <div style="margin-bottom: 1.1rem;">
         <label for="confirm_password" class="form-label">
             Confirm Password <span class="form-required">*</span>
         </label>
-        <input type="password"
-               id="confirm_password"
-               name="confirm_password"
-               class="form-input{% if form.confirm_password.errors %} border-red-600{% endif %}"
-               required>
+        <div class="password-container" id="confirm-password-container">
+            <input type="password"
+                   id="confirm_password"
+                   name="confirm_password"
+                   class="form-input password-input{% if form.confirm_password.errors %} border-red-600{% endif %}"
+                   required>
+            <button type="button" class="password-toggle" onclick="togglePassword('confirm_password', 'eye-icon-confirm')">
+                <span class="material-symbols-outlined" id="eye-icon-confirm">visibility_off</span>
+            </button>
+        </div>
         {% if form.confirm_password.errors %}
             {% for error in form.confirm_password.errors %}
                 <div class="field-error">{{ error }}</div>
@@ -175,6 +187,81 @@
     <span class="text-muted small">Already have an account?</span>
     <a href="{% url 'login_student' %}" class="ms-1 back-link">Login</a>
 </div>
+
+<!-- CSS for Password Container and Eye Icons -->
+<style>
+.field-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+/* Password Container Styling */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input {
+    padding-right: 45px !important; /* Make room for the eye icon */
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: #374151;
+}
+
+.password-toggle:focus {
+    outline: none;
+}
+
+.password-toggle .material-symbols-outlined {
+    font-size: 20px;
+    user-select: none;
+}
+
+/* Adjust Disabled State for Register Button */
+.btn-primary:disabled {
+    opacity: 0.5; /* Reduce opacity to indicate disabled state */
+    cursor: not-allowed;
+}
+</style>
+
+<!-- Password Toggle Script -->
+<script>
+function togglePassword(passwordFieldId, eyeIconId) {
+    const passwordField = document.getElementById(passwordFieldId);
+    const eyeIcon = document.getElementById(eyeIconId);
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.textContent = 'visibility';
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.textContent = 'visibility_off';
+    }
+}
+</script>
 {% endblock %}
 
 {% block extra_js %}
@@ -186,22 +273,24 @@
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm_password');
 
-        // ✅ Added: Confirm Password Validation (prevents refresh if mismatch)
+        // ✅ FIXED: Confirm Password Validation - error appears below the field
         form.addEventListener('submit', function (e) {
             const errorDiv = document.getElementById('confirm-password-error');
             if (password.value !== confirmPassword.value) {
-                e.preventDefault(); // ✅ Added: stop form submission
+                e.preventDefault(); // stop form submission
                 if (!errorDiv) {
                     const errorMsg = document.createElement('div');
                     errorMsg.id = 'confirm-password-error';
                     errorMsg.classList.add('field-error');
                     errorMsg.textContent = 'Passwords do not match.';
-                    confirmPassword.insertAdjacentElement('afterend', errorMsg); // ✅ Added: inline error
+                    // Insert after the password container div, not after the input
+                    const passwordContainer = document.getElementById('confirm-password-container');
+                    passwordContainer.insertAdjacentElement('afterend', errorMsg);
                 } else {
-                    errorDiv.textContent = 'Passwords do not match.'; // ✅ Added: update error text
+                    errorDiv.textContent = 'Passwords do not match.';
                 }
             } else {
-                // ✅ Added: clear error if fixed
+                // clear error if fixed
                 if (errorDiv) errorDiv.remove();
             }
         });
@@ -238,54 +327,46 @@
 </script>
 
 <!-- Ensure Register Button is Disabled Until reCAPTCHA is Completed -->
-<!-- Adjust Disabled State for Register Button -->
-        <style>
-          .btn-primary:disabled {
-            opacity: 0.5; /* Reduce opacity to indicate disabled state */
-            cursor: not-allowed;
-          }
-        </style>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const submit = document.getElementById('register-submit');
+    if(!submit) return;
+    const form = submit.closest('form');
+    // start disabled until grecaptcha shows a response
+    submit.disabled = true;
 
-        <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            const submit = document.getElementById('register-submit');
-            if(!submit) return;
-            const form = submit.closest('form');
-            // start disabled until grecaptcha shows a response
-            submit.disabled = true;
+    function checkGRecaptcha(){
+        try{
+            if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse){
+                const resp = grecaptcha.getResponse();
+                submit.disabled = !(resp && resp.length > 0);
+                return !submit.disabled;
+            }
+        }catch(e){
+            console.error('recaptcha check error', e);
+        }
+        return false;
+    }
 
-            function checkGRecaptcha(){
-                try{
-                    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse){
-                        const resp = grecaptcha.getResponse();
-                        submit.disabled = !(resp && resp.length > 0);
-                        return !submit.disabled;
-                    }
-                }catch(e){
-                    console.error('recaptcha check error', e);
-                }
+    const poll = setInterval(function(){
+        if(checkGRecaptcha()){
+            clearInterval(poll);
+        }
+    }, 400);
+
+    form.addEventListener('submit', function(e){
+        try{
+            if (!(typeof grecaptcha !== 'undefined' && grecaptcha.getResponse && grecaptcha.getResponse().length > 0)){
+                e.preventDefault();
+                alert('Please complete the reCAPTCHA verification before registering.');
                 return false;
             }
-
-            const poll = setInterval(function(){
-                if(checkGRecaptcha()){
-                    clearInterval(poll);
-                }
-            }, 400);
-
-            form.addEventListener('submit', function(e){
-                try{
-                    if (!(typeof grecaptcha !== 'undefined' && grecaptcha.getResponse && grecaptcha.getResponse().length > 0)){
-                        e.preventDefault();
-                        alert('Please complete the reCAPTCHA verification before registering.');
-                        return false;
-                    }
-                }catch(err){
-                    e.preventDefault();
-                    alert('reCAPTCHA not ready. Please try again in a moment.');
-                    return false;
-                }
-            });
-        });
-        </script>
+        }catch(err){
+            e.preventDefault();
+            alert('reCAPTCHA not ready. Please try again in a moment.');
+            return false;
+        }
+    });
+});
+</script>
 {% endblock %}
