@@ -106,10 +106,10 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'universityFeedbackPlatform',
-        'USER': 'postgres',
-        'PASSWORD': 'lattu123',
-        'HOST': 'localhost',
+        'NAME': 'ufp_db',
+        'USER': 'ufp_user',
+        'PASSWORD': 'Estevesjancen06-16-23',
+        'HOST': 'localhost',   # <-- important
         'PORT': '5432',
     }
 }

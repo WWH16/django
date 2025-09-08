@@ -60,8 +60,7 @@ class StudentActivityLog(models.Model):
         ('StudentLoggedOut', 'Student logged out'),
         ('StudentProvidedFeedback', 'Student provided feedback'),
         ('Profile updated.', 'Profile updated.'),
-        ('Password changed.', 'Password changed.'),
-        ('Student changed password.', 'Student changed password.'),
+        ('PasswordChanged', 'Password changed'),
 	('AccountCreated', 'Account created'),
     ]
 

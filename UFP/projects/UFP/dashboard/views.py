@@ -517,7 +517,7 @@ def change_password(request):
                 student = Student.objects.get(email=user.email)
                 StudentActivityLog.objects.create(
                     student=student,
-                    activity_type='Student changed password.',
+                    activity_type='PasswordChanged',
                 )
             except Student.DoesNotExist:
                 pass  # Optionally handle if student record not found

@@ -320,16 +320,42 @@ def reset_password_confirm_view(request):
 # ------------------------------
 # Change password API (authenticated users)
 # ------------------------------
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def change_password_withEmail(request):
-    serializer = ChangePasswordSerializer(data=request.data)
-    if serializer.is_valid():
-        user = request.user
-        if user.check_password(serializer.data.get('old_password')):
-            user.set_password(serializer.data.get('new_password'))
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django_rest_passwordreset.models import ResetPasswordToken
+
+def reset_password_confirm_view(request):
+    """
+    Renders and processes the password reset confirmation form.
+    """
+    token = request.GET.get('token', '')
+
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('new_password_confirmation')
+
+        if new_password != confirm_password:
+            return render(request, 'accounts/email/password_reset_confirm.html', {
+                'token': token,
+                'error': 'Passwords do not match.'
+            })
+
+        try:
+            reset_token = ResetPasswordToken.objects.get(key=token)
+            user = reset_token.user
+            user.set_password(new_password)
             user.save()
-            update_session_auth_hash(request, user)
-            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
-        return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # remove the token so it can't be reused
+            reset_token.delete()
+
+            # ✅ redirect to complete page
+            return redirect('password_reset_complete')  
+
+        except ResetPasswordToken.DoesNotExist:
+            return render(request, 'accounts/email/password_reset_confirm.html', {
+                'error': 'Invalid or expired token.'
+            })
+
+    # GET request → render the form
+    return render(request, 'accounts/email/password_reset_confirm.html', {'token': token})
