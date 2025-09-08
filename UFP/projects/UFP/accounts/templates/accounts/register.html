@@ -6,7 +6,46 @@
 {% block header_sub %}Create Your Student Account{% endblock %}
 
 {% block extra_css %}
+<style>
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
 
+.password-input {
+    padding-right: 45px; /* Make room for the eye icon */
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: #374151;
+}
+
+.password-toggle:focus {
+    outline: none;
+}
+
+#eye-icon, #eye-icon-confirm {
+    font-size: 20px;
+    user-select: none;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -128,11 +167,16 @@
         <label for="password" class="form-label">
             Password <span class="form-required">*</span>
         </label>
-        <input type="password"
-               id="password"
-               name="password"
-               class="form-input{% if form.password.errors %} border-red-600{% endif %}"
-               required>
+        <div class="password-container">
+            <input type="password"
+                   id="password"
+                   name="password"
+                   class="form-input{% if form.password.errors %} border-red-600{% endif %}"
+                   required>
+            <button type="button" class="password-toggle" onclick="togglePassword('password', 'eye-icon')">
+                <span class="material-symbols-outlined" id="eye-icon">visibility_off</span>
+            </button>
+        </div>
         {% if form.password.errors %}
             {% for error in form.password.errors %}
                 <div class="field-error">{{ error }}</div>
@@ -144,11 +188,16 @@
         <label for="confirm_password" class="form-label">
             Confirm Password <span class="form-required">*</span>
         </label>
-        <input type="password"
-               id="confirm_password"
-               name="confirm_password"
-               class="form-input{% if form.confirm_password.errors %} border-red-600{% endif %}"
-               required>
+        <div class="password-container">
+            <input type="password"
+                   id="confirm_password"
+                   name="confirm_password"
+                   class="form-input{% if form.confirm_password.errors %} border-red-600{% endif %}"
+                   required>
+            <button type="button" class="password-toggle" onclick="togglePassword('confirm_password', 'eye-icon-confirm')">
+                <span class="material-symbols-outlined" id="eye-icon-confirm">visibility_off</span>
+            </button>
+        </div>
         {% if form.confirm_password.errors %}
             {% for error in form.confirm_password.errors %}
                 <div class="field-error">{{ error }}</div>
@@ -235,6 +284,19 @@
             }
         });
     });
+
+    function togglePassword(inputId, iconId) {
+        const passwordField = document.getElementById(inputId);
+        const eyeIcon = document.getElementById(iconId);
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.textContent = 'visibility';
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.textContent = 'visibility_off';
+        }
+    }
 </script>
 
 <!-- Ensure Register Button is Disabled Until reCAPTCHA is Completed -->

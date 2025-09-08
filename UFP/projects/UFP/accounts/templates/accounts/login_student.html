@@ -56,14 +56,19 @@
         <label for="password" class="form-label">
             Password <span class="form-required">*</span>
         </label>
-        <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            class="form-input{% if form.password.errors %} border-red-600{% endif %}" 
-            required
-            autocomplete="current-password"
-        >
+        <div class="password-container">
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-input{% if form.password.errors %} border-red-600{% endif %}" 
+                required
+                autocomplete="current-password"
+            >
+            <button type="button" class="password-toggle" onclick="togglePassword()">
+                <span class="material-symbols-outlined" id="eye-icon">visibility_off</span>
+            </button>
+        </div>
         {% if form.password.errors %}
             {% for error in form.password.errors %}
                 <div class="field-error">{{ error }}</div>
@@ -128,6 +133,26 @@
     opacity: 0.5; /* Reduce opacity to indicate disabled state */
     cursor: not-allowed;
 }
+
+/* Password container to position the eye icon */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    padding: 0;
+    margin: 0;
+    color: #555;
+    font-size: 1.2rem;
+    line-height: 1;
+}
 </style>
 <!-- Enable submit only when reCAPTCHA is completed -->
 <script>
@@ -174,5 +199,18 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
 });
+
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.textContent = 'visibility';
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.textContent = 'visibility_off';
+    }
+}
 </script>
 {% endblock content %}
