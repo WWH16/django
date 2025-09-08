@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,9 +28,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-DEBUG = True
-
-ALLOWED_HOSTS = ['ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
+DEBUG = False
+FRONTEND_URL = 'https://ufplatform.com/accounts/password_reset/'  # Used in email link
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
 # ALLOWED_HOSTS = ['157.230.243.90', 'your-domain.com']  # production
 
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
     "unfold.contrib.location_field",  # optional, if django-location-field package is used
     "unfold.contrib.constance",  # optional, if django-constance package is used
-    'accounts.apps.LoginConfig',
+    'accounts.apps.AccountsConfig',
     'dashboard.apps.DashboardConfig',
     'system.apps.SystemConfig',
     'django.contrib.admin',
@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'warehouse.apps.WarehouseConfig',
+    'rest_framework.authtoken',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +113,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -183,20 +186,37 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 RECAPTCHA_PUBLIC_KEY = '6LeOH4YrAAAAAOoWOgDh9tE8zifaY4GlUBBuiqrO'
 RECAPTCHA_PRIVATE_KEY = '6LeOH4YrAAAAABTfbLHCTRf5fRcZQdxo9VNAPg-X'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+# Namecheap PrivateEmail SMTP
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+#EMAIL_HOST = "mail.privateemail.com"
+#EMAIL_PORT = 587
+SENDGRID_API_KEY = "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"
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'estevesjancen388@gmail.com'
-EMAIL_HOST_PASSWORD = 'sqyo mcxz rhjm mewu'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = "no-reply@ufplatform.com"
+EMAIL_HOST_PASSWORD = "Ge!O56!=Ujes"
+
+DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
+
+
+
+
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
+
+DJANGO_REST_PASSWORDRESET_USE_JSON = True
+
+# Custom email template
+DJANGO_REST_PASSWORDRESET_EMAIL_TEMPLATE_NAME = 'accounts/email/password_reset_email.html'
+
 
 # django unfold config 
 from django.templatetags.static import static
@@ -220,7 +240,7 @@ UNFOLD = {
             "rel": "icon",
             "sizes": "32x32",
             "type": "image/svg+xml",
-            "href": lambda request: static("favicon.svg"),
+            "href": lambda request: static("system/images/logo1.png"),
         },
     ],
     "COLORS": {

@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
@@ -225,14 +226,110 @@ def edit_profile(request):
         messages.success(request, 'Profile updated successfully!')
     return redirect('profile')
 
-class StudentPasswordResetConfirmView(PasswordResetConfirmView):
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        user = self.user
+from django.shortcuts import render
+from django.urls import reverse
+from django.core.mail import EmailMultiAlternatives
+from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django_rest_passwordreset.signals import reset_password_token_created
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import update_session_auth_hash
+from .serializers import ChangePasswordSerializer
+import logging
+
+logger = logging.getLogger(__name__)
+
+# ------------------------------
+# Reset password confirmation page
+# ------------------------------
+from django.shortcuts import render
+from django.urls import reverse
+from rest_framework.test import APIClient
+def password_reset_form_view(request):
+    """
+    Handles the password reset form submission.
+    """
+    # DRF password reset API endpoint
+    api_url = reverse('password_reset:reset-password-request')
+
+    if request.method == 'POST':
         try:
-            student = Student.objects.get(studentID=user.username)
-            log_student_activity(student=student, activity_type='PasswordReset')
-        except Student.DoesNotExist:
-            pass
-        return response
-    
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            data = request.POST
+
+        email = data.get('email', '').strip()
+
+        # Validate email input
+        if not email:
+            return render(request, 'accounts/email/password_reset_form.html', {
+                'api_url': api_url,
+                'error': 'Please enter an email address.'
+            })
+
+        # Check if user exists
+        if not User.objects.filter(email=email).exists():
+            return render(request, 'accounts/email/password_reset_form.html', {
+                'api_url': api_url,
+                'error': 'No user found with that email address.'
+            })
+
+        # Call DRF password reset API without sending default email
+        client = APIClient()
+        response = client.post(api_url, {'email': email, 'send_email':False}, format='json')
+
+        if response.status_code in [200, 201]:  # Success
+            return redirect('password_reset_sent')  # Redirect to custom success page
+        else:
+            # Extract error from DRF response
+            error_msg = 'An error occurred. Please try again.'
+            try:
+                data = response.json()
+                if 'email' in data and len(data['email']) > 0:
+                    error_msg = data['email'][0]
+                elif 'non_field_errors' in data:
+                    error_msg = ' '.join(data['non_field_errors'])  
+            except Exception:
+                pass
+
+            return render(request, 'accounts/email/password_reset_form.html', {
+                'api_url': api_url,
+                'error': error_msg
+            })
+
+    # GET request: render the form
+    return render(request, 'accounts/email/password_reset_form.html', {'api_url': api_url})
+
+from django.shortcuts import render
+
+def reset_password_confirm_view(request):
+    """
+    Renders the password reset confirmation form.
+    Reads the token from the URL query parameters.
+    """
+    token = request.GET.get('token', '')
+    context = {'token': token}
+    return render(request, 'accounts/email/password_reset_confirm.html', context)
+
+
+
+
+# ------------------------------
+# Change password API (authenticated users)
+# ------------------------------
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_withEmail(request):
+    serializer = ChangePasswordSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user
+        if user.check_password(serializer.data.get('old_password')):
+            user.set_password(serializer.data.get('new_password'))
+            user.save()
+            update_session_auth_hash(request, user)
+            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
