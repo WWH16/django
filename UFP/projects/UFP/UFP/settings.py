@@ -108,7 +108,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'universityFeedbackPlatform',
         'USER': 'postgres',
-        'PASSWORD': 'Estevesjancen06-16-23',
+        'PASSWORD': 'lattu123',
         'HOST': 'localhost',
         'PORT': '5432',
     }
