@@ -1,8 +1,8 @@
 from django.urls import path, include
 from django.views.generic import TemplateView
 from . import views
-from .views import password_reset_form_view, reset_password_confirm_view, change_password_withEmail
-
+from .views import password_reset_form_view, reset_password_confirm_view
+from django.shortcuts import render
 urlpatterns = [
     path('login_student/', views.login_student_view, name='login_student'),
     path('signup/', views.register_view, name='register'),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # Custom pages
+    path('password-reset/complete/', lambda r: render(r, 'accounts/email/password_reset_complete.html'), name='password_reset_complete'),
     path('password_reset_form/', password_reset_form_view, name='password_reset_form_view'),
     path(
         'password_reset_sent/',
@@ -20,7 +21,7 @@ urlpatterns = [
         name='password_reset_sent'
     ),
     path('reset_password_confirm/', reset_password_confirm_view, name='reset_password_confirm_view'),
-    path('change_password_withEmail/', change_password_withEmail, name='change_password_withEmail'),
+   #  path('change_password_withEmail/', change_password_withEmail, name='change_password_withEmail'),
 
     # Add the missing route for get-programs
     path('get-programs/<int:department_id>/', views.get_programs_by_department, name='get_programs_by_department'),
