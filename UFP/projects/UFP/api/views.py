@@ -627,3 +627,60 @@ def service_feedback_by_semester(request, semester_slug=None):
         "program": None,
         "services": results
     })
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+import os
+from openai import OpenAI
+
+client = OpenAI(api_key="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")
+
+# Test call
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": "You are a grammar corrector."},
+        {"role": "user", "content": "This are wrong sentence."}
+    ]
+)
+
+print(response.choices[0].message.content)
+
+
+@csrf_exempt
+def grammar_correct(request):
+    """API endpoint for complex grammar correction using ChatGPT"""
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+        user_text = data.get("text", "").strip()
+
+        if not user_text:
+            return JsonResponse({"error": "No text provided"}, status=400)
+
+        # Call ChatGPT API for grammar correction
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # or gpt-4.1 / gpt-3.5
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a professional grammar corrector. "
+                        "Fix complex grammar, spelling, punctuation, and sentence structure. "
+                        "Preserve the original meaning, but improve clarity and readability."
+                    )
+                },
+                {"role": "user", "content": user_text}
+            ],
+            temperature=0.2  # Lower temperature for more precise corrections
+        )
+
+        corrected = response.choices[0].message.content.strip()
+
+        return JsonResponse({"corrected": corrected})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
