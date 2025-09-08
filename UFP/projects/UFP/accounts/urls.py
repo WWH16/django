@@ -21,4 +21,7 @@ urlpatterns = [
     ),
     path('reset_password_confirm/', reset_password_confirm_view, name='reset_password_confirm_view'),
     path('change_password_withEmail/', change_password_withEmail, name='change_password_withEmail'),
+
+    # Add the missing route for get-programs
+    path('get-programs/<int:department_id>/', views.get_programs_by_department, name='get_programs_by_department'),
 ]
