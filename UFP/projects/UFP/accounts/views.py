@@ -279,7 +279,7 @@ def password_reset_form_view(request):
 
         # Call DRF password reset API without sending default email
         client = APIClient()
-        response = client.post(api_url, {'email': email, 'send_email': False}, format='json')
+        response = client.post(api_url, {'email': email, 'send_email':False}, format='json')
 
         if response.status_code in [200, 201]:  # Success
             return redirect('password_reset_sent')  # Redirect to custom success page
