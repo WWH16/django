@@ -106,14 +106,13 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'universityFeedbackPlatform',
-        'USER': 'postgres',
-        'PASSWORD': 'lattu123',
+        'NAME': 'ufp_db',
+        'USER': 'ufp_user',
+        'PASSWORD': 'Estevesjancen06-16-23',
         'HOST': 'localhost',   # <-- important
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
