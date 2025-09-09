@@ -387,7 +387,10 @@ def change_password(request):
     # Log the activity (best effort)
     try:
         student = Student.objects.get(studentID=request.user.username)
-        StudentActivityLog.objects.create(student=student, activity_type='PasswordChanged')
+        StudentActivityLog.objects.create(
+            student=student, 
+            activity_type='PasswordChanged'
+        )
     except Student.DoesNotExist:
         pass
 
