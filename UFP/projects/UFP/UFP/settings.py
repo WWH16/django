@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-DEBUG = False
+DEBUG = True
 FRONTEND_URL = 'https://ufplatform.com/accounts/password_reset/'  # Used in email link
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
@@ -106,9 +106,9 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'universityFeedbackPlatform',
-        'USER': 'postgres',
-        'PASSWORD': 'lattu123',
+        'NAME': 'ufp_db',
+        'USER': 'ufp_user',
+        'PASSWORD': 'Estevesjancen06-16-23',
         'HOST': 'localhost',   # <-- important
         'PORT': '5432',
     }
