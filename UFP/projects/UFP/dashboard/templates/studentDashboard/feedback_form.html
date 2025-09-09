@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,33 +14,47 @@
   {% block extra_head %}{% endblock %}
   <style>
     /* Highlight active sidebar link with a green border on the left */
-    .sidebar .nav-link.active {background-color: rgba(255,255,255,0.2) !important;
-			border-left: 3px solid white !important;
-			color: white !important;
-		}
+    .sidebar .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+      border-left: 3px solid white !important;
+      color: white !important;
+    }
+
     .sidebar-button {
-      font-size: 0.85rem; /* 13.6px in rem units */
+      font-size: 0.85rem;
+      /* 13.6px in rem units */
     }
+
     .sidebar .nav-link {
-        font-size: 0.85rem; /* 13.6px in rem units */
-        display: flex;
-        align-items: center;
-        gap: 0; /* No gap between icon and text */
+      font-size: 0.85rem;
+      /* 13.6px in rem units */
+      display: flex;
+      align-items: center;
+      gap: 0;
+      /* No gap between icon and text */
     }
+
     .sidebar .nav-link i {
-        margin-right: 0rem; /* Minimal space between icon and text */
+      margin-right: 0rem;
+      /* Minimal space between icon and text */
     }
+
     .material-symbols-outlined {
-      font-size: 1.1em; /* Smaller than default, adjust as needed */
+      font-size: 1.1em;
+      /* Smaller than default, adjust as needed */
       vertical-align: middle;
     }
+
     .sidebar .material-symbols-outlined {
-      font-size: 1.1em; /* Sidebar icons specifically */
+      font-size: 1.1em;
+      /* Sidebar icons specifically */
     }
+
     .btn .material-symbols-outlined {
-      font-size: 1.1em; /* Button icons specifically */
+      font-size: 1.1em;
+      /* Button icons specifically */
     }
-    
+
     /* Enhanced cooldown overlay styles */
     #cooldownOverlay {
       position: absolute;
@@ -54,7 +69,7 @@
       z-index: 1000;
       border-radius: 8px;
     }
-    
+
     .blurred {
       filter: blur(2px);
       pointer-events: none;
@@ -67,19 +82,23 @@
         max-width: 95vw;
         margin: 1rem auto;
       }
+
       .modal-content {
         border-radius: 10px;
         padding: 0.5rem;
         font-size: 0.97em;
       }
+
       .modal-header,
       .modal-footer {
         padding: 0.5rem 1rem;
       }
+
       .modal-body {
         padding: 1rem 0.5rem;
       }
     }
+
     /* Burger menu animation styles */
     .sidebar-toggle {
       background: none;
@@ -91,10 +110,12 @@
       transition: all 0.3s ease;
       border-radius: 6px;
     }
+
     .sidebar-toggle:hover {
       background-color: rgba(255, 255, 255, 0.1);
       transform: scale(1.05);
     }
+
     .sidebar-toggle .burger-icon {
       display: flex;
       flex-direction: column;
@@ -102,6 +123,7 @@
       height: 16px;
       justify-content: space-between;
     }
+
     .sidebar-toggle .burger-line {
       width: 100%;
       height: 2px;
@@ -109,29 +131,35 @@
       transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       transform-origin: center;
     }
+
     /* Burger animation when sidebar is open */
     .sidebar-toggle.active .burger-line:nth-child(1) {
       transform: translateY(7px) rotate(45deg);
     }
+
     .sidebar-toggle.active .burger-line:nth-child(2) {
       opacity: 0;
       transform: scaleX(0);
     }
+
     .sidebar-toggle.active .burger-line:nth-child(3) {
       transform: translateY(-7px) rotate(-45deg);
     }
+
     /* Only apply these styles on mobile screens */
-@media (max-width: 576px) {
-  .login-toast-mobile {
-    margin-top: 70px !important;
-  }
-}
-/* Remove the thin top border line in modal footers on this page */
-.modal-footer {
-  border-top: none !important;
-}
+    @media (max-width: 576px) {
+      .login-toast-mobile {
+        margin-top: 70px !important;
+      }
+    }
+
+    /* Remove the thin top border line in modal footers on this page */
+    .modal-footer {
+      border-top: none !important;
+    }
   </style>
 </head>
+
 <body>
   <!-- Logout Confirmation Modal (Bootstrap basic) -->
   <!-- SweetAlert2 Logout Modal will be triggered by JS -->
@@ -153,9 +181,10 @@
         <a href="{% url 'site' %}" class="btn btn-sm btn-outline-light border-0" title="Visit Website">
           <i class="fas fa-globe"></i> Visit site
         </a>
-        <span style="width:1px; height:30px; background:linear-gradient(to bottom, #d4f3e3 60%, #006600 100%); opacity:0.7; border-radius:2px; display:inline-block;"></span>
+        <span
+          style="width:1px; height:30px; background:linear-gradient(to bottom, #d4f3e3 60%, #006600 100%); opacity:0.7; border-radius:2px; display:inline-block;"></span>
         <span class="small d-flex align-items-center">
-            <span class="fw-semibold text-light ms-1">{{ user.first_name|default:user.username|title }}</span>
+          <span class="fw-semibold text-light ms-1">{{ user.first_name|default:user.username|title }}</span>
         </span>
       </div>
     </div>
@@ -166,32 +195,37 @@
     <nav id="studentSidebar" class="sidebar">
       <ul class="sidebar-nav flex-column mb-3">
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}" href="{% url 'my_feedback' %}">
+          <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}"
+            href="{% url 'my_feedback' %}">
             <i class="material-symbols-outlined">forum</i>
             <span class="sidebar-text">My Feedback</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}">
+          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+            href="{% url 'profile' %}">
             <i class="material-symbols-outlined">person</i>
             <span class="sidebar-text">Profile</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}" href="{% url 'give_feedback' %}">
+          <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}"
+            href="{% url 'give_feedback' %}">
             <i class="material-symbols-outlined">edit</i>
             <span class="sidebar-text">Give Feedback</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link sidebar-button" href="{% url 'teacher_evaluation' %}">
-              <i class="material-symbols-outlined" style="font-size:1.1em;">school</i>
-              <span class="sidebar-text">Teacher Evaluation</span>
+            <i class="material-symbols-outlined" style="font-size:1.1em;">school</i>
+            <span class="sidebar-text">Teacher Evaluation</span>
           </a>
         </li>
         <!-- Divider to isolate logout button -->
         <li class="px-3">
-          <div style="height:1px; border-top:2px dashed #d4f3e3; opacity:0.1; margin:1.5rem 0 1rem 0; border-radius:2px;"></div>
+          <div
+            style="height:1px; border-top:2px dashed #d4f3e3; opacity:0.1; margin:1.5rem 0 1rem 0; border-radius:2px;">
+          </div>
         </li>
         <!-- Logout button: same style and alignment as other sidebar buttons, placed last -->
         <li class="nav-item">
@@ -219,16 +253,18 @@
                 </h3>
                 <!-- ALERTS for form feedback -->
                 {% if messages %}
-                  {% for message in messages %}
-                    {% if 'login' not in message.tags and 'success' not in message.tags %}
-                      <div class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                      </div>
-                    {% endif %}
-                  {% endfor %}
+                {% for message in messages %}
+                {% if 'login' not in message.tags and 'success' not in message.tags %}
+                <div
+                  class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show"
+                  role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 {% endif %}
-                
+                {% endfor %}
+                {% endif %}
+
                 <!-- Form with relative positioning container -->
                 <div style="position: relative;">
                   <!-- Enhanced Cooldown Overlay -->
@@ -242,22 +278,22 @@
                       <div style="font-size: 1rem; opacity: 0.7;">before submitting again</div>
                     </div>
                   </div>
-                  
+
 
                   <form method="post" action="" id="feedbackForm">
                     {% csrf_token %}
                     <div class="mb-3">
                       <select class="form-select" id="service" name="service">
                         <option value="" disabled selected>Select a service</option>
-                        <option value="Wi-Fi">Wi-Fi</option>
-                        <option value="Scholarship">Scholarship</option>
-                        <option value="Library">Library Facility</option>
-                        <option value="Guidance">College Admission Test</option>
+                        {% for service in services %}
+                        <option value="{{ service.serviceID }}">{{ service.serviceName }}</option>
+                        {% endfor %}
                       </select>
                     </div>
                     <div class="mb-3">
                       <label for="feedback" class="form-label">Your Feedback</label>
-                      <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Type your feedback here..."></textarea>
+                      <textarea class="form-control" id="feedback" name="feedback" rows="4"
+                        placeholder="Type your feedback here..."></textarea>
                     </div>
                     <div class="mb-3">
                       <label for="anonymous" class="form-check-label">
@@ -273,7 +309,7 @@
                     </div>
                   </form>
                 </div>
-                
+
                 <hr>
                 <div class="text-center text-muted" style="font-size: 0.95em;">
                   Your feedback helps us improve our services. Thank you!
@@ -288,15 +324,15 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       var logoutBtn = document.querySelector('a.nav-link[href="#"][data-bs-toggle="modal"]');
       if (logoutBtn) {
         logoutBtn.removeAttribute('data-bs-toggle');
         logoutBtn.removeAttribute('data-bs-target');
-        logoutBtn.addEventListener('click', function(e) {
+        logoutBtn.addEventListener('click', function (e) {
           e.preventDefault();
           Swal.fire({
             title: "Are you sure?",
@@ -317,45 +353,45 @@
     });
   </script>
   <!-- Login Success Toast -->
-{% if show_login_toast %}
+  {% if show_login_toast %}
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      color: '#006600',
-      didOpen: (toast) => { 
-        toast.onmouseenter = Swal.stopTimer;
-        toast.onmouseleave = Swal.resumeTimer;
-      }
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        color: '#006600',
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
       Toast.fire({ icon: 'success', title: 'Signed in successfully"' });
     });
   </script>
-{% endif %}
+  {% endif %}
 
-{% if messages %}
+  {% if messages %}
   {% for message in messages %}
-    {% if 'login' not in message.tags %}
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          Swal.fire({
-            title: "{{ message.extra_tags|default:'Success'|escapejs }}",
-            text: "{{ message|escapejs }}",
-            icon: "{% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% elif 'info' in message.tags %}info{% else %}question{% endif %}",
-            confirmButtonColor: '#006600', // Set SweetAlert2 OK button color to green
-          });
-        });
-      </script>
-    {% endif %}
+  {% if 'login' not in message.tags %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      Swal.fire({
+        title: "{{ message.extra_tags|default:'Success'|escapejs }}",
+        text: "{{ message|escapejs }}",
+        icon: "{% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% elif 'info' in message.tags %}info{% else %}question{% endif %}",
+        confirmButtonColor: '#006600', // Set SweetAlert2 OK button color to green
+      });
+    });
+  </script>
+  {% endif %}
   {% endfor %}
-{% endif %}
+  {% endif %}
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Feedback cooldown logic
       var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
       var form = document.getElementById('feedbackForm');
@@ -367,7 +403,7 @@
         form.classList.add('blurred');
         Array.from(form.elements).forEach(el => el.disabled = true);
 
-        var interval = setInterval(function() {
+        var interval = setInterval(function () {
           cooldown--;
           if (cooldown < 0) cooldown = 0;
           countdownElem.textContent = cooldown;
@@ -393,7 +429,7 @@
   </script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const sidebarToggle = document.getElementById('sidebarToggleBtn');
       const sidebar = document.getElementById('studentSidebar');
       const sidebarBackdrop = document.getElementById('sidebarBackdrop');
@@ -418,7 +454,7 @@
         }
       }
 
-      sidebarToggle.addEventListener('click', function() {
+      sidebarToggle.addEventListener('click', function () {
         if (sidebar.classList.contains('open')) {
           closeSidebar();
         } else {
@@ -426,17 +462,17 @@
         }
       });
 
-      sidebarBackdrop.addEventListener('click', function() {
+      sidebarBackdrop.addEventListener('click', function () {
         closeSidebar();
       });
 
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && sidebar.classList.contains('open') && isMobile()) {
           closeSidebar();
         }
       });
 
-      window.addEventListener('resize', function() {
+      window.addEventListener('resize', function () {
         if (!isMobile()) {
           sidebarBackdrop.style.display = 'none';
         }
@@ -444,64 +480,64 @@
     });
   </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Force browser history to always have at least one entry
-    if (history.length === 1) {
-      history.pushState({ dashboard: true }, '', location.href);
-    }
-    
-    // Always push our own state
-    history.pushState({ preventBack: true }, '', location.href);
-    
-    // Listen for any popstate event
-    window.addEventListener('popstate', function(e) {
-      // Find and click the existing logout button to reuse its SweetAlert
-      const logoutBtn = document.querySelector('a.nav-link[href="#"]');
-      if (logoutBtn) {
-        logoutBtn.click();
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Force browser history to always have at least one entry
+      if (history.length === 1) {
+        history.pushState({ dashboard: true }, '', location.href);
       }
-      
-      // Always push state back to prevent navigation
+
+      // Always push our own state
       history.pushState({ preventBack: true }, '', location.href);
+
+      // Listen for any popstate event
+      window.addEventListener('popstate', function (e) {
+        // Find and click the existing logout button to reuse its SweetAlert
+        const logoutBtn = document.querySelector('a.nav-link[href="#"]');
+        if (logoutBtn) {
+          logoutBtn.click();
+        }
+
+        // Always push state back to prevent navigation
+        history.pushState({ preventBack: true }, '', location.href);
+      });
     });
-  });
-</script>
+  </script>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Grammar checker initialized');
-  
-  const feedbackTextarea = document.getElementById('feedback');
-  if (!feedbackTextarea) {
-    console.error('❌ Textarea with id="feedback" not found');
-    return;
-  }
-  
-  console.log('✅ Found textarea:', feedbackTextarea);
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Grammar checker initialized');
 
-  // ---------------- Config ----------------
-  const BACKEND_URL = '/api/grammar-correct/';
-  const IDLE_MS = 1500; // Slightly longer delay for suggestions
-  // ----------------------------------------
+      const feedbackTextarea = document.getElementById('feedback');
+      if (!feedbackTextarea) {
+        console.error('❌ Textarea with id="feedback" not found');
+        return;
+      }
 
-  let idleTimer = null;
-  let inFlight = null;
-  let busy = false;
-  let lastCheckedText = '';
-  let lastIssuedToken = 0;
-  let suggestionBox = null;
+      console.log('✅ Found textarea:', feedbackTextarea);
 
-  // Create suggestion box
-  function createSuggestionBox() {
-    if (suggestionBox) return suggestionBox;
-    
-    console.log('📦 Creating suggestion box');
-    
-    const box = document.createElement('div');
-    box.className = 'grammar-suggestion-box';
-    box.style.cssText = `
+      // ---------------- Config ----------------
+      const BACKEND_URL = '/api/grammar-correct/';
+      const IDLE_MS = 1500; // Slightly longer delay for suggestions
+      // ----------------------------------------
+
+      let idleTimer = null;
+      let inFlight = null;
+      let busy = false;
+      let lastCheckedText = '';
+      let lastIssuedToken = 0;
+      let suggestionBox = null;
+
+      // Create suggestion box
+      function createSuggestionBox() {
+        if (suggestionBox) return suggestionBox;
+
+        console.log('📦 Creating suggestion box');
+
+        const box = document.createElement('div');
+        box.className = 'grammar-suggestion-box';
+        box.style.cssText = `
       position: absolute;
       top: 100%;
       left: 0;
@@ -516,30 +552,30 @@ document.addEventListener('DOMContentLoaded', () => {
       overflow-y: auto;
       display: none;
     `;
-    
-    const container = feedbackTextarea.parentElement;
-    container.style.position = container.style.position || 'relative';
-    container.appendChild(box);
-    suggestionBox = box;
-    console.log('✅ Suggestion box created and added to DOM');
-    return box;
-  }
 
-  // Show suggestion
-  function showSuggestion(originalText, correctedText) {
-    console.log('💡 Showing suggestion:');
-    console.log('Original:', originalText);
-    console.log('Corrected:', correctedText);
-    
-    if (originalText === correctedText) {
-      console.log('📝 No changes needed, hiding suggestion');
-      hideSuggestion();
-      return;
-    }
+        const container = feedbackTextarea.parentElement;
+        container.style.position = container.style.position || 'relative';
+        container.appendChild(box);
+        suggestionBox = box;
+        console.log('✅ Suggestion box created and added to DOM');
+        return box;
+      }
 
-    const box = createSuggestionBox();
-    
-    box.innerHTML = `
+      // Show suggestion
+      function showSuggestion(originalText, correctedText) {
+        console.log('💡 Showing suggestion:');
+        console.log('Original:', originalText);
+        console.log('Corrected:', correctedText);
+
+        if (originalText === correctedText) {
+          console.log('📝 No changes needed, hiding suggestion');
+          hideSuggestion();
+          return;
+        }
+
+        const box = createSuggestionBox();
+
+        box.innerHTML = `
       <div style="padding: 12px;">
         <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
           💡 Grammar suggestion:
@@ -558,77 +594,77 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Add event listeners
-    const applyBtn = box.querySelector('.apply-suggestion');
-    const dismissBtn = box.querySelector('.dismiss-suggestion');
-    
-    applyBtn.addEventListener('click', () => {
-      console.log('✓ Apply button clicked');
-      applySuggestion(correctedText);
-    });
-    
-    dismissBtn.addEventListener('click', () => {
-      console.log('❌ Dismiss button clicked');
-      hideSuggestion();
-    });
+        // Add event listeners
+        const applyBtn = box.querySelector('.apply-suggestion');
+        const dismissBtn = box.querySelector('.dismiss-suggestion');
 
-    box.style.display = 'block';
-    console.log('✅ Suggestion box shown');
-  }
+        applyBtn.addEventListener('click', () => {
+          console.log('✓ Apply button clicked');
+          applySuggestion(correctedText);
+        });
 
-  // Apply suggestion - ONLY updates the textarea, does NOT submit the form
-  function applySuggestion(correctedText) {
-    console.log('🔧 Applying suggestion:', correctedText);
-    
-    const wasFocused = document.activeElement === feedbackTextarea;
-    
-    // Update the textarea value with corrected text
-    feedbackTextarea.value = correctedText;
-    lastCheckedText = correctedText;
-    
-    // Show brief success notice
-    showNotice('Suggestion applied! You can continue editing.', true);
-    
-    // Keep focus on textarea so user can continue typing
-    if (wasFocused) {
-      feedbackTextarea.focus();
-      // Place cursor at the end of the text
-      feedbackTextarea.setSelectionRange(correctedText.length, correctedText.length);
-    }
-    
-    // Hide the suggestion box
-    hideSuggestion();
-    
-    console.log('✅ Suggestion applied successfully');
-  }
+        dismissBtn.addEventListener('click', () => {
+          console.log('❌ Dismiss button clicked');
+          hideSuggestion();
+        });
 
-  // Hide suggestion
-  function hideSuggestion() {
-    if (suggestionBox) {
-      suggestionBox.style.display = 'none';
-      console.log('👻 Suggestion box hidden');
-    }
-  }
+        box.style.display = 'block';
+        console.log('✅ Suggestion box shown');
+      }
 
-  // Escape HTML for safe display
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
+      // Apply suggestion - ONLY updates the textarea, does NOT submit the form
+      function applySuggestion(correctedText) {
+        console.log('🔧 Applying suggestion:', correctedText);
 
-  // Status notice
-  function showNotice(message, success = true) {
-    console.log('📢 Showing notice:', message);
-    
-    const existing = document.querySelector('.grammar-notice');
-    if (existing) existing.remove();
-    
-    const el = document.createElement('div');
-    el.className = 'grammar-notice';
-    el.innerHTML = `<small class="${success ? 'text-success' : 'text-muted'}">
+        const wasFocused = document.activeElement === feedbackTextarea;
+
+        // Update the textarea value with corrected text
+        feedbackTextarea.value = correctedText;
+        lastCheckedText = correctedText;
+
+        // Show brief success notice
+        showNotice('Suggestion applied! You can continue editing.', true);
+
+        // Keep focus on textarea so user can continue typing
+        if (wasFocused) {
+          feedbackTextarea.focus();
+          // Place cursor at the end of the text
+          feedbackTextarea.setSelectionRange(correctedText.length, correctedText.length);
+        }
+
+        // Hide the suggestion box
+        hideSuggestion();
+
+        console.log('✅ Suggestion applied successfully');
+      }
+
+      // Hide suggestion
+      function hideSuggestion() {
+        if (suggestionBox) {
+          suggestionBox.style.display = 'none';
+          console.log('👻 Suggestion box hidden');
+        }
+      }
+
+      // Escape HTML for safe display
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Status notice
+      function showNotice(message, success = true) {
+        console.log('📢 Showing notice:', message);
+
+        const existing = document.querySelector('.grammar-notice');
+        if (existing) existing.remove();
+
+        const el = document.createElement('div');
+        el.className = 'grammar-notice';
+        el.innerHTML = `<small class="${success ? 'text-success' : 'text-muted'}">
       ${success ? '✓' : 'ℹ'} ${message}</small>`;
-    el.style.cssText = `
+        el.style.cssText = `
       position: absolute; 
       right: 10px; 
       top: -25px; 
@@ -642,212 +678,213 @@ document.addEventListener('DOMContentLoaded', () => {
       border: 1px solid ${success ? 'rgba(25,135,84,.2)' : 'rgba(108,117,125,.2)'};
       white-space: nowrap;
     `;
-    
-    const container = feedbackTextarea.parentElement;
-    container.appendChild(el);
-    
-    requestAnimationFrame(() => {
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(-3px)';
-    });
-    
-    setTimeout(() => {
-      el.style.opacity = '0';
-      setTimeout(() => el.remove(), 300);
-    }, 2000);
-  }
 
-  function cancelInFlight() {
-    if (inFlight) {
-      console.log('🚫 Cancelling previous request');
-      inFlight.abort();
-    }
-    inFlight = null;
-  }
+        const container = feedbackTextarea.parentElement;
+        container.appendChild(el);
 
-  function scheduleGrammarCheck() {
-    console.log('⏰ Scheduling grammar check in', IDLE_MS, 'ms');
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => checkGrammar(), IDLE_MS);
-  }
+        requestAnimationFrame(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(-3px)';
+        });
 
-  // Fallback: LanguageTool
-  async function correctWithLanguageTool(text) {
-    console.log('🔧 Using LanguageTool fallback');
-    const res = await fetch('https://api.languagetool.org/v2/check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ text, language: 'en-US' })
-    });
-    const data = await res.json();
-    let corrected = text;
-    for (const m of [...data.matches].reverse()) {
-      if (m.replacements && m.replacements.length) {
-        corrected =
-          corrected.slice(0, m.offset) +
-          m.replacements[0].value +
-          corrected.slice(m.offset + m.length);
-      }
-    }
-    return corrected;
-  }
-
-  // Backend API
-  async function correctWithBackend(text) {
-    console.log('🔍 Checking with backend API:', text);
-    
-    const controller = new AbortController();
-    inFlight = controller;
-    
-    try {
-      const res = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-        signal: controller.signal
-      });
-      
-      console.log('📡 Backend response status:', res.status);
-      
-      if (!res.ok) throw new Error(`Backend error: ${res.status}`);
-      
-      const data = await res.json();
-      console.log('📋 Backend response data:', data);
-      
-      if (!data || typeof data.corrected !== 'string') {
-        throw new Error('Invalid backend response format');
-      }
-      
-      return data.corrected;
-    } catch (error) {
-      console.error('❌ Backend request failed:', error);
-      throw error;
-    }
-  }
-
-  // Main grammar checking logic
-  async function checkGrammar() {
-    const text = feedbackTextarea.value.trim();
-    
-    console.log('🔍 Starting grammar check for:', text);
-    
-    if (!text || text.length < 10) {
-      console.log('📝 Text too short, skipping check');
-      return;
-    }
-    
-    if (busy) {
-      console.log('⏳ Already checking, skipping');
-      return;
-    }
-    
-    if (text === lastCheckedText) {
-      console.log('🔄 Same text as last check, skipping');
-      return;
-    }
-
-    busy = true;
-    const token = ++lastIssuedToken;
-    console.log('🎫 Check token:', token);
-
-    feedbackTextarea.style.borderColor = '#ffc107';
-    feedbackTextarea.style.transition = 'border-color 0.3s ease';
-
-    cancelInFlight();
-
-    try {
-      let corrected;
-      try {
-        corrected = await correctWithBackend(text);
-        console.log('✅ Backend correction successful');
-      } catch (error) {
-        console.log('🔄 Backend failed, trying LanguageTool...');
-        corrected = await correctWithLanguageTool(text);
-        console.log('✅ LanguageTool correction successful');
+        setTimeout(() => {
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 300);
+        }, 2000);
       }
 
-      if (token !== lastIssuedToken) {
-        console.log('🚫 Token mismatch, ignoring result');
-        return;
+      function cancelInFlight() {
+        if (inFlight) {
+          console.log('🚫 Cancelling previous request');
+          inFlight.abort();
+        }
+        inFlight = null;
       }
 
-      lastCheckedText = text;
-      
-      console.log('📊 Comparison result:');
-      console.log('  Original:', text);
-      console.log('  Corrected:', corrected);
-      console.log('  Changed:', corrected !== text);
-      
-      if (corrected && corrected !== text) {
-        showSuggestion(text, corrected);
-      } else {
-        hideSuggestion();
-        if (text.length > 20) {
-          showNotice('Grammar looks good!', false);
+      function scheduleGrammarCheck() {
+        console.log('⏰ Scheduling grammar check in', IDLE_MS, 'ms');
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => checkGrammar(), IDLE_MS);
+      }
+
+      // Fallback: LanguageTool
+      async function correctWithLanguageTool(text) {
+        console.log('🔧 Using LanguageTool fallback');
+        const res = await fetch('https://api.languagetool.org/v2/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ text, language: 'en-US' })
+        });
+        const data = await res.json();
+        let corrected = text;
+        for (const m of [...data.matches].reverse()) {
+          if (m.replacements && m.replacements.length) {
+            corrected =
+              corrected.slice(0, m.offset) +
+              m.replacements[0].value +
+              corrected.slice(m.offset + m.length);
+          }
+        }
+        return corrected;
+      }
+
+      // Backend API
+      async function correctWithBackend(text) {
+        console.log('🔍 Checking with backend API:', text);
+
+        const controller = new AbortController();
+        inFlight = controller;
+
+        try {
+          const res = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+            signal: controller.signal
+          });
+
+          console.log('📡 Backend response status:', res.status);
+
+          if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+
+          const data = await res.json();
+          console.log('📋 Backend response data:', data);
+
+          if (!data || typeof data.corrected !== 'string') {
+            throw new Error('Invalid backend response format');
+          }
+
+          return data.corrected;
+        } catch (error) {
+          console.error('❌ Backend request failed:', error);
+          throw error;
         }
       }
-    } catch (e) {
-      console.error('❌ Grammar check failed:', e);
-      hideSuggestion();
-      showNotice('Grammar check unavailable', false);
-    } finally {
-      busy = false;
-      feedbackTextarea.style.borderColor = '';
-      feedbackTextarea.style.transition = '';
-      inFlight = null;
-      console.log('✅ Grammar check completed');
-    }
-  }
 
-  // Event listeners
-  feedbackTextarea.addEventListener('input', () => {
-    console.log('⌨️ Input event triggered');
-    hideSuggestion();
-    scheduleGrammarCheck();
-  });
+      // Main grammar checking logic
+      async function checkGrammar() {
+        const text = feedbackTextarea.value.trim();
 
-  feedbackTextarea.addEventListener('blur', () => {
-    console.log('👋 Textarea blur event');
-    setTimeout(() => {
-      if (!document.activeElement || !suggestionBox?.contains(document.activeElement)) {
-        checkGrammar();
+        console.log('🔍 Starting grammar check for:', text);
+
+        if (!text || text.length < 10) {
+          console.log('📝 Text too short, skipping check');
+          return;
+        }
+
+        if (busy) {
+          console.log('⏳ Already checking, skipping');
+          return;
+        }
+
+        if (text === lastCheckedText) {
+          console.log('🔄 Same text as last check, skipping');
+          return;
+        }
+
+        busy = true;
+        const token = ++lastIssuedToken;
+        console.log('🎫 Check token:', token);
+
+        feedbackTextarea.style.borderColor = '#ffc107';
+        feedbackTextarea.style.transition = 'border-color 0.3s ease';
+
+        cancelInFlight();
+
+        try {
+          let corrected;
+          try {
+            corrected = await correctWithBackend(text);
+            console.log('✅ Backend correction successful');
+          } catch (error) {
+            console.log('🔄 Backend failed, trying LanguageTool...');
+            corrected = await correctWithLanguageTool(text);
+            console.log('✅ LanguageTool correction successful');
+          }
+
+          if (token !== lastIssuedToken) {
+            console.log('🚫 Token mismatch, ignoring result');
+            return;
+          }
+
+          lastCheckedText = text;
+
+          console.log('📊 Comparison result:');
+          console.log('  Original:', text);
+          console.log('  Corrected:', corrected);
+          console.log('  Changed:', corrected !== text);
+
+          if (corrected && corrected !== text) {
+            showSuggestion(text, corrected);
+          } else {
+            hideSuggestion();
+            if (text.length > 20) {
+              showNotice('Grammar looks good!', false);
+            }
+          }
+        } catch (e) {
+          console.error('❌ Grammar check failed:', e);
+          hideSuggestion();
+          showNotice('Grammar check unavailable', false);
+        } finally {
+          busy = false;
+          feedbackTextarea.style.borderColor = '';
+          feedbackTextarea.style.transition = '';
+          inFlight = null;
+          console.log('✅ Grammar check completed');
+        }
       }
-    }, 100);
-  });
 
-  feedbackTextarea.addEventListener('keyup', (e) => {
-    if (['.', '!', '?'].includes(e.key)) {
-      console.log('🔚 Sentence ending detected:', e.key);
-      clearTimeout(idleTimer);
-      setTimeout(() => checkGrammar(), 500);
-    }
-  });
+      // Event listeners
+      feedbackTextarea.addEventListener('input', () => {
+        console.log('⌨️ Input event triggered');
+        hideSuggestion();
+        scheduleGrammarCheck();
+      });
 
-  document.addEventListener('click', (e) => {
-    if (suggestionBox && 
-        !suggestionBox.contains(e.target) && 
-        e.target !== feedbackTextarea) {
-      hideSuggestion();
-    }
-  });
+      feedbackTextarea.addEventListener('blur', () => {
+        console.log('👋 Textarea blur event');
+        setTimeout(() => {
+          if (!document.activeElement || !suggestionBox?.contains(document.activeElement)) {
+            checkGrammar();
+          }
+        }, 100);
+      });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && suggestionBox && suggestionBox.style.display === 'block') {
-      hideSuggestion();
-      feedbackTextarea.focus();
-    }
-  });
+      feedbackTextarea.addEventListener('keyup', (e) => {
+        if (['.', '!', '?'].includes(e.key)) {
+          console.log('🔚 Sentence ending detected:', e.key);
+          clearTimeout(idleTimer);
+          setTimeout(() => checkGrammar(), 500);
+        }
+      });
 
-  // Initial check for existing content
-  if (feedbackTextarea.value.trim()) {
-    console.log('📝 Found existing text, scheduling initial check');
-    setTimeout(() => {
-      checkGrammar();
-    }, 1000);
-  }
+      document.addEventListener('click', (e) => {
+        if (suggestionBox &&
+          !suggestionBox.contains(e.target) &&
+          e.target !== feedbackTextarea) {
+          hideSuggestion();
+        }
+      });
 
-  console.log('✅ Grammar checker setup complete');
-});
-</script>
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && suggestionBox && suggestionBox.style.display === 'block') {
+          hideSuggestion();
+          feedbackTextarea.focus();
+        }
+      });
+
+      // Initial check for existing content
+      if (feedbackTextarea.value.trim()) {
+        console.log('📝 Found existing text, scheduling initial check');
+        setTimeout(() => {
+          checkGrammar();
+        }, 1000);
+      }
+
+      console.log('✅ Grammar checker setup complete');
+    });
+  </script>
 </body>
-</html> 
+
+</html>
