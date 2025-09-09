@@ -59,9 +59,9 @@ class StudentActivityLog(models.Model):
         ('StudentLoggedIn', 'Student logged in'),
         ('StudentLoggedOut', 'Student logged out'),
         ('StudentProvidedFeedback', 'Student provided feedback'),
-        ('Profile updated.', 'Profile updated.'),
+        ('ProfileUpdated', 'Profile updated'),
         ('PasswordChanged', 'Password changed'),
-	('AccountCreated', 'Account created'),
+	    ('AccountCreated', 'Account created'),
     ]
 
     logID = models.AutoField(primary_key=True)

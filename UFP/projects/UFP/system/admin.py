@@ -159,7 +159,7 @@ class UserAdmin(SimpleHistoryAdmin, ModelAdmin):
 @admin.register(StudentActivityLog)
 class StudentActivityLogAdmin(ModelAdmin):
     list_display = ('student', 'activity_type', 'timestamp')
-    list_filter = ('activity_type', 'timestamp', 'student')
+    list_filter = ('activity_type', 'timestamp')
     search_fields = ('student__studentName',)
     readonly_fields = ('logID', 'timestamp')
     date_hierarchy = 'timestamp'

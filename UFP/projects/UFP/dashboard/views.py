@@ -321,7 +321,7 @@ def edit_student_profile(request):
             if "email" in changes:
                 student.email = user.email
             student.save()
-            StudentActivityLog.objects.create(student=student, activity_type='Profile updated.')
+            StudentActivityLog.objects.create(student=student, activity_type='ProfileUpdated')
         except Student.DoesNotExist:
             pass
         messages.success(request, f"Profile updated: {', '.join(changes)}.")
@@ -387,7 +387,7 @@ def change_password(request):
     # Log the activity (best effort)
     try:
         student = Student.objects.get(studentID=request.user.username)
-        StudentActivityLog.objects.create(student=student, activity_type='Password changed.')
+        StudentActivityLog.objects.create(student=student, activity_type='PasswordChanged')
     except Student.DoesNotExist:
         pass
 
