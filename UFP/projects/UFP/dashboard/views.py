@@ -200,7 +200,7 @@ def profile(request):
 
 @login_required
 def give_feedback(request):
-    cooldown_seconds = 5
+    cooldown_seconds = 3
     now = timezone.now()
 
     services = Service.objects.all().order_by('serviceName')
@@ -465,7 +465,7 @@ def change_password(request):
 
 @login_required
 def teacher_evaluation(request):
-    cooldown_seconds = 5
+    cooldown_seconds = 3
     now = timezone.now()
 
     teachers = Teacher.objects.all()
