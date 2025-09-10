@@ -329,74 +329,6 @@ def edit_student_profile(request):
         messages.info(request, "No changes to update.")
     return redirect('profile')
 
-
-@login_required
-def change_password(request):
-    if request.method != "POST":
-        return redirect('profile')
-
-    current_password = (request.POST.get('current_password') or '').strip()
-    new_password     = (request.POST.get('new_password') or '').strip()
-    confirm_password = (request.POST.get('confirm_password') or '').strip()
-
-    errors = {}
-    summary_error = None
-
-    # Field presence
-    if not current_password:
-        errors['cp_error'] = "Current password is required."
-    if not new_password:
-        errors['np_error'] = "New password is required."
-    if not confirm_password:
-        errors['cnp_error'] = "Please confirm your new password."
-
-    # Current password check
-    if current_password and not request.user.check_password(current_password):
-        errors['cp_error'] = "Current password is incorrect."
-
-    # Match check
-    if new_password and confirm_password and new_password != confirm_password:
-        errors['cnp_error'] = "New password and confirmation do not match."
-
-    # Optional: Django password validators (length/complexity/history, etc.)
-    if new_password and 'np_error' not in errors:
-        try:
-            validate_password(new_password, user=request.user)
-        except ValidationError as ve:
-            errors['np_error'] = " ".join(ve.messages)
-
-    # If there are any errors, re-render profile with modal open and inline messages
-    if errors:
-        context = {
-            'open_change_password_modal': True,
-            'summary_error': summary_error,
-            'cp_error': errors.get('cp_error'),
-            'np_error': errors.get('np_error'),
-            'cnp_error': errors.get('cnp_error'),
-        }
-        # Do NOT include password values in context (security)
-        return render(request, "studentDashboard/profile.html", context)
-
-    # All good: set the new password
-    request.user.set_password(new_password)
-    request.user.save()
-
-    # Keep user logged in
-    update_session_auth_hash(request, request.user)
-
-    # Log the activity (best effort)
-    try:
-        student = Student.objects.get(studentID=request.user.username)
-        StudentActivityLog.objects.create(
-            student=student, 
-            activity_type='PasswordChanged'
-        )
-    except Student.DoesNotExist:
-        pass
-
-    messages.success(request, "Password updated successfully.")
-    return redirect('profile')
-
 @login_required
 def admin_dashboard(request):
     context = {
@@ -517,17 +449,19 @@ def change_password(request):
 
             # Log the password change
             try:
-                student = Student.objects.get(email=user.email)
+                student = Student.objects.get(studentID=user.username)
                 StudentActivityLog.objects.create(
                     student=student,
                     activity_type='PasswordChanged',
                 )
             except Student.DoesNotExist:
-                pass  # Optionally handle if student record not found
+                print(f"⚠ No Student record for username={user.username}")
 
             messages.success(request, 'Your password was changed successfully.')
             return redirect('profile')
+
     return render(request, 'studentDashboard/change_password.html')
+
 
 @login_required
 def teacher_evaluation(request):

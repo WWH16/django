@@ -1,7 +1,7 @@
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import AdminPasswordChangeView
+
 
 urlpatterns = [
     path('', views.give_feedback, name='give_feedback'),
@@ -22,6 +22,5 @@ urlpatterns = [
     # account management
     path('admin/profile/', views.admin_profile, name='admin_profile'),
     path('admin/profile/edit/', views.edit_admin_profile, name='edit_admin_profile'),  
-    path('profile/password/', AdminPasswordChangeView.as_view(), name='password_change'),
     path('change-password/', views.change_password, name='change_password'),
 ]

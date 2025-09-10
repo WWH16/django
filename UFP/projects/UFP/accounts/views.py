@@ -346,11 +346,21 @@ def reset_password_confirm_view(request):
             user.set_password(new_password)
             user.save()
 
+            # ✅ Log activity if this user is linked to a Student
+            try:
+                student = Student.objects.get(studentID=user.username)
+                log_student_activity(
+                    student=student,
+                    activity_type='PasswordChanged'
+                )
+            except Student.DoesNotExist:
+                pass  # In case it's not a student (admin, etc.)
+
             # remove the token so it can't be reused
             reset_token.delete()
 
-            # ✅ redirect to complete page
-            return redirect('password_reset_complete')  
+            # redirect to complete page
+            return redirect('password_reset_complete')
 
         except ResetPasswordToken.DoesNotExist:
             return render(request, 'accounts/email/password_reset_confirm.html', {
