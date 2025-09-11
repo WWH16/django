@@ -20,7 +20,7 @@ body {
 ============================ */
 .hero-section {
   height: 90vh;
-  background: url("../images/ISU.jpg") no-repeat center center;
+  background: url("/static/system/images/ISU.webp") no-repeat center center;
   background-size: cover;
   position: relative;
   padding-top: 100px;
