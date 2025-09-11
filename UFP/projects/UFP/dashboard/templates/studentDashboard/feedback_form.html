@@ -492,24 +492,6 @@
         refreshWordCount();
       }
 
-      if (formEl) {
-        formEl.addEventListener('submit', function (e) {
-          const words = refreshWordCount();
-          if (words < 5) {
-            e.preventDefault();
-            // Friendly inline message
-            hintEl.textContent = 'Please provide at least 5 words to help us understand your feedback better.';
-            hintEl.classList.add('text-danger');
-            // remove danger class after a short timeout so it reverts
-            setTimeout(() => hintEl.classList.remove('text-danger'), 4000);
-            feedbackEl.focus();
-            return false;
-          }
-          // allow submit
-          return true;
-        });
-      }
-
       // initialize hint from current selection
       updateHint();
       // -------------------------------------------------------
@@ -591,7 +573,6 @@
       });
     });
   </script>
-
 
   <!-- Grammar checker disabled. To re-enable, remove the surrounding HTML comment. -->
   <!--
@@ -835,7 +816,7 @@
 
           console.log('📡 Backend response status:', res.status);
 
-          if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+          if (!res.ok) throw new Error(Backend error: ${res.status});
 
           const data = await res.json();
           console.log('📋 Backend response data:', data);
@@ -975,59 +956,62 @@
       console.log('✅ Grammar checker setup complete');
     });
   </script>
-  <!-- Word count validation with Bootstrap tooltip -->
+  -->
 
+  <!-- Word count validation with Bootstrap tooltip - FIXED VERSION -->
   <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const feedbackEl = document.getElementById('feedback');
-  const formEl = document.getElementById('feedbackForm');
-  const feedbackHintEl = document.getElementById('feedbackHint');
+    document.addEventListener('DOMContentLoaded', function () {
+      const feedbackEl = document.getElementById('feedback');
+      const formEl = document.getElementById('feedbackForm');
+      const feedbackHintEl = document.getElementById('feedbackHint');
 
-  // Initialize Bootstrap tooltip with TOP placement to avoid overlapping with hints
-  const tooltip = new bootstrap.Tooltip(feedbackEl, {
-    title: 'Please provide at least 5 words to help us understand your feedback better.',
-    trigger: 'manual',
-    placement: 'top', // Changed from default to 'top'
-  });
+      // Initialize Bootstrap tooltip with TOP placement to avoid overlapping with hints
+      const tooltip = new bootstrap.Tooltip(feedbackEl, {
+        title: 'Please provide at least 5 words to help us understand your feedback better.',
+        trigger: 'manual',
+        placement: 'top',
+      });
 
-  function countWords(text) {
-    if (!text) return 0;
-    const words = text.trim().split(/\s+/).filter(Boolean);
-    return words.length;
-  }
+      function countWords(text) {
+        if (!text) return 0;
+        const words = text.trim().split(/\s+/).filter(Boolean);
+        return words.length;
+      }
 
-  function refreshWordCount() {
-    const wordCount = countWords(feedbackEl.value);
-    return wordCount;
-  }
+      function refreshWordCount() {
+        const wordCount = countWords(feedbackEl.value);
+        return wordCount;
+      }
 
-  formEl.addEventListener('submit', function (e) {
-    const wordCount = refreshWordCount();
-    if (wordCount < 5) {
-      e.preventDefault();
-      tooltip.show();
-      feedbackEl.classList.add('is-invalid');
+      formEl.addEventListener('submit', function (e) {
+        const wordCount = refreshWordCount();
+        if (wordCount < 5) {
+          e.preventDefault();
+          
+          // Show tooltip validation message
+          tooltip.show();
+          feedbackEl.classList.add('is-invalid');
 
-      // Ensure the suggestion text below the field remains completely unaffected
-      feedbackHintEl.style.display = ''; // Keep hint visible and unchanged
+          // DON'T change the hint text - keep it showing the service-specific guidance
+          // The validation message will only appear in the tooltip
 
-      // Hide tooltip after 3 seconds
-      setTimeout(() => {
+          // Hide tooltip after 3 seconds
+          setTimeout(() => {
+            tooltip.hide();
+            feedbackEl.classList.remove('is-invalid');
+          }, 3000);
+
+          feedbackEl.focus();
+          return false;
+        }
+        return true;
+      });
+
+      feedbackEl.addEventListener('input', function () {
         tooltip.hide();
         feedbackEl.classList.remove('is-invalid');
-      }, 3000);
-
-      feedbackEl.focus();
-      return false;
-    }
-    return true;
-  });
-
-  feedbackEl.addEventListener('input', function () {
-    tooltip.hide();
-    feedbackEl.classList.remove('is-invalid');
-  });
-});
+      });
+    });
   </script>
 </body>
 
