@@ -80,16 +80,14 @@
               {% csrf_token %}
               <div class="form-fields">
                 <div class="mb-3">
-                  <label for="teacher_input" class="form-label">Teacher</label>
-                  <!-- Searchable input backed by a datalist. The actual teacher PK is stored in the hidden input named 'teacher' -->
-                  <input list="teacherList" id="teacher_input" class="form-control" placeholder="Search or select a teacher" autocomplete="off">
-                  <datalist id="teacherList">
+                  <label for="teacher" class="form-label">Teacher</label>
+                  <!-- Use a real select so the submitted value is the teacher PK. We'll enhance it with Select2 for searchability. -->
+                  <select name="teacher" id="teacher" class="form-select" required>
+                    <option value="" disabled selected>Select a teacher</option>
                     {% for teacher in teachers %}
-                      <option data-pk="{{ teacher.pk }}" value="{{ teacher.teacherName }}"></option>
+                      <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
                     {% endfor %}
-                  </datalist>
-                  <!-- Hidden input carries the selected teacher's PK for form POST -->
-                  <input type="hidden" name="teacher" id="teacher" required>
+                  </select>
                 </div>
                 <div class="mb-3">
                   <label for="department" class="form-label">Department</label>
@@ -97,29 +95,6 @@
                     <option value="" disabled selected>Select a department</option>
                     {% for department in departments %}
                       <option value="{{ department.pk }}">{{ department.departmentName }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="program" class="form-label">Program</label>
-                  <select name="program" id="program" class="form-select" required>
-                    <option value="" disabled selected>Select a program</option>
-                    {% for program in programs %}
-                      {# expect Program has a FK to Department as `department` #}
-                      <option value="{{ program.pk }}" data-department="{{ program.department.pk|default:'' }}">{{ program.programName }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="specialization" class="form-label">Specialization</label>
-                  <input type="text" name="specialization" id="specialization" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                  <label for="sentiment" class="form-label">Sentiment</label>
-                  <select name="sentiment" id="sentiment" class="form-select">
-                    <option value="" selected>Optional</option>
-                    {% for sentiment in sentiments %}
-                      <option value="{{ sentiment.pk }}">{{ sentiment.sentimentName }}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -195,88 +170,7 @@
     }
   });
 </script>
-<script>
-  // Make the teacher input connected to the datalist set the hidden PK value
-  (function() {
-    var teacherInput = document.getElementById('teacher_input');
-    var teacherHidden = document.getElementById('teacher');
-    var teacherList = document.getElementById('teacherList');
-
-    if (!teacherInput || !teacherHidden || !teacherList) return;
-
-    // Build a map from teacherName -> pk for quick lookup
-    var nameToPk = {};
-    Array.from(teacherList.options).forEach(function(opt) {
-      var name = opt.value;
-      var pk = opt.getAttribute('data-pk');
-      if (name) nameToPk[name.trim()] = pk;
-    });
-
-    // When user selects from suggestions or leaves the field, set the hidden PK
-    function syncTeacher() {
-      var val = teacherInput.value && teacherInput.value.trim();
-      if (!val) {
-        teacherHidden.value = '';
-        return;
-      }
-
-      // Exact match first
-      if (nameToPk[val]) {
-        teacherHidden.value = nameToPk[val];
-        return;
-      }
-
-      // Try case-insensitive match
-      var lower = val.toLowerCase();
-      for (var name in nameToPk) {
-        if (name.toLowerCase() === lower) {
-          teacherHidden.value = nameToPk[name];
-          return;
-        }
-      }
-
-      // Try prefix match (best-effort)
-      for (var name2 in nameToPk) {
-        if (name2.toLowerCase().indexOf(lower) === 0) {
-          teacherHidden.value = nameToPk[name2];
-          return;
-        }
-      }
-
-      // No match found - clear hidden and leave validation to form submit
-      teacherHidden.value = '';
-    }
-
-    teacherInput.addEventListener('input', function() {
-      // attempt quick sync to support click-selection from datalist
-      syncTeacher();
-    });
-
-    teacherInput.addEventListener('change', syncTeacher);
-    teacherInput.addEventListener('blur', syncTeacher);
-
-    // Validate on submit: ensure hidden teacher PK is present
-    var form = document.getElementById('teacherEvaluationForm');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        syncTeacher();
-        if (!teacherHidden.value) {
-          e.preventDefault();
-          teacherInput.classList.add('is-invalid');
-          // show a simple inline invalid feedback
-          var next = teacherInput.nextElementSibling;
-          if (!next || !next.classList || !next.classList.contains('invalid-feedback')) {
-            var fb = document.createElement('div');
-            fb.className = 'invalid-feedback';
-            fb.textContent = 'Please select a valid teacher from the list.';
-            teacherInput.parentNode.appendChild(fb);
-          }
-          teacherInput.focus();
-        }
-      });
-    }
-  })();
-</script>
+<!-- Select2 removed — teacher is a plain <select> again. -->
 <script>
   // Filter programs based on selected department
   (function() {

@@ -497,20 +497,28 @@ def teacher_evaluation(request):
         comments       = request.POST.get('comments')
         teacher_id     = request.POST.get('teacher')
         department_id  = request.POST.get('department')
-        program_id     = request.POST.get('program')
-        specialization = request.POST.get('specialization')
+        # program/specialization/sentiment are optional now (template no longer sends them)
         sentiment_id   = request.POST.get('sentiment')
 
         is_anonymous = 'is_anonymous' in request.POST
         username = _resolve_username(request.user)  # store this ALWAYS
 
-        if comments and teacher_id and department_id and program_id and specialization:
+        # Basic required fields: comments, teacher, department
+        if comments and teacher_id and department_id:
+            # Attempt to derive program from the selected teacher if available
+            program_obj = None
+            try:
+                teacher_obj = Teacher.objects.get(pk=teacher_id)
+                program_obj = getattr(teacher_obj, 'program', None)
+            except Teacher.DoesNotExist:
+                teacher_obj = None
+
             TeacherEvaluation.objects.create(
                 comments=comments,
                 teacher_id=teacher_id,
                 department_id=department_id,
-                program_id=program_id,
-                specialization=specialization,
+                program=program_obj,
+                specialization=None,
                 sentiment_id=sentiment_id or None,
                 is_anonymous=is_anonymous,
                 submitted_by=username,           # <- key for filtering later
@@ -530,13 +538,12 @@ def teacher_evaluation(request):
             messages.error(request, 'Please fill in all required fields.')
 
     return render(request, 'studentDashboard/teacher_evaluation_form.html', {
-    'teachers': teachers,
-    'departments': departments,
-    'programs': programs,
-    'sentiments': sentiments,
-    'cooldown_remaining': cooldown_remaining,
-})
-    return render(request, 'studentDashboard/teacher_evaluation_form.html', context)
+        'teachers': teachers,
+        'departments': departments,
+        'programs': programs,
+        'sentiments': sentiments,
+        'cooldown_remaining': cooldown_remaining,
+    })
 
 from system.models import Service
 @login_required

@@ -93,13 +93,13 @@ class TeacherEvaluation(models.Model):
     comments = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     is_anonymous = models.BooleanField(default=False)
     submitted_by = models.CharField(max_length=100, null=True, blank=True)
-    specialization = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100, null=True, blank=True)
     sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
-    specialization = models.CharField(max_length=100)
+    
 
     
     def __str__(self):
