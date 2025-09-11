@@ -295,6 +295,10 @@
                       <label for="feedback" class="form-label">Your Feedback</label>
                       <textarea class="form-control" id="feedback" name="feedback" rows="4"
                         placeholder="Type your feedback here..."></textarea>
+                      <!-- Service-specific prompt / hint -->
+                      <div id="feedbackHint" class="form-text text-muted">Please describe your experience in a few sentences.</div>
+                      <!-- Live word count -->
+                      <div id="wordCount" class="form-text text-muted text-end">0 words</div>
                     </div>
                     <div class="mb-3">
                       <label for="anonymous" class="form-check-label">
@@ -426,6 +430,89 @@
           link.classList.add('active');
         }
       });
+      
+      // --- Service-specific hint and word-count validation ---
+      const serviceSelect = document.getElementById('service');
+      const feedbackEl = document.getElementById('feedback');
+      const hintEl = document.getElementById('feedbackHint');
+      const wordCountEl = document.getElementById('wordCount');
+      const formEl = document.getElementById('feedbackForm');
+
+      const hints = {
+        'Scholarship Services': 'Please describe your experience with scholarship services (e.g., timeliness of updates on Facebook, clarity of information, ease of application).',
+        'Library Facility': 'Please describe your experience with the library facility (e.g., cleanliness, availability of books, seating, study environment).',
+        'WiFi': 'Please describe your experience with campus WiFi (e.g., speed, accessibility, reliability, areas with weak signal).',
+        'College Admission': 'Please describe your experience with the admission process (e.g., requirements, clarity of instructions, staff assistance, processing time).'
+      };
+
+      function updateHint() {
+        const opt = serviceSelect.options[serviceSelect.selectedIndex];
+        const name = opt ? (opt.text || opt.value) : '';
+        // Map common names or fallback
+        if (!name) {
+          hintEl.textContent = 'Please describe your experience in a few sentences.';
+          return;
+        }
+        // Find matching hint by exact name or by keyword
+        if (hints[name]) {
+          hintEl.textContent = hints[name];
+        } else if (/scholarship/i.test(name)) {
+          hintEl.textContent = hints['Scholarship Services'];
+        } else if (/library/i.test(name)) {
+          hintEl.textContent = hints['Library Facility'];
+        } else if (/wifi|wi-?fi/i.test(name)) {
+          hintEl.textContent = hints['WiFi'];
+        } else if (/admission/i.test(name)) {
+          hintEl.textContent = hints['College Admission'];
+        } else {
+          hintEl.textContent = 'Please describe your experience in a few sentences.';
+        }
+      }
+
+      function countWords(text) {
+        if (!text) return 0;
+        // Normalize whitespace and split on spaces
+        const words = text.trim().split(/\s+/).filter(Boolean);
+        return words.length;
+      }
+
+      function refreshWordCount() {
+        const n = countWords(feedbackEl.value);
+        wordCountEl.textContent = n + (n === 1 ? ' word' : ' words');
+        return n;
+      }
+
+      if (serviceSelect) {
+        serviceSelect.addEventListener('change', updateHint);
+      }
+
+      if (feedbackEl) {
+        feedbackEl.addEventListener('input', refreshWordCount);
+        // initialize
+        refreshWordCount();
+      }
+
+      if (formEl) {
+        formEl.addEventListener('submit', function (e) {
+          const words = refreshWordCount();
+          if (words < 5) {
+            e.preventDefault();
+            // Friendly inline message
+            hintEl.textContent = 'Please provide at least 5 words to help us understand your feedback better.';
+            hintEl.classList.add('text-danger');
+            // remove danger class after a short timeout so it reverts
+            setTimeout(() => hintEl.classList.remove('text-danger'), 4000);
+            feedbackEl.focus();
+            return false;
+          }
+          // allow submit
+          return true;
+        });
+      }
+
+      // initialize hint from current selection
+      updateHint();
+      // -------------------------------------------------------
     });
   </script>
 
@@ -506,6 +593,8 @@
   </script>
 
 
+  <!-- Grammar checker disabled. To re-enable, remove the surrounding HTML comment. -->
+  <!--
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       console.log('🚀 Grammar checker initialized');
@@ -885,6 +974,60 @@
 
       console.log('✅ Grammar checker setup complete');
     });
+  </script>
+  <!-- Word count validation with Bootstrap tooltip -->
+
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const feedbackEl = document.getElementById('feedback');
+  const formEl = document.getElementById('feedbackForm');
+  const feedbackHintEl = document.getElementById('feedbackHint');
+
+  // Initialize Bootstrap tooltip with TOP placement to avoid overlapping with hints
+  const tooltip = new bootstrap.Tooltip(feedbackEl, {
+    title: 'Please provide at least 5 words to help us understand your feedback better.',
+    trigger: 'manual',
+    placement: 'top', // Changed from default to 'top'
+  });
+
+  function countWords(text) {
+    if (!text) return 0;
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    return words.length;
+  }
+
+  function refreshWordCount() {
+    const wordCount = countWords(feedbackEl.value);
+    return wordCount;
+  }
+
+  formEl.addEventListener('submit', function (e) {
+    const wordCount = refreshWordCount();
+    if (wordCount < 5) {
+      e.preventDefault();
+      tooltip.show();
+      feedbackEl.classList.add('is-invalid');
+
+      // Ensure the suggestion text below the field remains completely unaffected
+      feedbackHintEl.style.display = ''; // Keep hint visible and unchanged
+
+      // Hide tooltip after 3 seconds
+      setTimeout(() => {
+        tooltip.hide();
+        feedbackEl.classList.remove('is-invalid');
+      }, 3000);
+
+      feedbackEl.focus();
+      return false;
+    }
+    return true;
+  });
+
+  feedbackEl.addEventListener('input', function () {
+    tooltip.hide();
+    feedbackEl.classList.remove('is-invalid');
+  });
+});
   </script>
 </body>
 

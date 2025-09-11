@@ -627,7 +627,7 @@ def service_feedback_by_semester(request, semester_slug=None):
         "program": None,
         "services": results
     })
-
+'''
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -637,7 +637,7 @@ from openai import OpenAI
 client = OpenAI(api_key="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")
 
 # Test call
-'''response = client.chat.completions.create(
+response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
         {"role": "system", "content": "You are a grammar corrector."},
