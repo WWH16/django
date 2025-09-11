@@ -24,7 +24,8 @@ from warehouse.models import (
     fact_teacher_evaluation, FactFeedback
 )
 from .resources import (TeacherResource, TeacherEvaluationResource, StudentFeedbackResource,
-                        FactFeedbackResource, FactTeacherEvaluationResource)
+                        FactFeedbackResource,FactTeacherEvaluationResource, DimTeacherResource,
+                        DimServiceResource, DimSentimentResource, DimStudentResource, StudentResource)
 
 admin.site.unregister(User)
 admin.site.unregister(Group)
@@ -37,6 +38,7 @@ admin.site.unregister(Group)
 
 @admin.register(Service)
 class ServiceAdmin(ModelAdmin):
+
     list_display = ('serviceID', 'serviceName')  # change fields according to your model
     search_fields = ('serviceName',)
 
@@ -56,12 +58,13 @@ class ProgramAdmin(ModelAdmin):
     search_fields = ('programName',)
 @admin.register(Student)
 class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = StudentResource
     list_display = ('studentID', 'studentName','program')
     search_fields = ('studentName',)
     list_filter = ('program',)
     actions = ['export']
     import_form_class = ImportForm
-    export_form_class = ExportForm
+    
 
 @admin.register(StudentFeedback)
 class StudentFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
@@ -133,6 +136,7 @@ class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
 
 @admin.register(DimService)
 class DimServiceAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = DimServiceResource
     list_display = ('service_id', 'service_name')
     search_fields = ('service_name',)
     actions = ['export']
@@ -140,6 +144,7 @@ class DimServiceAdmin(ModelAdmin, ImportExportModelAdmin):
     export_form_class = ExportForm
 @admin.register(DimSentiment)
 class DimSentimentAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = DimSentimentResource
     list_display = ('sentiment_id', 'label')
     search_fields = ('label',)
     actions = ['export']
@@ -147,6 +152,7 @@ class DimSentimentAdmin(ModelAdmin, ImportExportModelAdmin):
     export_form_class = ExportForm
 @admin.register(DimStudent)
 class DimStudentAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = DimStudentResource
     list_display = ('student_id', 'student_name', 'program_id', 'program_name')
     search_fields = ('student_name', 'student_id')
     list_filter = ('program_name',)
@@ -155,6 +161,7 @@ class DimStudentAdmin(ModelAdmin, ImportExportModelAdmin):
     export_form_class = ExportForm
 @admin.register(dim_teacher)
 class DimTeacherAdmin(ModelAdmin, ImportExportModelAdmin):
+    resource_class = DimTeacherResource
     list_display = ('teacher_id', 'teacher_name', 'department_name', 'program_name')
     search_fields = ('teacher_name', 'teacher_id')
     list_filter = ('department_name', 'program_name')

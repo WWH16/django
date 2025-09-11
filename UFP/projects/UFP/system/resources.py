@@ -1,7 +1,12 @@
 from import_export import resources
-from .models import Teacher, TeacherEvaluation, StudentFeedback
-from warehouse.models import fact_teacher_evaluation, FactFeedback
+from .models import Teacher, TeacherEvaluation, StudentFeedback, Student
+from warehouse.models import fact_teacher_evaluation, FactFeedback, DimService, DimSentiment, DimStudent, dim_teacher
 
+class StudentResource(resources.ModelResource):
+    class Meta:
+        model = Student
+        import_id_fields = ('student_id',)  # primary key
+        fields = ('student_id', 'studentName', 'program', 'yearLevel')
 class TeacherResource(resources.ModelResource):
     class Meta:
         model = Teacher
@@ -29,7 +34,7 @@ class StudentFeedbackResource(resources.ModelResource):
 class FactFeedbackResource(resources.ModelResource):
     class Meta:
         model = FactFeedback
-        import_id_fields = ('id',)  # primary key
+        import_id_fields = ('feedback_id',)  # primary key
         fields = (
             'feedback_id', 'student', 'service', 'sentiment', 'comment_length', 'comments', 'timestamp'
         )
@@ -37,7 +42,31 @@ class FactFeedbackResource(resources.ModelResource):
 class FactTeacherEvaluationResource(resources.ModelResource):
     class Meta:
         model = fact_teacher_evaluation
-        import_id_fields = ('id',)  # primary key
+        import_id_fields = ('evaluation_id',)  # primary key
         fields = (
             'evaluation_id', 'teacher', 'student', 'sentiment', 'comment_length', 'comments', 'timestamp'
         )
+
+class DimServiceResource(resources.ModelResource):
+    class Meta:
+        model = DimService
+        import_id_fields = ('service_id',)  # primary key
+        fields = ('service_id', 'service_name')
+
+class DimSentimentResource(resources.ModelResource):
+    class Meta:
+        model = DimSentiment
+        import_id_fields = ('sentiment_id',)  # primary key
+        fields = ('sentiment_id', 'label')
+
+class DimTeacherResource(resources.ModelResource):
+    class Meta:
+        model = dim_teacher
+        exclude = ('id',)
+        import_id_fields = ('teacher_id',)  # primary key
+        fields = ('teacher_id', 'teacher_name', 'department', 'program')
+class DimStudentResource(resources.ModelResource):
+    class Meta:
+        model = DimStudent
+        import_id_fields = ('student_id',)  # primary key
+        fields = ('student_id', 'student_name', 'program', 'year_level')
