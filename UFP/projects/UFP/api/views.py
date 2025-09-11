@@ -646,7 +646,7 @@ client = OpenAI(api_key="sk-proj-kd8JgDbn5Gnv68tufQa98gBsIH00PYdpFnqo0lF8SJNx3t6
 )
 
 print(response.choices[0].message.content)
-'''
+
 
 @csrf_exempt
 def grammar_correct(request):
@@ -684,3 +684,4 @@ def grammar_correct(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+'''
