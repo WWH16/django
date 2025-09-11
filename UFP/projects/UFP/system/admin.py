@@ -55,10 +55,13 @@ class ProgramAdmin(ModelAdmin):
     list_display = ('programID', 'programName')
     search_fields = ('programName',)
 @admin.register(Student)
-class StudentAdmin(ModelAdmin):
+class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
     list_display = ('studentID', 'studentName','program')
     search_fields = ('studentName',)
     list_filter = ('program',)
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
 
 @admin.register(StudentFeedback)
 class StudentFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
@@ -98,9 +101,9 @@ class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
 @admin.register(TeacherEvaluation)
 class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = TeacherEvaluationResource
-    list_display = ('teacher', 'timestamp', 'comments','specialization','program','submitted_by')
+    list_display = ('teacher', 'timestamp', 'comments','program','submitted_by')
     search_fields = ('teacher__teacherName',)
-    list_filter = ('sentiment', 'timestamp','specialization','program') 
+    list_filter = ('sentiment', 'timestamp','program') 
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
@@ -124,6 +127,37 @@ class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
     search_fields = ('teacher__teacher_name',)
     list_filter = ('sentiment', 'timestamp') 
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
+
+@admin.register(DimService)
+class DimServiceAdmin(ModelAdmin, ImportExportModelAdmin):
+    list_display = ('service_id', 'service_name')
+    search_fields = ('service_name',)
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
+@admin.register(DimSentiment)
+class DimSentimentAdmin(ModelAdmin, ImportExportModelAdmin):
+    list_display = ('sentiment_id', 'label')
+    search_fields = ('label',)
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
+@admin.register(DimStudent)
+class DimStudentAdmin(ModelAdmin, ImportExportModelAdmin):
+    list_display = ('student_id', 'student_name', 'program_id', 'program_name')
+    search_fields = ('student_name', 'student_id')
+    list_filter = ('program_name',)
+    actions = ['export']
+    import_form_class = ImportForm
+    export_form_class = ExportForm
+@admin.register(dim_teacher)
+class DimTeacherAdmin(ModelAdmin, ImportExportModelAdmin):
+    list_display = ('teacher_id', 'teacher_name', 'department_name', 'program_name')
+    search_fields = ('teacher_name', 'teacher_id')
+    list_filter = ('department_name', 'program_name')
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
