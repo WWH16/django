@@ -1,6 +1,5 @@
 <!-- Help Section -->
 {% load static %}
-{% load static %}
 <section id="help" class="py-5 bg-light text-dark" data-aos="fade-up">
   <div class="container">
     <h2 class="text-center mb-5" data-aos="fade-down" data-aos-delay="100">
@@ -17,7 +16,7 @@
         </h2>
         <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            This platform enables students to provide feedback on both university services and faculty performance. Through sentiment analysis (Positive, Neutral, Negative), the system generates insights that support continuous improvement in service delivery and teaching quality 
+            This platform enables students to provide feedback on both university services and faculty performance. Through sentiment analysis (Positive, Neutral, Negative), the system generates insights that support continuous improvement in service delivery and teaching quality.
           </div>
         </div>
       </div>
@@ -44,7 +43,7 @@
         </h2>
         <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            Only authorized faculty or staff (admin users) can see the feedback and sentiment analysis. 
+            Only authorized faculty or staff (admin users) can see the feedback and sentiment analysis.
           </div>
         </div>
       </div>
@@ -71,12 +70,14 @@
         <li>Visit the website.</li>
         <li>Click on "Login" (or "Sign up" if you don’t have an account).</li>
         <li>Select "Student Login".</li>
-        <li>After logging in, choose the type of feedback from the side navigation bar:</li>
-            <ol>
-              <li>Give Feedback(OSAS Services) → Select a service (e.g., Wi-Fi, Library), then enter your honest feedback.</li>
-              <li>Teacher Evaluation → Select a teacher and department, then enter your homest feedback.</li>
-            </ol>
-        <li>(Optional)</strong> Check “Submit as anonymous” if you don’t want your name attached.</li>
+        <li>
+          After logging in, choose the type of feedback from the side navigation bar:
+          <ol>
+            <li>Give Feedback (OSAS Services) → Select a service (e.g., Wi-Fi, Library), then enter your honest feedback.</li>
+            <li>Teacher Evaluation → Select a teacher and department, then enter your honest feedback.</li>
+          </ol>
+        </li>
+        <li>(Optional) Check “Submit as anonymous” if you don’t want your name attached.</li>
         <li>Click “Submit” — the system will analyze the sentiment automatically.</li>
       </ol>
 
@@ -86,7 +87,20 @@
         <li>Speak casually, no formality needed.</li>
         <li>Do not include names or personal identifiers.</li>
         <li>Take advantage of the anonymity.</li>
+        <!-- NEW -->
+        <li><strong>Write at least 5 words in your feedback.</strong> Very short answers (like “Good” or “Bad”) are not enough for the system to understand the full context. A minimum of five words ensures the sentiment analysis is accurate and your feedback is meaningful for improvement.</li>
       </ul>
+
+      <!-- NEW Good vs. Bad Examples -->
+      <div class="mt-4 p-3 border rounded bg-white shadow-sm">
+        <h5 class="mb-3">Examples of Feedback</h5>
+        <p><strong>✅ Good:</strong> “The Wi-Fi is slow and keeps disconnecting.”</p>
+        <p><strong>✅ Good:</strong> “The library is clean but sometimes noisy.”</p>
+        <p><strong>❌ Bad:</strong> “Good only.”</p>
+        <p><strong>❌ Bad:</strong> “Okay lang.”</p>
+        <p><strong>❌ Bad:</strong> “Goods.”</p>
+        <p><strong>❌ Bad:</strong> “Bad.”</p>
+      </div>
     </div>
 
     <!-- Admin Dashboard Guide -->
@@ -100,4 +114,3 @@
     </div>
   </div>
 </section>
-
