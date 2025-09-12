@@ -1,64 +1,107 @@
-<!-- Help Resources Section -->
 {% load static %}
 <style>
   /* Help Resources Section Styles */
-  .hel    </div>
-  </div>
-</section>ces {
-    margin-top: 5rem;
+  .help-section {
     padding: 4rem 0;
     background-color: #f8f9fa;
   }
-  .help-resources h2 {
+
+  /* Typography */
+  .section-heading
+  {
     font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .sub-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
     margin-bottom: 1rem;
   }
-  .help-resources p {
-    color: #6c757d;a
+
+  .body-text {
+    font-size: 1rem;
+    color: #6c757d;
+    line-height: 1.6;
   }
-  .help-resources .help-card {
+
+  /* Cards */
+  .help-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   }
-  .help-resources .help-card:hover {
+
+  .help-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
-  .help-resources .help-icon {
+
+  /* Lists */
+  .guide-list li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  /* Examples Box */
+  .example-box {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+
+  .example-good {
     color: var(--bs-success);
+    font-weight: 600;
   }
-  .help-resources .btn {
-    margin-top: 1rem;
-    transition: all 0.3s ease;
+
+  .example-bad {
+    color: var(--bs-danger);
+    font-weight: 600;
   }
-  .help-resources .btn:hover {
-    transform: translateY(-2px);
-  }
+
+  /* Responsive */
   @media (max-width: 768px) {
-    .help-resources {
-      padding: 3rem 0;
-    }
-    .help-resources h2 {
+    .section-heading {
       font-size: 2rem;
     }
-    .help-resources .help-card {
+
+    .sub-heading {
+      font-size: 1.25rem;
+    }
+
+    .card-heading,
+    .accordion-button {
+      font-size: 0.95rem;
+    }
+    
+    .help-card {
       margin-bottom: 1.5rem;
     }
   }
 </style>
-</section>
 {% load static %}
-<section id="help" class="py-5 bg-light text-dark" data-aos="fade-up">
+<section id="help" class="help-section bg-light text-dark" data-aos="fade-up">
   <div class="container">
-    <h2 class="text-center mb-5" data-aos="fade-down" data-aos-delay="100">
+    <h4 class="fw-bold text-center mb-4" data-aos="fade-down" data-aos-delay="100">
       <i class="bi bi-question-circle-fill text-primary me-2"></i>Help Center
-    </h2>
+    </h4>
 
     <!-- FAQ Accordion -->
-    <div class="accordion mb-4" id="faqAccordion" data-aos="fade-up" data-aos-delay="200">
+    <div class="accordion mb-5" id="faqAccordion" data-aos="fade-up" data-aos-delay="200">
       <div class="accordion-item">
         <h2 class="accordion-header" id="faq1">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+          <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
             What is this website for?
           </button>
         </h2>
@@ -116,7 +159,7 @@
       <p><strong>How to Give Feedback for OSAS Services</strong></p>
       <ol class="ps-3">
         <li>Visit the website.</li>
-        <li>Click on "Login" (or "Sign up" if you don’t have an account).</li>
+        <li>Click on "Login" (or "Sign up" if you don't have an account).</li>
         <li>Select "Student Login".</li>
         <li>
           After logging in, choose the type of feedback from the side navigation bar:
@@ -125,35 +168,52 @@
             <li>Teacher Evaluation → Select a teacher and department, then enter your honest feedback.</li>
           </ol>
         </li>
-        <li>(Optional) Check “Submit as anonymous” if you don’t want your name attached.</li>
-        <li>Click “Submit” — the system will analyze the sentiment automatically.</li>
+        <li>(Optional) Check "Submit as anonymous" if you don't want your name attached.</li>
+        <li>Click "Submit" — the system will analyze the sentiment automatically.</li>
       </ol>
 
-      <p><strong>Tips:</strong></p>
-      <ul class="ps-3">
-        <li>Be honest and constructive.</li>
-        <li>Speak casually, no formality needed.</li>
-        <li>Do not include names or personal identifiers.</li>
-        <li>Take advantage of the anonymity.</li>
-        <!-- NEW -->
-        <li><strong>Write at least 5 words in your feedback.</strong> Very short answers (like “Good” or “Bad”) are not enough for the system to understand the full context. A minimum of five words ensures the sentiment analysis is accurate and your feedback is meaningful for improvement.</li>
-      </ul>
-
-      <!-- NEW Good vs. Bad Examples -->
-      <div class="mt-4 p-3 border rounded bg-white shadow-sm">
-        <h5 class="mb-3">Examples of Feedback</h5>
-        <p><strong>✅ Good:</strong> “The Wi-Fi is slow and keeps disconnecting.”</p>
-        <p><strong>✅ Good:</strong> “The library is clean but sometimes noisy.”</p>
-        <p><strong>❌ Bad:</strong> “Good only.”</p>
-        <p><strong>❌ Bad:</strong> “Okay lang.”</p>
-        <p><strong>❌ Bad:</strong> “Goods.”</p>
-        <p><strong>❌ Bad:</strong> “Bad.”</p>
+      <!-- Tips Card -->
+      <div class="card mb-4 border-0 shadow-sm" data-aos="fade-up" data-aos-delay="350">
+        <div class="card-header bg-transparent border-0 py-4">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-lightbulb text-warning me-3"></i>
+            <h5 class="mb-0 fw-semibold">Writing Effective Feedback</h5>
+          </div>
+        </div>
+        <div class="card-body px-4 pb-4">
+          <div class="row g-5">
+            <div class="col-md-6">
+              <h6 class="text-muted mb-3 fw-normal">Best Practices</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">• Be honest and constructive</li>
+                <li class="mb-2">• Speak casually, no formality needed</li>
+                <li class="mb-2">• Do not include names or personal identifiers</li>
+                <li class="mb-2">• Take advantage of the anonymity</li>
+                <li class="mb-0">• <strong>Write at least 5 words</strong> for accurate analysis</li>
+              </ul>
+            </div>
+            
+            <div class="col-md-6">
+              <h6 class="text-muted mb-3 fw-normal">Examples</h6>
+              <div class="mb-4">
+                <small class="text-success fw-semibold">✓ Good examples:</small>
+                <p class="mb-1 text-muted small">"The Wi-Fi is slow and keeps disconnecting."</p>
+                <p class="mb-0 text-muted small">"The library is clean but sometimes noisy."</p>
+              </div>
+              <div>
+                <small class="text-danger fw-semibold">✗ Too short:</small>
+                <p class="mb-0 text-muted small">"Good only." • "Okay lang." • "Bad."</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
 
     <!-- Admin Dashboard Guide -->
-    <div class="mb-5" data-aos="fade-up" data-aos-delay="400">
-      <h4><i class="bi bi-person-gear text-warning me-2"></i>Admin Dashboard (Faculty Only)</h4>
-      <ul class="ps-3">
+    <div class="help-card p-4" data-aos="fade-up" data-aos-delay="400">
+      <h4 class="sub-heading"><i class="bi bi-person-gear text-warning me-2"></i>Admin Dashboard (Faculty Only)</h4>
+      <ul class="guide-list ps-4 mb-0">
         <li>View feedback by sentiment: Positive, Negative, Neutral.</li>
         <li>Access statistical reports per service.</li>
         <li>Filter and visualize trends via charts and tables.</li>

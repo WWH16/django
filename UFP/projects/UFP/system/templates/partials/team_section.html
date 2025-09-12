@@ -2,6 +2,25 @@
 {% load static %}
 <style>
   /* Enhanced Team Section Styles */
+  .section-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--bs-success);
+  }
+  
+  .section-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #6c757d;
+  }
+  
   .leader-card {
     transition: all 0.3s ease;
   }
@@ -40,6 +59,22 @@
     transform: translateY(-3px);
   }
 
+  .leader-info h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .leader-info .position {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .leader-info .bio {
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
   @media (max-width: 768px) {
     .leader-card {
       margin-bottom: 2rem;
@@ -49,16 +84,24 @@
       height: 220px !important;
     }
 
+    .section-heading {
+      font-size: 2rem !important;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem !important;
+    }
+
     .leader-info h4 {
-      font-size: 1rem !important;
+      font-size: 1.1rem !important;
     }
 
     .leader-info .position {
-      font-size: 0.8rem !important;
+      font-size: 0.875rem !important;
     }
 
     .leader-info .bio {
-      font-size: 0.8rem !important;
+      font-size: 0.875rem !important;
     }
   }
 </style>
