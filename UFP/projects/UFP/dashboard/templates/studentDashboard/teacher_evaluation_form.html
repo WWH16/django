@@ -3,21 +3,22 @@
 {% block dashboard_content %}
 <style>
   #feedbackFormContainer #cooldownOverlay,
-.main-content #cooldownOverlay {
-  display: none !important;
-}
+  .main-content #cooldownOverlay {
+    display: none !important;
+  }
+
   /* Hide any cooldown overlays from parent template */
   #feedbackFormContainer,
   #feedbackFormContainer #cooldownOverlay,
-  .main-content > div > div > div > div > div #cooldownOverlay {
+  .main-content>div>div>div>div>div #cooldownOverlay {
     display: none !important;
   }
-  
+
   /* Remove any blurring from parent */
   .blurred {
     filter: none !important;
   }
-  
+
   /* Custom styles for our overlay */
   .teacher-eval-overlay {
     position: absolute;
@@ -32,13 +33,11 @@
     z-index: 1000;
     border-radius: 8px;
   }
-  
+
   .teacher-eval-blur {
     filter: blur(2px);
     pointer-events: none;
   }
-
-
 </style>
 
 
@@ -52,16 +51,18 @@
           </h3>
           <!-- ALERTS for form feedback -->
           {% if messages %}
-            {% for message in messages %}
-              {% if 'login' not in message.tags and 'success' not in message.tags %}
-                <div class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-              {% endif %}
-            {% endfor %}
+          {% for message in messages %}
+          {% if 'login' not in message.tags and 'success' not in message.tags %}
+          <div
+            class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
           {% endif %}
-          
+          {% endfor %}
+          {% endif %}
+
           <!-- Form with relative positioning container -->
           <div style="position: relative;">
             <!-- Our custom cooldown overlay -->
@@ -75,7 +76,7 @@
                 <div style="font-size: 1rem; opacity: 0.7;">before submitting again</div>
               </div>
             </div>
-            
+
             <form method="post" id="teacherEvaluationForm">
               {% csrf_token %}
               <div class="form-fields">
@@ -85,7 +86,7 @@
                   <select name="teacher" id="teacher" class="form-select" required>
                     <option value="" disabled selected>Select a teacher</option>
                     {% for teacher in teachers %}
-                      <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
+                    <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -94,14 +95,24 @@
                   <select name="department" id="department" class="form-select" required>
                     <option value="" disabled selected>Select a department</option>
                     {% for department in departments %}
-                      <option value="{{ department.pk }}">{{ department.departmentName }}</option>
+                    <option value="{{ department.pk }}">{{ department.departmentName }}</option>
                     {% endfor %}
                   </select>
                 </div>
+
                 <div class="mb-3">
                   <label for="comments" class="form-label">Your Comments</label>
                   <textarea name="comments" id="comments" class="form-control" rows="4" required></textarea>
+
+                  <!-- Guidance message -->
+                  <div id="feedbackHint" class="form-text text-muted">
+                    Please describe your overall experience with your teacher.
+                  </div>
+
+                  <!-- Live word counter -->
+                  <div id="wordCount" class="form-text text-muted text-end">0 words</div>
                 </div>
+
                 <div class="form-check mb-3">
                   <input type="checkbox" name="is_anonymous" id="is_anonymous" class="form-check-input">
                   <label for="is_anonymous" class="form-check-label">Submit Anonymously</label>
@@ -124,37 +135,37 @@
   </div>
 </div>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     // Force hide any parent cooldown overlays
     var parentOverlays = document.querySelectorAll('#cooldownOverlay, .cooldown-overlay');
-    parentOverlays.forEach(function(overlay) {
+    parentOverlays.forEach(function (overlay) {
       if (overlay.id !== 'teacherCooldownOverlay') {
         overlay.style.display = 'none !important';
         overlay.remove();
       }
     });
-    
+
     // Remove blurring from any parent elements
     var blurred = document.querySelectorAll('.blurred');
-    blurred.forEach(function(el) {
+    blurred.forEach(function (el) {
       el.classList.remove('blurred');
     });
-    
+
     // Our cooldown logic
     var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
     var form = document.getElementById('teacherEvaluationForm');
     var cooldownOverlay = document.getElementById('teacherCooldownOverlay');
     var countdownElem = document.getElementById('teacherCountdown');
     var formFields = form.querySelector('.form-fields');
-    
+
     if (cooldown > 0) {
       cooldownOverlay.style.display = 'flex';
       formFields.classList.add('teacher-eval-blur');
-      Array.from(form.elements).forEach(function(el) {
+      Array.from(form.elements).forEach(function (el) {
         el.disabled = true;
       });
 
-      var interval = setInterval(function() {
+      var interval = setInterval(function () {
         cooldown--;
         if (cooldown < 0) cooldown = 0;
         countdownElem.textContent = cooldown;
@@ -162,7 +173,7 @@
           clearInterval(interval);
           cooldownOverlay.style.display = 'none';
           formFields.classList.remove('teacher-eval-blur');
-          Array.from(form.elements).forEach(function(el) {
+          Array.from(form.elements).forEach(function (el) {
             el.disabled = false;
           });
         }
@@ -173,7 +184,7 @@
 <!-- Select2 removed — teacher is a plain <select> again. -->
 <script>
   // Filter programs based on selected department
-  (function() {
+  (function () {
     function filterPrograms() {
       var deptSelect = document.getElementById('department');
       var progSelect = document.getElementById('program');
@@ -186,7 +197,7 @@
       var prev = progSelect.value;
 
       // Clear and repopulate visible options
-      options.forEach(function(opt) {
+      options.forEach(function (opt) {
         if (!selectedDept) {
           opt.hidden = true;
           opt.disabled = true;
@@ -217,7 +228,7 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       var dept = document.getElementById('department');
       if (!dept) return;
       dept.addEventListener('change', filterPrograms);
@@ -226,4 +237,86 @@
     });
   })();
 </script>
+
+<!-- Word count validation with Bootstrap tooltip - FIXED for Teacher Evaluation -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const teacherSelect = document.getElementById('teacher');
+    const commentsEl = document.getElementById('comments');
+    const formEl = document.getElementById('teacherEvaluationForm');
+    const hintEl = document.getElementById('feedbackHint');
+    const wordCountEl = document.getElementById('wordCount');
+
+    // Bootstrap tooltip setup
+    const tooltip = new bootstrap.Tooltip(commentsEl, {
+      title: 'Please provide at least 5 words to help us understand your feedback better.',
+      trigger: 'manual',
+      placement: 'top',
+    });
+
+    // Default + dynamic hints
+    const defaultHint = 'Please describe your overall experience with your teacher.';
+
+    function updateHint() {
+      const selectedOption = teacherSelect.options[teacherSelect.selectedIndex];
+      if (teacherSelect.value) {
+        const teacherName = selectedOption.text;
+        hintEl.textContent = `Please describe your experience with ${teacherName} (e.g., teaching quality/effort, fairness, clarity, class engagement).`;
+      } else {
+        hintEl.textContent = defaultHint;
+      }
+    }
+
+    // Word counter
+    function countWords(text) {
+      if (!text) return 0;
+      return text.trim().split(/\s+/).filter(Boolean).length;
+    }
+
+    function updateWordCount() {
+      const words = countWords(commentsEl.value);
+      wordCountEl.textContent = words + (words === 1 ? ' word' : ' words');
+
+      if (words < 5) {
+        wordCountEl.classList.remove('text-success');
+        wordCountEl.classList.add('text-danger');
+      } else {
+        wordCountEl.classList.remove('text-danger');
+        wordCountEl.classList.add('text-success');
+      }
+    }
+
+    // Events
+    teacherSelect.addEventListener('change', updateHint);
+
+    commentsEl.addEventListener('input', function () {
+      tooltip.hide();
+      commentsEl.classList.remove('is-invalid');
+      updateWordCount();
+    });
+
+    formEl.addEventListener('submit', function (e) {
+      const words = countWords(commentsEl.value);
+      if (words < 5) {
+        e.preventDefault();
+        tooltip.show();
+        commentsEl.classList.add('is-invalid');
+
+        setTimeout(() => {
+          tooltip.hide();
+          commentsEl.classList.remove('is-invalid');
+        }, 3000);
+
+        commentsEl.focus();
+        return false;
+      }
+      return true;
+    });
+
+    // Initialize
+    updateHint();
+    updateWordCount();
+  });
+</script>
+
 {% endblock %}
