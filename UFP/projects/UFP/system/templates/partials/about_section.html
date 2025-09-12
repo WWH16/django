@@ -2,25 +2,113 @@
 {% load static %}
 <section id="about" class="py-5 bg-white text-dark" data-aos="fade-up">
   <div class="container">
-    <h2 class="section-heading fw-bold text-center mb-2" data-aos="fade-right" data-aos-delay="100">
-      About the Platform
-    </h2>
-    <div class="mx-auto mb-4" style="width: 60px; height: 4px; background: #198754; border-radius: 2px;"></div>
-    <div class="row justify-content-center align-items-center">
-      <div class="col-lg-8">
-          <p class="section-description lead text-center mb-3" data-aos="fade-up" data-aos-delay="200" style="font-size: 1.125rem;">
-            The <strong>University Feedback Platform</strong> was developed by students to provide a centralized, accessible, and 
-            anonymous space where students can share their experiences about university services (Wi-Fi, Library access, Scholarships, and College Admissions) 
-            and also give feedback through teacher evaluation.
-          </p>
-          <p class="text-center mb-4" data-aos="fade-up" data-aos-delay="300">
-            Using <strong>Natural Language Processing (NLP)</strong>, the platform automatically analyzes the sentiment of student feedback. 
-            This covers both university services (Wi-Fi, Library, Scholarships, etc.) and teacher evaluation. 
-            The collected feedback is also processed as part of our thesis to build the sentiment analysis model and generate insights 
-            that can be used for future improvements.
-          </p>
-        <div class="text-center mt-4" data-aos="zoom-in" data-aos-delay="400">
-          <a href="#team" class="btn btn-success rounded-pill px-4 py-2">Meet the Team</a>
+    <div class="text-center mb-5">
+      <h2 class="section-heading fw-bold mb-2" data-aos="fade-right" data-aos-delay="100">
+        About the Platform
+      </h2>
+      <div class="mx-auto mb-4" style="width: 60px; height: 4px; background: #198754; border-radius: 2px;"></div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <!-- Main Description Card -->
+        <div class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-body p-5">
+            <div class="row align-items-center">
+              <div class="col-md-2 text-center mb-3 mb-md-0">
+                <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block">
+                  <i class="bi bi-chat-square-text text-success" style="font-size: 2rem;"></i>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <p class="lead mb-0" style="font-size: 1.125rem;">
+                  The <strong>University Feedback Platform</strong> was developed by students to provide a centralized, accessible, and 
+                  anonymous space where students can share their experiences about university services and teacher evaluations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="300">
+          <div class="col-md-6">
+            <div class="d-flex">
+              <div class="flex-shrink-0">
+                <div class="bg-primary bg-opacity-10 rounded p-2">
+                  <i class="bi bi-shield-check text-primary"></i>
+                </div>
+              </div>
+              <div class="ms-3">
+                <h6 class="fw-semibold mb-2">Anonymous & Secure</h6>
+                <p class="text-muted small mb-0">Share honest feedback without revealing your identity, ensuring complete privacy.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex">
+              <div class="flex-shrink-0">
+                <div class="bg-warning bg-opacity-10 rounded p-2">
+                  <i class="bi bi-cpu text-warning"></i>
+                </div>
+              </div>
+              <div class="ms-3">
+                <h6 class="fw-semibold mb-2">AI-Powered Analysis</h6>
+                <p class="text-muted small mb-0">Advanced NLP automatically analyzes sentiment to generate actionable insights.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex">
+              <div class="flex-shrink-0">
+                <div class="bg-info bg-opacity-10 rounded p-2">
+                  <i class="bi bi-graph-up text-info"></i>
+                </div>
+              </div>
+              <div class="ms-3">
+                <h6 class="fw-semibold mb-2">Data-Driven Improvements</h6>
+                <p class="text-muted small mb-0">Feedback contributes to research that drives meaningful university improvements.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex">
+              <div class="flex-shrink-0">
+                <div class="bg-success bg-opacity-10 rounded p-2">
+                  <i class="bi bi-people text-success"></i>
+                </div>
+              </div>
+              <div class="ms-3">
+                <h6 class="fw-semibold mb-2">Student-Centered</h6>
+                <p class="text-muted small mb-0">Built by students, for students to improve university services and teaching quality.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services Covered -->
+        <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="400">
+          <h6 class="text-muted mb-3">What You Can Evaluate</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <h6 class="fw-semibold mb-2">University Services</h6>
+              <div class="d-flex flex-wrap justify-content-center gap-2">
+                <span class="badge bg-light text-dark border px-3 py-2">Wi-Fi Services</span>
+                <span class="badge bg-light text-dark border px-3 py-2">Library Access</span>
+                <span class="badge bg-light text-dark border px-3 py-2">Scholarships</span>
+                <span class="badge bg-light text-dark border px-3 py-2">College Admissions</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="fw-semibold mb-2">Teacher Evaluation</h6>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center" data-aos="zoom-in" data-aos-delay="500">
+          <a href="#team" class="btn btn-success rounded-pill px-4 py-2 me-3">Meet the Team</a>
+          <a href="#help" class="btn btn-outline-success rounded-pill px-4 py-2">Learn More</a>
         </div>
       </div>
     </div>
