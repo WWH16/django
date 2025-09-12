@@ -1,5 +1,67 @@
 <!-- Leadership Section -->
 {% load static %}
+<style>
+  /* Enhanced Team Section Styles */
+  .leader-card {
+    transition: all 0.3s ease;
+  }
+  
+  .leader-image {
+    padding: 15px;
+  }
+  
+  .leader-image img {
+    max-width: 250px;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+  }
+  
+  .leader-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+
+  .leader-image img {
+    transition: all 0.3s ease;
+  }
+
+  .leader-card:hover .leader-image img {
+    transform: scale(1.05);
+  }
+
+  .social-links a {
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  .social-links a:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .leader-card {
+      margin-bottom: 2rem;
+    }
+    
+    .leader-image img {
+      height: 220px !important;
+    }
+
+    .leader-info h4 {
+      font-size: 1rem !important;
+    }
+
+    .leader-info .position {
+      font-size: 0.8rem !important;
+    }
+
+    .leader-info .bio {
+      font-size: 0.8rem !important;
+    }
+  }
+</style>
 <section id="team" class="leadership section py-5" data-aos="fade-up">
   <div class="container">
     <div class="row justify-content-center align-items-center mb-5 flex-column-reverse flex-lg-row">
@@ -41,56 +103,59 @@
     </div>
     <div class="leadership-team d-flex justify-content-center">
       <div class="row justify-content-center w-100">
-        <div class="col-lg-3 col-md-6 mb-4 d-flex" data-aos="fade-up" data-aos-delay="100">
-          <div class="leader-card flex-fill">
-            <div class="leader-image">
-              <img src="{% static 'system/images/ken.webp' %}" alt="Principal" class="img-fluid">
-              <div class="social-links">
-                <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/"><i class="bi bi-linkedin"></i></a>
-                <a href="https://www.facebook.com/shinichikenn"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/kensstre/"><i class="bi bi-instagram"></i></a>
+        <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="leader-card bg-white shadow-sm rounded-3">
+            <div class="leader-image position-relative text-center">
+              <img src="{% static 'system/images/ken.webp' %}" alt="Principal" style="width: auto; max-width: 100%; height: auto;">
+              <div class="social-links position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-center gap-3" 
+                   style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" class="text-white"><i class="bi bi-linkedin"></i></a>
+                <a href="https://www.facebook.com/shinichikenn" class="text-white"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/kensstre/" class="text-white"><i class="bi bi-instagram"></i></a>
               </div>
             </div>
-            <div class="leader-info">
-              <h4>Kennie Angelo R. Estrellon</h4>
-              <p class="position">3rd Year BSCS-DM</p>
-              <p class="bio">Member of the development team behind the student-centered feedback systems.
+            <div class="leader-info p-3">
+              <h4 class="h5 mb-1">Kennie Angelo R. Estrellon</h4>
+              <p class="position text-success mb-2 small">3rd Year BSCS-DM</p>
+              <p class="bio small text-muted">Member of the development team behind the student-centered feedback systems.
                 Passionate about full-stack development, problem-solving, and leveraging AI to improve user experience.</p>
             </div>
           </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4 d-flex" data-aos="fade-up" data-aos-delay="200">
-          <div class="leader-card flex-fill">
-            <div class="leader-image">
-              <img src="{% static 'system/images/panis2.webp' %}" alt="Vice Principal" class="img-fluid">
-              <div class="social-links">
-                <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/"><i class="bi bi-linkedin"></i></a>
-                <a href="https://www.facebook.com/nathaniel.panis.355"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/nielpns/"><i class="bi bi-instagram"></i></a>
+        <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="leader-card bg-white shadow-sm rounded-3">
+            <div class="leader-image position-relative text-center">
+              <img src="{% static 'system/images/panis2.webp' %}" alt="Vice Principal" style="width: auto; max-width: 100%; height: auto;">
+              <div class="social-links position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-center gap-3" 
+                   style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" class="text-white"><i class="bi bi-linkedin"></i></a>
+                <a href="https://www.facebook.com/nathaniel.panis.355" class="text-white"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/nielpns/" class="text-white"><i class="bi bi-instagram"></i></a>
               </div>
             </div>
-            <div class="leader-info">
-              <h4>Nathaniel Panis</h4>
-              <p class="position">3rd Year BSCS-DM</p>
-              <p class="bio">Member of the development team behind the student-centered feedback systems, focusing on front-end development.
+            <div class="leader-info p-3">
+              <h4 class="h5 mb-1">Nathaniel Panis</h4>
+              <p class="position text-success mb-2 small">3rd Year BSCS-DM</p>
+              <p class="bio small text-muted">Member of the development team behind the student-centered feedback systems, focusing on front-end development.
                 Specializing in creating responsive user interfaces and enhancing user experience through modern web technologies.</p>
             </div>
           </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4 d-flex" data-aos="fade-up" data-aos-delay="300">
-          <div class="leader-card flex-fill">
-            <div class="leader-image">
-              <img src="{% static 'system/images/cen.webp' %}" alt="Dean of Students" class="img-fluid">
-              <div class="social-links">
-                <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/"><i class="bi bi-linkedin"></i></a>
-                <a href="https://www.facebook.com/johnansley.esteves"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/b._.boss__/"><i class="bi bi-instagram"></i></a>
+        <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="leader-card bg-white shadow-sm rounded-3">
+            <div class="leader-image position-relative text-center">
+              <img src="{% static 'system/images/cen.webp' %}" alt="Dean of Students" style="width: auto; max-width: 100%; height: auto;">
+              <div class="social-links position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-center gap-3" 
+                   style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" class="text-white"><i class="bi bi-linkedin"></i></a>
+                <a href="https://www.facebook.com/johnansley.esteves" class="text-white"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/b._.boss__/" class="text-white"><i class="bi bi-instagram"></i></a>
               </div>
             </div>
-            <div class="leader-info">
-              <h4>John Ansley Rocel</h4>
-              <p class="position">3rd Year BSCS-DM</p>
-              <p class="bio">Part of the development team behind a student-centered feedback system.
+            <div class="leader-info p-3">
+              <h4 class="h5 mb-1">John Ansley Rocel</h4>
+              <p class="position text-success mb-2 small">3rd Year BSCS-DM</p>
+              <p class="bio small text-muted">Part of the development team behind a student-centered feedback system.
                 Interested in software engineering and real-world applications of AI.</p>
             </div>
           </div>

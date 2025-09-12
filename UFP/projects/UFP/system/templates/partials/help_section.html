@@ -1,4 +1,52 @@
-<!-- Help Section -->
+<!-- Help Resources Section -->
+{% load static %}
+<style>
+  /* Help Resources Section Styles */
+  .hel    </div>
+  </div>
+</section>ces {
+    margin-top: 5rem;
+    padding: 4rem 0;
+    background-color: #f8f9fa;
+  }
+  .help-resources h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  .help-resources p {
+    color: #6c757d;a
+  }
+  .help-resources .help-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+  }
+  .help-resources .help-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  .help-resources .help-icon {
+    color: var(--bs-success);
+  }
+  .help-resources .btn {
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+  }
+  .help-resources .btn:hover {
+    transform: translateY(-2px);
+  }
+  @media (max-width: 768px) {
+    .help-resources {
+      padding: 3rem 0;
+    }
+    .help-resources h2 {
+      font-size: 2rem;
+    }
+    .help-resources .help-card {
+      margin-bottom: 1.5rem;
+    }
+  }
+</style>
+</section>
 {% load static %}
 <section id="help" class="py-5 bg-light text-dark" data-aos="fade-up">
   <div class="container">
@@ -101,7 +149,6 @@
         <p><strong>❌ Bad:</strong> “Goods.”</p>
         <p><strong>❌ Bad:</strong> “Bad.”</p>
       </div>
-    </div>
 
     <!-- Admin Dashboard Guide -->
     <div class="mb-5" data-aos="fade-up" data-aos-delay="400">
