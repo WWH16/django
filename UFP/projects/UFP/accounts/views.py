@@ -369,3 +369,19 @@ def reset_password_confirm_view(request):
 
     # GET request → render the form
     return render(request, 'accounts/email/password_reset_confirm.html', {'token': token})
+
+# guest logic
+# accounts/views.py
+# views.py
+import uuid
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+
+def guest_login(request):
+    guest_user = User.objects.create_user(
+        username=f"guest_{uuid.uuid4().hex[:8]}",
+        password=None,
+    )
+    # optionally add to a "Guest" group
+    login(request, guest_user)
+    return redirect("give_feedback")

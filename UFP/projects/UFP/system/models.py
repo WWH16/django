@@ -44,7 +44,8 @@ class Student(models.Model):
 
 class StudentFeedback(models.Model):
     feedbackID = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field='studentID')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field='studentID', null=True, blank=True)
+    guest_id = models.CharField(max_length=50, null=True, blank=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     sentiment = models.ForeignKey(Sentiment, on_delete=models.CASCADE, null=True, blank=True)
     comments = models.TextField()

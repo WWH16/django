@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.views.generic import TemplateView
 from . import views
-from .views import password_reset_form_view, reset_password_confirm_view
+from .views import password_reset_form_view, reset_password_confirm_view, guest_login
 from django.shortcuts import render
 urlpatterns = [
     path('login_student/', views.login_student_view, name='login_student'),
@@ -25,4 +25,7 @@ urlpatterns = [
 
     # Add the missing route for get-programs
     path('get-programs/<int:department_id>/', views.get_programs_by_department, name='get_programs_by_department'),
+
+    # guest 
+    path("guest-login/", guest_login, name="guest_login"),
 ]
