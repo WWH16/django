@@ -5,18 +5,24 @@
 {% block header_sub %}Welcome{% endblock %}
 
 {% block content %}
-<a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="btn-select">
-    Admin Login
-</a>
 
 <a href="{% url 'login_student' %}" class="btn-select">
     Student Login
 </a>
+
+<a href="{% url 'admin:login' %}?next={% url 'admin:index' %}" class="btn-select">
+    Admin Login
+</a>
+
 <div class="divider-or">
     <span class="divider-line"></span>
     Or
     <span class="divider-line"></span>
 </div>
+<a href="{% url 'guest_login' %}" class="btn-select">
+  Continue as Guest
+</a>
+
 <a href="{% url 'register' %}" class="btn-select">
     Register as Student
 </a>

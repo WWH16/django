@@ -80,22 +80,27 @@
             <form method="post" id="teacherEvaluationForm">
               {% csrf_token %}
               <div class="form-fields">
-                <div class="mb-3">
-                  <label for="teacher" class="form-label">Teacher</label>
-                  <!-- Use a real select so the submitted value is the teacher PK. We'll enhance it with Select2 for searchability. -->
-                  <select name="teacher" id="teacher" class="form-select" required>
-                    <option value="" disabled selected>Select a teacher</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.pk }}">{{ teacher.teacherName }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
+
+                <!-- Department FIRST -->
                 <div class="mb-3">
                   <label for="department" class="form-label">Department</label>
                   <select name="department" id="department" class="form-select" required>
                     <option value="" disabled selected>Select a department</option>
                     {% for department in departments %}
                     <option value="{{ department.pk }}">{{ department.departmentName }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- Teacher SECOND, disabled by default -->
+                <div class="mb-3">
+                  <label for="teacher" class="form-label">Teacher</label>
+                  <select name="teacher" id="teacher" class="form-select" required disabled>
+                    <option value="" disabled selected>Select a teacher</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.pk }}" data-department="{{ teacher.department_id }}" hidden>
+                      {{ teacher.teacherName }}
+                    </option>
                     {% endfor %}
                   </select>
                 </div>
@@ -134,24 +139,10 @@
     </div>
   </div>
 </div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Force hide any parent cooldown overlays
-    var parentOverlays = document.querySelectorAll('#cooldownOverlay, .cooldown-overlay');
-    parentOverlays.forEach(function (overlay) {
-      if (overlay.id !== 'teacherCooldownOverlay') {
-        overlay.style.display = 'none !important';
-        overlay.remove();
-      }
-    });
-
-    // Remove blurring from any parent elements
-    var blurred = document.querySelectorAll('.blurred');
-    blurred.forEach(function (el) {
-      el.classList.remove('blurred');
-    });
-
-    // Our cooldown logic
+    // Cooldown logic
     var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
     var form = document.getElementById('teacherEvaluationForm');
     var cooldownOverlay = document.getElementById('teacherCooldownOverlay');
@@ -179,28 +170,20 @@
         }
       }, 1000);
     }
-  });
-</script>
-<!-- Select2 removed — teacher is a plain <select> again. -->
-<script>
-  // Filter programs based on selected department
-  (function () {
-    function filterPrograms() {
-      var deptSelect = document.getElementById('department');
-      var progSelect = document.getElementById('program');
-      if (!deptSelect || !progSelect) return;
 
-      var selectedDept = deptSelect.value;
-      var options = Array.from(progSelect.querySelectorAll('option[data-department]'));
+    // 🔹 Department → Teacher filter
+    const deptSelect = document.getElementById('department');
+    const teacherSelect = document.getElementById('teacher');
 
-      // Remember previously selected value
-      var prev = progSelect.value;
+    deptSelect.addEventListener('change', function () {
+      const selectedDept = this.value;
 
-      // Clear and repopulate visible options
-      options.forEach(function (opt) {
-        if (!selectedDept) {
-          opt.hidden = true;
-          opt.disabled = true;
+      // Reset teacher dropdown
+      teacherSelect.value = '';
+      teacherSelect.querySelectorAll('option').forEach(opt => {
+        if (opt.value === '') {
+          opt.hidden = false;
+          opt.disabled = false;
         } else if (opt.getAttribute('data-department') === selectedDept) {
           opt.hidden = false;
           opt.disabled = false;
@@ -210,35 +193,17 @@
         }
       });
 
-      // Set placeholder and enable/disable select
-      var placeholder = progSelect.querySelector('option[value=""]');
-      if (!selectedDept) {
-        progSelect.value = '';
-        progSelect.setAttribute('disabled', 'disabled');
-        if (placeholder) placeholder.selected = true;
+      // Enable teacher dropdown only if department is selected
+      if (selectedDept) {
+        teacherSelect.removeAttribute('disabled');
       } else {
-        progSelect.removeAttribute('disabled');
-        // try to restore previous selection only if it is still visible
-        var stillVisible = progSelect.querySelector('option[value="' + prev + '"]:not([hidden])');
-        if (stillVisible) {
-          progSelect.value = prev;
-        } else {
-          if (placeholder) placeholder.selected = true;
-        }
+        teacherSelect.setAttribute('disabled', 'disabled');
       }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      var dept = document.getElementById('department');
-      if (!dept) return;
-      dept.addEventListener('change', filterPrograms);
-      // initialize on load
-      filterPrograms();
     });
-  })();
+  });
 </script>
 
-<!-- Word count validation with Bootstrap tooltip - FIXED for Teacher Evaluation -->
+<!-- Word count + hint logic -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const teacherSelect = document.getElementById('teacher');
@@ -247,14 +212,12 @@
     const hintEl = document.getElementById('feedbackHint');
     const wordCountEl = document.getElementById('wordCount');
 
-    // Bootstrap tooltip setup
     const tooltip = new bootstrap.Tooltip(commentsEl, {
       title: 'Please provide at least 5 words to help us understand your feedback better.',
       trigger: 'manual',
       placement: 'top',
     });
 
-    // Default + dynamic hints
     const defaultHint = 'Please describe your overall experience with your teacher.';
 
     function updateHint() {
@@ -267,7 +230,6 @@
       }
     }
 
-    // Word counter
     function countWords(text) {
       if (!text) return 0;
       return text.trim().split(/\s+/).filter(Boolean).length;
@@ -286,7 +248,6 @@
       }
     }
 
-    // Events
     teacherSelect.addEventListener('change', updateHint);
 
     commentsEl.addEventListener('input', function () {
@@ -313,7 +274,6 @@
       return true;
     });
 
-    // Initialize
     updateHint();
     updateWordCount();
   });

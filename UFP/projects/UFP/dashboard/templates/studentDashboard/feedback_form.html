@@ -195,6 +195,7 @@
     <!-- Sidebar -->
     <nav id="studentSidebar" class="sidebar">
       <ul class="sidebar-nav flex-column mb-3">
+        {% if user.is_authenticated and user.username|slice:":6" != "guest_" %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}"
             href="{% url 'my_feedback' %}">
@@ -209,6 +210,7 @@
             <span class="sidebar-text">Profile</span>
           </a>
         </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}"
             href="{% url 'give_feedback' %}">

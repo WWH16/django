@@ -202,72 +202,114 @@ def profile(request):
 def give_feedback(request):
     cooldown_seconds = 3
     now = timezone.now()
+    services = Service.objects.all().order_by("serviceName")
 
-    services = Service.objects.all().order_by('serviceName')
-    try:
-        student = Student.objects.get(studentID=request.user.username)
-    except Student.DoesNotExist:
-        messages.error(request, 'Student profile not found.')
-        return render(request, 'studentDashboard/feedback_form.html', {
-            'cooldown_remaining': 0,
-            'services': services,
-        })
+    # default values (guarantee these exist for every render)
+    student = None
+    is_guest = False
+    cooldown_remaining = 0
 
-    last_feedback = StudentFeedback.objects.filter(student=student).order_by('-timestamp').first()
-    cooldown_remaining = max(
-        0,
-        cooldown_seconds - int((now - last_feedback.timestamp).total_seconds())
-    ) if last_feedback else 0
+    # pop one-time login toast flag (set this in your login/guest_login view)
+    show_login_toast = request.session.pop("show_login_toast", False)
 
-    # Detect if we just logged in (message with 'login' tag)
-    show_login_toast = False
-    for message in messages.get_messages(request):
-        if 'login' in message.tags and message.level_tag == 'success':
-            show_login_toast = True
-            break
+    # ---- Identify guest vs student ----
+    if request.user.username.startswith("guest_"):
+        is_guest = True
+        # one-time guest notice in-session
+        if not request.session.get("guest_notified", False):
+            messages.info(request, "You are in guest mode. Your feedback will be anonymous.")
+            request.session["guest_notified"] = True
+    else:
+        # try to find Student profile (if none, we keep student=None and warn)
+        try:
+            student = Student.objects.get(studentID=request.user.username)
+            # optional one-time welcome for real students
+            if not request.session.get("student_notified", False):
+                messages.success(
+                    request,
+                    f"Welcome back {student.studentName}!"
+                )
+                request.session["student_notified"] = True
+        except Student.DoesNotExist:
+            messages.warning(request, "Student profile not found. Your feedback will be anonymous.")
+            student = None
 
-    if request.method == 'POST':
-        if cooldown_remaining > 0:
+    # ---- Cooldown logic (only for real students) ----
+    if student:
+        last_feedback = StudentFeedback.objects.filter(student=student).order_by("-timestamp").first()
+        if last_feedback:
+            elapsed = int((now - last_feedback.timestamp).total_seconds())
+            cooldown_remaining = max(0, cooldown_seconds - elapsed)
+        else:
+            cooldown_remaining = 0
+    else:
+        cooldown_remaining = 0
+
+    # ---- POST handling ----
+    if request.method == "POST":
+        # re-check cooldown for safety
+        if cooldown_remaining > 0 and not is_guest:
             messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
-            return render(request, 'studentDashboard/feedback_form.html', {
-                'cooldown_remaining': cooldown_remaining,
-                'show_login_toast': show_login_toast,
-                'services': services,
+            return render(request, "studentDashboard/feedback_form.html", {
+                "cooldown_remaining": cooldown_remaining,
+                "show_login_toast": show_login_toast,
+                "services": services,
+                "student": student,
             })
 
-        service_id = request.POST.get('service')
-        feedback_text = request.POST.get('feedback')
+        service_id = request.POST.get("service")
+        feedback_text = request.POST.get("feedback")
 
         if not service_id or not feedback_text:
-            messages.error(request, 'Please fill in all required fields.')
-            return render(request, 'studentDashboard/feedback_form.html', {
-                'cooldown_remaining': cooldown_remaining,
-                'show_login_toast': show_login_toast,
-                'services': services,
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, "studentDashboard/feedback_form.html", {
+                "cooldown_remaining": cooldown_remaining,
+                "show_login_toast": show_login_toast,
+                "services": services,
+                "student": student,
             })
 
         try:
             service = Service.objects.get(pk=service_id)
+
             StudentFeedback.objects.create(
-                student=student,
+                student=student if student else None,
+                guest_id=request.user.username if is_guest else None,
                 service=service,
                 sentiment=None,
-                comments=feedback_text
+                comments=feedback_text,
+                timestamp=timezone.now()
             )
-            log_student_activity(student=student, activity_type='StudentProvidedFeedback')
-            messages.success(request, 'Thank you for your input.')
-            return redirect('give_feedback')
+
+            if student:
+                log_student_activity(student=student, activity_type="StudentProvidedFeedback")
+
+            messages.success(request, "Thank you for your feedback!")
+            # After successful POST redirect (PRG) — keep login toast state consumed already
+            return redirect("give_feedback")
 
         except Service.DoesNotExist:
-            messages.error(request, 'Selected service does not exist.')
+            messages.error(request, "Selected service does not exist.")
         except Exception as e:
-            messages.error(request, f'Error submitting feedback: {str(e)}')
+            messages.error(request, f"Error submitting feedback: {str(e)}")
 
-    return render(request, 'studentDashboard/feedback_form.html', {
-        'cooldown_remaining': cooldown_remaining,
-        'show_login_toast': show_login_toast,
-        'services': services,
+        # If we fallthrough because of an exception, render with full context
+        return render(request, "studentDashboard/feedback_form.html", {
+            "cooldown_remaining": cooldown_remaining,
+            "show_login_toast": show_login_toast,
+            "services": services,
+            "student": student,
+        })
+
+    # ---- GET: render page with context (always include cooldown_remaining & show_login_toast) ----
+    return render(request, "studentDashboard/feedback_form.html", {
+        "cooldown_remaining": cooldown_remaining,
+        "show_login_toast": show_login_toast,
+        "services": services,
+        "student": student,
     })
+
+
 
 from system.models import TeacherEvaluation, Teacher, Department, Program
 from django.shortcuts import render, redirect, get_object_or_404
@@ -462,7 +504,6 @@ def change_password(request):
 
     return render(request, 'studentDashboard/change_password.html')
 
-
 @login_required
 def teacher_evaluation(request):
     cooldown_seconds = 3
@@ -473,39 +514,44 @@ def teacher_evaluation(request):
     programs = Program.objects.all()
     sentiments = Sentiment.objects.all()
 
-    try:
-        student = Student.objects.get(studentID=request.user.username)
-    except Student.DoesNotExist:
-        messages.error(request, 'Student profile not found.')
-        return render(request, 'studentDashboard/teacher_evaluation_form.html', {
-            'teachers': teachers,
-            'departments': departments,
-            'programs': programs,
-            'sentiments': sentiments,
-            'cooldown_remaining': 0,
-        })
+    # 🔹 Explicitly handle guest vs student
+    student = None
+    if request.user.is_authenticated:
+        if request.user.username.startswith("guest_"):
+            if not request.session.get("guest_notified", False):
+                messages.warning(request, "You are in guest mode. Your evaluation will be anonymous.")
+                request.session["guest_notified"] = True
+        else:
+            try:
+                student = Student.objects.get(studentID=request.user.username)
+            except Student.DoesNotExist:
+                messages.error(request, "Student profile not found. Your evaluation will be anonymous.")
+    # 🔹 Cooldown logic (only applies to real students, not guests)
+    last_evaluation = None
+    if student:
+        last_evaluation = TeacherEvaluation.objects.filter(
+            submitted_by=request.user.username
+        ).order_by('-timestamp').first()
 
-    # --- Refactored cooldown logic (same as give_feedback) ---
-    last_evaluation = TeacherEvaluation.objects.filter(submitted_by=request.user.username).order_by('-timestamp').first()
     cooldown_remaining = max(
         0,
         cooldown_seconds - int((now - last_evaluation.timestamp).total_seconds())
     ) if last_evaluation else 0
-    # ---------------------------------------------------------
 
+    # 🔹 Handle form submission
     if request.method == 'POST':
-        comments       = request.POST.get('comments')
-        teacher_id     = request.POST.get('teacher')
-        department_id  = request.POST.get('department')
-        # program/specialization/sentiment are optional now (template no longer sends them)
-        sentiment_id   = request.POST.get('sentiment')
-
+        comments = request.POST.get('comments')
+        teacher_id = request.POST.get('teacher')
+        department_id = request.POST.get('department')
+        sentiment_id = request.POST.get('sentiment')
         is_anonymous = 'is_anonymous' in request.POST
-        username = _resolve_username(request.user)  # store this ALWAYS
 
-        # Basic required fields: comments, teacher, department
+        if student:
+            username = request.user.username  # real student
+        else:
+            username = f"{request.user.username}" if request.user.is_authenticated else "Guest"
+
         if comments and teacher_id and department_id:
-            # Attempt to derive program from the selected teacher if available
             program_obj = None
             try:
                 teacher_obj = Teacher.objects.get(pk=teacher_id)
@@ -520,20 +566,17 @@ def teacher_evaluation(request):
                 program=program_obj,
                 specialization=None,
                 sentiment_id=sentiment_id or None,
-                is_anonymous=is_anonymous,
-                submitted_by=username,           # <- key for filtering later
+                is_anonymous=(not student) or is_anonymous,
+                submitted_by=username,
                 timestamp=timezone.now(),
             )
-            try:
-                student = Student.objects.get(studentID=request.user.username)
-                log_student_activity(
-                    student=student,
-                    activity_type='StudentProvidedFeedback'
-                )
-            except Student.DoesNotExist:
-                pass
+
+            if student:
+                log_student_activity(student=student, activity_type='StudentProvidedFeedback')
+
             messages.success(request, 'Your evaluation has been submitted successfully!')
             return redirect('teacher_evaluation')
+
         else:
             messages.error(request, 'Please fill in all required fields.')
 
@@ -543,7 +586,10 @@ def teacher_evaluation(request):
         'programs': programs,
         'sentiments': sentiments,
         'cooldown_remaining': cooldown_remaining,
+        'student': student,  # Pass to template
     })
+
+
 
 from system.models import Service
 @login_required
