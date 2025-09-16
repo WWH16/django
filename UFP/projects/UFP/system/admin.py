@@ -69,7 +69,7 @@ class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
 @admin.register(StudentFeedback)
 class StudentFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = StudentFeedbackResource
-    list_display = ('student', 'comments', 'service', 'sentiment', 'timestamp')
+    list_display = ('student', 'comments', 'service', 'timestamp', 'guest_id')
     search_fields = ('student__studentName', 'service__serviceName')
     list_filter = ('service', 'sentiment', 'timestamp') 
     actions = ['export']
