@@ -198,7 +198,9 @@ def profile(request):
         }
     return render(request, 'studentDashboard/profile.html', context)
 
-@login_required
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def give_feedback(request):
     cooldown_seconds = 3
     now = timezone.now()
