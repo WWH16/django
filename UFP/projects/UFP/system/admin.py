@@ -212,7 +212,9 @@ class StudentActivityLogAdmin(ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False  # prevent editing
     
-# cron job
+# ------------------------------
+# Celery tasks
+# ------------------------------
 # admin.py
 from django.contrib import admin
 from unfold.admin import ModelAdmin
@@ -266,3 +268,23 @@ class CrontabScheduleAdmin(BaseCrontabScheduleAdmin, ModelAdmin):
 @admin.register(SolarSchedule)
 class SolarScheduleAdmin(ModelAdmin):
     pass
+
+@admin.register(ClockedSchedule)
+class ClockedScheduleAdmin(BaseClockedScheduleAdmin, ModelAdmin):
+    pass
+
+
+from django_celery_results.models import TaskResult, GroupResult
+from django_celery_results.admin import TaskResultAdmin as DefaultTaskResultAdmin
+from django_celery_results.admin import GroupResultAdmin as DefaultGroupResultAdmin
+
+admin.site.unregister(TaskResult)
+
+@admin.register(TaskResult)
+class TaskResultAdmin(DefaultTaskResultAdmin, ModelAdmin):
+    list_filter = ('status', 'date_done', 'task_name', 'result')
+
+admin.site.unregister(GroupResult)
+@admin.register(GroupResult)
+class GroupResultAdmin(DefaultGroupResultAdmin, ModelAdmin):
+    list_filter = ('group_id', 'result', 'date_done')
