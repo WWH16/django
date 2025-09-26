@@ -2,10 +2,10 @@ import os
 from celery import Celery
 
 # Set default Django settings
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "warehouse.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "UFP.settings")
 
 # Create Celery app
-app = Celery("warehouse")
+app = Celery("UFP")
 
 # Load Celery settings from Django settings (with CELERY_ prefix)
 app.config_from_object("django.conf:settings", namespace="CELERY")
