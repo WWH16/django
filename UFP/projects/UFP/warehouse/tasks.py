@@ -3,18 +3,23 @@ from system.models import Student, StudentFeedback
 from warehouse.models import DimStudent, FactFeedback, DimService, DimSentiment
 from django.db import transaction
 import requests
+import datetime
 
+# -------------------------
+# 0️⃣ Simple test task
+# -------------------------
 @shared_task(ignore_result=False)
 def print_hello():
-    import datetime
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"Hello from Celery at {now}")
     return f"Executed at {now}"
 
+# -------------------------
+# Hugging Face API config
+# -------------------------
 HF_API_URL = "https://huggingface.co/spaces/CEENNNNNN/UFP_MODEL/api/predict"
 HF_API_TOKEN = "<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>"  # optional if private
 HEADERS = {"Authorization": f"Bearer {HF_API_TOKEN}"} if HF_API_TOKEN else {}
-
 BATCH_SIZE = 50  # adjust depending on API/system
 
 # -------------------------
@@ -48,7 +53,7 @@ def sync_students_task():
 # 2️⃣ Process new feedback and insert into warehouse
 # -------------------------
 @shared_task
-def run_model_to_warehouse_task():
+def run_model_to_warehouse_task(*args, **kwargs):
     # Get IDs of feedback already in warehouse
     processed_ids = set(FactFeedback.objects.values_list('feedback_id', flat=True))
 
@@ -56,6 +61,7 @@ def run_model_to_warehouse_task():
     new_feedbacks = StudentFeedback.objects.filter(sentiment__isnull=True).exclude(feedbackID__in=processed_ids)
 
     if not new_feedbacks.exists():
+        print("No new feedback to process.")
         return "No new feedback to process."
 
     new_feedbacks = list(new_feedbacks)
@@ -64,12 +70,15 @@ def run_model_to_warehouse_task():
         batch = new_feedbacks[i:i + BATCH_SIZE]
         payload = {"data": [fb.comments for fb in batch]}
 
+        print(f"Sending batch {i} to Hugging Face API...")
         response = requests.post(HF_API_URL, headers=HEADERS, json=payload)
+
         if response.status_code != 200:
             print(f"Error processing batch starting at {i}: {response.text}")
             continue
 
         predictions = response.json().get("data", [])
+        print(f"Received predictions: {predictions}")
 
         warehouse_rows = []
         for fb, label in zip(batch, predictions):
@@ -79,7 +88,7 @@ def run_model_to_warehouse_task():
 
             warehouse_rows.append(
                 FactFeedback(
-                    feedback_id=fb.feedbackID,  # system feedbackID as PK
+                    feedback_id=fb.feedbackID,
                     student=student_obj,
                     service=service_obj,
                     sentiment=sentiment_obj,
@@ -99,5 +108,13 @@ def run_model_to_warehouse_task():
 # 3️⃣ Chain tasks
 # -------------------------
 @shared_task
-def sync_then_model_to_warehouse():
-    chain(sync_students_task.s(), run_model_to_warehouse_task.s())()
+def sync_then_model_to_warehouse(*args, **kwargs):
+    """
+    Chain:
+    1. Sync students
+    2. Run model to warehouse (ignores previous result)
+    """
+    chain(
+        sync_students_task.s(),         # normal signature
+        run_model_to_warehouse_task.si()  # immutable signature, ignores previous result
+    )()
