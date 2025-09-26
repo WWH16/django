@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     'warehouse.apps.WarehouseConfig',
     'rest_framework.authtoken',
     'django_rest_passwordreset',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -101,16 +103,16 @@ WSGI_APPLICATION = 'UFP.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+from decouple import config
 # Use dj-database-url for more flexible database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ufp_db',
-        'USER': 'ufp_user',
-        'PASSWORD': 'Estevesjancen06-16-23',
-        'HOST': 'localhost',   # <-- important
-        'PORT': '5432',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
