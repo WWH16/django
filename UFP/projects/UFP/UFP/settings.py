@@ -617,5 +617,7 @@ UNFOLD = {
     #"ENVIRONMENT_TITLE_PREFIX": None,
     #"DASHBOARD_CALLBACK": "system.views.dashboard_callback",
 }
-CELERY_RESULT_BACKEND = 'django-db'
+# Celery settings
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"   # Redis as the broker
+CELERY_RESULT_BACKEND = "django-db"              # Store results in Django DB
 CELERY_RESULT_EXTENDED = True

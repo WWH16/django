@@ -266,7 +266,3 @@ class CrontabScheduleAdmin(BaseCrontabScheduleAdmin, ModelAdmin):
 @admin.register(SolarSchedule)
 class SolarScheduleAdmin(ModelAdmin):
     pass
-
-@admin.register(ClockedSchedule)
-class ClockedScheduleAdmin(BaseClockedScheduleAdmin, ModelAdmin):
-    pass
