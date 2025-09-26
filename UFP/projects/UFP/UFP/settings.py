@@ -404,6 +404,56 @@ UNFOLD = {
                     },
                 ],
             },
+            {
+                "title": _("Periodic Tasks"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Periodic Tasks"),
+                        "icon": "schedule",
+                        "link": reverse_lazy("admin:django_celery_beat_periodictask_changelist"),
+                    },
+                    {
+                        "title": _("Intervals"),
+                        "icon": "timer",
+                        "link": reverse_lazy("admin:django_celery_beat_intervalschedule_changelist"),
+                    },
+                    {
+                        "title": _("Crontabs"),
+                        "icon": "calendar_today",
+                        "link": reverse_lazy("admin:django_celery_beat_crontabschedule_changelist"),
+                    },
+                    {
+                        "title": _("Solar"),
+                        "icon": "wb_sunny",
+                        "link": reverse_lazy("admin:django_celery_beat_solarschedule_changelist"),
+                    },
+                    {
+                        "title": _("Clocked"),
+                        "icon": "access_time",
+                        "link": reverse_lazy("admin:django_celery_beat_clockedschedule_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Celery Results"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Task Results"),
+                        "icon": "task_alt",
+                        "link": reverse_lazy("admin:django_celery_results_taskresult_changelist"),
+                    },
+                    {
+                        "title": _("Group Results"),
+                        "icon": "group_work",
+                        "link": reverse_lazy("admin:django_celery_results_groupresult_changelist"),
+                    },
+                ],
+            },
+
         ],
     },
     "TABS": [
@@ -494,6 +544,72 @@ UNFOLD = {
                 },
             ],
         },
+        {
+            "models": [
+                "auth.user",
+                "auth.group",
+            ],
+            "items": [
+                {
+                    "title": _("Users"),
+                    "link": reverse_lazy("admin:auth_user_changelist"),
+                },
+                {
+                    "title": _("Groups"),
+                    "link": reverse_lazy("admin:auth_group_changelist"),
+                },
+            ],
+        },
+        {
+            "models": [
+                "django_celery_beat.periodictask",
+                "django_celery_beat.intervalschedule",
+                "django_celery_beat.crontabschedule",
+                "django_celery_beat.solarschedule",
+                "django_celery_beat.clockedschedule",
+            ],
+            "items": [
+                {
+                    "title": _("Periodic Tasks"),
+                    "link": reverse_lazy("admin:django_celery_beat_periodictask_changelist"),
+                },
+                {
+                    "title": _("Intervals"),
+                    "link": reverse_lazy("admin:django_celery_beat_intervalschedule_changelist"),
+                },
+                {
+                    "title": _("Crontabs"),
+                    "link": reverse_lazy("admin:django_celery_beat_crontabschedule_changelist"),
+                },
+                {
+                    "title": _("Solar"),
+                    "link": reverse_lazy("admin:django_celery_beat_solarschedule_changelist"),
+                },
+                {
+                    "title": _("Clocked"),
+                    "link": reverse_lazy("admin:django_celery_beat_clockedschedule_changelist"),
+                },
+            ],
+        },
+        {
+            "models": [
+                "django_celery_results.taskresult",
+                "django_celery_results.groupresult",
+            ],
+            "items": [
+                {
+                    "title": _("Task Results"),
+                    "link": reverse_lazy("admin:django_celery_results_taskresult_changelist"),
+                    #filter: "status__exact=SUCCESS",
+                },
+                {
+                    "title": _("Group Results"),
+                    "link": reverse_lazy("admin:django_celery_results_groupresult_changelist"),
+                    #filter: "status__exact=SUCCESS",
+                },
+            ],
+        },
+
     ],
 
     # Your callbacks here:
@@ -501,3 +617,5 @@ UNFOLD = {
     #"ENVIRONMENT_TITLE_PREFIX": None,
     #"DASHBOARD_CALLBACK": "system.views.dashboard_callback",
 }
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXTENDED = True
