@@ -152,11 +152,25 @@ USE_TZ = True
 # settings.py
 
 # URL paths for browser
+# =============================
+# Static & Media files
+# =============================
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = '/var/www/ufp/assets/'
-MEDIA_ROOT = '/var/www/ufp/media/'
+# -----------------------------
+# Local development (Windows)
+# -----------------------------
+# Use project-relative folders for dev
+# STATIC_ROOT = BASE_DIR / 'assets'      # <-- DEV: uncomment for local
+# MEDIA_ROOT = BASE_DIR / 'media'        # <-- DEV: uncomment for local
+
+# -----------------------------
+# Production / VM (Linux)
+# -----------------------------
+# Use absolute Linux paths for production
+STATIC_ROOT = '/var/www/ufp/assets/'   # <-- PROD: uncomment on VM
+MEDIA_ROOT = '/var/www/ufp/media/'     # <-- PROD: uncomment on VM
 
 # Optional: additional static files
 STATICFILES_DIRS = [

@@ -166,7 +166,11 @@
         </div>
       </div>
     </div>
-
+{% if osas_wordcloud_url %}
+    <img src="{{ osas_wordcloud_url }}" alt="OSAS Feedback WordCloud" style="max-width:100%;">
+{% else %}
+    <p>No WordCloud generated yet.</p>
+{% endif %}
     <!-- CHARTS -->
     <div class="row">
       <div class="col-lg-7 col-xl-8">
