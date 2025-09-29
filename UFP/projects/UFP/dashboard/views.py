@@ -385,23 +385,61 @@ def admin_dashboard(request):
 def osas_services(request):
     return render(request, 'adminDashboard/osas-services.html')
 
+import os
+from django.conf import settings
+from django.template.response import TemplateResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import admin
+
 @staff_member_required
 def admin_teachers_evaluation(request):
-    """Render Teacher's Evaluation dashboard inside Unfold-themed admin shell with admin context."""
+    wc_folder = os.path.join(settings.MEDIA_ROOT, "wordclouds")
+    latest_wc = None
+    if os.path.exists(wc_folder):
+        files = [f for f in os.listdir(wc_folder) if f.startswith("teacher_eval")]
+        if files:
+            latest_wc = max(files, key=lambda f: os.path.getctime(os.path.join(wc_folder, f)))
+
+    wc_url = os.path.join(settings.MEDIA_URL, "wordclouds", latest_wc).replace("\\", "/") if latest_wc else None
+
     context = {
         **admin.site.each_context(request),
         "title": "Teacher's Evaluation Dashboard",
+        "teacher_wordcloud_url": wc_url,
     }
     return TemplateResponse(request, 'admin/teachers_evaluation.html', context)
 
+
+
+
+import os
+from django.template.response import TemplateResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import admin
+from django.conf import settings
+
 @staff_member_required
 def admin_osas_services(request):
-    """Render OSAS Services dashboard inside Unfold-themed admin shell with admin context."""
+    wc_folder = os.path.join(settings.MEDIA_ROOT, "wordclouds")
+    latest_wc = None
+
+    if os.path.exists(wc_folder):
+        # Look for files starting with the prefix used in the feedback WordCloud task
+        files = [f for f in os.listdir(wc_folder) if f.startswith("feedback_wordcloud")]
+        if files:
+            latest_wc = max(files, key=lambda f: os.path.getctime(os.path.join(wc_folder, f)))
+
+    wc_url = os.path.join(settings.MEDIA_URL, "wordclouds", latest_wc).replace("\\", "/") if latest_wc else None
+
     context = {
         **admin.site.each_context(request),
         "title": "OSAS Services Dashboard",
+        "osas_wordcloud_url": wc_url,  # no trailing space
     }
+
     return TemplateResponse(request, 'admin/osas_services.html', context)
+
+
 
 
 @login_required

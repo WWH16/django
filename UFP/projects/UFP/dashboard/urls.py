@@ -1,5 +1,6 @@
-from django.urls import path, reverse_lazy
-from django.contrib.auth import views as auth_views
+from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 
@@ -24,3 +25,7 @@ urlpatterns = [
     path('admin/profile/edit/', views.edit_admin_profile, name='edit_admin_profile'),  
     path('change-password/', views.change_password, name='change_password'),
 ]
+
+    # Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

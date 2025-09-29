@@ -9,6 +9,7 @@
 <!-- Load Chart.js first so page script can register plugins and use Chart API -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="{% static 'dashboard/js/teachers_evaluation.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -143,7 +144,12 @@
         </div>
       </div>
     </div>
-
+<h2>Teacher Evaluation WordCloud</h2>
+{% if teacher_wordcloud_url %}
+    <img src="{{ teacher_wordcloud_url }}" alt="Teacher Evaluation WordCloud" style="max-width:100%;">
+{% else %}
+    <p>No WordCloud generated yet.</p>
+{% endif %}
     <!-- Lists -->
     <div class="row">
       <div class="col-lg-6 mb-4">

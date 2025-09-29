@@ -1,31 +1,39 @@
-from celery import shared_task, chain
-from system.models import Student, StudentFeedback
-from warehouse.models import DimStudent, FactFeedback, DimService, DimSentiment
+from celery import shared_task, chain, group
+from system.models import Student, StudentFeedback, TeacherEvaluation
+from warehouse.models import DimStudent, FactFeedback, DimService, DimSentiment, dim_teacher, fact_teacher_evaluation
 from django.db import transaction
-import requests
+from django.conf import settings
 import datetime
+import os
+from joblib import load
+from wordcloud import WordCloud
 
 # -------------------------
-# 0️⃣ Simple test task
+# 0️⃣ Load local SVM + TFIDF pipeline
 # -------------------------
-@shared_task(ignore_result=False)
-def print_hello():
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"Hello from Celery at {now}")
-    return f"Executed at {now}"
+MODEL_PATH = os.path.join(settings.BASE_DIR, "warehouse", "model", "svm_tfidf_pipeline.pkl")
+svm_pipeline = load(MODEL_PATH)
+print(f"SVM + TFIDF pipeline loaded from {MODEL_PATH}")
 
-# -------------------------
-# Hugging Face API config
-# -------------------------
-HF_API_URL = "https://huggingface.co/spaces/CEENNNNNN/UFP_MODEL/api/predict"
-HF_API_TOKEN = "<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>"  # optional if private
-HEADERS = {"Authorization": f"Bearer {HF_API_TOKEN}"} if HF_API_TOKEN else {}
-BATCH_SIZE = 50  # adjust depending on API/system
+# Map model predictions to labels
+SENTIMENT_LABELS = {
+    1: "Positive",
+    2: "Neutral",
+    3: "Negative"
+}
+
+def get_sentiment_label(text):
+    """Predict sentiment using local SVM pipeline."""
+    try:
+        pred = svm_pipeline.predict([text])[0]
+        return SENTIMENT_LABELS.get(pred, "Unknown")
+    except Exception as e:
+        print(f"Error predicting sentiment for '{text[:50]}...': {e}")
+        return "Unknown"
 
 # -------------------------
 # 1️⃣ Sync new students
 # -------------------------
-@shared_task
 def sync_students_task():
     existing_ids = set(DimStudent.objects.values_list('student_id', flat=True))
     new_students = Student.objects.exclude(studentID__in=existing_ids)
@@ -50,71 +58,183 @@ def sync_students_task():
     return f"Synced {len(dim_students)} new students."
 
 # -------------------------
-# 2️⃣ Process new feedback and insert into warehouse
+# 2️⃣ Process Student Feedback
 # -------------------------
-@shared_task
-def run_model_to_warehouse_task(*args, **kwargs):
-    # Get IDs of feedback already in warehouse
-    processed_ids = set(FactFeedback.objects.values_list('feedback_id', flat=True))
-
-    # Only feedback with null sentiment AND not yet in warehouse
-    new_feedbacks = StudentFeedback.objects.filter(sentiment__isnull=True).exclude(feedbackID__in=processed_ids)
+def run_feedback_to_warehouse_task(*args, **kwargs):
+    processed_comments = set(FactFeedback.objects.values_list('comments', flat=True))
+    new_feedbacks = StudentFeedback.objects.exclude(comments__in=processed_comments)
 
     if not new_feedbacks.exists():
-        print("No new feedback to process.")
         return "No new feedback to process."
 
-    new_feedbacks = list(new_feedbacks)
+    feedback_objs = []
+    dim_sentiments_cache = {}
+    dim_services_cache = {}
+    dim_students_cache = {s.student_id: s for s in DimStudent.objects.all()}
 
-    for i in range(0, len(new_feedbacks), BATCH_SIZE):
-        batch = new_feedbacks[i:i + BATCH_SIZE]
-        payload = {"data": [fb.comments for fb in batch]}
+    for fb in new_feedbacks:
+        sentiment_label = get_sentiment_label(fb.comments)
 
-        print(f"Sending batch {i} to Hugging Face API...")
-        response = requests.post(HF_API_URL, headers=HEADERS, json=payload)
+        # Cache DimSentiment objects
+        if sentiment_label not in dim_sentiments_cache:
+            sentiment_obj, _ = DimSentiment.objects.get_or_create(label=sentiment_label)
+            dim_sentiments_cache[sentiment_label] = sentiment_obj
+        else:
+            sentiment_obj = dim_sentiments_cache[sentiment_label]
 
-        if response.status_code != 200:
-            print(f"Error processing batch starting at {i}: {response.text}")
-            continue
+        # Cache DimService objects
+        service_name = fb.service.serviceName
+        if service_name not in dim_services_cache:
+            service_obj, _ = DimService.objects.get_or_create(service_name=service_name)
+            dim_services_cache[service_name] = service_obj
+        else:
+            service_obj = dim_services_cache[service_name]
 
-        predictions = response.json().get("data", [])
-        print(f"Received predictions: {predictions}")
+        student_obj = dim_students_cache.get(fb.student.studentID) if fb.student else None
 
-        warehouse_rows = []
-        for fb, label in zip(batch, predictions):
-            sentiment_obj, _ = DimSentiment.objects.get_or_create(label=label)
-            service_obj = DimService.objects.get(service_name=fb.service.serviceName)
-            student_obj = DimStudent.objects.filter(student_id=fb.student.studentID).first() if fb.student else None
-
-            warehouse_rows.append(
-                FactFeedback(
-                    feedback_id=fb.feedbackID,
-                    student=student_obj,
-                    service=service_obj,
-                    sentiment=sentiment_obj,
-                    timestamp=fb.timestamp,
-                    comment_length=len(fb.comments),
-                    comments=fb.comments
-                )
+        feedback_objs.append(
+            FactFeedback(
+                student=student_obj,
+                service=service_obj,
+                sentiment=sentiment_obj,
+                timestamp=fb.timestamp,
+                comments=fb.comments,
+                comment_length=len(fb.comments)
             )
+        )
 
-        if warehouse_rows:
-            with transaction.atomic():
-                FactFeedback.objects.bulk_create(warehouse_rows)
+    if feedback_objs:
+        with transaction.atomic():
+            FactFeedback.objects.bulk_create(feedback_objs)
 
-    return f"Processed {len(new_feedbacks)} new feedback entries into warehouse."
+    return f"Processed {len(feedback_objs)} feedback entries into warehouse."
+
 
 # -------------------------
-# 3️⃣ Chain tasks
+# 3️⃣ Process Teacher Evaluation
+# -------------------------
+def run_teacher_eval_to_warehouse_task(*args, **kwargs):
+    processed_comments = set(fact_teacher_evaluation.objects.values_list('comments', flat=True))
+    new_evals = TeacherEvaluation.objects.exclude(comments__in=processed_comments)
+
+    if not new_evals.exists():
+        return "No new teacher evaluations to process."
+
+    eval_objs = []
+    dim_sentiments_cache = {}
+    dim_teachers_cache = {t.teacher_id: t for t in dim_teacher.objects.all()}
+
+    for ev in new_evals:
+        sentiment_label = get_sentiment_label(ev.comments)
+
+        # Cache DimSentiment objects
+        if sentiment_label not in dim_sentiments_cache:
+            sentiment_obj, _ = DimSentiment.objects.get_or_create(label=sentiment_label)
+            dim_sentiments_cache[sentiment_label] = sentiment_obj
+        else:
+            sentiment_obj = dim_sentiments_cache[sentiment_label]
+
+        teacher_obj = dim_teachers_cache.get(ev.teacher.teacher_id) if ev.teacher else None
+
+        eval_objs.append(
+            fact_teacher_evaluation(
+                teacher=teacher_obj,
+                sentiment=sentiment_obj,
+                timestamp=ev.timestamp,
+                comments=ev.comments,
+                comment_length=len(ev.comments)
+            )
+        )
+
+    if eval_objs:
+        with transaction.atomic():
+            fact_teacher_evaluation.objects.bulk_create(eval_objs)
+
+    return f"Processed {len(eval_objs)} teacher evaluations into warehouse."
+
+# -------------------------
+# 4️⃣ Chain tasks
 # -------------------------
 @shared_task
-def sync_then_model_to_warehouse(*args, **kwargs):
-    """
-    Chain:
-    1. Sync students
-    2. Run model to warehouse (ignores previous result)
-    """
-    chain(
-        sync_students_task.s(),         # normal signature
-        run_model_to_warehouse_task.si()  # immutable signature, ignores previous result
-    )()
+def Process_all_Data(*args, **kwargs):
+    # 1️⃣ Sync new students
+    student_result = sync_students_task()
+    print(student_result)
+
+    # 2️⃣ Process new student feedback
+    feedback_result = run_feedback_to_warehouse_task()
+    print(feedback_result)
+
+    # 3️⃣ Process new teacher evaluations
+    teacher_result = run_teacher_eval_to_warehouse_task()
+    print(teacher_result)
+
+    # 4️⃣ Determine if WordClouds should be generated
+    feedback_has_new = "No new feedback" not in feedback_result
+    teacher_has_new = "No new teacher evaluations" not in teacher_result
+
+    if feedback_has_new or teacher_has_new:
+        # Only generate WordClouds if there is new data
+        wc_tasks = []
+        if feedback_has_new:
+            wc_tasks.append(generate_feedback_wordcloud_task.s())
+        if teacher_has_new:
+            wc_tasks.append(generate_teacher_eval_wordcloud_task.s())
+
+        # Execute WordCloud tasks in parallel asynchronously
+        from celery import group
+        group(wc_tasks).apply_async()
+        print("WordCloud generation tasks dispatched.")
+    else:
+        print("No new feedback or teacher evaluations. Skipping WordCloud generation.")
+
+    return "Sync + feedback + teacher evaluations + wordclouds processed."
+
+
+
+# -------------------------
+# 5️⃣ Cleanup invalid sentiments
+# -------------------------
+def cleanup_invalid_sentiments():
+    invalid_labels = ['text', 'sentiment', '']
+    invalid_sentiments = DimSentiment.objects.filter(label__in=invalid_labels)
+    count = invalid_sentiments.count()
+    if count > 0:
+        unknown_sentiment, _ = DimSentiment.objects.get_or_create(label="Unknown")
+        FactFeedback.objects.filter(sentiment__in=invalid_sentiments).update(sentiment=unknown_sentiment)
+        fact_teacher_evaluation.objects.filter(sentiment__in=invalid_sentiments).update(sentiment=unknown_sentiment)
+        invalid_sentiments.delete()
+    return f"Cleaned up {count} invalid sentiment records."
+
+# -------------------------
+# 6️⃣ WordCloud tasks
+# -------------------------
+def generate_wordcloud(text_list, filename):
+    if not text_list:
+        return None
+    text = " ".join(text_list)
+    wordcloud = WordCloud(width=800, height=400, background_color="white", colormap="Greens").generate(text)
+    output_dir = os.path.join(settings.MEDIA_ROOT, "wordclouds")
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, filename)
+    wordcloud.to_file(output_path)
+    print(f"WordCloud saved at {output_path}")
+    return os.path.join(settings.MEDIA_URL, "wordclouds", filename).replace("\\", "/")
+
+@shared_task
+def generate_feedback_wordcloud_task():
+    all_comments = [fb.comments for fb in StudentFeedback.objects.all() if fb.comments]
+    if not all_comments:
+        return "No feedback to generate WordCloud."
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"feedback_wordcloud_{timestamp}.png"
+    return generate_wordcloud(all_comments, filename)
+
+@shared_task
+def generate_teacher_eval_wordcloud_task():
+    all_comments = [ev.comments for ev in TeacherEvaluation.objects.all() if ev.comments]
+    if not all_comments:
+        return "No teacher evaluations to generate WordCloud."
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"teacher_eval_wordcloud_{timestamp}.png"
+    return generate_wordcloud(all_comments, filename)

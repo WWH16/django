@@ -5,8 +5,8 @@ from warehouse.models import fact_teacher_evaluation, FactFeedback, DimService, 
 class StudentResource(resources.ModelResource):
     class Meta:
         model = Student
-        import_id_fields = ('student_id',)  # primary key
-        fields = ('student_id', 'studentName', 'program', 'yearLevel')
+        import_id_fields = ('studentID',)  # primary key
+        fields = ('studentID', 'studentName', 'program', 'yearLevel')
 class TeacherResource(resources.ModelResource):
     class Meta:
         model = Teacher
