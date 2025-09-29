@@ -52,8 +52,10 @@ class StudentFeedback(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        sentiment_name = self.sentiment.sentimentName if self.sentiment else 'No Sentiment'
-        return f"{self.student.studentName} - {self.service.serviceName} - {sentiment_name}"
+        student_name = self.student.studentName if self.student else "No Student"
+        service_name = self.service.serviceName if self.service else "No Service"
+        sentiment_name = self.sentiment.sentimentName if self.sentiment else "No Sentiment"
+        return f"{student_name} - {service_name} - {sentiment_name}"
 
 class StudentActivityLog(models.Model):
     ACTIVITY_CHOICES = [
