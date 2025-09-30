@@ -322,7 +322,7 @@ UNFOLD = {
                         "permission": lambda request: request.user.is_staff,
                     },
                     {
-                        "title": _("Teacher's Evaluation"),
+                        "title": _("Teacher Evaluations"),
                         "icon": "school",
                         "link": reverse_lazy("admin_teachers_evaluation"),
                         "permission": lambda request: request.user.is_staff,
@@ -387,35 +387,35 @@ UNFOLD = {
                 "collapsible": True,
                 "items": [
                     {
-                        "title": _("FactTeacherEvaluation"),
+                        "title": _("Teacher Evaluations"),
                         "icon": "rate_review",
                         "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
                     },
                     {
-                        "title": _("FactFeedback"),
+                        "title": _("OSAS Feedbacks"),
                         "icon": "feedback",
                         "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
                     },
-                    {
-                        "title": _("DimService"),
-                        "icon": "build",
-                        "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
-                    },
-                    {
-                        "title": _("DimSentiment"),
-                        "icon": "emoji_emotions",
-                        "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
-                    },
-                    {
-                        "title": _("DimStudent"),
-                        "icon": "person",
-                        "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
-                    },
-                    {
-                        "title": _("DimTeacher"),
-                        "icon": "people",
-                        "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
-                    },
+                    #{
+                    #    "title": _("DimService"),
+                    #    "icon": "build",
+                    #    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
+                    #},
+                    #{
+                    #    "title": _("DimSentiment"),
+                    #    "icon": "emoji_emotions",
+                    #    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
+                    #},
+                    #{
+                    #    "title": _("DimStudent"),
+                    #    "icon": "person",
+                    #    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
+                    #},
+                    #{
+                    #    "title": _("DimTeacher"),
+                    #    "icon": "people",
+                    #    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+                    #},
                 ],
             },
             {
@@ -526,10 +526,10 @@ UNFOLD = {
             "models": [
                 "warehouse.dimservice",
                 "warehouse.dimsentiment",
-                "warehouse.dimstudent",
-                "warehouse.dim_teacher",
-                "warehouse.fact_teacher_evaluation",
-                "warehouse.factfeedback",
+                #"warehouse.dimstudent",
+                #"warehouse.dim_teacher",
+                #"warehouse.fact_teacher_evaluation",
+                #warehouse.factfeedback",
             ],
             "items": [
                 {
@@ -540,22 +540,22 @@ UNFOLD = {
                     "title": _("Fact Feedback"),
                     "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
                 },
-                {
-                    "title": _("Dim Service"),
-                    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
-                },
-                {
-                    "title": _("Dim Sentiment"),
-                    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
-                },
-                {
-                    "title": _("Dim Student"),
-                    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
-                },
-                {
-                    "title": _("Dim Teacher"),
-                    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
-                },
+                #{
+                #    "title": _("Dim Service"),
+                #    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
+                #},
+                #{
+                #    "title": _("Dim Sentiment"),
+                #    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
+                #},
+                #{
+                #    "title": _("Dim Student"),
+                #    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
+                #},
+                #{
+                #    "title": _("Dim Teacher"),
+                #    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
+                #},
             ],
         },
         {

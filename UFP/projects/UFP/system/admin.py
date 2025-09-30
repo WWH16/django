@@ -11,10 +11,10 @@ from unfold.admin import ModelAdmin
 from django.contrib.auth import get_user_model
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportModelAdmin
-from unfold.contrib.import_export.forms import ExportForm, ImportForm, SelectableFieldsExportForm
+from unfold.contrib.import_export.forms import ExportForm, ImportForm
 
 
-from django.contrib.admin import RelatedOnlyFieldListFilter
+
 from .models import (
     Service, Department, Sentiment, Program, Student,
     StudentFeedback, StudentActivityLog, Teacher, TeacherEvaluation
@@ -134,40 +134,40 @@ class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     import_form_class = ImportForm
     export_form_class = ExportForm
 
-@admin.register(DimService)
-class DimServiceAdmin(ModelAdmin, ImportExportModelAdmin):
-    resource_class = DimServiceResource
-    list_display = ('service_id', 'service_name')
-    search_fields = ('service_name',)
-    actions = ['export']
-    import_form_class = ImportForm
-    export_form_class = ExportForm
-@admin.register(DimSentiment)
-class DimSentimentAdmin(ModelAdmin, ImportExportModelAdmin):
-    resource_class = DimSentimentResource
-    list_display = ('sentiment_id', 'label')
-    search_fields = ('label',)
-    actions = ['export']
-    import_form_class = ImportForm
-    export_form_class = ExportForm
-@admin.register(DimStudent)
-class DimStudentAdmin(ModelAdmin, ImportExportModelAdmin):
-    resource_class = DimStudentResource
-    list_display = ('student_id', 'student_name', 'program_id', 'program_name')
-    search_fields = ('student_name', 'student_id')
-    list_filter = ('program_name',)
-    actions = ['export']
-    import_form_class = ImportForm
-    export_form_class = ExportForm
-@admin.register(dim_teacher)
-class DimTeacherAdmin(ModelAdmin, ImportExportModelAdmin):
-    resource_class = DimTeacherResource
-    list_display = ('teacher_id', 'teacher_name', 'department_name', 'program_name')
-    search_fields = ('teacher_name', 'teacher_id')
-    list_filter = ('department_name', 'program_name')
-    actions = ['export']
-    import_form_class = ImportForm
-    export_form_class = ExportForm
+#@admin.register(DimService)
+#class DimServiceAdmin(ModelAdmin, ImportExportModelAdmin):
+#    resource_class = DimServiceResource
+#    list_display = ('service_id', 'service_name')
+#   search_fields = ('service_name',)
+#    actions = ['export']
+#    import_form_class = ImportForm
+#   export_form_class = ExportForm
+#@admin.register(DimSentiment)
+#class DimSentimentAdmin(ModelAdmin, ImportExportModelAdmin):
+#    resource_class = DimSentimentResource
+#    list_display = ('sentiment_id', 'label')
+#    search_fields = ('label',)
+#    actions = ['export']
+#    import_form_class = ImportForm
+#    export_form_class = ExportForm
+#@admin.register(DimStudent)
+#class DimStudentAdmin(ModelAdmin, ImportExportModelAdmin):
+#    resource_class = DimStudentResource
+#    list_display = ('student_id', 'student_name', 'program_id', 'program_name')
+#    search_fields = ('student_name', 'student_id')
+#    list_filter = ('program_name',)
+#    actions = ['export']
+#    import_form_class = ImportForm
+#    export_form_class = ExportForm
+#@admin.register(dim_teacher)
+#class DimTeacherAdmin(ModelAdmin, ImportExportModelAdmin):
+#    resource_class = DimTeacherResource
+#    list_display = ('teacher_id', 'teacher_name', 'department_name', 'program_name')
+#    search_fields = ('teacher_name', 'teacher_id')
+#    list_filter = ('department_name', 'program_name')
+#    actions = ['export']
+#    import_form_class = ImportForm
+#   export_form_class = ExportForm
 # ------------------------------
 # for the admin
 # ------------------------------
