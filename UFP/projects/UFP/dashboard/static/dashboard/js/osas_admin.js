@@ -523,21 +523,20 @@ if (barCanvas && barCanvas.getContext && window.Chart && data.services) {
 
 /* ---------------- Filter Management ---------------- */
 function showDrawer() {
-  console.log('showDrawer called - NOT rendering charts');
   const filterDrawer = document.getElementById('filter-drawer');
   const blurOverlay = document.getElementById('blur-overlay');
-  
+
   if (filterDrawer) filterDrawer.classList.add('show');
-  if (blurOverlay) blurOverlay.classList.add('show');
+  if (blurOverlay) blurOverlay.classList.add('active'); // ✅ use 'active' not 'show'
   document.body.classList.add('filter-open');
 }
 
 function hideDrawer() {
   const filterDrawer = document.getElementById('filter-drawer');
   const blurOverlay = document.getElementById('blur-overlay');
-  
+
   if (filterDrawer) filterDrawer.classList.remove('show');
-  if (blurOverlay) blurOverlay.classList.remove('show');
+  if (blurOverlay) blurOverlay.classList.remove('active'); // ✅ use 'active' not 'show'
   document.body.classList.remove('filter-open');
 }
 
