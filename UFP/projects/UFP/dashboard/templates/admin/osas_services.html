@@ -9,7 +9,9 @@
 <!-- Load Chart.js first so osas_admin.js can register plugins and use Chart API -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="{% static 'dashboard/js/osas_admin.js' %}"></script>
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 <div class="osas-wrap">
   <div class="osas-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -50,7 +52,7 @@
         <li class="filter-option" data-value="2023">2023</li>
         <li class="filter-option" data-value="2024">2024</li>
         <li class="filter-option" data-value="2025">2025</li>
-        <li class="filter-option reset" data-value="-">-</li>
+        <li class="filter-option reset" data-value="-">Reset Filter</li>
       </ul>
     </div>
 
@@ -160,17 +162,12 @@
             <div class="font-bold text-primary text-xl mb-0" style="color: #78b4ff;">
               <span id="osas-total-count">0</span>
             </div>
-            <!-- FIXED: Added id="osas-total-description" -->
             <div class="text-xs text-muted" id="osas-total-description">All Time</div>
           </div>
         </div>
       </div>
     </div>
-{% if osas_wordcloud_url %}
-    <img src="{{ osas_wordcloud_url }}" alt="OSAS Feedback WordCloud" style="max-width:100%;">
-{% else %}
-    <p>No WordCloud generated yet.</p>
-{% endif %}
+
     <!-- CHARTS -->
     <div class="row">
       <div class="col-lg-7 col-xl-8">
@@ -179,6 +176,7 @@
           <div class="d-flex align-items-center justify-content-between mb-3">
             <h6 class="font-semibold mb-0 text-font-important-light dark:text-font-important-dark">
               Sentiment Distribution by OSAS Services
+            </h6>
           </div>
           <div class="chart-area">
             <canvas id="osasBarChart" style="width:100%;height:400px;"></canvas>
@@ -213,38 +211,29 @@
       </div>
     </div>
 
-    <!-- ROW 1: Service Priority + Service Cards -->
+    <!-- WORDCLOUD + SERVICE CARDS ROW -->
     <div class="row">
+      <!-- Left: WordCloud -->
       <div class="col-lg-6 mb-4">
-        <!-- Service Improvement Priority Card -->
         <div
-          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
-          <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">
-            Service Improvement Priority
-          </h2>
-          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
-          <div class="flex flex-col gap-4" id="service-priority-list">
-            <!-- This will be populated by JavaScript -->
+          class="bg-white border border-base-200 rounded-default shadow-xs p-4 dark:bg-base-900 dark:border-base-800">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+
           </div>
-        </div>
-
-
-        <!-- Recent Feedback -->
-        <div
-          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
-          <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
-            Recent Feedbacks
-          </h2>
-          <ul class="list-group list-group-flush text-font-important-light dark:text-font-important-dark"
-            id="recent-feedback-list">
-            <!-- filled by JS -->
-          </ul>
+          <div class="wordcloud-container text-center">
+            {% if osas_wordcloud_url %}
+              <img src="{{ osas_wordcloud_url }}" alt="OSAS Feedback WordCloud" style="max-width:100%; height:auto; border-radius:8px;">
+            {% else %}
+              <p class="text-muted">No WordCloud generated yet.</p>
+            {% endif %}
+          </div>
         </div>
       </div>
 
-      <div class="col">
+      <!-- Right: Service Cards Grid -->
+      <div class="col-lg-6 mb-4">
         <div class="row">
-          <div class="col-lg-6 mb-4">
+          <div class="col-md-6 mb-4">
             <div
               class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
@@ -266,7 +255,7 @@
                 class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl">wifi</span>
             </div>
           </div>
-          <div class="col-lg-6 mb-4">
+          <div class="col-md-6 mb-4">
             <div
               class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
@@ -288,7 +277,7 @@
                 class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl">school</span>
             </div>
           </div>
-          <div class="col-lg-6 mb-4">
+          <div class="col-md-6 mb-4">
             <div
               class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
@@ -310,7 +299,7 @@
                 class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl">volunteer_activism</span>
             </div>
           </div>
-          <div class="col-lg-6 mb-4">
+          <div class="col-md-6 mb-4">
             <div
               class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
               <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
@@ -332,17 +321,55 @@
                 class="material-symbols-outlined absolute right-6 top-6 text-font-important-light dark:text-font-important-dark text-3xl">local_library</span>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <div
-            class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
-            <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">
-              Action Items & Recommendations
-            </h2>
-            <!-- Dynamic container that will be populated by JavaScript -->
-            <div id="dynamic-action-items" class="mt-3">
-              <!-- This will be populated by the renderActionItems() function -->
-            </div>
+    <!-- BOTTOM ROW: Recent Feedback on Left + Priority & Actions on Right -->
+    <div class="row">
+      <!-- Left Column: Recent Feedback -->
+      <div class="col-lg-6 mb-4">
+        <div
+          class="bg-white block border border-base-200 flex flex-col grow overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800">
+          <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
+            Recent Feedbacks
+          </h2>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <ul class="list-group list-group-flush text-font-important-light dark:text-font-important-dark"
+            id="recent-feedback-list">
+            <!-- filled by JS -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right Column: Priority + Action Items -->
+      <div class="col-lg-6 mb-4" style="margin-top: -50px;">
+        <!-- Service Improvement Priority Card -->
+        <div
+          class="bg-white block border border-base-200 flex flex-col overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
+          <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
+            Service Improvement Priority
+          </h2>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <div class="flex flex-col gap-4" id="service-priority-list">
+            <!-- This will be populated by JavaScript -->
           </div>
+        </div>
 
-          <!-- Chart.js already loaded in the head. Removed duplicate include. -->
-          {% endblock %}
+        <!-- Action Items & Recommendations -->
+        <div
+          class="bg-white block border border-base-200 flex flex-col overflow-hidden p-4 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
+          <h2 class="font-semibold mb-2 text-[15px] text-font-important-light dark:text-font-important-dark">
+            Action Items & Recommendations
+          </h2>
+          <hr class="border-base-200 dark:border-base-800 mb-3 mt-0" />
+          <!-- Dynamic container that will be populated by JavaScript -->
+          <div id="dynamic-action-items" class="mt-3">
+            <!-- This will be populated by the renderActionItems() function -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

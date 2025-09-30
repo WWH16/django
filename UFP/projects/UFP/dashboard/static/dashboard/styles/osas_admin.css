@@ -715,7 +715,6 @@
   --drawer-border: #e5e7eb;
   --drawer-text: #374151;
   --drawer-active: #16a34a;
-  --drawer-reset: #dc2626;
   --footer-bg: #f9fafb;
 
   --btn-bg: #ffffff;
@@ -737,8 +736,6 @@
   /* text */
   --drawer-active: #16a34a;
   /* active filter green */
-  --drawer-reset: #ef4444;
-  /* reset red */
   --footer-bg: #1e293b;
   /* footer matches drawer */
 
