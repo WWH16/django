@@ -212,11 +212,6 @@
     const hintEl = document.getElementById('feedbackHint');
     const wordCountEl = document.getElementById('wordCount');
 
-    const tooltip = new bootstrap.Tooltip(commentsEl, {
-      title: 'Please provide at least 5 words to help us understand your feedback better.',
-      trigger: 'manual',
-      placement: 'top',
-    });
 
     const defaultHint = 'Please describe your overall experience with your teacher.';
 
@@ -238,41 +233,15 @@
     function updateWordCount() {
       const words = countWords(commentsEl.value);
       wordCountEl.textContent = words + (words === 1 ? ' word' : ' words');
-
-      if (words < 5) {
-        wordCountEl.classList.remove('text-success');
-        wordCountEl.classList.add('text-danger');
-      } else {
-        wordCountEl.classList.remove('text-danger');
-        wordCountEl.classList.add('text-success');
-      }
     }
 
     teacherSelect.addEventListener('change', updateHint);
 
     commentsEl.addEventListener('input', function () {
-      tooltip.hide();
-      commentsEl.classList.remove('is-invalid');
       updateWordCount();
     });
 
-    formEl.addEventListener('submit', function (e) {
-      const words = countWords(commentsEl.value);
-      if (words < 5) {
-        e.preventDefault();
-        tooltip.show();
-        commentsEl.classList.add('is-invalid');
-
-        setTimeout(() => {
-          tooltip.hide();
-          commentsEl.classList.remove('is-invalid');
-        }, 3000);
-
-        commentsEl.focus();
-        return false;
-      }
-      return true;
-    });
+    // Removed submit-time 5-word enforcement
 
     updateHint();
     updateWordCount();

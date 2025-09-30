@@ -960,61 +960,7 @@
   </script>
   -->
 
-  <!-- Word count validation with Bootstrap tooltip - FIXED VERSION -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const feedbackEl = document.getElementById('feedback');
-      const formEl = document.getElementById('feedbackForm');
-      const feedbackHintEl = document.getElementById('feedbackHint');
-
-      // Initialize Bootstrap tooltip with TOP placement to avoid overlapping with hints
-      const tooltip = new bootstrap.Tooltip(feedbackEl, {
-        title: 'Please provide at least 5 words to help us understand your feedback better.',
-        trigger: 'manual',
-        placement: 'top',
-      });
-
-      function countWords(text) {
-        if (!text) return 0;
-        const words = text.trim().split(/\s+/).filter(Boolean);
-        return words.length;
-      }
-
-      function refreshWordCount() {
-        const wordCount = countWords(feedbackEl.value);
-        return wordCount;
-      }
-
-      formEl.addEventListener('submit', function (e) {
-        const wordCount = refreshWordCount();
-        if (wordCount < 5) {
-          e.preventDefault();
-          
-          // Show tooltip validation message
-          tooltip.show();
-          feedbackEl.classList.add('is-invalid');
-
-          // DON'T change the hint text - keep it showing the service-specific guidance
-          // The validation message will only appear in the tooltip
-
-          // Hide tooltip after 3 seconds
-          setTimeout(() => {
-            tooltip.hide();
-            feedbackEl.classList.remove('is-invalid');
-          }, 3000);
-
-          feedbackEl.focus();
-          return false;
-        }
-        return true;
-      });
-
-      feedbackEl.addEventListener('input', function () {
-        tooltip.hide();
-        feedbackEl.classList.remove('is-invalid');
-      });
-    });
-  </script>
+  <!-- Removed 5-word submission enforcement script -->
 </body>
 
 </html>
