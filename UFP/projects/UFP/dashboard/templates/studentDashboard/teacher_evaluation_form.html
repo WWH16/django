@@ -65,17 +65,7 @@
 
           <!-- Form with relative positioning container -->
           <div style="position: relative;">
-            <!-- Our custom cooldown overlay -->
-            <div id="teacherCooldownOverlay" class="teacher-eval-overlay" style="display:none;">
-              <div style="text-align: center; color: #647060; font-weight: 600;">
-                <div style="font-size: 3rem; margin-bottom: 10px;">⏱️</div>
-                <div style="font-size: 1.8rem;">Please wait</div>
-                <div style="font-size: 3.5rem; margin: 15px 0;">
-                  <span id="teacherCountdown">{{ cooldown_remaining|default:"0" }}</span>s
-                </div>
-                <div style="font-size: 1rem; opacity: 0.7;">before submitting again</div>
-              </div>
-            </div>
+            
 
             <form method="post" id="teacherEvaluationForm">
               {% csrf_token %}
@@ -142,35 +132,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Cooldown logic
-    var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
-    var form = document.getElementById('teacherEvaluationForm');
-    var cooldownOverlay = document.getElementById('teacherCooldownOverlay');
-    var countdownElem = document.getElementById('teacherCountdown');
-    var formFields = form.querySelector('.form-fields');
-
-    if (cooldown > 0) {
-      cooldownOverlay.style.display = 'flex';
-      formFields.classList.add('teacher-eval-blur');
-      Array.from(form.elements).forEach(function (el) {
-        el.disabled = true;
-      });
-
-      var interval = setInterval(function () {
-        cooldown--;
-        if (cooldown < 0) cooldown = 0;
-        countdownElem.textContent = cooldown;
-        if (cooldown <= 0) {
-          clearInterval(interval);
-          cooldownOverlay.style.display = 'none';
-          formFields.classList.remove('teacher-eval-blur');
-          Array.from(form.elements).forEach(function (el) {
-            el.disabled = false;
-          });
-        }
-      }, 1000);
-    }
-
     // 🔹 Department → Teacher filter
     const deptSelect = document.getElementById('department');
     const teacherSelect = document.getElementById('teacher');
