@@ -359,166 +359,160 @@
         });
       }
 
-      // PIE CHART: update existing chart in-place when possible to avoid re-creation animation
-      const pieCanvas = document.getElementById('osasPieChart');
-      if (pieCanvas && pieCanvas.getContext && window.Chart) {
-        const pieCtx = pieCanvas.getContext('2d');
-        const pieData = [pos, neu, neg];
+      // PIE CHART: destroy and recreate for animation
+const pieCanvas = document.getElementById('osasPieChart');
+if (pieCanvas && pieCanvas.getContext && window.Chart) {
+  const pieCtx = pieCanvas.getContext('2d');
+  const pieData = [pos, neu, neg];
 
-        if (osasPieChart && osasPieChart.data && osasPieChart.data.datasets && osasPieChart.data.datasets[0]) {
-          // update data and refresh
-          osasPieChart.data.datasets[0].data = pieData;
-          osasPieChart.update();
-        } else {
-          osasPieChart = new Chart(pieCtx, {
-            type: 'pie',
-            data: {
-              labels: ['Positive', 'Neutral', 'Negative'],
-              datasets: [{
-                backgroundColor: [
-                  CHART_COLORS.positive.background,
-                  CHART_COLORS.neutral.background,
-                  CHART_COLORS.negative.background
-                ],
-                borderColor: [
-                  CHART_COLORS.positive.border,
-                  CHART_COLORS.neutral.border,
-                  CHART_COLORS.negative.border
-                ],
-                data: pieData,
-                borderWidth: 1,
-                hoverOffset: 5
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              color: CHART_COLORS.textColor,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    color: CHART_COLORS.legendColor,
-                    font: { weight: '600', size: 12 },
-                    usePointStyle: true,
-                    pointStyle: 'circle',
-                    boxWidth: 12,
-                    padding: 20
-                  }
-                },
-                tooltip: {
-                  titleColor: CHART_COLORS.tooltipTextColor,
-                  bodyColor: CHART_COLORS.tooltipTextColor,
-                  backgroundColor: CHART_COLORS.tooltipBackground,
-                  borderColor: CHART_COLORS.tooltipBorderColor,
-                  borderWidth: 1,
-                  padding: 8
-                }
-              }
-            }
-          });
+  // Always destroy and recreate for animation
+  if (osasPieChart) {
+    osasPieChart.destroy();
+  }
+
+  osasPieChart = new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels: ['Positive', 'Neutral', 'Negative'],
+      datasets: [{
+        backgroundColor: [
+          CHART_COLORS.positive.background,
+          CHART_COLORS.neutral.background,
+          CHART_COLORS.negative.background
+        ],
+        borderColor: [
+          CHART_COLORS.positive.border,
+          CHART_COLORS.neutral.border,
+          CHART_COLORS.negative.border
+        ],
+        data: pieData,
+        borderWidth: 1,
+        hoverOffset: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      color: CHART_COLORS.textColor,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: CHART_COLORS.legendColor,
+            font: { weight: '600', size: 12 },
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 12,
+            padding: 20
+          }
+        },
+        tooltip: {
+          titleColor: CHART_COLORS.tooltipTextColor,
+          bodyColor: CHART_COLORS.tooltipTextColor,
+          backgroundColor: CHART_COLORS.tooltipBackground,
+          borderColor: CHART_COLORS.tooltipBorderColor,
+          borderWidth: 1,
+          padding: 8
         }
       }
+    }
+  });
+}
 
-      // BAR CHART: update labels/datasets in-place when possible
-      const barCanvas = document.getElementById('osasBarChart');
-      if (barCanvas && barCanvas.getContext && window.Chart && data.services) {
-        const ctx = barCanvas.getContext('2d');
-        const serviceLabels = data.services.map(s => s.service || s.name);
-        const positiveData = data.services.map(s => Number(s.positive || 0));
-        const neutralData = data.services.map(s => Number(s.neutral || 0));
-        const negativeData = data.services.map(s => Number(s.negative || 0));
+// BAR CHART: destroy and recreate for animation
+const barCanvas = document.getElementById('osasBarChart');
+if (barCanvas && barCanvas.getContext && window.Chart && data.services) {
+  const ctx = barCanvas.getContext('2d');
+  const serviceLabels = data.services.map(s => s.service || s.name);
+  const positiveData = data.services.map(s => Number(s.positive || 0));
+  const neutralData = data.services.map(s => Number(s.neutral || 0));
+  const negativeData = data.services.map(s => Number(s.negative || 0));
 
-        if (osasBarChart && osasBarChart.data && osasBarChart.data.datasets) {
-          // update labels and datasets
-          osasBarChart.data.labels = serviceLabels;
-          // Expect same dataset order: Positive, Neutral, Negative
-          if (osasBarChart.data.datasets[0]) osasBarChart.data.datasets[0].data = positiveData;
-          if (osasBarChart.data.datasets[1]) osasBarChart.data.datasets[1].data = neutralData;
-          if (osasBarChart.data.datasets[2]) osasBarChart.data.datasets[2].data = negativeData;
-          osasBarChart.update();
-        } else {
-          osasBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: serviceLabels,
-              datasets: [
-                {
-                  label: 'Positive',
-                  data: positiveData,
-                  backgroundColor: CHART_COLORS.positive.backgroundLight,
-                  borderColor: CHART_COLORS.positive.border,
-                  borderWidth: 1,
-                  maxBarThickness: 48
-                },
-                {
-                  label: 'Neutral',
-                  data: neutralData,
-                  backgroundColor: CHART_COLORS.neutral.backgroundLight,
-                  borderColor: CHART_COLORS.neutral.border,
-                  borderWidth: 1,
-                  maxBarThickness: 48
-                },
-                {
-                  label: 'Negative',
-                  data: negativeData,
-                  backgroundColor: CHART_COLORS.negative.backgroundLight,
-                  borderColor: CHART_COLORS.negative.border,
-                  borderWidth: 1,
-                  maxBarThickness: 48
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              color: CHART_COLORS.textColor,
-              plugins: {
-                legend: {
-                  position: 'top',
-                  labels: {
-                    color: CHART_COLORS.legendColor,
-                    font: { weight: '600', size: 12 },
-                    usePointStyle: false,
-                    padding: 20
-                  }
-                },
-                tooltip: {
-                  titleColor: CHART_COLORS.tooltipTextColor,
-                  bodyColor: CHART_COLORS.tooltipTextColor,
-                  backgroundColor: CHART_COLORS.tooltipBackground,
-                  borderColor: CHART_COLORS.tooltipBorderColor,
-                  borderWidth: 1,
-                  padding: 8
-                }
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  ticks: {
-                    color: CHART_COLORS.axisColor,
-                    font: { weight: '600', size: 11 },
-                    precision: 0
-                  },
-                  grid: {
-                    color: CHART_COLORS.gridColor,
-                    drawBorder: false
-                  }
-                },
-                x: {
-                  ticks: {
-                    color: CHART_COLORS.axisColor,
-                    font: { weight: '600', size: 11 }
-                  },
-                  grid: {
-                    display: false
-                  }
-                }
-              }
-            }
-          });
+  // Always destroy and recreate for animation
+  if (osasBarChart) {
+    osasBarChart.destroy();
+  }
+
+  osasBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: serviceLabels,
+      datasets: [
+        {
+          label: 'Positive',
+          data: positiveData,
+          backgroundColor: CHART_COLORS.positive.backgroundLight,
+          borderColor: CHART_COLORS.positive.border,
+          borderWidth: 1,
+          maxBarThickness: 48
+        },
+        {
+          label: 'Neutral',
+          data: neutralData,
+          backgroundColor: CHART_COLORS.neutral.backgroundLight,
+          borderColor: CHART_COLORS.neutral.border,
+          borderWidth: 1,
+          maxBarThickness: 48
+        },
+        {
+          label: 'Negative',
+          data: negativeData,
+          backgroundColor: CHART_COLORS.negative.backgroundLight,
+          borderColor: CHART_COLORS.negative.border,
+          borderWidth: 1,
+          maxBarThickness: 48
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      color: CHART_COLORS.textColor,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            color: CHART_COLORS.legendColor,
+            font: { weight: '600', size: 12 },
+            usePointStyle: false,
+            padding: 20
+          }
+        },
+        tooltip: {
+          titleColor: CHART_COLORS.tooltipTextColor,
+          bodyColor: CHART_COLORS.tooltipTextColor,
+          backgroundColor: CHART_COLORS.tooltipBackground,
+          borderColor: CHART_COLORS.tooltipBorderColor,
+          borderWidth: 1,
+          padding: 8
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: CHART_COLORS.axisColor,
+            font: { weight: '600', size: 11 },
+            precision: 0
+          },
+          grid: {
+            color: CHART_COLORS.gridColor,
+            drawBorder: false
+          }
+        },
+        x: {
+          ticks: {
+            color: CHART_COLORS.axisColor,
+            font: { weight: '600', size: 11 }
+          },
+          grid: {
+            display: false
+          }
         }
       }
+    }
+  });
+}
 
       renderActionItems(data);
 
@@ -527,89 +521,90 @@
     }
   }
 
-  /* ---------------- Filter Management ---------------- */
-  function showDrawer() {
-    const filterDrawer = document.getElementById('filter-drawer');
-    const blurOverlay = document.getElementById('blur-overlay');
-    
-    if (filterDrawer) filterDrawer.classList.add('show');
-    if (blurOverlay) blurOverlay.classList.add('show');
-    document.body.classList.add('filter-open');
+/* ---------------- Filter Management ---------------- */
+function showDrawer() {
+  console.log('showDrawer called - NOT rendering charts');
+  const filterDrawer = document.getElementById('filter-drawer');
+  const blurOverlay = document.getElementById('blur-overlay');
+  
+  if (filterDrawer) filterDrawer.classList.add('show');
+  if (blurOverlay) blurOverlay.classList.add('show');
+  document.body.classList.add('filter-open');
+}
+
+function hideDrawer() {
+  const filterDrawer = document.getElementById('filter-drawer');
+  const blurOverlay = document.getElementById('blur-overlay');
+  
+  if (filterDrawer) filterDrawer.classList.remove('show');
+  if (blurOverlay) blurOverlay.classList.remove('show');
+  document.body.classList.remove('filter-open');
+}
+
+function resetFilters() {
+  const yearFilter = document.getElementById('year-filter');
+  const semesterFilter = document.getElementById('semester-filter');
+  
+  // Reset year filter to "All Time"
+  if (yearFilter) {
+    yearFilter.querySelectorAll('.filter-option').forEach(item => {
+      item.classList.remove('active');
+      if (item.getAttribute('data-value') === 'all') {
+        item.classList.add('active');
+      }
+    });
   }
 
-  function hideDrawer() {
-    const filterDrawer = document.getElementById('filter-drawer');
-    const blurOverlay = document.getElementById('blur-overlay');
-    
-    if (filterDrawer) filterDrawer.classList.remove('show');
-    if (blurOverlay) blurOverlay.classList.remove('show');
-    document.body.classList.remove('filter-open');
+  // Reset semester filter to "All Semesters"
+  if (semesterFilter) {
+    semesterFilter.querySelectorAll('.filter-option').forEach(item => {
+      item.classList.remove('active');
+      if (item.getAttribute('data-value') === 'all') {
+        item.classList.add('active');
+      }
+    });
   }
 
-  function resetFilters() {
+  // Update filter state
+  currentFilters.year = 'all';
+  currentFilters.semester = 'all';
+
+  applyCurrentFilters();
+  hideDrawer();
+}
+
+async function applyCurrentFilters() {
+  try {
     const yearFilter = document.getElementById('year-filter');
     const semesterFilter = document.getElementById('semester-filter');
     
-    // Reset year filter to "All Time"
-    if (yearFilter) {
-      yearFilter.querySelectorAll('.filter-option').forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('data-value') === 'all') {
-          item.classList.add('active');
-        }
-      });
-    }
+    let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+    let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
 
-    // Reset semester filter to "All Semesters"
-    if (semesterFilter) {
-      semesterFilter.querySelectorAll('.filter-option').forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('data-value') === 'all') {
-          item.classList.add('active');
-        }
-      });
-    }
-
-    // Update filter state
-    currentFilters.year = 'all';
-    currentFilters.semester = 'all';
-
-    applyCurrentFilters();
-    hideDrawer();
-  }
-
-  async function applyCurrentFilters() {
-    try {
-      const yearFilter = document.getElementById('year-filter');
-      const semesterFilter = document.getElementById('semester-filter');
-      
-      let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-      let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-
-      // Clean semester value - convert display values to API values
-      if (activeSemester && activeSemester !== 'all') {
-        // Convert display values like "1st", "2nd", "3rd" to numeric values
-        activeSemester = activeSemester.replace(/[^\d]/g, ''); // Remove non-digits
-        if (!activeSemester || activeSemester === '') {
-          activeSemester = 'all';
-        }
+    // Clean semester value - convert display values to API values
+    if (activeSemester && activeSemester !== 'all') {
+      // Convert display values like "1st", "2nd", "3rd" to numeric values
+      activeSemester = activeSemester.replace(/[^\d]/g, ''); // Remove non-digits
+      if (!activeSemester || activeSemester === '') {
+        activeSemester = 'all';
       }
-
-      // CRITICAL: Update current filters state
-      currentFilters.year = activeYear;
-      currentFilters.semester = activeSemester;
-
-      console.log('Applying OSAS filters:', currentFilters);
-
-      const data = await fetchFilteredOsasData(activeYear, activeSemester);
-      updateOsasCards(data);
-      renderCharts(data);
-
-    } catch (error) {
-      console.error('Failed to apply OSAS filters:', error);
-      alert('Failed to load OSAS data: ' + error.message);
     }
+
+    // CRITICAL: Update current filters state
+    currentFilters.year = activeYear;
+    currentFilters.semester = activeSemester;
+
+    console.log('Applying OSAS filters:', currentFilters);
+
+    const data = await fetchFilteredOsasData(activeYear, activeSemester);
+    updateOsasCards(data);
+    renderCharts(data);
+
+  } catch (error) {
+    console.error('Failed to apply OSAS filters:', error);
+    alert('Failed to load OSAS data: ' + error.message);
   }
+}
 
   /* ---------------- CSV Export - FIXED FOR FILTERED DATA ---------------- */
   function buildFilteredCsvExport(data) {
@@ -1069,38 +1064,47 @@
   }
 
   /* ---------------- Theme Change Observer ---------------- */
-  function observeThemeChanges() {
-    const observer = new MutationObserver((mutations) => {
-      let shouldRerender = false;
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && 
-            (mutation.attributeName === 'class' || 
-             mutation.attributeName === 'data-theme' || 
-             mutation.attributeName === 'data-bs-theme')) {
+function observeThemeChanges() {
+  let previousTheme = detectDarkMode();
+  
+  const observer = new MutationObserver((mutations) => {
+    let shouldRerender = false;
+    
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && 
+          (mutation.attributeName === 'class' || 
+           mutation.attributeName === 'data-theme' || 
+           mutation.attributeName === 'data-bs-theme')) {
+        
+        // Only rerender if the ACTUAL theme changed, not just any class
+        const currentTheme = detectDarkMode();
+        if (currentTheme !== previousTheme) {
           shouldRerender = true;
+          previousTheme = currentTheme;
         }
-      });
-      
-      if (shouldRerender) {
-        setTimeout(() => {
-          if (baselineData) renderCharts(baselineData);
-          if (chartData) renderCharts(chartData);
-          if (cachedFilteredData) renderCharts(cachedFilteredData);
-        }, 100);
       }
     });
     
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme', 'data-bs-theme']
-    });
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme', 'data-bs-theme']
-    });
-  }
+    if (shouldRerender) {
+      setTimeout(() => {
+        if (baselineData) renderCharts(baselineData);
+        if (chartData) renderCharts(chartData);
+        if (cachedFilteredData) renderCharts(cachedFilteredData);
+      }, 100);
+    }
+  });
+  
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'data-bs-theme']
+  });
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'data-bs-theme']
+  });
+}
 
-  /* ---------------- Event Handlers & Initialization ---------------- */
+/* ---------------- Event Handlers & Initialization ---------------- */
   function initializeEventHandlers() {
     const filterBtn = document.getElementById('filter-btn');
     const filterDrawer = document.getElementById('filter-drawer');
@@ -1118,6 +1122,16 @@
     if (blurOverlay) {
       blurOverlay.addEventListener('click', hideDrawer);
     }
+
+    // Close drawer when clicking outside of it
+    document.addEventListener('click', function (e) {
+      if (filterDrawer && filterDrawer.classList.contains('show')) {
+        // Check if click is outside both the drawer and the filter button
+        if (!filterDrawer.contains(e.target) && !filterBtn.contains(e.target)) {
+          hideDrawer();
+        }
+      }
+    });
 
     // Close drawer with ESC key
     document.addEventListener('keydown', function (keyEvent) {
@@ -1303,11 +1317,6 @@
     // Load initial data
     fetchBaselineThenRender();
     fetchRecentFeedback();
-
-    // Initialize with current filters after a short delay
-    setTimeout(() => {
-      applyCurrentFilters();
-    }, 100);
 
     console.log('OSAS Dashboard initialized successfully');
   });
