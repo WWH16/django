@@ -64,7 +64,8 @@ class DimTeacherResource(resources.ModelResource):
         model = dim_teacher
         exclude = ('id',)
         import_id_fields = ('teacher_id',)  # primary key
-        fields = ('teacher_id', 'teacher_name', 'department', 'program')
+        fields = ('teacher_id', 'teacher_name', 'department_name', 'program_name')
+
 class DimStudentResource(resources.ModelResource):
     class Meta:
         model = DimStudent
