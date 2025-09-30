@@ -276,15 +276,17 @@ class ClockedScheduleAdmin(BaseClockedScheduleAdmin, ModelAdmin):
 
 from django_celery_results.models import TaskResult, GroupResult
 from django_celery_results.admin import TaskResultAdmin as DefaultTaskResultAdmin
-from django_celery_results.admin import GroupResultAdmin as DefaultGroupResultAdmin
+#from django_celery_results.admin import GroupResultAdmin as DefaultGroupResultAdmin
 
 admin.site.unregister(TaskResult)
+
+from django_celery_results.models import TaskResult
 
 @admin.register(TaskResult)
 class TaskResultAdmin(DefaultTaskResultAdmin, ModelAdmin):
     list_filter = ('status', 'date_done', 'task_name', 'result')
 
-admin.site.unregister(GroupResult)
-@admin.register(GroupResult)
-class GroupResultAdmin(DefaultGroupResultAdmin, ModelAdmin):
-    list_filter = ('group_id', 'result', 'date_done')
+#admin.site.unregister(GroupResult)
+#@admin.register(GroupResult)
+#class GroupResultAdmin(DefaultGroupResultAdmin, ModelAdmin):
+#    list_filter = ('group_id', 'result', 'date_done')

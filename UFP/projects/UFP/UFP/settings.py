@@ -330,7 +330,7 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("System"),
+                "title": _("University Feedback Platform"),
                 "separator": True,
                 "collapsible": True,
                 "items": [
@@ -419,52 +419,52 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Periodic Tasks"),
+                #"title": _("Periodic Tasks"),
                 "separator": True,
-                "collapsible": True,
+                #"collapsible": True,
                 "items": [
                     {
                         "title": _("Periodic Tasks"),
                         "icon": "schedule",
                         "link": reverse_lazy("admin:django_celery_beat_periodictask_changelist"),
                     },
-                    {
-                        "title": _("Intervals"),
-                        "icon": "timer",
-                        "link": reverse_lazy("admin:django_celery_beat_intervalschedule_changelist"),
-                    },
-                    {
-                        "title": _("Crontabs"),
-                        "icon": "calendar_today",
-                        "link": reverse_lazy("admin:django_celery_beat_crontabschedule_changelist"),
-                    },
-                    {
-                        "title": _("Solar"),
-                        "icon": "wb_sunny",
-                        "link": reverse_lazy("admin:django_celery_beat_solarschedule_changelist"),
-                    },
-                    {
-                        "title": _("Clocked"),
-                        "icon": "access_time",
-                        "link": reverse_lazy("admin:django_celery_beat_clockedschedule_changelist"),
-                    },
+                    #{
+                    #    "title": _("Intervals"),
+                    #    "icon": "timer",
+                    #    "link": reverse_lazy("admin:django_celery_beat_intervalschedule_changelist"),
+                    #},
+                    #{
+                    #    "title": _("Crontabs"),
+                    #    "icon": "calendar_today",
+                    #    "link": reverse_lazy("admin:django_celery_beat_crontabschedule_changelist"),
+                    #},
+                    #{
+                    #    "title": _("Solar"),
+                    #    "icon": "wb_sunny",
+                    #    "link": reverse_lazy("admin:django_celery_beat_solarschedule_changelist"),
+                    #},
+                    #{
+                    #    "title": _("Clocked"),
+                    #    "icon": "access_time",
+                    #    "link": reverse_lazy("admin:django_celery_beat_clockedschedule_changelist"),
+                    #},
                 ],
             },
             {
-                "title": _("Celery Results"),
+                #"title": _("Celery Results"),
                 "separator": True,
-                "collapsible": True,
+                #"collapsible": True,
                 "items": [
                     {
                         "title": _("Task Results"),
                         "icon": "task_alt",
                         "link": reverse_lazy("admin:django_celery_results_taskresult_changelist"),
                     },
-                    {
-                        "title": _("Group Results"),
-                        "icon": "group_work",
-                        "link": reverse_lazy("admin:django_celery_results_groupresult_changelist"),
-                    },
+                    #{
+                    #    "title": _("Group Results"),
+                    #    "icon": "group_work",
+                    #    "link": reverse_lazy("admin:django_celery_results_groupresult_changelist"),
+                    #},
                 ],
             },
 
@@ -608,7 +608,7 @@ UNFOLD = {
         {
             "models": [
                 "django_celery_results.taskresult",
-                "django_celery_results.groupresult",
+                #"django_celery_results.groupresult",
             ],
             "items": [
                 {
@@ -616,11 +616,11 @@ UNFOLD = {
                     "link": reverse_lazy("admin:django_celery_results_taskresult_changelist"),
                     #filter: "status__exact=SUCCESS",
                 },
-                {
-                    "title": _("Group Results"),
-                    "link": reverse_lazy("admin:django_celery_results_groupresult_changelist"),
+                #{
+                #    "title": _("Group Results"),
+                #    "link": reverse_lazy("admin:django_celery_results_groupresult_changelist"),
                     #filter: "status__exact=SUCCESS",
-                },
+                #},
             ],
         },
 
