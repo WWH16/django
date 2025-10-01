@@ -2,10 +2,31 @@
 {% load static %}
 <style>
   /* Enhanced Team Section Styles */
+  .team-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .team-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2308915e" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    pointer-events: none;
+  }
+  
   .section-heading {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    background: linear-gradient(135deg, #08915e, #0bbf7a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   .section-subtitle {
@@ -13,6 +34,18 @@
     font-weight: 600;
     margin-bottom: 1.25rem;
     color: var(--bs-success);
+    position: relative;
+  }
+  
+  .section-subtitle::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #08915e, #0bbf7a);
+    border-radius: 2px;
   }
   
   .section-description {
@@ -22,11 +55,30 @@
   }
   
   .leader-card {
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(8, 145, 94, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .leader-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.05), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .leader-card:hover::before {
+    left: 100%;
   }
   
   .leader-image {
-    padding: 15px;
+    padding: 20px;
+    position: relative;
   }
   
   .leader-image img {
@@ -34,45 +86,64 @@
     width: auto;
     height: auto;
     margin: 0 auto;
+    border-radius: 12px;
+    transition: all 0.4s ease;
   }
   
   .leader-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-  }
-
-  .leader-image img {
-    transition: all 0.3s ease;
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(8, 145, 94, 0.15) !important;
+    border-color: rgba(8, 145, 94, 0.2);
   }
 
   .leader-card:hover .leader-image img {
     transform: scale(1.05);
   }
 
-  .social-links a {
-    opacity: 0.8;
-    transition: all 0.3s ease;
+  .team-section .social-links {
+    background: linear-gradient(135deg, rgba(8, 145, 94, 0.9), rgba(11, 191, 122, 0.9));
+    backdrop-filter: blur(10px);
   }
 
-  .social-links a:hover {
+  .team-section .social-links a {
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    color: white !important;
+  }
+
+  .team-section .social-links a:hover {
     opacity: 1;
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.1);
+    color: white !important;
   }
 
   .leader-info h4 {
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+    color: #2c3e50;
   }
 
   .leader-info .position {
     font-size: 0.875rem;
     font-weight: 500;
+    color: #08915e;
   }
 
   .leader-info .bio {
     font-size: 0.875rem;
     line-height: 1.6;
+    color: #6c757d;
+  }
+
+  .about-image img {
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .about-image:hover img {
+    transform: scale(1.02);
   }
 
   @media (max-width: 768px) {
@@ -105,7 +176,7 @@
     }
   }
 </style>
-<section id="team" class="leadership section py-5" data-aos="fade-up">
+<section id="team" class="leadership section py-5 team-section" data-aos="fade-up">
   <div class="container">
     <div class="row justify-content-center align-items-center mb-5 flex-column-reverse flex-lg-row">
       <div class="col-lg-6 mb-4 mb-lg-0 d-flex flex-column justify-content-center" data-aos="fade-right" data-aos-delay="100">

@@ -3,15 +3,30 @@
   /* Help Resources Section Styles */
   .help-section {
     padding: 4rem 0;
-    background-color: #f8f9fa;
+    background: #f6f7f8;
+    position: relative;
+  }
+  
+  .help-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2308915e" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    pointer-events: none;
   }
 
   /* Typography */
-  .section-heading
-  {
+  .section-heading {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #08915e, #0bbf7a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .sub-heading {
@@ -34,17 +49,63 @@
 
   /* Cards */
   .help-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 0.5rem;
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
+    border-radius: 12px;
     overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0,0,0,0.06);
+    position: relative;
+  }
+  
+  .help-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.05), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .help-card:hover::before {
+    left: 100%;
   }
 
   .help-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10);
+    border-color: rgba(0,0,0,0.08);
   }
+
+  /* Accordion */
+  .accordion-item {
+    border: 1px solid rgba(0,0,0,0.08);
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem !important;
+    overflow: hidden;
+  }
+  
+  .accordion-button {
+    background: #ffffff;
+    border: none;
+    font-weight: 600;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+  }
+  
+  .accordion-button:not(.collapsed) {
+    background: #f3fbf7;
+    color: #08915e;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
+  }
+  
+  .accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(8, 145, 94, 0.25);
+  }
+  
+  .accordion-body { background: #ffffff; }
 
   /* Lists */
   .guide-list li {
@@ -54,10 +115,11 @@
 
   /* Examples Box */
   .example-box {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.06);
   }
 
   .example-good {
@@ -68,6 +130,31 @@
   .example-bad {
     color: var(--bs-danger);
     font-weight: 600;
+  }
+  
+  /* Step numbers */
+  .step-number {
+    background: #0bbf7a;
+    color: #fff;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  }
+
+  /* Quick Info box (border-only, no shadow) */
+  .quick-info-box {
+    background: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    box-shadow: none !important;
+    border-radius: 12px;
   }
 
   /* Responsive */
@@ -155,7 +242,7 @@
 
     <!-- Student Guide -->
     <div class="mb-5" data-aos="fade-up" data-aos-delay="300">
-<div class="card border-0 shadow-sm mb-4">
+<div class="card border-0 shadow-sm mb-4 help-card">
         <div class="card-header bg-success bg-opacity-10 border-0 py-3">
           <h4 class="mb-0"><i class="bi bi-mortarboard-fill text-success me-2"></i>Student Guide</h4>
         </div>
@@ -164,28 +251,28 @@
           <div class="row">
             <div class="col-lg-8">
               <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">1.</span>
+                <div class="step-number">1</div>
                 <div>
                   <p class="mb-0">Visit the website.</p>
                 </div>
               </div>
 
               <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">2.</span>
+                <div class="step-number">2</div>
                 <div>
                   <p class="mb-0">Click on "Login" (or "Sign up" if you don't have an account).</p>
                 </div>
               </div>
 
               <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">3.</span>
+                <div class="step-number">3</div>
                 <div>
                   <p class="mb-0">Select "Student Login".</p>
                 </div>
               </div>
 
               <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">4.</span>
+                <div class="step-number">4</div>
                 <div>
                   <p class="mb-2">After logging in, choose the type of feedback from the side navigation bar:</p>
                   <div class="ps-3">
@@ -202,14 +289,14 @@
               </div>
 
               <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">5.</span>
+                <div class="step-number">5</div>
                 <div>
                   <p class="mb-0">(Optional) Check "Submit as anonymous" if you don't want your name attached.</p>
                 </div>
               </div>
 
               <div class="d-flex">
-                <span class="fw-bold text-muted me-3">6.</span>
+                <div class="step-number">6</div>
                 <div>
                   <p class="mb-0">Click "Submit" — the system will analyze the sentiment automatically.</p>
                 </div>
@@ -217,7 +304,7 @@
             </div>
 
             <div class="col-lg-4">
-              <div class="bg-light rounded p-3">
+              <div class="bg-light rounded p-3 quick-info-box">
                 <h6 class="fw-semibold mb-3">
                   <i class="bi bi-info-circle text-primary me-2"></i>Quick Info
                 </h6>

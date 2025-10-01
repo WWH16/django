@@ -1,6 +1,145 @@
 <!-- about section -->
 {% load static %}
-<section id="about" class="py-5 bg-white text-dark" data-aos="fade-up">
+<style>
+  .about-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    position: relative;
+  }
+  
+  .about-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2308915e" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    pointer-events: none;
+  }
+  
+  .section-heading {
+    background: linear-gradient(135deg, #08915e, #0bbf7a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+  }
+  
+  .feature-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(8, 145, 94, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.05), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .feature-card:hover::before {
+    left: 100%;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(8, 145, 94, 0.1);
+    border-color: rgba(8, 145, 94, 0.2);
+  }
+  
+  .feature-icon {
+    transition: all 0.3s ease;
+  }
+  
+  .feature-card:hover .feature-icon {
+    transform: scale(1.1);
+  }
+  
+  .main-description-card {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border: 1px solid rgba(8, 145, 94, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .main-description-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #08915e, #0bbf7a);
+  }
+  
+  .badge {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(8, 145, 94, 0.2) !important;
+  }
+  
+  .badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(8, 145, 94, 0.2);
+    background-color: rgba(8, 145, 94, 0.1) !important;
+  }
+  
+  /* Service Badge Styles */
+  .service-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border: 2px solid rgba(8, 145, 94, 0.2);
+    border-radius: 25px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(8, 145, 94, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .service-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .service-badge:hover::before {
+    left: 100%;
+  }
+  
+  .service-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(8, 145, 94, 0.15);
+    border-color: rgba(8, 145, 94, 0.4);
+    color: #08915e;
+  }
+  
+  .service-badge i {
+    color: #08915e;
+    transition: all 0.3s ease;
+  }
+  
+  .service-badge:hover i {
+    transform: scale(1.1);
+    color: #0bbf7a;
+  }
+</style>
+<section id="about" class="py-5 about-section text-dark" data-aos="fade-up">
   <div class="container">
     <div class="text-center mb-5">
       <h2 class="section-heading fw-bold mb-2" data-aos="fade-right" data-aos-delay="100">
@@ -12,11 +151,11 @@
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <!-- Main Description Card -->
-        <div class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card border-0 shadow-sm mb-4 main-description-card" data-aos="fade-up" data-aos-delay="200">
           <div class="card-body p-5">
             <div class="row align-items-center">
               <div class="col-md-2 text-center mb-3 mb-md-0">
-                <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block">
+                <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block feature-icon">
                   <i class="bi bi-chat-square-text text-success" style="font-size: 2rem;"></i>
                 </div>
               </div>
@@ -33,9 +172,9 @@
         <!-- Features Grid -->
         <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="300">
           <div class="col-md-6">
-            <div class="d-flex">
+            <div class="d-flex feature-card p-3 rounded-3">
               <div class="flex-shrink-0">
-                <div class="bg-primary bg-opacity-10 rounded p-2">
+                <div class="bg-primary bg-opacity-10 rounded p-2 feature-icon">
                   <i class="bi bi-shield-check text-primary"></i>
                 </div>
               </div>
@@ -46,9 +185,9 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="d-flex">
+            <div class="d-flex feature-card p-3 rounded-3">
               <div class="flex-shrink-0">
-                <div class="bg-warning bg-opacity-10 rounded p-2">
+                <div class="bg-warning bg-opacity-10 rounded p-2 feature-icon">
                   <i class="bi bi-cpu text-warning"></i>
                 </div>
               </div>
@@ -59,9 +198,9 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="d-flex">
+            <div class="d-flex feature-card p-3 rounded-3">
               <div class="flex-shrink-0">
-                <div class="bg-info bg-opacity-10 rounded p-2">
+                <div class="bg-info bg-opacity-10 rounded p-2 feature-icon">
                   <i class="bi bi-graph-up text-info"></i>
                 </div>
               </div>
@@ -72,9 +211,9 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="d-flex">
+            <div class="d-flex feature-card p-3 rounded-3">
               <div class="flex-shrink-0">
-                <div class="bg-success bg-opacity-10 rounded p-2">
+                <div class="bg-success bg-opacity-10 rounded p-2 feature-icon">
                   <i class="bi bi-people text-success"></i>
                 </div>
               </div>
@@ -87,24 +226,44 @@
         </div>
 
         <!-- Services Covered -->
-<!-- Services Covered -->
 <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="400">
-  <h6 class="text-muted mb-4">What You Can Evaluate</h6>
+  <h4 class="fw-bold mb-4" style="color: #2c3e50;">What You Can Evaluate</h4>
   
-  <div class="mb-4">
-    <h6 class="fw-semibold mb-3">University Services</h6>
-    <div class="d-flex flex-wrap justify-content-center gap-3">
-      <span class="badge bg-light text-dark border px-3 py-2">Wi-Fi Services</span>
-      <span class="badge bg-light text-dark border px-3 py-2">Library Access</span>
-    </div>
-    <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-      <span class="badge bg-light text-dark border px-3 py-2">Scholarships</span>
-      <span class="badge bg-light text-dark border px-3 py-2">College Admissions</span>
+  <div class="mb-5">
+    <h5 class="fw-bold mb-4" style="color: #08915e; position: relative;">
+      University Services
+      <div class="mx-auto mt-2" style="width: 50px; height: 3px; background: linear-gradient(90deg, #08915e, #0bbf7a); border-radius: 2px;"></div>
+    </h5>
+    <div class="row g-3 justify-content-center">
+      <div class="col-auto">
+        <div class="service-badge">
+          <i class="bi bi-wifi me-2"></i>Wi-Fi Services
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="service-badge">
+          <i class="bi bi-journal-bookmark me-2"></i>Library Access
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="service-badge">
+          <i class="bi bi-award me-2"></i>Scholarships
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="service-badge">
+          <i class="bi bi-pencil-square me-2"></i>College Admissions
+        </div>
+      </div>
     </div>
   </div>
   
   <div class="mb-3">
-    <h6 class="fw-semibold mb-2">Teacher Evaluation</h6>
+    <h5 class="fw-bold mb-3" style="color: #08915e; position: relative;">
+      Teacher Evaluation
+      <div class="mx-auto mt-2" style="width: 50px; height: 3px; background: linear-gradient(90deg, #08915e, #0bbf7a); border-radius: 2px;"></div>
+    </h5>
+    <p class="text-muted">Evaluate faculty performance and teaching quality</p>
   </div>
 </div>
 

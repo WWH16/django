@@ -3,6 +3,74 @@
 
 {% block title %}Home | University Feedback Platform{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* Hero */
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 40, 20, 0.55), rgba(0, 40, 20, 0.65)), url('{% static "system/images/ISU.jpg" %}') center/cover no-repeat fixed;
+  }
+  /* no dots overlay on hero to keep image clean */
+  .hero-section .display-4 {
+    letter-spacing: 0.5px;
+  }
+  .hero-section .lead {
+    color: rgba(255,255,255,0.9);
+  }
+  
+  /* Primary actions */
+  .cta-primary {
+    background-color: #08915e;
+    color: #fff;
+    border: none;
+    box-shadow: 0 8px 24px rgba(8, 145, 94, 0.35);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(8, 145, 94, 0.45); }
+  .cta-outline {
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.8);
+    backdrop-filter: blur(2px);
+    transition: all .2s ease;
+  }
+  .cta-outline:hover { background-color: #08915e; border-color: #08915e; }
+
+  /* Section: OSAS */
+  /* Cleaner OSAS section (no dot pattern here for clarity) */
+  .glass-section { position: relative; background: rgba(0,0,0,0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+  .service-card {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    position: relative;
+    cursor: pointer;
+  }
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.22);
+    border-color: rgba(8,145,94,.28);
+  }
+  .service-card:focus { outline: none; box-shadow: 0 0 0 0.2rem rgba(8,145,94,.22); }
+  /* Removed top divider for a cleaner card */
+  .service-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #0bbf7a, #08915e);
+    transition: transform .2s ease;
+  }
+  .service-card:hover .service-icon { transform: scale(1.05); }
+
+  /* Divider */
+  .section-divider { width: 64px; height: 3px; background-color: #08915e; }
+
+  @media (max-width: 575.98px) {
+    .display-4 { font-size: 2rem; }
+    .lead { font-size: 1rem; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <!-- Modal -->
@@ -24,18 +92,16 @@
 </div>
 
 <!-- Hero Section -->
-<div class="hero-section d-flex align-items-center" style="min-height: 100vh;" data-aos="fade-in">
+<div class="hero-section d-flex align-items-center" data-aos="fade-in">
   <div class="container">
     <div class="row justify-content-center align-items-center text-white">
       <div class="col-lg-8 mx-auto text-center mb-5 mb-lg-0" data-aos="fade-right">
         <h1 class="display-4 fw-bold mb-3">University Feedback Platform</h1>
         <p class="lead mb-4">Built by students for the university — your feedback shapes a better campus experience.</p>
         <div class="d-flex gap-2 justify-content-center flex-wrap">
-          <a href="{% url 'select' %}" class="btn btn-lg px-4 me-md-2" style="background-color: #006600; color: #fff;">Login</a>
-          <a href="{% url 'register' %}" class="btn btn-lg px-4" style="background-color: transparent; color: #fff; border: 1px solid #fff;"
-             onmouseover="this.style.backgroundColor='#006600'; this.style.color='#fff';"
-             onmouseout="this.style.backgroundColor='transparent'; this.style.color='#fff';">
-            Sign Up
+          <a href="{% url 'select' %}" class="btn btn-lg px-4 me-md-2 cta-primary">Login</a>
+          <a href="{% url 'guest_login' %}" class="btn btn-lg px-4 cta-primary">
+            Continue as Guest
           </a>
         </div>
       </div>
@@ -45,42 +111,53 @@
 
 
 <!-- OSAS Services Section -->
-<section class="py-5" style="background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);" data-aos="fade-up">
+<section id="osas" class="py-5 glass-section" data-aos="fade-up">
   <div class="container text-center text-white">
     <h2 class="fw-bold mb-2">Selected OSAS Services</h2>
-    <div class="mx-auto mb-4" style="width: 60px; height: 3px; background-color: #08915e;"></div>
     <div class="row g-4 justify-content-center">
       <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="100">
-        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100">
-          <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
-            <i class="bi bi-wifi" style="font-size: 1.5rem;"></i>
+        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100 service-card" role="button" tabindex="0"
+             data-bs-toggle="modal" data-bs-target="#serviceModal"
+             data-title="Wi-Fi Services"
+             data-body="The Office of Student Affairs and Services (OSAS), in collaboration with the DICT, provides free internet access to students in designated Wi‑Fi zones on campus to support academic activities like research and online learning.">
+          <div class="text-white rounded-circle d-flex justify-content-center align-items-center mb-3 service-icon">
+            <i class="bi bi-wifi" style="font-size: 1.25rem;"></i>
           </div>
           <h5 class="fw-bold mb-1">Wi-Fi</h5>
           <p class="small">Campus Internet Access</p>
         </div>
       </div>
       <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="200">
-        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100">
-          <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
-            <i class="bi bi-journal-bookmark" style="font-size: 1.5rem;"></i>
+        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100 service-card" role="button" tabindex="0"
+             data-bs-toggle="modal" data-bs-target="#serviceModal"
+             data-title="Library Facilities"
+             data-body="OSAS supports students by ensuring access to the university library's resources — textbooks, research materials, and study spaces. Sometimes the library offers free coffee and bread in the morning for a welcoming study environment.">
+          <div class="text-white rounded-circle d-flex justify-content-center align-items-center mb-3 service-icon">
+            <i class="bi bi-journal-bookmark" style="font-size: 1.25rem;"></i>
           </div>
           <h5 class="fw-bold mb-1">Library</h5>
           <p class="small">Research & Study Resources</p>
         </div>
       </div>
       <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="300">
-        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100">
-          <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
-            <i class="bi bi-award" style="font-size: 1.5rem;"></i>
+        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100 service-card" role="button" tabindex="0"
+             data-bs-toggle="modal" data-bs-target="#serviceModal"
+             data-title="Scholarship Assistance"
+             data-body="OSAS regularly posts scholarship opportunities and updates through their Facebook page and the bulletin board outside their office — from government‑funded to institutional and higher‑education scholarships.">
+          <div class="text-white rounded-circle d-flex justify-content-center align-items-center mb-3 service-icon">
+            <i class="bi bi-award" style="font-size: 1.25rem;"></i>
           </div>
           <h5 class="fw-bold mb-1">Scholarships</h5>
           <p class="small">Financial Aid Opportunities</p>
         </div>
       </div>
       <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="400">
-        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100">
-          <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
-            <i class="bi bi-pencil-square" style="font-size: 1.5rem;"></i>
+        <div class="bg-white rounded-4 p-3 text-dark d-flex align-items-center flex-column shadow-sm h-100 service-card" role="button" tabindex="0"
+             data-bs-toggle="modal" data-bs-target="#serviceModal"
+             data-title="College Admission Tests"
+             data-body="OSAS helps applicants stay informed and prepared for the College Admission Test — sharing schedules, guidelines, and reminders via bulletin boards and official pages for SHS applicants and transferees.">
+          <div class="text-white rounded-circle d-flex justify-content-center align-items-center mb-3 service-icon">
+            <i class="bi bi-pencil-square" style="font-size: 1.25rem;"></i>
           </div>
           <h5 class="fw-bold mb-1">Admissions</h5>
           <p class="small">Exam & Enrollment</p>
