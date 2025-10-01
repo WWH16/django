@@ -1,23 +1,11 @@
 <!-- about section -->
 {% load static %}
 <style>
-  .about-section {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    position: relative;
-  }
-  
-  .about-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2308915e" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-    pointer-events: none;
-  }
+  .about-section { background: #ffffff; position: relative; }
   
   .section-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
     background: linear-gradient(135deg, #08915e, #0bbf7a);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -25,12 +13,7 @@
     position: relative;
   }
   
-  .feature-card {
-    transition: all 0.3s ease;
-    border: 1px solid rgba(8, 145, 94, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
+  .feature-card { transition: transform .15s ease, border-color .15s ease; border: 1px solid rgba(0,0,0,0.06); position: relative; overflow: hidden; box-shadow: none; }
   
   .feature-card::before {
     content: '';
@@ -47,11 +30,7 @@
     left: 100%;
   }
   
-  .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(8, 145, 94, 0.1);
-    border-color: rgba(8, 145, 94, 0.2);
-  }
+  .feature-card:hover { transform: translateY(-2px); border-color: rgba(0,0,0,0.12); }
   
   .feature-icon {
     transition: all 0.3s ease;
@@ -61,27 +40,15 @@
     transform: scale(1.1);
   }
   
-  .main-description-card {
-    background: linear-gradient(135deg, #ffffff, #f8f9fa);
-    border: 1px solid rgba(8, 145, 94, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
+  .main-description-card { background: #ffffff; border: 1px solid rgba(0,0,0,0.06); position: relative; overflow: hidden; box-shadow: none; }
   
-  .main-description-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #08915e, #0bbf7a);
-  }
+  .main-description-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: #10b981; }
   
   .badge {
     transition: all 0.3s ease;
     border: 1px solid rgba(8, 145, 94, 0.2) !important;
   }
+  .badge:focus { outline: none; box-shadow: 0 0 0 .2rem rgba(8,145,94,.25); }
   
   .badge:hover {
     transform: translateY(-2px);
@@ -128,6 +95,7 @@
     border-color: rgba(8, 145, 94, 0.4);
     color: #08915e;
   }
+  .service-badge:focus { outline: none; box-shadow: 0 0 0 .25rem rgba(8,145,94,.25); }
   
   .service-badge i {
     color: #08915e;
@@ -138,135 +106,59 @@
     transform: scale(1.1);
     color: #0bbf7a;
   }
+
+  /* Mobile responsive */
+  @media (max-width: 991.98px) {
+    .about-section .section-heading {
+      font-size: 2rem !important;
+      text-align: center;
+    }
+  }
 </style>
 <section id="about" class="py-5 about-section text-dark" data-aos="fade-up">
   <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="section-heading fw-bold mb-2" data-aos="fade-right" data-aos-delay="100">
-        About the Platform
-      </h2>
-      <div class="mx-auto mb-4" style="width: 60px; height: 4px; background: #198754; border-radius: 2px;"></div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <!-- Main Description Card -->
-        <div class="card border-0 shadow-sm mb-4 main-description-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="card-body p-5">
-            <div class="row align-items-center">
-              <div class="col-md-2 text-center mb-3 mb-md-0">
-                <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block feature-icon">
-                  <i class="bi bi-chat-square-text text-success" style="font-size: 2rem;"></i>
-                </div>
-              </div>
-              <div class="col-md-10">
-                <p class="lead mb-0" style="font-size: 1.125rem;">
-                  The <strong>University Feedback Platform</strong> was developed by students to provide a centralized, accessible, and 
-                  anonymous space where students can share their experiences about university services and teacher evaluations.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="300">
-          <div class="col-md-6">
-            <div class="d-flex feature-card p-3 rounded-3">
-              <div class="flex-shrink-0">
-                <div class="bg-primary bg-opacity-10 rounded p-2 feature-icon">
-                  <i class="bi bi-shield-check text-primary"></i>
-                </div>
-              </div>
-              <div class="ms-3">
-                <h6 class="fw-semibold mb-2">Anonymous & Secure</h6>
-                <p class="text-muted small mb-0">Share honest feedback without revealing your identity, ensuring complete privacy.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex feature-card p-3 rounded-3">
-              <div class="flex-shrink-0">
-                <div class="bg-warning bg-opacity-10 rounded p-2 feature-icon">
-                  <i class="bi bi-cpu text-warning"></i>
-                </div>
-              </div>
-              <div class="ms-3">
-                <h6 class="fw-semibold mb-2">AI-Powered Analysis</h6>
-                <p class="text-muted small mb-0">Advanced NLP automatically analyzes sentiment to generate actionable insights.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex feature-card p-3 rounded-3">
-              <div class="flex-shrink-0">
-                <div class="bg-info bg-opacity-10 rounded p-2 feature-icon">
-                  <i class="bi bi-graph-up text-info"></i>
-                </div>
-              </div>
-              <div class="ms-3">
-                <h6 class="fw-semibold mb-2">Data-Driven Improvements</h6>
-                <p class="text-muted small mb-0">Feedback contributes to research that drives meaningful university improvements.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex feature-card p-3 rounded-3">
-              <div class="flex-shrink-0">
-                <div class="bg-success bg-opacity-10 rounded p-2 feature-icon">
-                  <i class="bi bi-people text-success"></i>
-                </div>
-              </div>
-              <div class="ms-3">
-                <h6 class="fw-semibold mb-2">Student-Centered</h6>
-                <p class="text-muted small mb-0">Built by students, for students to improve university services and teaching quality.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Services Covered -->
-<div class="text-center mb-4" data-aos="fade-up" data-aos-delay="400">
-  <h4 class="fw-bold mb-4" style="color: #2c3e50;">What You Can Evaluate</h4>
-  
-  <div class="mb-5">
-    <h5 class="fw-bold mb-4" style="color: #08915e; position: relative;">
-      University Services
-      <div class="mx-auto mt-2" style="width: 50px; height: 3px; background: linear-gradient(90deg, #08915e, #0bbf7a); border-radius: 2px;"></div>
-    </h5>
-    <div class="row g-3 justify-content-center">
-      <div class="col-auto">
-        <div class="service-badge">
-          <i class="bi bi-wifi me-2"></i>Wi-Fi Services
-        </div>
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6">
+        <h2 class="section-heading fw-bold mb-3">About the Platform</h2>
+        <p class="text-muted mb-4">A student-built platform for honest feedback on university services and faculty performance with privacy and insights built in.</p>
+        <ul class="list-unstyled mb-4">
+          <li class="d-flex align-items-start mb-2"><i class="bi bi-check-circle text-success me-2"></i><span>Anonymous & secure submissions</span></li>
+          <li class="d-flex align-items-start mb-2"><i class="bi bi-check-circle text-success me-2"></i><span>AI-powered sentiment analysis</span></li>
+          <li class="d-flex align-items-start mb-2"><i class="bi bi-check-circle text-success me-2"></i><span>Actionable insights for improvement</span></li>
+        </ul>
+        <!-- CTAs removed to avoid duplication with hero buttons -->
       </div>
-      <div class="col-auto">
-        <div class="service-badge">
-          <i class="bi bi-journal-bookmark me-2"></i>Library Access
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="card main-description-card p-3 text-center">
+              <div class="mb-2"><i class="bi bi-chat-square-text text-success"></i></div>
+              <div class="small text-muted">Feedback submitted</div>
+              <div class="fw-bold">Real-time</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card main-description-card p-3 text-center">
+              <div class="mb-2"><i class="bi bi-cpu text-success"></i></div>
+              <div class="small text-muted">Sentiment engine</div>
+              <div class="fw-bold">Enabled</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card main-description-card p-3 text-center">
+              <div class="mb-2"><i class="bi bi-graph-up text-success"></i></div>
+              <div class="small text-muted">Insights</div>
+              <div class="fw-bold">Actionable</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card main-description-card p-3 text-center">
+              <div class="mb-2"><i class="bi bi-people text-success"></i></div>
+              <div class="small text-muted">Built for</div>
+              <div class="fw-bold">Students</div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-auto">
-        <div class="service-badge">
-          <i class="bi bi-award me-2"></i>Scholarships
-        </div>
-      </div>
-      <div class="col-auto">
-        <div class="service-badge">
-          <i class="bi bi-pencil-square me-2"></i>College Admissions
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="mb-3">
-    <h5 class="fw-bold mb-3" style="color: #08915e; position: relative;">
-      Teacher Evaluation
-      <div class="mx-auto mt-2" style="width: 50px; height: 3px; background: linear-gradient(90deg, #08915e, #0bbf7a); border-radius: 2px;"></div>
-    </h5>
-    <p class="text-muted">Evaluate faculty performance and teaching quality</p>
-  </div>
-</div>
-
       </div>
     </div>
   </div>

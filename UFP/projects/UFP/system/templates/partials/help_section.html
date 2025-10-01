@@ -1,22 +1,7 @@
 {% load static %}
 <style>
   /* Help Resources Section Styles */
-  .help-section {
-    padding: 4rem 0;
-    background: #f6f7f8;
-    position: relative;
-  }
-  
-  .help-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2308915e" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-    pointer-events: none;
-  }
+  .help-section { padding: 4rem 0; background: #f7f9f8; position: relative; }
 
   /* Typography */
   .section-heading {
@@ -48,15 +33,7 @@
   }
 
   /* Cards */
-  .help-card {
-    transition: box-shadow 0.25s ease, transform 0.2s ease;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(0,0,0,0.06);
-    position: relative;
-  }
+  .help-card { transition: transform .15s ease, border-color .15s ease; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: none; border: 1px solid rgba(0,0,0,0.06); position: relative; }
   
   .help-card::before {
     content: '';
@@ -73,11 +50,7 @@
     left: 100%;
   }
 
-  .help-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10);
-    border-color: rgba(0,0,0,0.08);
-  }
+  .help-card:hover { transform: translateY(-2px); border-color: rgba(0,0,0,0.12); }
 
   /* Accordion */
   .accordion-item {
@@ -180,19 +153,28 @@
 {% load static %}
 <section id="help" class="help-section bg-light text-dark" data-aos="fade-up">
   <div class="container">
-    <h4 class="fw-bold text-center mb-4" data-aos="fade-down" data-aos-delay="100">
-      <i class="bi bi-question-circle-fill text-primary me-2"></i>Help Center
-    </h4>
-
-    <!-- FAQ Accordion -->
-    <div class="accordion mb-5" id="faqAccordion" data-aos="fade-up" data-aos-delay="200">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-5">
+        <h4 class="fw-bold mb-3"><i class="bi bi-question-circle-fill text-primary me-2" aria-hidden="true"></i>Quick Start</h4>
+        <div class="card help-card p-3 mb-3">
+          <ol class="mb-0 ps-3">
+            <li class="mb-2">Create an account or continue as guest</li>
+            <li class="mb-2">Choose OSAS service or Teacher Evaluation</li>
+            <li class="mb-2">Write honest feedback and submit</li>
+          </ol>
+        </div>
+        <!-- CTA removed to avoid duplication with hero buttons -->
+      </div>
+      <div class="col-lg-7">
+        <h4 class="fw-bold mb-3">FAQ</h4>
+        <div class="accordion" id="faqAccordion" data-aos="fade-up" data-aos-delay="100">
       <div class="accordion-item">
         <h2 class="accordion-header" id="faq1">
-          <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+          <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
             What is this website for?
           </button>
         </h2>
-        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion" aria-labelledby="faq1">
           <div class="accordion-body">
             This platform enables students to provide feedback on both university services and faculty performance. Through sentiment analysis (Positive, Neutral, Negative), the system generates insights that support continuous improvement in service delivery and teaching quality.
           </div>
@@ -201,11 +183,11 @@
 
       <div class="accordion-item">
         <h2 class="accordion-header" id="faq2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
             Do I need to create an account to give feedback?
           </button>
         </h2>
-        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="faq2">
           <div class="accordion-body">
             Yes, creating an account is required to submit feedback. This helps ensure the integrity of submissions and allows us to better organize feedback data. <br>
             However, your responses are still handled with strict confidentiality and used only for research and service improvement purposes. Your identity is protected at all times.
@@ -215,11 +197,11 @@
 
       <div class="accordion-item">
         <h2 class="accordion-header" id="faq3">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
             Who can see my feedback?
           </button>
         </h2>
-        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="faq3">
           <div class="accordion-body">
             Only authorized faculty or staff (admin users) can see the feedback and sentiment analysis.
           </div>
@@ -228,106 +210,17 @@
 
       <div class="accordion-item">
         <h2 class="accordion-header" id="faq4">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
             Can I edit my feedback?
           </button>
         </h2>
-        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="faq4">
           <div class="accordion-body">
             No, submitted feedback cannot be edited. If needed, you may submit a new one.
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Student Guide -->
-    <div class="mb-5" data-aos="fade-up" data-aos-delay="300">
-<div class="card border-0 shadow-sm mb-4 help-card">
-        <div class="card-header bg-success bg-opacity-10 border-0 py-3">
-          <h4 class="mb-0"><i class="bi bi-mortarboard-fill text-success me-2"></i>Student Guide</h4>
-        </div>
-        <div class="card-body p-4">
-          <p class="fw-semibold mb-3">How to Give Feedback for OSAS Services</p>
-          <div class="row">
-            <div class="col-lg-8">
-              <div class="d-flex mb-3">
-                <div class="step-number">1</div>
-                <div>
-                  <p class="mb-0">Visit the website.</p>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <div class="step-number">2</div>
-                <div>
-                  <p class="mb-0">Click on "Login" (or "Sign up" if you don't have an account).</p>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <div class="step-number">3</div>
-                <div>
-                  <p class="mb-0">Select "Student Login".</p>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <div class="step-number">4</div>
-                <div>
-                  <p class="mb-2">After logging in, choose the type of feedback from the side navigation bar:</p>
-                  <div class="ps-3">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-wifi text-primary me-2"></i>
-                      <span class="small"><strong>Give Feedback (OSAS Services)</strong> → Select a service (e.g., Wi-Fi, Library), then enter your honest feedback.</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      <i class="bi bi-person-check text-warning me-2"></i>
-                      <span class="small"><strong>Teacher Evaluation</strong> → Select a teacher and department, then enter your honest feedback.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <div class="step-number">5</div>
-                <div>
-                  <p class="mb-0">(Optional) Check "Submit as anonymous" if you don't want your name attached.</p>
-                </div>
-              </div>
-
-              <div class="d-flex">
-                <div class="step-number">6</div>
-                <div>
-                  <p class="mb-0">Click "Submit" — the system will analyze the sentiment automatically.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4">
-              <div class="bg-light rounded p-3 quick-info-box">
-                <h6 class="fw-semibold mb-3">
-                  <i class="bi bi-info-circle text-primary me-2"></i>Quick Info
-                </h6>
-                <ul class="list-unstyled small">
-                  <li class="mb-2">
-                    <i class="bi bi-shield-check text-success me-2"></i>
-                    Anonymous option available
-                  </li>
-                  <li class="mb-2">
-                    <i class="bi bi-cpu text-warning me-2"></i>
-                    AI analyzes your feedback automatically
-                  </li>
-                  <li class="mb-0">
-                    <i class="bi bi-graph-up text-info me-2"></i>
-                    Helps improve university services
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-
     </div>
   </div>
 </section>
