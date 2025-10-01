@@ -32,11 +32,7 @@
   }
 
   /* Theme-consistent Navbar (dark solid with green accents) */
-  .navbar {
-    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-    background: #212529 !important;
-    border-bottom: 1px solid rgba(8, 145, 94, 0.25);
-  }
+  .navbar { transition: background 0.2s, border-color 0.2s; background: #111416 !important; border-bottom: 1px solid rgba(255,255,255,0.06); }
 
   .navbar.scrolled {
     background: #212529 !important;
@@ -64,8 +60,8 @@
     border-radius: 6px;
     transition: color .2s ease, background .2s ease;
   }
-  .nav-link:hover { color: #ffffff !important; background: rgba(8,145,94,.12); }
-  .nav-link.active { color: #0bbf7a !important; background: rgba(8,145,94,.16); }
+  .nav-link:hover { color: #ffffff !important; background: rgba(255,255,255,.06); }
+  .nav-link.active { color: #10b981 !important; background: rgba(16,185,129,.15); }
 
   /* Dropdown */
   .dropdown-menu { background: #ffffff; border: 1px solid rgba(8,145,94,.2); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
@@ -215,6 +211,7 @@
     {% block extra_head %}{% endblock %}
   </head>
   <body class="loading">
+    <a href="#main" class="visually-hidden-focusable position-absolute top-0 start-0 p-2 m-2 bg-dark text-white rounded" style="z-index: 1050;">Skip to main content</a>
 
     <!-- Skeleton Loading Screen -->
     <div class="skeleton-container">
@@ -334,6 +331,9 @@
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -343,7 +343,7 @@
           >
             <ul class="navbar-nav align-items-lg-center">
               <li class="nav-item">
-                <a class="nav-link active" href="#">Home</a>
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
               </li>
               <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
 
@@ -380,7 +380,7 @@
       </nav>
 
       <!-- Page Content -->
-      <main>
+      <main id="main">
         {% block content %}
         <!-- Page-specific content goes here -->
         {% endblock %}
@@ -389,7 +389,7 @@
     
     {% block footer %}
     <!-- Footer -->
-    <footer id="footer" class="footer position-relative dark-background">
+    <footer id="footer" class="footer position-relative dark-background" style="border-top: 1px solid rgba(255,255,255,0.06);">
       <div class="container footer-top">
         <div class="row gy-4">
           <div class="col-lg-4 col-md-6 footer-about">
@@ -587,10 +587,46 @@
         if (serviceModal) {
           serviceModal.addEventListener("show.bs.modal", function (event) {
             const trigger = event.relatedTarget;
-            serviceModal.querySelector(".modal-title").textContent =
-              trigger.getAttribute("data-title");
-            serviceModal.querySelector(".modal-body").textContent =
-              trigger.getAttribute("data-body");
+            const title = trigger.getAttribute("data-title") || '';
+            const body = trigger.getAttribute("data-body") || '';
+            const img = trigger.getAttribute("data-img") || '';
+            const social = trigger.getAttribute("data-social") || '';
+
+            serviceModal.querySelector(".modal-title").textContent = title;
+
+            // Build rich body if an image is provided (team member)
+            if (img) {
+              serviceModal.querySelector(".modal-dialog").classList.add('modal-lg');
+              serviceModal.querySelector(".modal-body").innerHTML = `
+                <div class="row g-3 align-items-start">
+                  <div class="col-12 col-md-4">
+                    <img src="${img}" alt="${title}" class="img-fluid rounded" style="width:100%;height:260px;object-fit:contain;object-position:top center;background:#ffffff;" />
+                  </div>
+                  <div class="col-12 col-md-8">
+                    <p class="mb-3">${body}</p>
+                    ${social ? `<div class="d-flex gap-3">${social}</div>` : ''}
+                  </div>
+                </div>`;
+            } else {
+              serviceModal.querySelector(".modal-body").textContent = body;
+            }
+          });
+
+          // Keyboard support for service cards
+          document.querySelectorAll('.service-card[role="button"]').forEach((card) => {
+            card.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const modal = new bootstrap.Modal(serviceModal);
+                serviceModal.querySelector(".modal-title").textContent = card.getAttribute("data-title");
+                serviceModal.querySelector(".modal-body").textContent = card.getAttribute("data-body");
+                modal.show(card);
+              }
+            });
+            if (!card.getAttribute('aria-label')) {
+              const title = card.querySelector('h5')?.textContent?.trim() || 'Service card';
+              card.setAttribute('aria-label', title + ' details');
+            }
           });
         }
 
