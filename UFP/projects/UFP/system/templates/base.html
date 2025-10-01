@@ -31,42 +31,65 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
   }
 
-  /* Default: solid background for mobile/small screens */
+  /* Theme-consistent Navbar (dark solid with green accents) */
   .navbar {
-    transition: background 0.3s, box-shadow 0.3s;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
     background: #212529 !important;
+    border-bottom: 1px solid rgba(8, 145, 94, 0.25);
   }
 
   .navbar.scrolled {
     background: #212529 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
-  /* Desktop: semi-transparent until scroll */
-  @media (min-width: 992px) {
-    .navbar {
-      background: rgba(33, 37, 41, 0.7) !important;
-    }
+  /* Navbar Brand */
+  .navbar-brand {
+    transition: all 0.3s ease;
+    position: relative;
   }
 
-  /* Cellphone only: reduce navbar height */
+  .navbar-brand:hover {
+    transform: scale(1.05);
+  }
+
+  .site-title { color: #ffffff; font-weight: 700; letter-spacing: .2px; }
+  .navbar-brand:hover .site-title { color: #0bbf7a; }
+
+  /* Nav Links */
+  .nav-link {
+    color: rgba(255,255,255,.85) !important;
+    font-weight: 500;
+    padding: 0.75rem 0.9rem !important;
+    border-radius: 6px;
+    transition: color .2s ease, background .2s ease;
+  }
+  .nav-link:hover { color: #ffffff !important; background: rgba(8,145,94,.12); }
+  .nav-link.active { color: #0bbf7a !important; background: rgba(8,145,94,.16); }
+
+  /* Dropdown */
+  .dropdown-menu { background: #ffffff; border: 1px solid rgba(8,145,94,.2); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+
+  .dropdown-item {
+    color: #2c3e50; font-weight: 500; padding: 0.75rem 1.25rem; transition: background .2s ease, color .2s ease;
+  }
+  .dropdown-item:hover { background: rgba(8,145,94,.1); color: #08915e; }
+
+  /* Buttons */
+  .btn-warning { background: #ffc107; border: none; color: #2c3e50; font-weight: 600; transition: background .2s ease, transform .2s ease; box-shadow: 0 4px 12px rgba(255,193,7,.2); }
+  .btn-warning:hover { background: #ffb300; transform: translateY(-1px); }
+
+  /* Mobile Styles */
   @media (max-width: 767px) {
-    .navbar {
-      padding-top: 0.25rem;    /* smaller vertical space */
-      padding-bottom: 0.25rem;
-      background-color: #212529 !important; /* solid background */
-    }
+    .navbar { padding-top: 0.4rem; padding-bottom: 0.4rem; background: #212529 !important; }
+    .navbar-toggler { padding: 0.5rem; border: 1px solid rgba(8,145,94,.35); border-radius: 8px; }
+    .navbar-toggler:hover { background: rgba(8,145,94,.12); border-color: rgba(8,145,94,.5); }
+    .nav-link { padding: 1rem !important; margin: 0.25rem 0; border-radius: 8px; }
+  }
 
-      /* Default: solid background for mobile/small screens */
-      .navbar {
-        transition: background 0.3s, box-shadow 0.3s;
-        background: #212529 !important;
-      }
-
-      .navbar.scrolled {
-        background: #212529 !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
+  /* Desktop Styles */
+  @media (min-width: 992px) {
+    .navbar { background: rgba(33, 37, 41, 0.9) !important; }
   }
 
   /* Help Resources Section Styles */
@@ -111,26 +134,6 @@
       margin-bottom: 1.5rem;
     }
   }
-
-      /* Desktop: semi-transparent until scroll */
-      @media (min-width: 992px) {
-        .navbar {
-          background: rgba(33, 37, 41, 0.7) !important;
-        }
-      }
-
-      /* Cellphone only: reduce navbar height */
-      @media (max-width: 767px) {
-        .navbar {
-          padding-top: 0.25rem; /* smaller vertical space */
-          padding-bottom: 0.25rem;
-          background-color: #212529 !important; /* solid background */
-        }
-
-        .navbar-toggler {
-          padding: 0.25rem; /* optional: smaller hamburger spacing */
-        }
-      }
 
     /* Skeleton Loading Styles */
     @keyframes skeleton-loading {
@@ -198,6 +201,14 @@
 
     .loading .skeleton-container {
       display: block !important;
+    }
+
+    /* Anchor scroll offset so fixed navbar does not cover headings */
+    :root { --navbar-offset: 96px; }
+    html { scroll-behavior: smooth; }
+    section[id], header[id], footer[id], div[id] { scroll-margin-top: var(--navbar-offset); }
+    @media (max-width: 767px) {
+      :root { --navbar-offset: 80px; }
     }
     </style>
 
@@ -336,67 +347,9 @@
               </li>
               <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
 
-              <!-- Services Dropdown -->
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle toggle-dropdown"
-                  href="#services"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Services
-                </a>
-                <ul class="dropdown-menu" data-aos="fade-up">
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      data-bs-toggle="modal"
-                      data-bs-target="#serviceModal"
-                      data-title="Wi-Fi Services"
-                      data-body="The Office of Student Affairs and Services (OSAS), in collaboration with the Department of Information and Communications Technology (DICT), provides free internet access to students in designated Wi-Fi zones on campus. These hotspots are strategically located to support academic activities such as research, online classes, and digital communication."
-                    >
-                      Wi-Fi Services
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      data-bs-toggle="modal"
-                      data-bs-target="#serviceModal"
-                      data-title="Library Facilities"
-                      data-body="The OSAS supports students' academic success by ensuring access to the university library's resources — including textbooks, research materials, and study spaces. As an added gesture of care, the library sometimes offers free coffee and bread in the morning, fostering a welcoming and focused study environment for early risers."
-                    >
-                      Library Facilities
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      data-bs-toggle="modal"
-                      data-bs-target="#serviceModal"
-                      data-title="Scholarship Assistance"
-                      data-body="The OSAS constantly provides updates on available scholarship programs through their official Facebook page, ensuring students stay informed in real time. They also post visual aids and announcements on the bulletin board outside their office — covering a wide range of opportunities, from government-funded to institutional and higher education scholarships. All you name it, OSAS makes sure you're aware and guided."
-                    >
-                      Scholarship Services
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      data-bs-toggle="modal"
-                      data-bs-target="#serviceModal"
-                      data-title="College Admission Tests"
-                      data-body="The OSAS helps students prepare for and navigate the College Admission Test process. They provide schedules, guidelines, and reminders — whether you're a senior high school applicant or a transferee. Through advisories posted on bulletin boards and their Facebook page, they ensure students stay informed and equipped for this important academic milestone."
-                    >
-                      College Admission Tests
-                    </a>
-                  </li>
-                </ul>
+              <!-- Services Link (scroll to OSAS section) -->
+              <li class="nav-item">
+                <a class="nav-link" href="#osas">Services</a>
               </li>
 
               <!-- Other Nav Items -->
@@ -407,20 +360,20 @@
               <li class="nav-item">
                 <a class="nav-link" href="#footer">Contact</a>
               </li>
-              <!-- Give Feedback Button: visible on mobile and desktop inside collapse -->
+              <!-- Sign Up Button: visible on mobile and desktop inside collapse -->
               <li class="nav-item d-lg-none mt-2">
                 <a
-                  class="btn btn-warning fw-bold px-4 py-2 w-100"
-                  href="{% url 'select' %}"
-                  >Give Feedback</a
+                  class="btn btn-warning fw-bold px-2 py-1 w-100"
+                  href="{% url 'register' %}"
+                  >Sign Up</a
                 >
               </li>
             </ul>
-            <!-- Give Feedback Button: visible only on desktop, outside collapse -->
+            <!-- Sign Up Button: visible only on desktop, outside collapse -->
             <a
-              class="btn btn-warning fw-bold px-4 py-2 ms-lg-3 d-none d-lg-block"
-              href="{% url 'select' %}"
-              >Give Feedback</a
+              class="btn btn-warning fw-bold px-2 py-1 ms-lg-3 d-none d-lg-block"
+              href="{% url 'register' %}"
+              >Sign Up</a
             >
           </div>
         </div>
