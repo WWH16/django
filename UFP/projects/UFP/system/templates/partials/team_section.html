@@ -1,285 +1,283 @@
-  <!-- Leadership Section -->
-  {% load static %}
-  <style>
-    /* Enhanced Team Section Styles */
-    .team-section { background: #f7f9f8; position: relative; }
-    
-  .section-heading {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #006600 !important;
-    background: none !important;
-    -webkit-background-clip: initial !important;
-    -webkit-text-fill-color: initial !important;
-    background-clip: initial !important;
-  }
-
-    
-    .section-subtitle { font-size: 1.25rem; font-weight: 600; margin-bottom: .5rem; color: #10b981; position: relative; }
-    
-    .section-subtitle::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      width: 40px;
-      height: 3px;
-      background: linear-gradient(90deg, #08915e, #0bbf7a);
-      border-radius: 2px;
-    }
-    
-    .section-description {
-      font-size: 1rem;
-      line-height: 1.6;
-      color: #6c757d;
-    }
-    
-    .leader-card { 
-      transition: transform .15s ease, border-color .15s ease; 
-      border: 1px solid rgba(0,0,0,0.06); 
-      position: relative; 
-      overflow: hidden; 
-      box-shadow: none; 
-    }
-    
-    .leader-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.05), transparent);
-      transition: left 0.6s ease;
-    }
-    
-    .leader-card:hover::before {
-      left: 100%;
-    }
-    
-    .leader-image {
-      padding: 20px;
-      position: relative;
-    }
-    
-    .leader-image img {
-      width: 100%;
-      height: auto;
-      max-height: 250px;
-      object-fit: cover;
-      object-position: top center;
-      margin: 0 auto;
-      border-radius: 12px;
-      background: #ffffff;
-      transition: all 0.4s ease;
-    }
-    
-    .leader-card:hover { 
-      transform: translateY(-2px); 
-      border-color: rgba(0,0,0,0.12); 
-    }
-
-    .leader-card:hover .leader-image img {
-      transform: scale(1.05);
-    }
-
-    .team-section .social-links { 
-      background: rgba(0,0,0,0.45); 
-      backdrop-filter: blur(6px); 
-    }
-
-    /* Show social icons only on image hover */
-    .leader-image .social-links {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(6px);
-      transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
-    }
-    .leader-image:hover .social-links {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .team-section .social-links a {
-      opacity: 0.8;
-      transition: all 0.3s ease;
-      color: white !important;
-    }
-
-    .team-section .social-links a:hover {
-      opacity: 1;
-      transform: translateY(-3px) scale(1.1);
-      color: white !important;
-    }
-
-    .leader-info h4 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #006600;
-    }
-
-    .leader-info .position {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #08915e;
-    }
-
-    .leader-info .bio {
-      font-size: 0.875rem;
-      line-height: 1.6;
-      color: #6c757d;
-    }
-
-    .about-image img {
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-    }
-
-    .about-image:hover img {
-      transform: scale(1.02);
-    }
-
-    @media (max-width: 768px) {
-      .leader-card {
-        margin-bottom: 0.75rem;
-        padding: 1rem !important;
-      }
-      
-      .leader-image {
-        padding: 10px !important;
-      }
-      
-      .leader-image img {
-        max-height: 200px !important;
-        object-fit: contain !important;
-        object-position: center center !important;
-      }
-
-      .section-heading {
-        font-size: 2rem !important;
-      }
-
-      .section-subtitle {
-        font-size: 1.25rem !important;
-      }
-
-      .leader-info h4 {
-        font-size: 1.1rem !important;
-      }
-
-      .leader-info .position {
-        font-size: 0.875rem !important;
-      }
-
-      .leader-info .bio {
-        font-size: 0.875rem !important;
-      }
-    }
-  </style>
-
-  <section id="team" class="section py-5 team-section" data-aos="fade-up">
-    <div class="container">
-      <div class="text-center mb-4">
-        <h2 class="section-heading">Student Developers</h2>
-        <p class="section-description">The team behind the platform.</p>
+{% load static %}
+<section id="team" class="team-section py-5" data-aos="fade-up">
+  <div class="container">
+    <div class="row align-items-center mb-5 flex-column-reverse flex-lg-row">
+      <!-- Left Intro -->
+      <div class="col-lg-5 text-center text-lg-start" data-aos="fade-right" data-aos-delay="100">
+        <h3 class="team-subtitle text-success">Meet Our Team</h3>
+        <h2 class="team-heading">The Student Development Team Behind the Platform</h2>
+        <p class="team-description">We developed this platform as part of our thesis to enable meaningful student feedback — built with research, collaboration, and care.</p>
       </div>
-      <div class="row g-2 g-md-4 justify-content-center">
-        
-        <!-- Kennie -->
-        <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="50">
-          <div class="leader-card bg-white rounded-3 text-center p-3">
-            <div class="leader-image position-relative text-center">
-              <button type="button" class="p-0 w-100 border-0 bg-transparent"
-                data-bs-toggle="modal" data-bs-target="#serviceModal"
-                data-title="Kennie Angelo R. Estrellon"
-                data-body="4th Year BSCS-DM. Member of the development team behind the student-centered feedback systems. Passionate about full-stack development, problem-solving, and leveraging AI to improve user experience."
-                data-img="{% static 'system/images/ken.webp' %}"
-                data-social='<a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank" rel="noopener" class="text-success"><i class="bi bi-linkedin"></i></a><a href="https://www.facebook.com/shinichikenn" target="_blank" rel="noopener" class="text-success"><i class="bi bi-facebook"></i></a><a href="https://www.instagram.com/kensstre/" target="_blank" rel="noopener" class="text-success"><i class="bi bi-instagram"></i></a>'>
-                <img src="{% static 'system/images/ken.webp' %}" 
-                  alt="Kennie Angelo R. Estrellon portrait" 
-                  class="img-fluid rounded mb-3"
-                  style="width:100%;height:auto;max-height:220px;object-fit:cover;object-position:top center;background:#ffffff;" 
-                  loading="lazy">
-              </button>
-              <div class="social-links position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-center gap-3 rounded-2">
-                <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank" rel="noopener" aria-label="Kennie on LinkedIn" class="text-white"><i class="bi bi-linkedin"></i></a>
-                <a href="https://www.facebook.com/shinichikenn" target="_blank" rel="noopener" aria-label="Kennie on Facebook" class="text-white"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/kensstre/" target="_blank" rel="noopener" aria-label="Kennie on Instagram" class="text-white"><i class="bi bi-instagram"></i></a>
-              </div>
-            </div>
-            <div>
-              <h4 class="h6 mb-1">Kennie Angelo R. Estrellon</h4>
-              <p class="small text-muted mb-0">4th Year BSCS-DM</p>
-            </div>
+
+      <!-- Right Team Members -->
+      <div class="col-lg-7 d-flex justify-content-start flex-wrap gap-4 team-members-wrapper" data-aos="fade-left" data-aos-delay="200">
+
+        <!-- Leader 1 -->
+        <div class="team-member" data-bs-toggle="modal" data-bs-target="#teamModal1">
+          <div class="member-img">
+            <img src="{% static 'system/images/ken.webp' %}" alt="Kennie Angelo R. Estrellon">
+          </div>
+          <h5 class="member-name mt-2">Kennie Angelo R.</h5>
+          <p class="member-role text-success small">4th Year BSCS-DM</p>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/shinichikenn" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/kensstre/" target="_blank"><i class="bi bi-instagram"></i></a>
           </div>
         </div>
 
-        <!-- Nathaniel -->
-        <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-          <div class="leader-card bg-white rounded-3 text-center p-3">
-            <div class="leader-image position-relative text-center">
-              <button type="button" class="p-0 w-100 border-0 bg-transparent"
-                data-bs-toggle="modal" data-bs-target="#serviceModal"
-                data-title="Nathaniel Panis"
-                data-body="4th Year BSCS-DM. Member of the development team behind the student-centered feedback systems, focusing on front-end development. Specializing in creating responsive user interfaces and enhancing user experience through modern web technologies."
-                data-img="{% static 'system/images/panis2.webp' %}"
-                data-social='<a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank" rel="noopener" class="text-success"><i class="bi bi-linkedin"></i></a><a href="https://www.facebook.com/nathaniel.panis.355" target="_blank" rel="noopener" class="text-success"><i class="bi bi-facebook"></i></a><a href="https://www.instagram.com/nielpns/" target="_blank" rel="noopener" class="text-success"><i class="bi bi-instagram"></i></a>'>
-                <img src="{% static 'system/images/panis2.webp' %}" 
-                  alt="Nathaniel Panis portrait" 
-                  class="img-fluid rounded mb-3"
-                  style="width:100%;height:auto;max-height:220px;object-fit:cover;object-position:top center;background:#ffffff;" 
-                  loading="lazy">
-              </button>
-              <div class="social-links position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-center gap-3 rounded-2">
-                <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank" rel="noopener" aria-label="Nathaniel on LinkedIn" class="text-white"><i class="bi bi-linkedin"></i></a>
-                <a href="https://www.facebook.com/nathaniel.panis.355" target="_blank" rel="noopener" aria-label="Nathaniel on Facebook" class="text-white"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/nielpns/" target="_blank" rel="noopener" aria-label="Nathaniel on Instagram" class="text-white"><i class="bi bi-instagram"></i></a>
-              </div>
-            </div>
-            <div>
-              <h4 class="h6 mb-1">Nathaniel Panis</h4>
-              <p class="small text-muted mb-0">4th Year BSCS-DM</p>
-            </div>
+        <!-- Leader 2 -->
+        <div class="team-member" data-bs-toggle="modal" data-bs-target="#teamModal2">
+          <div class="member-img">
+            <img src="{% static 'system/images/panis2.webp' %}" alt="Nathaniel Panis">
+          </div>
+          <h5 class="member-name mt-2">Nathaniel Panis</h5>
+          <p class="member-role text-success small">4th Year BSCS-DM</p>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/nathaniel.panis.355" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/nielpns/" target="_blank"><i class="bi bi-instagram"></i></a>
           </div>
         </div>
 
-        <!-- John -->
-        <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150">
-          <div class="leader-card bg-white rounded-3 text-center p-3">
-            <div class="leader-image position-relative text-center">
-              <button type="button" class="p-0 w-100 border-0 bg-transparent"
-                data-bs-toggle="modal" data-bs-target="#serviceModal"
-                data-title="John Ansley Rocel"
-                data-body="4th Year BSCS-DM. Part of the development team behind a student-centered feedback system. Interested in software engineering and real-world applications of AI."
-                data-img="{% static 'system/images/cen.webp' %}"
-                data-social='<a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank" rel="noopener" class="text-success"><i class="bi bi-linkedin"></i></a><a href="https://www.facebook.com/johnansley.esteves" target="_blank" rel="noopener" class="text-success"><i class="bi bi-facebook"></i></a><a href="https://www.instagram.com/b._.boss__/" target="_blank" rel="noopener" class="text-success"><i class="bi bi-instagram"></i></a>'>
-                <img src="{% static 'system/images/cen.webp' %}" 
-                  alt="John Ansley Rocel portrait" 
-                  class="img-fluid rounded mb-3"
-                  style="width:100%;height:auto;max-height:220px;object-fit:cover;object-position:top center;background:#ffffff;" 
-                  loading="lazy">
-              </button>
-              <div class="social-links position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-center gap-3 rounded-2">
-                <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank" rel="noopener" aria-label="John on LinkedIn" class="text-white"><i class="bi bi-linkedin"></i></a>
-                <a href="https://www.facebook.com/johnansley.esteves" target="_blank" rel="noopener" aria-label="John on Facebook" class="text-white"><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/b._.boss__/" target="_blank" rel="noopener" aria-label="John on Instagram" class="text-white"><i class="bi bi-instagram"></i></a>
-              </div>
-            </div>
-            <div>
-              <h4 class="h6 mb-1">John Ansley Rocel</h4>
-              <p class="small text-muted mb-0">4th Year BSCS-DM</p>
-            </div>
+        <!-- Leader 3 -->
+        <div class="team-member" data-bs-toggle="modal" data-bs-target="#teamModal3">
+          <div class="member-img">
+            <img src="{% static 'system/images/cen.webp' %}" alt="John Ansley Rocel">
+          </div>
+          <h5 class="member-name mt-2">John Ansley Rocel</h5>
+          <p class="member-role text-success small">4th Year BSCS-DM</p>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/johnansley.esteves" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/b._.boss__/" target="_blank"><i class="bi bi-instagram"></i></a>
           </div>
         </div>
 
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- ================= Modals ================= -->
+  <!-- Modal 1 -->
+  <div class="modal fade" id="teamModal1" tabindex="-1" aria-labelledby="teamModal1Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="teamModal1Label">Kennie Angelo R. Estrellon</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Member of the development team behind the student-centered feedback systems. Passionate about full-stack development, problem-solving, and leveraging AI to improve user experience.</p>
+          <div class="d-flex gap-3 justify-content-center">
+            <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/shinichikenn" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/kensstre/" target="_blank"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2 -->
+  <div class="modal fade" id="teamModal2" tabindex="-1" aria-labelledby="teamModal2Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="teamModal2Label">Nathaniel Panis</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Member of the development team focusing on front-end development. Specializes in creating responsive user interfaces and enhancing user experience through modern web technologies.</p>
+          <div class="d-flex gap-3 justify-content-center">
+            <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/nathaniel.panis.355" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/nielpns/" target="_blank"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3 -->
+  <div class="modal fade" id="teamModal3" tabindex="-1" aria-labelledby="teamModal3Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="teamModal3Label">John Ansley Rocel</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Part of the development team behind a student-centered feedback system. Interested in software engineering and real-world applications of AI.</p>
+          <div class="d-flex gap-3 justify-content-center">
+            <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.facebook.com/johnansley.esteves" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/b._.boss__/" target="_blank"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ================= Team Section Scoped ================= */
+#team {
+  padding: 60px 0;
+  background: linear-gradient(135deg, rgba(0,102,0,0.05), rgba(0,102,0,0.15));
+  border-radius: 15px;
+}
+
+#team .team-subtitle {
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #006600;
+  margin-bottom: 0.5rem;
+}
+
+#team .team-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+#team .team-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Right column flex */
+#team .col-lg-7 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 15px;
+}
+
+/* Team Member Cards */
+#team .team-member {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  flex: 1 1 200px;
+  max-width: 240px;
+  position: relative;
+}
+
+#team .team-member:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+#team .member-img {
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin: 0 auto 10px;
+  transition: transform 0.3s ease;
+}
+
+#team .team-member:hover .member-img {
+  transform: scale(1.05);
+}
+
+#team .member-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#team .member-name {
+  font-weight: 600;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+#team .member-role {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #006600;
+}
+
+/* Social Media Hover */
+#team .team-member .social-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  margin-top: 10px;
+}
+
+#team .team-member:hover .social-links {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Modal links */
+#team .modal-body a {
+  font-size: 1.25rem;
+  color: #006600;
+  transition: color 0.3s;
+}
+
+#team .modal-body a:hover {
+  color: #28a745;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 768px) {
+  /* Text first on mobile */
+  .flex-column-reverse {
+    flex-direction: column !important;
+  }
+
+  #team .team-members-wrapper {
+    justify-content: center !important;
+  }
+
+  /* Team member boxes wider on mobile */
+  #team .team-member {
+    flex: 1 1 45%;
+    max-width: 45%;
+    margin: 5px;
+    padding: 10px;
+  }
+
+  #team .member-img {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+  }
+
+  #team .team-heading {
+    font-size: 2rem;
+  }
+  #team .team-subtitle {
+    font-size: 1.25rem;
+  }
+
+  #team .team-member .social-links {
+    gap: 5px;
+  }
+}
+
+/* Extra small screens <500px */
+@media (max-width: 500px) {
+  #team .team-member {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+</style>
+
+<!-- Include Bootstrap JS Bundle at the bottom -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
