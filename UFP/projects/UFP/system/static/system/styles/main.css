@@ -50,8 +50,8 @@ body {
 
 .custom-btn-white-outline:hover {
   color: #fff !important;
-  background-color: #198754 !important; /* Bootstrap's success green */
-  border-color: #198754 !important;
+  background-color: #006600 !important;
+  border-color: #006600 !important;
 }
 
 /*
@@ -207,9 +207,9 @@ nav.navbar.bg-body-tertiary.scrolled {
 }
 
 .btn-outline-success:hover {
-  background-color: #00cc99;
-  border-color: #00cc99;
-  color: #000000;
+  background-color: #006600;
+  border-color: #006600;
+  color: #ffffff;
 }
 
 /* ============================
@@ -252,7 +252,7 @@ nav.navbar.bg-body-tertiary.scrolled {
 
   --background-color: #f1f5f4;
   --default-color: #212529;
-  --heading-color: #2d465e;
+  --heading-color: #006600;
   --accent-color: #006600;
   --surface-color: #ffffff;
   --contrast-color: #ffffff;
