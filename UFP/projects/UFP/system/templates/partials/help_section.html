@@ -1,226 +1,269 @@
 {% load static %}
 <style>
-  /* Help Resources Section Styles */
-  .help-section { padding: 4rem 0; background: #f7f9f8; position: relative; }
+/* ================= Help Section ================= */
+.help-section {
+  background: linear-gradient(135deg, rgba(0,102,0,0.05), rgba(0,102,0,0.12));
+  padding: 100px 0;
+  position: relative;
+  border-radius: 25px;
+}
 
-  /* Typography */
+/* Section Heading: Main */
+.section-heading {
+  font-size: 2.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #198754, #0bbf7a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+.section-heading::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #198754, #006600);
+  border-radius: 2px;
+  margin: 12px 0 0 0;
+}
+
+/* Step-by-Step Guide Label */
+.step-guide-label {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+/* Quick Info Box */
+.quick-info-box {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(0,102,0,0.08);
+  padding: 25px 20px;
+  margin-bottom: 40px;
+}
+.quick-info-box h5 {
+  font-weight: 700;
+  color: #006600;
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+}
+.quick-info-box ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.quick-info-box ul li {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 12px;
+  color: #555;
+  font-weight: 500;
+}
+.quick-info-box ul li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #0bbf7a;
+  font-weight: 700;
+}
+
+/* Step-by-Step Guide Cards */
+.help-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: flex-start;
+  margin-bottom: 50px;
+}
+.help-card {
+  flex: 1 1 calc(50% - 25px);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(0,102,0,0.08);
+  padding: 30px 25px;
+  text-align: left;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.help-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0,102,0,0.18);
+}
+.help-card .step-number {
+  background: #0bbf7a;
+  color: #fff;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.help-card h5 {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: #006600;
+  margin-bottom: 12px;
+  font-size: 1.15rem;
+}
+.help-card p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Help Center Accordion */
+.help-center h4 {
+  font-weight: 700;
+  color: #000;  /* solid black */
+  margin-bottom: 25px;
+}
+.accordion-item {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 15px !important;
+  overflow: hidden;
+  box-shadow: 0 6px 22px rgba(0,102,0,0.08);
+  margin-bottom: 15px;
+}
+.accordion-button {
+  background: #ffffff;
+  font-weight: 600;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+}
+.accordion-button:not(.collapsed) {
+  background: #f3fbf7;
+  color: #006600;
+}
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0,102,0,0.25);
+}
+.accordion-body {
+  background: #ffffff;
+  color: #555;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .help-card {
+    flex: 1 1 100%;
+  }
   .section-heading {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, #08915e, #0bbf7a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 2rem;
   }
-
-  .sub-heading {
+  .step-guide-label {
     font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem;
   }
-
-  .card-heading {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .body-text {
-    font-size: 1rem;
-    color: #6c757d;
-    line-height: 1.6;
-  }
-
-  /* Cards */
-  .help-card { transition: transform .15s ease, border-color .15s ease; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: none; border: 1px solid rgba(0,0,0,0.06); position: relative; }
-  
-  .help-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.05), transparent);
-    transition: left 0.6s ease;
-  }
-  
-  .help-card:hover::before {
-    left: 100%;
-  }
-
-  .help-card:hover { transform: translateY(-2px); border-color: rgba(0,0,0,0.12); }
-
-  /* Accordion */
-  .accordion-item {
-    border: 1px solid rgba(0,0,0,0.08);
-    margin-bottom: 0.5rem;
-    border-radius: 0.5rem !important;
-    overflow: hidden;
-  }
-  
-  .accordion-button {
-    background: #ffffff;
-    border: none;
-    font-weight: 600;
-    color: #2c3e50;
-    transition: all 0.3s ease;
-  }
-  
-  .accordion-button:not(.collapsed) {
-    background: #f3fbf7;
-    color: #08915e;
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
-  }
-  
-  .accordion-button:focus {
-    box-shadow: 0 0 0 0.25rem rgba(8, 145, 94, 0.25);
-  }
-  
-  .accordion-body { background: #ffffff; }
-
-  /* Lists */
-  .guide-list li {
-    margin-bottom: 0.75rem;
-    line-height: 1.6;
-  }
-
-  /* Examples Box */
-  .example-box {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    border: 1px solid rgba(0,0,0,0.06);
-  }
-
-  .example-good {
-    color: var(--bs-success);
-    font-weight: 600;
-  }
-
-  .example-bad {
-    color: var(--bs-danger);
-    font-weight: 600;
-  }
-  
-  /* Step numbers */
-  .step-number {
-    background: #0bbf7a;
-    color: #fff;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 0.8rem;
-    margin-right: 0.75rem;
-    flex-shrink: 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-  }
-
-  /* Quick Info box (border-only, no shadow) */
-  .quick-info-box {
-    background: #ffffff !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-    box-shadow: none !important;
-    border-radius: 12px;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .section-heading {
-      font-size: 2rem;
-    }
-
-    .sub-heading {
-      font-size: 1.25rem;
-    }
-
-    .card-heading,
-    .accordion-button {
-      font-size: 0.95rem;
-    }
-    
-    .help-card {
-      margin-bottom: 1.5rem;
-    }
-  }
+}
 </style>
-{% load static %}
-<section id="help" class="help-section bg-light text-dark" data-aos="fade-up">
-  <div class="container">
-    <div class="row g-4 align-items-start">
-      <div class="col-lg-5">
-        <h4 class="fw-bold mb-3"><i class="bi bi-question-circle-fill text-primary me-2" aria-hidden="true"></i>Quick Start</h4>
-        <div class="card help-card p-3 mb-3">
-          <ol class="mb-0 ps-3">
-            <li class="mb-2">Create an account or continue as guest</li>
-            <li class="mb-2">Choose OSAS service or Teacher Evaluation</li>
-            <li class="mb-2">Write honest feedback and submit</li>
-          </ol>
-        </div>
-        <!-- CTA removed to avoid duplication with hero buttons -->
-      </div>
-      <div class="col-lg-7">
-        <h4 class="fw-bold mb-3">FAQ</h4>
-        <div class="accordion" id="faqAccordion" data-aos="fade-up" data-aos-delay="100">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq1">
-          <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-            What is this website for?
-          </button>
-        </h2>
-        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion" aria-labelledby="faq1">
-          <div class="accordion-body">
-            This platform enables students to provide feedback on both university services and faculty performance. Through sentiment analysis (Positive, Neutral, Negative), the system generates insights that support continuous improvement in service delivery and teaching quality.
-          </div>
-        </div>
-      </div>
 
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-            Do I need to create an account to give feedback?
-          </button>
-        </h2>
-        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="faq2">
-          <div class="accordion-body">
-            Yes, creating an account is required to submit feedback. This helps ensure the integrity of submissions and allows us to better organize feedback data. <br>
-            However, your responses are still handled with strict confidentiality and used only for research and service improvement purposes. Your identity is protected at all times.
-          </div>
-        </div>
-      </div>
+<section id="help" class="help-section" data-aos="fade-up">
+  <div class="container position-relative">
+    <!-- Main Heading -->
+    <h2 class="fw-bold section-heading">Help & Guide</h2>
 
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq3">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
-            Who can see my feedback?
-          </button>
-        </h2>
-        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="faq3">
-          <div class="accordion-body">
-            Only authorized faculty or staff (admin users) can see the feedback and sentiment analysis.
-          </div>
-        </div>
-      </div>
+    <!-- Quick Info -->
+    <div class="quick-info-box">
+      <h5>Quick Info</h5>
+      <ul>
+        <li>Anonymous option available</li>
+        <li>AI analyzes your feedback automatically</li>
+        <li>Helps improve university services</li>
+      </ul>
+    </div>
 
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq4">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-            Can I edit my feedback?
-          </button>
-        </h2>
-        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="faq4">
-          <div class="accordion-body">
-            No, submitted feedback cannot be edited. If needed, you may submit a new one.
-          </div>
-        </div>
+    <!-- Step-by-Step Guide Label -->
+    <h3 class="step-guide-label">How to Give Feedback</h3>
+
+    <!-- Step-by-Step Guide -->
+    <div class="help-cards">
+      <div class="help-card">
+        <h5><span class="step-number">1</span>Visit the Website</h5>
+        <p>Go to the platform URL to start the feedback process.</p>
       </div>
+      <div class="help-card">
+        <h5><span class="step-number">2</span>Login or Sign Up</h5>
+        <p>Click "Login" or "Sign Up" if you don’t have an account yet. Select "Student Login" when prompted.</p>
+      </div>
+      <div class="help-card">
+        <h5><span class="step-number">3</span>Select Feedback Type</h5>
+        <p>
+          Choose from the side navigation bar:<br>
+          <strong>Give Feedback (OSAS Services)</strong> → select a service (e.g., Wi-Fi, Library).<br>
+          <strong>Teacher Evaluation</strong> → select a teacher and department.
+        </p>
+      </div>
+      <div class="help-card">
+        <h5><span class="step-number">4</span>Submit Feedback</h5>
+        <p>Write honest feedback, optionally check "Submit as anonymous," and click "Submit". The system will automatically analyze the sentiment.</p>
       </div>
     </div>
+
+    <!-- Help Center / FAQ -->
+    <div class="help-center" data-aos="fade-up" data-aos-delay="100">
+      <h4>Help Center</h4>
+      <div class="accordion" id="helpAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="help1">
+            <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp1" aria-expanded="true" aria-controls="collapseHelp1">
+              What is this website for?
+            </button>
+          </h2>
+          <div id="collapseHelp1" class="accordion-collapse collapse show" data-bs-parent="#helpAccordion">
+            <div class="accordion-body">
+              This platform enables students to provide feedback on both university services and faculty performance. The system analyzes sentiment automatically for insights.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="help2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp2" aria-expanded="false" aria-controls="collapseHelp2">
+              Do I need an account to give feedback?
+            </button>
+          </h2>
+          <div id="collapseHelp2" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+            <div class="accordion-body">
+              Yes, creating an account ensures integrity and organization of feedback, but your identity is protected.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="help3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp3" aria-expanded="false" aria-controls="collapseHelp3">
+              Who can see my feedback?
+            </button>
+          </h2>
+          <div id="collapseHelp3" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+            <div class="accordion-body">
+              Only authorized faculty or staff (admins) can view feedback and analysis.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="help4">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp4" aria-expanded="false" aria-controls="collapseHelp4">
+              Can I edit my feedback?
+            </button>
+          </h2>
+          <div id="collapseHelp4" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+            <div class="accordion-body">
+              No, feedback cannot be edited. Submit a new one if needed.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Help Center -->
   </div>
 </section>
