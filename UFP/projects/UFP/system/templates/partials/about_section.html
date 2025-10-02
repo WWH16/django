@@ -6,10 +6,7 @@
   .section-heading {
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #08915e, #0bbf7a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #006600 !important;
     position: relative;
   }
   
@@ -22,7 +19,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.05), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 102, 0, 0.05), transparent);
     transition: left 0.6s ease;
   }
   
@@ -42,18 +39,18 @@
   
   .main-description-card { background: #ffffff; border: 1px solid rgba(0,0,0,0.06); position: relative; overflow: hidden; box-shadow: none; }
   
-  .main-description-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: #10b981; }
+  .main-description-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: #006600; }
   
   .badge {
     transition: all 0.3s ease;
-    border: 1px solid rgba(8, 145, 94, 0.2) !important;
+    border: 1px solid rgba(0, 102, 0, 0.2) !important;
   }
-  .badge:focus { outline: none; box-shadow: 0 0 0 .2rem rgba(8,145,94,.25); }
+  .badge:focus { outline: none; box-shadow: 0 0 0 .2rem rgba(0,102,0,.25); }
   
   .badge:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(8, 145, 94, 0.2);
-    background-color: rgba(8, 145, 94, 0.1) !important;
+    box-shadow: 0 5px 15px rgba(0, 102, 0, 0.2);
+    background-color: rgba(0, 102, 0, 0.1) !important;
   }
   
   /* Service Badge Styles */
@@ -62,14 +59,14 @@
     align-items: center;
     padding: 12px 20px;
     background: linear-gradient(135deg, #ffffff, #f8f9fa);
-    border: 2px solid rgba(8, 145, 94, 0.2);
+    border: 2px solid rgba(0, 102, 0, 0.2);
     border-radius: 25px;
     color: #2c3e50;
     font-weight: 600;
     font-size: 0.95rem;
     text-decoration: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(8, 145, 94, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 102, 0, 0.08);
     position: relative;
     overflow: hidden;
   }
@@ -81,7 +78,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(8, 145, 94, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 102, 0, 0.1), transparent);
     transition: left 0.6s ease;
   }
   
@@ -91,20 +88,20 @@
   
   .service-badge:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(8, 145, 94, 0.15);
-    border-color: rgba(8, 145, 94, 0.4);
-    color: #08915e;
+    box-shadow: 0 8px 25px rgba(0, 102, 0, 0.15);
+    border-color: rgba(0, 102, 0, 0.4);
+    color: #006600;
   }
-  .service-badge:focus { outline: none; box-shadow: 0 0 0 .25rem rgba(8,145,94,.25); }
+  .service-badge:focus { outline: none; box-shadow: 0 0 0 .25rem rgba(0,102,0,.25); }
   
   .service-badge i {
-    color: #08915e;
+    color: #006600;
     transition: all 0.3s ease;
   }
   
   .service-badge:hover i {
     transform: scale(1.1);
-    color: #0bbf7a;
+    color: #005500;
   }
 
   /* Mobile responsive */
@@ -115,11 +112,11 @@
     }
   }
 </style>
-<section id="about" class="py-5 about-section text-dark" data-aos="fade-up">
+<section id="about" class="py-5 about-section" data-aos="fade-up">
   <div class="container">
     <div class="row align-items-center g-4">
       <div class="col-lg-6">
-        <h2 class="section-heading fw-bold mb-3">About the Platform</h2>
+        <h2 class="fw-bold mb-3" style="color: #006600 !important; font-size: 2.5rem;">About the Platform</h2>
         <p class="text-muted mb-4">A student-built platform for honest feedback on university services and faculty performance with privacy and insights built in.</p>
         <ul class="list-unstyled mb-4">
           <li class="d-flex align-items-start mb-2"><i class="bi bi-check-circle text-success me-2"></i><span>Anonymous & secure submissions</span></li>

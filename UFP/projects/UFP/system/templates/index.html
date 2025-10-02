@@ -16,15 +16,15 @@
   
   /* Primary actions */
   .cta-primary {
-    background-color: #10b981;
+    background-color: #006600;
     color: white;
-    border: 1px solid #10b981;
+    border: 1px solid #006600;
     box-shadow: none;
     transition: transform .15s ease, background-color .15s ease, color .15s ease;
     border-radius: 3px !important;
   }
-  .cta-primary:hover { transform: translateY(-1px); background-color: #0ea271;}
-  .cta-primary:focus { outline: none; box-shadow: 0 0 0 .2rem rgba(16,185,129,.35); }
+  .cta-primary:hover { transform: translateY(-1px); background-color: #005500;}
+  .cta-primary:focus { outline: none; box-shadow: 0 0 0 .2rem rgba(0,102,0,.35); }
   .cta-outline {
     color: #e9f6f0;
     border: 1px solid rgba(233,246,240,0.35);
@@ -61,6 +61,7 @@
   @media (max-width: 575.98px) {
     .display-4 { font-size: 2rem; }
     .lead { font-size: 1rem; }
+    .hero-section h1.display-3 { margin-top: -3rem !important; }
   }
 
   /* Center headings on mobile */
@@ -137,7 +138,7 @@
   <div class="container">
     <div class="row justify-content-center align-items-center text-white">
       <div class="col-lg-8 mx-auto text-center mb-5 mb-lg-0" data-aos="fade-right">
-        <h1 class="display-4 fw-bold mb-3">University Feedback Platform</h1>
+        <h1 class="display-3 fw-bold mb-3">University Feedback Platform</h1>
         <p class="lead mb-4">Built by students for the university — your feedback shapes a better campus experience.</p>
         <div class="d-flex gap-2 justify-content-center flex-wrap">
           <a href="{% url 'select' %}" class="btn btn-lg px-4 me-md-2 cta-primary" aria-label="Login to your account">Login</a>
@@ -160,29 +161,29 @@
   <div class="container text-white">
     <div class="row align-items-center g-4">
       <div class="col-lg-5 mobile-center-heading">
-        <h2 class="fw-bold mb-3" style="font-size: 2.5rem; background: linear-gradient(135deg, #08915e, #0bbf7a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Student Services</h2>
+        <h2 class="fw-bold mb-3" style="font-size: 2.5rem; background: linear-gradient(135deg, #006600, #006600); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Student Services</h2>
         <div class="section-divider mb-3"></div>
         <p class="text-white-50 mb-0">Quick access to the most used services on campus. Open details for a short description and how to get started.</p>
       </div>
       <div class="col-lg-7">
         <div class="list-group list-group-flush rounded-3 overflow-hidden border border-secondary border-opacity-25">
           <button class="list-group-item list-group-item-action d-flex align-items-center bg-transparent text-white border-secondary" data-bs-toggle="modal" data-bs-target="#serviceModal" data-title="Wi‑Fi Services" data-body="The Office of Student Affairs and Services (OSAS), in collaboration with the DICT, provides free internet access to students in designated Wi‑Fi zones on campus to support academic activities like research and online learning.">
-            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#10b981;color:#0b1a14"><i class="bi bi-wifi"></i></span>
+            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#006600;color:#0b1a14"><i class="bi bi-wifi"></i></span>
             <span class="flex-grow-1">Wi‑Fi Access</span>
             <i class="bi bi-chevron-right opacity-50"></i>
           </button>
           <button class="list-group-item list-group-item-action d-flex align-items-center bg-transparent text-white border-secondary" data-bs-toggle="modal" data-bs-target="#serviceModal" data-title="Library Facilities" data-body="OSAS supports students by ensuring access to the university library's resources — textbooks, research materials, and study spaces. Sometimes the library offers free coffee and bread in the morning for a welcoming study environment.">
-            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#10b981;color:#0b1a14"><i class="bi bi-journal-bookmark"></i></span>
+            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#006600;color:#0b1a14"><i class="bi bi-journal-bookmark"></i></span>
             <span class="flex-grow-1">Library</span>
             <i class="bi bi-chevron-right opacity-50"></i>
           </button>
           <button class="list-group-item list-group-item-action d-flex align-items-center bg-transparent text-white border-secondary" data-bs-toggle="modal" data-bs-target="#serviceModal" data-title="Scholarship Assistance" data-body="OSAS regularly posts scholarship opportunities and updates through their Facebook page and the bulletin board outside their office — from government‑funded to institutional and higher‑education scholarships.">
-            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#10b981;color:#0b1a14"><i class="bi bi-award"></i></span>
+            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#006600;color:#0b1a14"><i class="bi bi-award"></i></span>
             <span class="flex-grow-1">Scholarships</span>
             <i class="bi bi-chevron-right opacity-50"></i>
           </button>
           <button class="list-group-item list-group-item-action d-flex align-items-center bg-transparent text-white border-secondary" data-bs-toggle="modal" data-bs-target="#serviceModal" data-title="College Admission Tests" data-body="OSAS helps applicants stay informed and prepared for the College Admission Test — sharing schedules, guidelines, and reminders via bulletin boards and official pages for SHS applicants and transferees.">
-            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#10b981;color:#0b1a14"><i class="bi bi-pencil-square"></i></span>
+            <span class="me-3 d-inline-flex align-items-center justify-content-center rounded-circle" style="width:36px;height:36px;background:#006600;color:#0b1a14"><i class="bi bi-pencil-square"></i></span>
             <span class="flex-grow-1">Admissions</span>
             <i class="bi bi-chevron-right opacity-50"></i>
           </button>
