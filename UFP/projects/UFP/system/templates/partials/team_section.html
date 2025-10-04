@@ -136,7 +136,7 @@
 }
 
 #team .team-heading {
-  font-size: 2.5rem; /* ✅ Match Selected OSAS Services */
+  font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
 }
@@ -175,11 +175,11 @@
 }
 
 #team .member-img {
-  width: 180px;
-  height: 180px;
+  width: 140px;
+  height: 140px;
   overflow: hidden;
   border-radius: 8px;
-  margin: 0 auto 10px;
+  margin: 0 auto 8px;
   transition: transform 0.3s ease;
 }
 
@@ -244,26 +244,25 @@
   }
 
   #team .team-member {
-    flex: 1 1 45%;
-    max-width: 45%;
-    margin: 5px;
-    padding: 10px;
+    flex: 1 1 220px !important;
+    max-width: 220px !important;
+    padding: 14px !important;
   }
 
-  /* ✅ Fix image zoom issue on mobile */
   #team .member-img {
-    width: 100%;
-    height: auto;
-    max-height: none;
+    width: 150px !important;
+    height: 150px !important;
   }
 
-  #team .member-img img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+  #team .member-name {
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
   }
 
-  /* Keep team-heading the same size as desktop */
+  #team .member-role {
+    font-size: 0.8rem;
+  }
+
   #team .team-heading {
     font-size: 2.5rem;
   }
@@ -273,15 +272,43 @@
   }
 
   #team .team-member .social-links {
-    gap: 5px;
+    gap: 8px;
+  }
+
+  #team .social-links a i {
+    font-size: 1rem;
   }
 }
 
-/* Extra small screens <500px */
+/* ✅ Extra small screens <500px */
 @media (max-width: 500px) {
   #team .team-member {
-    flex: 1 1 100%;
-    max-width: 100%;
+    flex: 1 1 200px !important;
+    max-width: 200px !important;
+    padding: 12px !important;
+  }
+
+  #team .member-img {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  #team .member-name {
+    font-size: 0.9rem;
+  }
+
+  #team .member-role {
+    font-size: 0.75rem;
+  }
+
+  /* ✅ Make heading match "Selected OSAS Services" */
+  #team .team-heading {
+    font-size: 1.8rem !important;
+  }
+
+  /* ✅ Slightly smaller subtitle */
+  #team .team-subtitle {
+    font-size: 1.1rem !important;
   }
 }
 </style>

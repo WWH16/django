@@ -31,7 +31,6 @@
     word-break: break-word;
   }
 
-  /* Keep your existing styles exactly as before */
   .hero-section .display-3 {
     letter-spacing: 1px;
     font-weight: 800;
@@ -139,29 +138,27 @@
     50% { transform: translateY(-6px); }
   }
 
-  /* Mobile font adjustments */
+  /* ✅ Mobile font adjustments */
   @media (max-width: 576px) {
     .hero-section .display-3 {
-        font-size: 2rem;
+        font-size: 2.5em; /* slightly bigger on mobile */
     }
     .hero-section .lead {
         font-size: 1rem;
+    }
+    #osas h2 {
+        font-size: 1.8rem !important; /* smaller than the hero title */
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <!-- Hero -->
 <div class="hero-section" data-aos="fade-in">
   <div class="hero-inner" data-aos="zoom-in">
-    <!-- Title shows instantly (no typing effect) -->
     <h1 class="display-3 mb-3">University Feedback Platform</h1>
-
-    <!-- Description keeps typing animation -->
     <p class="lead mb-4"><span id="typed-subtext" class="typed-text"></span></p>
-
     <div class="d-flex gap-3 justify-content-center flex-wrap">
       <a href="{% url 'select' %}" class="btn cta-primary">Login</a>
       <a href="{% url 'guest_login' %}" class="btn cta-outline">Guest</a>
@@ -218,16 +215,10 @@
   </div>
 </section>
 
-<!-- Team -->
 {% include 'partials/team_section.html' %}
-
-<!-- About -->
 {% include 'partials/about_section.html' %}
-
-<!-- Help -->
 {% include 'partials/help_section.html' %}
 
-<!-- Typing Animation Script -->
 <script>
   const subText = "Built by students for the university — your feedback shapes a better campus experience.";
 
@@ -245,9 +236,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    // Only animate subtext now
     typeText("typed-subtext", subText, 20);
   });
 </script>
-
 {% endblock %}
