@@ -11,7 +11,7 @@
 
 /* Section Heading */
 .section-heading {
-  font-size: 2.75rem;
+  font-size: 2.5rem; /* ✅ Match Selected OSAS Services & Team Heading */
   font-weight: 700;
   color: #000000 !important; /* black heading */
   position: relative;
@@ -125,9 +125,18 @@
   color: #004d00;
 }
 
+/* "What You Can Evaluate" label */
+.text-success.fw-semibold.mb-3 {
+  font-size: 1.75rem; /* ✅ Updated size */
+  font-weight: 700;
+}
+
 /* Mobile responsive */
 @media (max-width: 991.98px) {
-  .section-heading { font-size: 2rem !important; text-align: center; }
+  .section-heading { 
+    font-size: 2.5rem !important; /* ✅ Keep same as desktop */
+    text-align: center; 
+  }
   .about-section { padding: 60px 0; }
   .main-description-card { margin-bottom: 15px; }
 }
