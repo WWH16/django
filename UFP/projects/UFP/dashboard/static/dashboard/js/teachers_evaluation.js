@@ -242,9 +242,9 @@
         const negPercent = Math.round((totalNegative / grandTotal) * 100);
 
         const percentElements = [
-          { id: 'teacher-positive-percent', value: `${posPercent}% of the evaluations` },
-          { id: 'teacher-neutral-percent', value: `${neuPercent}% of the evaluations` },
-          { id: 'teacher-negative-percent', value: `${negPercent}% of the evaluations` },
+          { id: 'teacher-positive-percent', value: `${posPercent}% of evaluations` },
+          { id: 'teacher-neutral-percent', value: `${neuPercent}% of evaluations` },
+          { id: 'teacher-negative-percent', value: `${negPercent}% of evaluations` },
           { id: 'teacher-pie-positive-percent', value: posPercent },
           { id: 'teacher-pie-neutral-percent', value: neuPercent },
           { id: 'teacher-pie-negative-percent', value: negPercent }
@@ -734,139 +734,144 @@ async function applyCurrentFilters() {
   }
 
   /* ---------------- Teacher Recommendations - WITH DEBUGGING ---------------- */
-  function loadTeacherRecommendations() {
-    console.log('=== LOADING RECOMMENDATIONS ===');
-    console.log('Cache state:', {
-      teachers: cache.teachers,
-      teachersLength: cache.teachers ? cache.teachers.length : 0,
-      programs: cache.programs,
-      programsLength: cache.programs?.programs?.length || 0
-    });
-    
-    const wrap = document.getElementById('static-recos');
-    if (!wrap) {
-      console.error('Recommendations container not found!');
-      return;
-    }
-    wrap.innerHTML = '';
+  /* ---------------- Teacher Recommendations - COUNT-BASED VERSION ---------------- */
+function loadTeacherRecommendations() {
+  console.log('=== LOADING RECOMMENDATIONS ===');
+  console.log('Cache state:', {
+    teachers: cache.teachers,
+    teachersLength: cache.teachers ? cache.teachers.length : 0,
+    programs: cache.programs,
+    programsLength: cache.programs?.programs?.length || 0
+  });
+  
+  const wrap = document.getElementById('static-recos');
+  if (!wrap) {
+    console.error('Recommendations container not found!');
+    return;
+  }
+  wrap.innerHTML = '';
 
-    const teachers = Array.isArray(cache.teachers) ? cache.teachers : [];
-    const programs = (cache.programs && cache.programs.programs) ? cache.programs.programs : [];
+  const teachers = Array.isArray(cache.teachers) ? cache.teachers : [];
+  const programs = (cache.programs && cache.programs.programs) ? cache.programs.programs : [];
 
-    console.log('Teachers array:', teachers);
-    console.log('Programs array:', programs);
+  console.log('Teachers array:', teachers);
+  console.log('Programs array:', programs);
 
-    if (!teachers.length && !programs.length) {
-      wrap.innerHTML = `<div class="text-muted">No data available (teachers: ${teachers.length}, programs: ${programs.length})</div>`;
-      console.warn('No data available for recommendations');
-      return;
-    }
+  if (!teachers.length && !programs.length) {
+    wrap.innerHTML = `<div class="text-muted">No data available (teachers: ${teachers.length}, programs: ${programs.length})</div>`;
+    console.warn('No data available for recommendations');
+    return;
+  }
 
-    const REC_MIN_SAMPLE = 1;
-    const pct = (num, den) => den ? (num / den) * 100 : 0;
+  const REC_MIN_SAMPLE = 1;
 
-    const pickMostByShare = (arr, keyName) => {
-      console.log(`\nSearching for most ${keyName} from ${arr.length} items`);
-      let best = null;
-      arr.forEach((it, index) => {
-        const pos = Number(it.positive || 0);
-        const neu = Number(it.neutral || 0);
-        const neg = Number(it.negative || 0);
-        const tot = pos + neu + neg;
-        
-        console.log(`  Item ${index}:`, it.teacher || it.name || 'Unknown', {pos, neu, neg, tot});
-        
-        if (tot < REC_MIN_SAMPLE) {
-          console.log(`    Skipped (total ${tot} < ${REC_MIN_SAMPLE})`);
-          return;
-        }
-
-        let share = 0;
-        if (keyName === 'positive') share = pct(pos, tot);
-        if (keyName === 'neutral') share = pct(neu, tot);
-        if (keyName === 'negative') share = pct(neg, tot);
-        
-        console.log(`    ${keyName} share: ${share}%`);
-
-        if (!best || share > best.share) {
-          best = { ...it, total: tot, share };
-          console.log(`    NEW BEST! Share: ${share}%`);
-        }
-      });
-      console.log(`Result for most ${keyName}:`, best);
-      return best;
-    };
-
-    const addItem = (cls, label, text) => {
-      let borderColor = '';
-      let backgroundColor = '';
-
-      if (cls === 'is-urgent') {
-        borderColor = '#ff6384';
-        backgroundColor = 'rgba(255,99,132,0.08)';
-      } else if (cls === 'is-review') {
-        borderColor = '#ffcd56';
-        backgroundColor = 'rgba(255,205,86,0.08)';
-      } else if (cls === 'is-recognize') {
-        borderColor = '#4bc0c0';
-        backgroundColor = 'rgba(75,192,192,0.08)';
-      } else if (cls === 'is-support') {
-        borderColor = '#3b82f6';
-        backgroundColor = 'rgba(59,130,246,0.08)';
+  // Changed from percentage-based to count-based selection
+  const pickMostByCount = (arr, keyName) => {
+    console.log(`\nSearching for most ${keyName} from ${arr.length} items`);
+    let best = null;
+    arr.forEach((it, index) => {
+      const pos = Number(it.positive || 0);
+      const neu = Number(it.neutral || 0);
+      const neg = Number(it.negative || 0);
+      const tot = pos + neu + neg;
+      
+      console.log(`  Item ${index}:`, it.teacher || it.name || 'Unknown', {pos, neu, neg, tot});
+      
+      if (tot < REC_MIN_SAMPLE) {
+        console.log(`    Skipped (total ${tot} < ${REC_MIN_SAMPLE})`);
+        return;
       }
 
-      console.log(`Adding recommendation: ${label}`);
-      wrap.insertAdjacentHTML('beforeend', `
-        <div class="p-3 rounded-default border-start mb-3" style="border-left: 8px solid ${borderColor}; background: ${backgroundColor};">
-          <strong style="color: ${borderColor};">${label}:</strong>
-          ${text}
-        </div>
-      `);
-    };
+      let count = 0;
+      if (keyName === 'positive') count = pos;
+      if (keyName === 'neutral') count = neu;
+      if (keyName === 'negative') count = neg;
+      
+      console.log(`    ${keyName} count: ${count}`);
 
-    const mostNegTeacher = pickMostByShare(teachers, 'negative');
-    const mostNeuTeacher = pickMostByShare(teachers, 'neutral');
-    const mostPosTeacher = pickMostByShare(teachers, 'positive');
-    const mostNegProgram = pickMostByShare(programs, 'negative');
+      if (!best || count > best.count) {
+        best = { ...it, total: tot, count };
+        console.log(`    NEW BEST! Count: ${count}`);
+      }
+    });
+    console.log(`Result for most ${keyName}:`, best);
+    return best;
+  };
 
-    console.log('\n=== FINAL RESULTS ===');
-    console.log('Most negative teacher:', mostNegTeacher);
-    console.log('Most neutral teacher:', mostNeuTeacher);
-    console.log('Most positive teacher:', mostPosTeacher);
-    console.log('Most negative program:', mostNegProgram);
+  const addItem = (cls, label, text) => {
+    let borderColor = '';
+    let backgroundColor = '';
 
-    if (mostNegTeacher) {
-      const tLabel = `${mostNegTeacher.teacher || mostNegTeacher.teacher_name || 'Teacher'}${mostNegTeacher.program ? `, ${mostNegTeacher.program}` : ''}`;
-      const percent = Math.round(mostNegTeacher.share);
-      addItem('is-urgent', 'Urgent', `Professor, ${tLabel} has received the most negative feedback, with ${percent}% of evaluations marked as negative. Immediate action is recommended to address concerns.`);
+    if (cls === 'is-urgent') {
+      borderColor = '#ff6384';
+      backgroundColor = 'rgba(255,99,132,0.08)';
+    } else if (cls === 'is-review') {
+      borderColor = '#ffcd56';
+      backgroundColor = 'rgba(255,205,86,0.08)';
+    } else if (cls === 'is-recognize') {
+      borderColor = '#4bc0c0';
+      backgroundColor = 'rgba(75,192,192,0.08)';
+    } else if (cls === 'is-support') {
+      borderColor = '#3b82f6';
+      backgroundColor = 'rgba(59,130,246,0.08)';
     }
 
-    if (mostNeuTeacher) {
-      const tLabel = `${mostNeuTeacher.teacher || mostNeuTeacher.teacher_name || 'Teacher'}${mostNeuTeacher.program ? `, ${mostNeuTeacher.program}` : ''}`;
-      const percent = Math.round(mostNeuTeacher.share);
-      addItem('is-review', 'Review', `Professor, ${tLabel} stands out with the highest neutral feedback at ${percent}%. This suggests a need to review and provide guidance to move evaluations toward more positive outcomes.`);
-    }
+    console.log(`Adding recommendation: ${label}`);
+    wrap.insertAdjacentHTML('beforeend', `
+      <div class="p-3 rounded-default border-start mb-3" style="border-left: 8px solid ${borderColor}; background: ${backgroundColor};">
+        <strong style="color: ${borderColor};">${label}:</strong>
+        ${text}
+      </div>
+    `);
+  };
 
-    if (mostPosTeacher) {
-      const tLabel = `${mostPosTeacher.teacher || mostPosTeacher.teacher_name || 'Teacher'}${mostPosTeacher.program ? `, ${mostPosTeacher.program}` : ''}`;
-      const percent = Math.round(mostPosTeacher.share);
-      addItem('is-recognize', 'Recognize', `Professor, ${tLabel} has received the most positive evaluations, with ${percent}% marked as positive. Recognition and encouragement are recommended to reinforce this performance.`);
-    }
+  const mostNegTeacher = pickMostByCount(teachers, 'negative');
+  const mostNeuTeacher = pickMostByCount(teachers, 'neutral');
+  const mostPosTeacher = pickMostByCount(teachers, 'positive');
+  const mostNegProgram = pickMostByCount(programs, 'negative');
 
-    if (mostNegProgram) {
-      const pLabel = mostNegProgram.name || mostNegProgram.program || 'Program';
-      const percent = Math.round(mostNegProgram.share);
-      addItem('is-support', 'Support', `The ${pLabel} Department, received the highest negative evaluations, with ${percent}% of evaluations classified as negative. Support and Development initiatives are advised.`);
-    }
+  console.log('\n=== FINAL RESULTS ===');
+  console.log('Most negative teacher:', mostNegTeacher);
+  console.log('Most neutral teacher:', mostNeuTeacher);
+  console.log('Most positive teacher:', mostPosTeacher);
+  console.log('Most negative program:', mostNegProgram);
 
-    if (!wrap.children.length) {
-      wrap.innerHTML = `<div class="text-muted">Insufficient data for recommendations</div>`;
-      console.warn('No recommendations were generated');
-    }
-    
-    console.log(`\nTotal recommendations rendered: ${wrap.children.length}`);
-    console.log('=== END RECOMMENDATIONS ===\n');
+  if (mostNegTeacher) {
+    const tLabel = `${mostNegTeacher.teacher || mostNegTeacher.teacher_name || 'Teacher'}${mostNegTeacher.program ? `, ${mostNegTeacher.program}` : ''}`;
+    const negCount = Number(mostNegTeacher.negative || 0);
+    const countText = negCount === 1 ? 'negative evaluation' : 'negative evaluations';
+    addItem('is-urgent', 'Urgent', `Professor, ${tLabel} has received the most negative feedback, with ${negCount} ${countText}. Immediate action is recommended to address concerns.`);
   }
+
+  if (mostNeuTeacher) {
+    const tLabel = `${mostNeuTeacher.teacher || mostNeuTeacher.teacher_name || 'Teacher'}${mostNeuTeacher.program ? `, ${mostNeuTeacher.program}` : ''}`;
+    const neuCount = Number(mostNeuTeacher.neutral || 0);
+    const countText = neuCount === 1 ? 'neutral evaluation' : 'neutral evaluations';
+    addItem('is-review', 'Review', `Professor, ${tLabel} stands out with the highest neutral feedback at ${neuCount} ${countText}. This suggests a need to review and provide guidance to move evaluations toward more positive outcomes.`);
+  }
+
+  if (mostPosTeacher) {
+    const tLabel = `${mostPosTeacher.teacher || mostPosTeacher.teacher_name || 'Teacher'}${mostPosTeacher.program ? `, ${mostPosTeacher.program}` : ''}`;
+    const posCount = Number(mostPosTeacher.positive || 0);
+    const countText = posCount === 1 ? 'positive evaluation' : 'positive evaluations';
+    addItem('is-recognize', 'Recognize', `Professor, ${tLabel} has received the most positive evaluations, with ${posCount} ${countText}. Recognition and encouragement are recommended to reinforce this performance.`);
+  }
+
+  if (mostNegProgram) {
+    const pLabel = mostNegProgram.name || mostNegProgram.program || 'Program';
+    const negCount = Number(mostNegProgram.negative || 0);
+    const countText = negCount === 1 ? 'negative evaluation' : 'negative evaluations';
+    addItem('is-support', 'Support', `The ${pLabel} Department, received the highest negative evaluations, with ${negCount} ${countText}. Support and Development initiatives are advised.`);
+  }
+
+  if (!wrap.children.length) {
+    wrap.innerHTML = `<div class="text-muted">Insufficient data for recommendations</div>`;
+    console.warn('No recommendations were generated');
+  }
+  
+  console.log(`\nTotal recommendations rendered: ${wrap.children.length}`);
+  console.log('=== END RECOMMENDATIONS ===\n');
+}
 
   /* ---------------- Teacher Performance Data (for recommendations) ---------------- */
 async function loadTeacherPerformanceData(year = 'all', semester = null) {
@@ -921,19 +926,35 @@ async function loadTeacherPerformanceData(year = 'all', semester = null) {
 }
 
   /* ---------------- Teacher Priority List ---------------- */
-  async function fetchTeacherPriority() {
-    try {
-      const response = await fetch('/api/teacher-improvement-priority/', {
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      
-      renderTeacherPriority(data);
-    } catch (err) {
-      console.error('Failed to load teacher priority:', err);
+async function fetchTeacherPriority(year = 'all', semester = 'all') {
+  try {
+    let url = '/api/teacher-improvement-priority/';
+    const params = [];
+    
+    if (year && year !== 'all') {
+      params.push(`year=${encodeURIComponent(year)}`);
     }
+    if (semester && semester !== 'all') {
+      params.push(`semester=${encodeURIComponent(semester)}`);
+    }
+    
+    if (params.length > 0) {
+      url += '?' + params.join('&');
+    }
+    
+    console.log('Fetching teacher priority:', url);
+    
+    const response = await fetch(url, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    
+    renderTeacherPriority(data);
+  } catch (err) {
+    console.error('Failed to load teacher priority:', err);
   }
+}
 
 function renderTeacherPriority(priorityList) {
   try {
@@ -963,14 +984,15 @@ function renderTeacherPriority(priorityList) {
 
       const teacherLabel = item.teacher || 'Unknown Teacher';
       const programLabel = item.program ? ` (${item.program})` : '';
-      const negativePercent = Number(item.percent_negative || 0);
+      const negativeCount = item.negative_count || 0;
+      const countText = negativeCount === 1 ? 'negative evaluation' : 'negative evaluations';
 
       list.insertAdjacentHTML('beforeend', `
         <div class="priority-item ${priorityClass}">
           <div class="pri-left">
             <div class="teacher-name">${teacherLabel.toUpperCase()}</div>
             <div class="teacher-program">${programLabel}</div>
-            <div class="teacher-percent">${negativePercent}% of negative evaluations</div>
+            <div class="teacher-feedback-info">${negativeCount} ${countText}</div>
           </div>
           <span class="priority-badge ${priorityClass}">${badgeText}</span>
         </div>

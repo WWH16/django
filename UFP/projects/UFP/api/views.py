@@ -161,37 +161,6 @@ def teacher_performance_by_program(request):
 
     return Response({"programs": programs})
 
-
-@api_view(['GET'])
-def teacher_improvement_priority(request):
-    teachers = dim_teacher.objects.all()
-    priority_list = []
-    for teacher in teachers:
-        evaluations = Eval.objects.filter(teacher=teacher)
-        total = evaluations.count()
-        if total == 0:
-            continue
-        negative = evaluations.filter(sentiment__label='Negative').count()
-        percent_negative = round((negative / total) * 100)
-        if percent_negative >= 25:
-            priority = 'Urgent'
-        elif percent_negative >= 15:
-            priority = 'Medium'
-        elif percent_negative >= 10:
-            priority = 'Low'
-        else:
-            priority = None
-        if priority:
-            priority_list.append({
-                "teacher": teacher.teacher_name,
-                "program": teacher.program_name,
-                "priority": priority,
-                "percent_negative": percent_negative
-            })
-    priority_list.sort(key=lambda x: x['percent_negative'], reverse=True)
-    return Response(priority_list)
-
-
 # Teacher performance export per teacher
 @api_view(['GET'])
 def teacher_performance_by_teacher(request):
@@ -426,12 +395,12 @@ def teacher_improvement_priority(request):
         if total == 0:
             continue
         negative = evaluations.filter(sentiment__label='Negative').count()
-        percent_negative = round((negative / total) * 100)
-        if percent_negative >= 25:
+        
+        if negative >= 3:
             priority = 'Urgent'
-        elif percent_negative >= 15:
+        elif negative >= 1:
             priority = 'Medium'
-        elif percent_negative >= 10:
+        elif negative >= 0:
             priority = 'Low'
         else:
             priority = None
@@ -440,9 +409,9 @@ def teacher_improvement_priority(request):
                 "teacher": teacher.teacher_name,
                 "program": teacher.program_name,
                 "priority": priority,
-                "percent_negative": percent_negative
+                "negative_count": negative
             })
-    priority_list.sort(key=lambda x: x['percent_negative'], reverse=True)
+    priority_list.sort(key=lambda x: x['negative_count'], reverse=True)
     return Response(priority_list)
 
 
