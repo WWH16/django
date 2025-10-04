@@ -125,7 +125,7 @@
 /* Help Center Accordion */
 .help-center h4 {
   font-weight: 700;
-  color: #000;  /* solid black */
+  color: #000;
   margin-bottom: 25px;
 }
 .accordion-item {
@@ -194,7 +194,7 @@
       </div>
       <div class="help-card">
         <h5><span class="step-number">2</span>Login or Sign Up</h5>
-        <p>Click <strong>"Login"</strong> if you have an account and select login or click <strong>"Guest"</strong> if you want to give feedback anonymously</p>
+        <p>Click <strong>"Login"</strong> if you have an account or click <strong>"Guest"</strong> for anonymous feedback.</p>
       </div>
       <div class="help-card">
         <h5><span class="step-number">3</span>Select Feedback Type</h5>
@@ -216,16 +216,17 @@
       <div class="accordion" id="helpAccordion">
         <div class="accordion-item">
           <h2 class="accordion-header" id="help1">
-            <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp1" aria-expanded="true" aria-controls="collapseHelp1">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp1" aria-expanded="false" aria-controls="collapseHelp1">
               What is this website for?
             </button>
           </h2>
-          <div id="collapseHelp1" class="accordion-collapse collapse show" data-bs-parent="#helpAccordion">
+          <div id="collapseHelp1" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
             <div class="accordion-body">
               This platform enables students to provide feedback on both university services and faculty performance. The system analyzes sentiment automatically for insights.
             </div>
           </div>
         </div>
+
         <div class="accordion-item">
           <h2 class="accordion-header" id="help2">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp2" aria-expanded="false" aria-controls="collapseHelp2">
@@ -238,6 +239,7 @@
             </div>
           </div>
         </div>
+
         <div class="accordion-item">
           <h2 class="accordion-header" id="help3">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp3" aria-expanded="false" aria-controls="collapseHelp3">
@@ -250,6 +252,7 @@
             </div>
           </div>
         </div>
+
         <div class="accordion-item">
           <h2 class="accordion-header" id="help4">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp4" aria-expanded="false" aria-controls="collapseHelp4">

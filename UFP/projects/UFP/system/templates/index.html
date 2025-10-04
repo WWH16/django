@@ -22,10 +22,20 @@
     max-width: 850px;
     margin: auto;
   }
+
+  /* Typing animation without cursor */
+  .typed-text {
+    white-space: pre-wrap;
+    overflow: hidden;
+    display: inline;
+    word-break: break-word;
+  }
+
+  /* Keep your existing styles exactly as before */
   .hero-section .display-3 {
     letter-spacing: 1px;
     font-weight: 800;
-    color: #fff; /* ✅ Pure white header */
+    color: #fff;
   }
   .hero-section .lead {
     color: rgba(255,255,255,0.82);
@@ -35,7 +45,7 @@
 
   /* CTA buttons */
   .cta-primary {
-    background: linear-gradient(135deg, #10b981, #006600); /* ✅ Same theme as services */
+    background: linear-gradient(135deg, #10b981, #006600);
     color: white;
     border: none;
     border-radius: 8px;
@@ -67,7 +77,7 @@
     padding: 4rem 0;
   }
 
-  /* Student Services (no cards, unified design) */
+  /* Student Services */
   .services-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -128,6 +138,16 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
   }
+
+  /* Mobile font adjustments */
+  @media (max-width: 576px) {
+    .hero-section .display-3 {
+        font-size: 2rem;
+    }
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -136,8 +156,12 @@
 <!-- Hero -->
 <div class="hero-section" data-aos="fade-in">
   <div class="hero-inner" data-aos="zoom-in">
+    <!-- Title shows instantly (no typing effect) -->
     <h1 class="display-3 mb-3">University Feedback Platform</h1>
-    <p class="lead mb-4">Built by students for the university — your feedback shapes a better campus experience.</p>
+
+    <!-- Description keeps typing animation -->
+    <p class="lead mb-4"><span id="typed-subtext" class="typed-text"></span></p>
+
     <div class="d-flex gap-3 justify-content-center flex-wrap">
       <a href="{% url 'select' %}" class="btn cta-primary">Login</a>
       <a href="{% url 'guest_login' %}" class="btn cta-outline">Guest</a>
@@ -153,7 +177,7 @@
 <section id="osas" class="glass-section text-white" data-aos="fade-up">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="fw-bold" style="font-size: 2.5rem; background: linear-gradient(135deg, #10b981, #006600); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Student Services</h2>
+      <h2 class="fw-bold" style="font-size: 2.5rem; background: linear-gradient(135deg, #10b981, #006600); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Selected OSAS Services</h2>
       <div class="section-divider mt-3"></div>
       <p class="text-white-50 mt-3">Quick access to essential campus services that support your student journey.</p>
     </div>
@@ -202,5 +226,28 @@
 
 <!-- Help -->
 {% include 'partials/help_section.html' %}
+
+<!-- Typing Animation Script -->
+<script>
+  const subText = "Built by students for the university — your feedback shapes a better campus experience.";
+
+  function typeText(elementId, text, speed = 40) {
+    let i = 0;
+    const el = document.getElementById(elementId);
+    function typing() {
+      if (i < text.length) {
+        el.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typing, speed);
+      }
+    }
+    typing();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Only animate subtext now
+    typeText("typed-subtext", subText, 20);
+  });
+</script>
 
 {% endblock %}
