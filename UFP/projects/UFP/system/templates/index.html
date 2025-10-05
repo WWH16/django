@@ -9,8 +9,6 @@
   .hero-section {
     position: relative;
     min-height: 100vh;
-    background: linear-gradient(rgba(5, 12, 9, 0.65), rgba(5, 12, 9, 0.85)),
-                url('{% static "system/images/ISU.jpg" %}') center/cover no-repeat fixed;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -155,7 +153,7 @@
 
 {% block content %}
 <!-- Hero -->
-<div class="hero-section" data-aos="fade-in">
+<div class="hero-section">
   <div class="hero-inner" data-aos="zoom-in">
     <h1 class="display-3 mb-3">University Feedback Platform</h1>
     <p class="lead mb-4"><span id="typed-subtext" class="typed-text"></span></p>
