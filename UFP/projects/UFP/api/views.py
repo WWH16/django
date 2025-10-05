@@ -493,12 +493,37 @@ def osas_sentiment_dashboard(request):
 
 @api_view(['GET'])
 def recent_osas_feedback(request):
-    limit = int(request.GET.get('limit', 3))
-    qs = (
-        FactFeedback.objects
-        .select_related('service', 'sentiment')
-        .order_by('-timestamp')[:max(1, min(limit, 20))]
-    )
+    """
+    Get most recent OSAS feedback with optional year/semester filtering
+    Supports: ?limit=5&year=2024&semester=1&all_time=true
+    """
+    limit = int(request.GET.get('limit', 5))
+    year = request.GET.get("year")
+    all_time = request.GET.get("all_time", "false").lower() == "true"
+    semester = request.GET.get("semester")
+    
+    # Base queryset
+    qs = FactFeedback.objects.select_related('service', 'sentiment')
+    
+    # Apply year filter
+    if not all_time:
+        if year and year != 'all':
+            try:
+                year_int = int(year)
+                qs = qs.annotate(feedback_year=ExtractYear("timestamp")).filter(feedback_year=year_int)
+            except ValueError:
+                pass
+    
+    # Apply semester filter (Aug–Dec = 1st; Jan–May = 2nd)
+    if semester in ("1", "2"):
+        if semester == "1":
+            qs = qs.filter(timestamp__month__gte=8, timestamp__month__lte=12)
+        else:  # "2"
+            qs = qs.filter(timestamp__month__gte=1, timestamp__month__lte=5)
+    
+    # Get most recent feedbacks after filtering
+    qs = qs.order_by('-timestamp')[:max(1, min(limit, 20))]
+    
     def pick(obj, *paths):
         for p in paths:
             try:
@@ -518,11 +543,13 @@ def recent_osas_feedback(request):
         )
         sentiment_label = pick(f, 'sentiment__label', 'sentiment__name', 'sentiment__value') or 'Unknown'
         comments = pick(f, 'comments', 'comment', 'feedback', 'feedback_text', 'text', 'content', 'message', 'remarks') or ''
+        
         data.append({
             "service": service_name,
             "sentiment": sentiment_label,
             "comments": comments,
         })
+    
     return Response(data)
 
 @api_view(['GET'])
