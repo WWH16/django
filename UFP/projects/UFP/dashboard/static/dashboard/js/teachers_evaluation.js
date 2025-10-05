@@ -42,11 +42,11 @@
     const s = String(v).replace(/"/g, '""');
     return `"${s}"`;
   }
-  
+
   function arrayToCsv(rows) {
     return rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
   }
-  
+
   function downloadCsv(filename, csvString) {
     const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -93,7 +93,7 @@
 
       const data = await response.json();
       console.log('Teacher Filter API Response:', data);
-      
+
       cachedFilteredData = {
         ...data,
         _filterMeta: {
@@ -118,24 +118,24 @@
   function detectDarkMode() {
     const html = document.documentElement;
     const body = document.body;
-    
-    if (html.classList.contains('dark') || 
-        html.classList.contains('dark-mode') ||
-        body.classList.contains('dark') || 
-        body.classList.contains('dark-mode')) {
+
+    if (html.classList.contains('dark') ||
+      html.classList.contains('dark-mode') ||
+      body.classList.contains('dark') ||
+      body.classList.contains('dark-mode')) {
       return true;
     }
-    
-    if (html.getAttribute('data-theme') === 'dark' || 
-        html.getAttribute('data-bs-theme') === 'dark' ||
-        body.getAttribute('data-theme') === 'dark' ||
-        body.getAttribute('data-bs-theme') === 'dark') {
+
+    if (html.getAttribute('data-theme') === 'dark' ||
+      html.getAttribute('data-bs-theme') === 'dark' ||
+      body.getAttribute('data-theme') === 'dark' ||
+      body.getAttribute('data-bs-theme') === 'dark') {
       return true;
     }
-    
+
     const htmlBg = window.getComputedStyle(html).backgroundColor;
     const bodyBg = window.getComputedStyle(body).backgroundColor;
-    
+
     const isDarkBackground = (bgColor) => {
       if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') return false;
       const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
@@ -146,13 +146,13 @@
       }
       return false;
     };
-    
+
     return isDarkBackground(bodyBg) || isDarkBackground(htmlBg);
   }
 
   function getChartColors() {
     const isDark = detectDarkMode();
-    
+
     return {
       textColor: isDark ? '#e5e7eb' : '#374151',
       axisColor: isDark ? '#d1d5db' : '#374151',
@@ -161,7 +161,7 @@
       tooltipBackground: isDark ? '#1f2937' : '#ffffff',
       tooltipTextColor: isDark ? '#f9fafb' : '#0f172a',
       tooltipBorderColor: isDark ? 'rgba(209, 213, 219, 0.3)' : 'rgba(55, 65, 81, 0.2)',
-      
+
       positive: {
         background: 'rgba(75, 192, 192, 0.75)',
         border: 'rgba(75, 192, 192, 1)',
@@ -207,23 +207,29 @@
 
   function updateTeacherCards(responseData) {
     try {
-      if (!responseData || !Array.isArray(responseData.programs)) {
-        console.warn('Invalid response data for teacher cards');
-        return;
-      }
+      console.log('updateTeacherCards received:', responseData);
 
       let totalPositive = 0;
       let totalNeutral = 0;
       let totalNegative = 0;
       let grandTotal = 0;
 
-      responseData.programs.forEach(programItem => {
-        totalPositive += Number(programItem.positive || 0);
-        totalNeutral += Number(programItem.neutral || 0);
-        totalNegative += Number(programItem.negative || 0);
-        grandTotal += Number(programItem.total || 0);
-      });
+      // Calculate totals from programs array
+      if (responseData && Array.isArray(responseData.programs)) {
+        responseData.programs.forEach(programItem => {
+          const p = Number(programItem.positive || 0);
+          const n = Number(programItem.neutral || 0);
+          const neg = Number(programItem.negative || 0);
+          totalPositive += p;
+          totalNeutral += n;
+          totalNegative += neg;
+          grandTotal += (p + n + neg); // Calculate from components
+        });
+      }
 
+      console.log('Calculated totals:', { totalPositive, totalNeutral, totalNegative, grandTotal });
+
+      // Update KPI cards
       const elements = {
         positive: document.getElementById('teacher-positive-count'),
         neutral: document.getElementById('teacher-neutral-count'),
@@ -236,25 +242,35 @@
       if (elements.negative) elements.negative.textContent = totalNegative.toLocaleString();
       if (elements.total) elements.total.textContent = grandTotal.toLocaleString();
 
-      if (grandTotal > 0) {
-        const posPercent = Math.round((totalPositive / grandTotal) * 100);
-        const neuPercent = Math.round((totalNeutral / grandTotal) * 100);
-        const negPercent = Math.round((totalNegative / grandTotal) * 100);
+      // Update percentages (always update, even when zero)
+      const posPercent = grandTotal > 0 ? Math.round((totalPositive / grandTotal) * 100) : 0;
+      const neuPercent = grandTotal > 0 ? Math.round((totalNeutral / grandTotal) * 100) : 0;
+      const negPercent = grandTotal > 0 ? Math.round((totalNegative / grandTotal) * 100) : 0;
 
-        const percentElements = [
-          { id: 'teacher-positive-percent', value: `${posPercent}% of evaluations` },
-          { id: 'teacher-neutral-percent', value: `${neuPercent}% of evaluations` },
-          { id: 'teacher-negative-percent', value: `${negPercent}% of evaluations` },
-          { id: 'teacher-pie-positive-percent', value: posPercent },
-          { id: 'teacher-pie-neutral-percent', value: neuPercent },
-          { id: 'teacher-pie-negative-percent', value: negPercent }
-        ];
+      const percentTextElements = [
+        { id: 'teacher-positive-percent', value: `${posPercent}% of evaluations` },
+        { id: 'teacher-neutral-percent', value: `${neuPercent}% of evaluations` },
+        { id: 'teacher-negative-percent', value: `${negPercent}% of evaluations` }
+      ];
 
-        percentElements.forEach(item => {
-          const element = document.getElementById(item.id);
-          if (element) element.textContent = item.value;
-        });
-      }
+      percentTextElements.forEach(item => {
+        const element = document.getElementById(item.id);
+        if (element) element.textContent = item.value;
+      });
+
+      const percentPieElements = [
+        { id: 'teacher-pie-positive-percent', value: posPercent },
+        { id: 'teacher-pie-neutral-percent', value: neuPercent },
+        { id: 'teacher-pie-negative-percent', value: negPercent }
+      ];
+
+      percentPieElements.forEach(item => {
+        const element = document.getElementById(item.id);
+        if (element) element.textContent = item.value;
+      });
+
+      // Get programs array
+      const programs = responseData?.programs || [];
 
       const programCardMapping = {
         bsit: ['bsit', 'information technology'],
@@ -262,6 +278,7 @@
         bsemc: ['bsemc', 'entertainment', 'multimedia']
       };
 
+      // FIRST: Reset all program cards to zero
       Object.keys(programCardMapping).forEach(cardPrefix => {
         const programEl = {
           positive: document.getElementById(`${cardPrefix}-positive`),
@@ -270,18 +287,38 @@
           rating: document.getElementById(`${cardPrefix}-rating`)
         };
 
-        const matchingProgram = responseData.programs.find(program => 
-          programCardMapping[cardPrefix].some(keyword => 
+        if (programEl.positive) programEl.positive.textContent = '0';
+        if (programEl.neutral) programEl.neutral.textContent = '0';
+        if (programEl.negative) programEl.negative.textContent = '0';
+        if (programEl.rating) programEl.rating.textContent = '0% Positive Sentiments';
+      });
+
+      // SECOND: Update with actual data if available
+      Object.keys(programCardMapping).forEach(cardPrefix => {
+        const programEl = {
+          positive: document.getElementById(`${cardPrefix}-positive`),
+          neutral: document.getElementById(`${cardPrefix}-neutral`),
+          negative: document.getElementById(`${cardPrefix}-negative`),
+          rating: document.getElementById(`${cardPrefix}-rating`)
+        };
+
+        const matchingProgram = programs.find(program =>
+          programCardMapping[cardPrefix].some(keyword =>
             (program.name || program.program || '').toLowerCase().includes(keyword)
           )
         );
 
         if (matchingProgram) {
-          if (programEl.positive) programEl.positive.textContent = matchingProgram.positive || 0;
-          if (programEl.neutral) programEl.neutral.textContent = matchingProgram.neutral || 0;
-          if (programEl.negative) programEl.negative.textContent = matchingProgram.negative || 0;
+          const pos = Number(matchingProgram.positive || 0);
+          const neu = Number(matchingProgram.neutral || 0);
+          const neg = Number(matchingProgram.negative || 0);
+          const total = pos + neu + neg;
+          const ratingPercent = total > 0 ? Math.round((pos / total) * 100) : 0;
+
+          if (programEl.positive) programEl.positive.textContent = pos;
+          if (programEl.neutral) programEl.neutral.textContent = neu;
+          if (programEl.negative) programEl.negative.textContent = neg;
           if (programEl.rating) {
-            const ratingPercent = matchingProgram.positive_percent || 0;
             programEl.rating.textContent = `${ratingPercent}% Positive Sentiments`;
           }
         }
@@ -475,7 +512,7 @@
     try {
       const filterDrawer = document.getElementById('filter-drawer');
       const blurOverlay = document.getElementById('blur-overlay');
-      
+
       if (filterDrawer) filterDrawer.classList.add('show');
       if (blurOverlay) blurOverlay.classList.add('show');
       document.body.classList.add('filter-open');
@@ -488,7 +525,7 @@
     try {
       const filterDrawer = document.getElementById('filter-drawer');
       const blurOverlay = document.getElementById('blur-overlay');
-      
+
       if (filterDrawer) filterDrawer.classList.remove('show');
       if (blurOverlay) blurOverlay.classList.remove('show');
       document.body.classList.remove('filter-open');
@@ -501,7 +538,7 @@
     try {
       const yearFilter = document.getElementById('year-filter');
       const semesterFilter = document.getElementById('semester-filter');
-      
+
       if (yearFilter) {
         yearFilter.querySelectorAll('.filter-option').forEach(item => {
           item.classList.remove('active');
@@ -531,54 +568,63 @@
   }
 
 async function applyCurrentFilters() {
-    if (isLoadingData) {
-      console.log('Already loading data, skipping duplicate request');
-      return;
-    }
-
-    try {
-      isLoadingData = true;
-      
-      const yearFilter = document.getElementById('year-filter');
-      const semesterFilter = document.getElementById('semester-filter');
-      
-      let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-      let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-
-      if (activeSemester && activeSemester !== 'all') {
-        activeSemester = activeSemester.replace(/[^\d]/g, '');
-        if (!activeSemester || activeSemester === '') {
-          activeSemester = 'all';
-        }
-      }
-
-      currentFilters.year = activeYear;
-      currentFilters.semester = activeSemester;
-
-      console.log('Applying Teacher filters:', currentFilters);
-
-      const data = await fetchFilteredTeacherData(activeYear, activeSemester);
-      
-      // Populate cache for recommendations
-      cache.programs = { programs: data.programs || [] };
-      cache.summary = data;
-      
-      updateTeacherCards(data);
-      renderCharts(data);
-      
-      // Load teacher performance data with filters - WAIT for it to complete
-      await loadTeacherPerformanceData(activeYear, activeSemester);
-      
-      // Only load recommendations AFTER teacher data is loaded
-      loadTeacherRecommendations();
-
-    } catch (error) {
-      console.error('Failed to apply Teacher filters:', error);
-      alert('Failed to load Teacher data: ' + error.message);
-    } finally {
-      isLoadingData = false;
-    }
+  if (isLoadingData) {
+    console.log('Already loading data, skipping duplicate request');
+    return;
   }
+
+  try {
+    isLoadingData = true;
+
+    const yearFilter = document.getElementById('year-filter');
+    const semesterFilter = document.getElementById('semester-filter');
+
+    let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+    let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+
+    if (activeSemester && activeSemester !== 'all') {
+      activeSemester = activeSemester.replace(/[^\d]/g, '');
+      if (!activeSemester || activeSemester === '') {
+        activeSemester = 'all';
+      }
+    }
+
+    currentFilters.year = activeYear;
+    currentFilters.semester = activeSemester;
+
+    console.log('Applying Teacher filters:', currentFilters);
+
+    // Fetch main data
+    const data = await fetchFilteredTeacherData(activeYear, activeSemester);
+
+    // Populate cache for recommendations
+    cache.programs = { programs: data.programs || [] };
+    cache.summary = data;
+
+    // Update UI with main data
+    updateTeacherCards(data);
+    renderCharts(data);
+
+    // Load all additional data in sequence with proper awaits
+    await loadTeacherPerformanceData(activeYear, activeSemester);
+    await fetchTeacherPriority(activeYear, activeSemester);
+    await fetchRecentEvaluations();
+
+    // Small delay to ensure cache is fully updated with filter keys
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // Load recommendations after all data is ready and cached
+    loadTeacherRecommendations();
+
+    console.log('Teacher filters applied successfully');
+
+  } catch (error) {
+    console.error('Failed to apply Teacher filters:', error);
+    alert('Failed to load Teacher data: ' + error.message);
+  } finally {
+    isLoadingData = false;
+  }
+}
 
   /* ---------------- CSV Export ---------------- */
   function buildFilteredCsvExport(data) {
@@ -640,11 +686,11 @@ async function applyCurrentFilters() {
 
       let exportData = cachedFilteredData;
 
-      if (!exportData || 
-          !exportData._filterMeta ||
-          exportData._filterMeta.year !== currentFilters.year ||
-          exportData._filterMeta.semester !== currentFilters.semester) {
-        
+      if (!exportData ||
+        !exportData._filterMeta ||
+        exportData._filterMeta.year !== currentFilters.year ||
+        exportData._filterMeta.semester !== currentFilters.semester) {
+
         exportData = await fetchFilteredTeacherData(currentFilters.year, currentFilters.semester);
       }
 
@@ -657,7 +703,7 @@ async function applyCurrentFilters() {
 
       const date = new Date().toISOString().slice(0, 10);
       let filename = 'teacher_evaluation_report';
-      
+
       if (currentFilters.year !== 'all') {
         filename += `_${currentFilters.year}`;
       }
@@ -698,22 +744,25 @@ async function applyCurrentFilters() {
     try {
       const list = document.getElementById('recent-evaluations-list');
       if (!list) return;
-      
+
+      // ✅ ADD THIS LINE - Always clear first (zero-out pattern)
+      list.innerHTML = '';
+
       if (!items || !items.length) {
         list.innerHTML = `<li class="list-group-item text-muted">No recent evaluations.</li>`;
         return;
       }
-      
+
       list.innerHTML = items.map(it => `
-        <li class="list-group-item">
-          <div class="row align-items-center">
-            <div class="col me-2">
-              <h6 class="mb-0"><strong>${it.teacher || 'Teacher'}${it.program ? ` - ${it.program}` : ''}</strong></h6>
-              <span class="text-xs ${sentimentClass(it.sentiment)}">${it.sentiment || 'Unknown'} Sentiment</span>
-              <p class="text-xs text-muted mb-0">"${truncate(it.comments || '', 90)}"</p>
-            </div>
+      <li class="list-group-item">
+        <div class="row align-items-center">
+          <div class="col me-2">
+            <h6 class="mb-0"><strong>${it.teacher || 'Teacher'}${it.program ? ` - ${it.program}` : ''}</strong></h6>
+            <span class="text-xs ${sentimentClass(it.sentiment)}">${it.sentiment || 'Unknown'} Sentiment</span>
+            <p class="text-xs text-muted mb-0">"${truncate(it.comments || '', 90)}"</p>
           </div>
-        </li>`).join('');
+        </div>
+      </li>`).join('');
     } catch (error) {
       console.error('Error rendering recent evaluations:', error);
     }
@@ -721,11 +770,32 @@ async function applyCurrentFilters() {
 
   async function fetchRecentEvaluations() {
     try {
-      const response = await fetch(RECENT_EVALUATIONS_URL, { 
-        headers: { 'Accept': 'application/json' } 
+      // Build URL with current filters
+      const url = new URL('/api/recent-teacher-evaluations/', window.location.origin);
+      url.searchParams.set('limit', '5');
+
+      // Add year filter
+      if (currentFilters.year && currentFilters.year !== 'all') {
+        url.searchParams.set('year', currentFilters.year);
+        url.searchParams.set('all_time', 'false');
+      } else {
+        url.searchParams.set('all_time', 'true');
+      }
+
+      // Add semester filter
+      if (currentFilters.semester && currentFilters.semester !== 'all') {
+        url.searchParams.set('semester', currentFilters.semester);
+      }
+
+      console.log('Fetching recent evaluations with URL:', url.toString());
+
+      const response = await fetch(url.toString(), {
+        headers: { 'Accept': 'application/json' }
       });
+
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
+      console.log('Recent evaluations received:', data);
       renderRecentEvaluations(data);
     } catch (err) {
       console.error('Failed to load recent evaluations:', err);
@@ -733,96 +803,100 @@ async function applyCurrentFilters() {
     }
   }
 
-  /* ---------------- Teacher Recommendations - WITH DEBUGGING ---------------- */
   /* ---------------- Teacher Recommendations - COUNT-BASED VERSION ---------------- */
+  /* ---------------- Helper Functions for Recommendations ---------------- */
+function createRecommendationCard(type, label, message, color, extraClass = '') {
+  const rgbaBackground = hexToRgba(color, 0.08);
+  return `
+    <div class="p-3 rounded-default border-start${extraClass}" 
+         style="border-left: 8px solid ${color}; background: ${rgbaBackground};">
+      <strong style="color: ${color};">${label}:</strong>
+      ${message}
+    </div>
+  `;
+}
+
+function hexToRgba(hex, alpha) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+  if (hex.length !== 6) return `rgba(0,0,0,${alpha})`;
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+/* ---------------- Teacher Recommendations - FIXED VERSION ---------------- */
 function loadTeacherRecommendations() {
-  console.log('=== LOADING RECOMMENDATIONS ===');
-  console.log('Cache state:', {
-    teachers: cache.teachers,
-    teachersLength: cache.teachers ? cache.teachers.length : 0,
-    programs: cache.programs,
-    programsLength: cache.programs?.programs?.length || 0
-  });
-  
   const wrap = document.getElementById('static-recos');
   if (!wrap) {
     console.error('Recommendations container not found!');
     return;
   }
+
   wrap.innerHTML = '';
 
-  const teachers = Array.isArray(cache.teachers) ? cache.teachers : [];
-  const programs = (cache.programs && cache.programs.programs) ? cache.programs.programs : [];
+  const currentFilterKey = `${currentFilters.year}_${currentFilters.semester}`;
+  let teachers = [];
+  let programs = [];
 
-  console.log('Teachers array:', teachers);
-  console.log('Programs array:', programs);
+  if (cachedFilteredData && cachedFilteredData.programs) {
+    programs = cachedFilteredData.programs;
+    
+    // ✅ STRICT CHECK: Only use teachers if filter matches EXACTLY
+    if (cache.teachers && 
+        Array.isArray(cache.teachers) && 
+        cache.teachers.length > 0 && 
+        cache.teachers._filterKey === currentFilterKey) {
+      teachers = cache.teachers;
+      console.log('✅ Using teacher data matching filter:', currentFilterKey);
+    } else {
+      console.log('⚠️ Teacher data filter mismatch or empty. Current:', currentFilterKey, 'Cached:', cache.teachers?._filterKey);
+      console.log('Showing only program-level recommendations until teacher data loads.');
+      teachers = []; // ✅ Force empty to prevent wrong data
+    }
+  } else if (baselineData && baselineData.programs) {
+    programs = baselineData.programs;
+    if (cache.teachers && cache.teachers._filterKey === 'all_all') {
+      teachers = cache.teachers;
+    }
+    console.log('Loading recommendations from BASELINE data:', { teachers: teachers.length, programs: programs.length });
+  } else {
+    programs = (cache.programs && cache.programs.programs) ? cache.programs.programs : [];
+    console.log('Loading recommendations from CACHE data:', { teachers: teachers.length, programs: programs.length });
+  }
 
   if (!teachers.length && !programs.length) {
-    wrap.innerHTML = `<div class="text-muted">No data available (teachers: ${teachers.length}, programs: ${programs.length})</div>`;
-    console.warn('No data available for recommendations');
+    wrap.innerHTML = createRecommendationCard('info', 'Info',
+      'Add evaluations to generate personalized recommendations for teacher improvements.',
+      '#6c757d');
     return;
   }
 
   const REC_MIN_SAMPLE = 1;
 
-  // Changed from percentage-based to count-based selection
+  // Helper function to pick item with most count
   const pickMostByCount = (arr, keyName) => {
-    console.log(`\nSearching for most ${keyName} from ${arr.length} items`);
     let best = null;
-    arr.forEach((it, index) => {
+    arr.forEach((it) => {
       const pos = Number(it.positive || 0);
       const neu = Number(it.neutral || 0);
       const neg = Number(it.negative || 0);
       const tot = pos + neu + neg;
-      
-      console.log(`  Item ${index}:`, it.teacher || it.name || 'Unknown', {pos, neu, neg, tot});
-      
-      if (tot < REC_MIN_SAMPLE) {
-        console.log(`    Skipped (total ${tot} < ${REC_MIN_SAMPLE})`);
-        return;
-      }
+
+      if (tot < REC_MIN_SAMPLE) return;
 
       let count = 0;
       if (keyName === 'positive') count = pos;
       if (keyName === 'neutral') count = neu;
       if (keyName === 'negative') count = neg;
-      
-      console.log(`    ${keyName} count: ${count}`);
 
       if (!best || count > best.count) {
         best = { ...it, total: tot, count };
-        console.log(`    NEW BEST! Count: ${count}`);
       }
     });
-    console.log(`Result for most ${keyName}:`, best);
     return best;
-  };
-
-  const addItem = (cls, label, text) => {
-    let borderColor = '';
-    let backgroundColor = '';
-
-    if (cls === 'is-urgent') {
-      borderColor = '#ff6384';
-      backgroundColor = 'rgba(255,99,132,0.08)';
-    } else if (cls === 'is-review') {
-      borderColor = '#ffcd56';
-      backgroundColor = 'rgba(255,205,86,0.08)';
-    } else if (cls === 'is-recognize') {
-      borderColor = '#4bc0c0';
-      backgroundColor = 'rgba(75,192,192,0.08)';
-    } else if (cls === 'is-support') {
-      borderColor = '#3b82f6';
-      backgroundColor = 'rgba(59,130,246,0.08)';
-    }
-
-    console.log(`Adding recommendation: ${label}`);
-    wrap.insertAdjacentHTML('beforeend', `
-      <div class="p-3 rounded-default border-start mb-3" style="border-left: 8px solid ${borderColor}; background: ${backgroundColor};">
-        <strong style="color: ${borderColor};">${label}:</strong>
-        ${text}
-      </div>
-    `);
   };
 
   const mostNegTeacher = pickMostByCount(teachers, 'negative');
@@ -830,61 +904,67 @@ function loadTeacherRecommendations() {
   const mostPosTeacher = pickMostByCount(teachers, 'positive');
   const mostNegProgram = pickMostByCount(programs, 'negative');
 
-  console.log('\n=== FINAL RESULTS ===');
-  console.log('Most negative teacher:', mostNegTeacher);
-  console.log('Most neutral teacher:', mostNeuTeacher);
-  console.log('Most positive teacher:', mostPosTeacher);
-  console.log('Most negative program:', mostNegProgram);
-
+  // Generate recommendations
   if (mostNegTeacher) {
     const tLabel = `${mostNegTeacher.teacher || mostNegTeacher.teacher_name || 'Teacher'}${mostNegTeacher.program ? `, ${mostNegTeacher.program}` : ''}`;
     const negCount = Number(mostNegTeacher.negative || 0);
     const countText = negCount === 1 ? 'negative evaluation' : 'negative evaluations';
-    addItem('is-urgent', 'Urgent', `Professor, ${tLabel} has received the most negative feedback, with ${negCount} ${countText}. Immediate action is recommended to address concerns.`);
+    wrap.insertAdjacentHTML('beforeend',
+      createRecommendationCard('urgent', 'Urgent',
+        `Professor ${tLabel} has received the most negative feedback, with ${negCount} ${countText}. Immediate action is recommended to address concerns.`,
+        '#ff6384', ' mb-3'));
   }
 
   if (mostNeuTeacher) {
     const tLabel = `${mostNeuTeacher.teacher || mostNeuTeacher.teacher_name || 'Teacher'}${mostNeuTeacher.program ? `, ${mostNeuTeacher.program}` : ''}`;
     const neuCount = Number(mostNeuTeacher.neutral || 0);
     const countText = neuCount === 1 ? 'neutral evaluation' : 'neutral evaluations';
-    addItem('is-review', 'Review', `Professor, ${tLabel} stands out with the highest neutral feedback at ${neuCount} ${countText}. This suggests a need to review and provide guidance to move evaluations toward more positive outcomes.`);
+    wrap.insertAdjacentHTML('beforeend',
+      createRecommendationCard('review', 'Review',
+        `Professor ${tLabel} stands out with the highest neutral feedback at ${neuCount} ${countText}. This suggests a need to review and provide guidance.`,
+        '#ffcd56', ' mb-3'));
   }
 
   if (mostPosTeacher) {
     const tLabel = `${mostPosTeacher.teacher || mostPosTeacher.teacher_name || 'Teacher'}${mostPosTeacher.program ? `, ${mostPosTeacher.program}` : ''}`;
     const posCount = Number(mostPosTeacher.positive || 0);
     const countText = posCount === 1 ? 'positive evaluation' : 'positive evaluations';
-    addItem('is-recognize', 'Recognize', `Professor, ${tLabel} has received the most positive evaluations, with ${posCount} ${countText}. Recognition and encouragement are recommended to reinforce this performance.`);
+    wrap.insertAdjacentHTML('beforeend',
+      createRecommendationCard('recognize', 'Recognize',
+        `Professor ${tLabel} has received the most positive evaluations, with ${posCount} ${countText}. Recognition is recommended.`,
+        '#4bc0c0', ' mb-3'));
   }
 
   if (mostNegProgram) {
     const pLabel = mostNegProgram.name || mostNegProgram.program || 'Program';
     const negCount = Number(mostNegProgram.negative || 0);
     const countText = negCount === 1 ? 'negative evaluation' : 'negative evaluations';
-    addItem('is-support', 'Support', `The ${pLabel} Department, received the highest negative evaluations, with ${negCount} ${countText}. Support and Development initiatives are advised.`);
+    wrap.insertAdjacentHTML('beforeend',
+      createRecommendationCard('support', 'Support',
+        `The ${pLabel} Department received the highest negative evaluations, with ${negCount} ${countText}. Support initiatives are advised.`,
+        '#3b82f6'));
   }
 
+  // Fallback if no recommendations generated
   if (!wrap.children.length) {
-    wrap.innerHTML = `<div class="text-muted">Insufficient data for recommendations</div>`;
-    console.warn('No recommendations were generated');
+    wrap.innerHTML = createRecommendationCard('info', 'Info',
+      'Insufficient data for specific recommendations. Continue collecting evaluations.',
+      '#6c757d');
   }
-  
-  console.log(`\nTotal recommendations rendered: ${wrap.children.length}`);
-  console.log('=== END RECOMMENDATIONS ===\n');
 }
 
-  /* ---------------- Teacher Performance Data (for recommendations) ---------------- */
+/* ---------------- Teacher Performance Data (for recommendations) ---------------- */
 async function loadTeacherPerformanceData(year = 'all', semester = null) {
   let url = '/api/teacher-performance-by-teacher/';
   const params = [];
-  
+
   if (year && year !== 'all') {
     params.push(`year=${encodeURIComponent(year)}`);
   }
   if (semester && semester !== 'all') {
     params.push(`semester=${encodeURIComponent(semester)}`);
   }
-  
+
   if (params.length > 0) {
     url += '?' + params.join('&');
   }
@@ -894,29 +974,32 @@ async function loadTeacherPerformanceData(year = 'all', semester = null) {
     const response = await fetch(url, {
       headers: { 'Accept': 'application/json' }
     });
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Teacher performance API failed:', response.status, errorText);
       throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
-    
+
     const data = await response.json();
     
-    // FIX: Handle both array and object responses
+    // TAG THE DATA WITH FILTER KEY for matching
+    const filterKey = `${year || 'all'}_${semester || 'all'}`;
+
     if (Array.isArray(data)) {
       cache.teachers = data;
-      console.log('Teacher performance data loaded (array format):', data);
-      console.log('Loaded teachers count:', data.length);
+      cache.teachers._filterKey = filterKey;
+      console.log('Teacher performance data loaded (array):', data.length, 'filter:', filterKey);
     } else if (data.teachers && Array.isArray(data.teachers)) {
       cache.teachers = data.teachers;
-      console.log('Teacher performance data loaded (object format):', data.teachers);
-      console.log('Loaded teachers count:', data.teachers.length);
+      cache.teachers._filterKey = filterKey;
+      console.log('Teacher performance data loaded (object):', data.teachers.length, 'filter:', filterKey);
     } else {
       console.error('Unexpected data format from API:', data);
       cache.teachers = [];
+      cache.teachers._filterKey = filterKey;
     }
-    
+
     return cache.teachers;
   } catch (error) {
     console.error('Teacher performance loading failed:', error);
@@ -926,68 +1009,89 @@ async function loadTeacherPerformanceData(year = 'all', semester = null) {
 }
 
   /* ---------------- Teacher Priority List ---------------- */
-async function fetchTeacherPriority(year = 'all', semester = 'all') {
-  try {
-    let url = '/api/teacher-improvement-priority/';
-    const params = [];
-    
-    if (year && year !== 'all') {
-      params.push(`year=${encodeURIComponent(year)}`);
-    }
-    if (semester && semester !== 'all') {
-      params.push(`semester=${encodeURIComponent(semester)}`);
-    }
-    
-    if (params.length > 0) {
-      url += '?' + params.join('&');
-    }
-    
-    console.log('Fetching teacher priority:', url);
-    
-    const response = await fetch(url, {
-      headers: { 'Accept': 'application/json' }
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    
-    renderTeacherPriority(data);
-  } catch (err) {
-    console.error('Failed to load teacher priority:', err);
-  }
-}
+  async function fetchTeacherPriority(year = 'all', semester = 'all') {
+    try {
+      let url = '/api/teacher-improvement-priority/';
+      const params = [];
 
-function renderTeacherPriority(priorityList) {
-  try {
-    const list = document.getElementById('teacher-priority-list');
-    if (!list) return;
-
-    if (!priorityList || !priorityList.length) {
-      list.innerHTML = '<p class="text-muted text-center py-4">No priority data available</p>';
-      return;
-    }
-
-    list.innerHTML = '';
-    priorityList.forEach(item => {
-      let priorityClass = '';
-      let badgeText = '';
-      
-      if (item.priority === 'Urgent') {
-        priorityClass = 'is-urgent';
-        badgeText = 'Urgent';
-      } else if (item.priority === 'Medium') {
-        priorityClass = 'is-review';
-        badgeText = 'Medium';
-      } else if (item.priority === 'Low') {
-        priorityClass = 'is-maintain';
-        badgeText = 'Low';
+      // Add year parameter
+      if (year && year !== 'all') {
+        params.push(`year=${encodeURIComponent(year)}`);
+        params.push('all_time=false');
+      } else {
+        params.push('all_time=true');
       }
 
-      const teacherLabel = item.teacher || 'Unknown Teacher';
-      const programLabel = item.program ? ` (${item.program})` : '';
-      const negativeCount = item.negative_count || 0;
-      const countText = negativeCount === 1 ? 'negative evaluation' : 'negative evaluations';
+      // Add semester parameter
+      if (semester && semester !== 'all') {
+        params.push(`semester=${encodeURIComponent(semester)}`);
+      }
 
-      list.insertAdjacentHTML('beforeend', `
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+
+      console.log('Fetching teacher priority:', url);
+
+      const response = await fetch(url, {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Priority API failed:', response.status, errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      // Debug logs
+      console.log('Priority API returned:', data);
+      console.log('Is array?', Array.isArray(data));
+      console.log('Length:', data?.length);
+
+      renderTeacherPriority(data);
+    } catch (err) {
+      console.error('Failed to load teacher priority:', err);
+      renderTeacherPriority([]);
+    }
+  }
+
+  function renderTeacherPriority(priorityList) {
+    try {
+      const list = document.getElementById('teacher-priority-list');
+      if (!list) return;
+
+      // ✅ THIS LINE MUST BE HERE - Always clear first
+      list.innerHTML = '';
+
+      if (!priorityList || !priorityList.length) {
+        list.innerHTML = '<p class="text-muted text-center py-4">No data available for selected filters.</p>';
+        return;
+      }
+
+      // Rest of existing code...
+      priorityList.forEach(item => {
+        let priorityClass = '';
+        let badgeText = '';
+
+        if (item.priority === 'Urgent') {
+          priorityClass = 'is-urgent';
+          badgeText = 'Urgent';
+        } else if (item.priority === 'Medium') {
+          priorityClass = 'is-review';
+          badgeText = 'Medium';
+        } else if (item.priority === 'Low') {
+          priorityClass = 'is-maintain';
+          badgeText = 'Low';
+        }
+
+        const teacherLabel = item.teacher || 'Unknown Teacher';
+        const programLabel = item.program ? ` (${item.program})` : '';
+        const negativeCount = item.negative_count || 0;
+        const countText = negativeCount === 1 ? 'negative evaluation' : 'negative evaluations';
+
+        list.insertAdjacentHTML('beforeend', `
         <div class="priority-item ${priorityClass}">
           <div class="pri-left">
             <div class="teacher-name">${teacherLabel.toUpperCase()}</div>
@@ -997,35 +1101,37 @@ function renderTeacherPriority(priorityList) {
           <span class="priority-badge ${priorityClass}">${badgeText}</span>
         </div>
       `);
-    });
-  } catch (error) {
-    console.error('Error rendering teacher priority:', error);
+      });
+    } catch (error) {
+      console.error('Error rendering teacher priority:', error);
+    }
   }
-}
 
   /* ---------------- Baseline Dashboard Functions ---------------- */
-async function fetchBaselineThenRender() {
+  /* ---------------- Baseline Dashboard Functions ---------------- */
+  async function fetchBaselineThenRender() {
     if (isBaselineLoading) return;
     isBaselineLoading = true;
-    
+
     try {
       const data = await fetchFilteredTeacherData('all', 'all');
-      
+
       if (!data) throw new Error('No data received');
-      
+
       baselineData = data;
-      
+
       // Populate cache for recommendations
       cache.programs = { programs: data.programs || [] };
       cache.summary = data;
-      
+
       updateTeacherCards(data);
       renderCharts(data);
-      
-      // ✅ LOAD TEACHER DATA FIRST, THEN RECOMMENDATIONS
+
+      // ✅ LOAD TEACHER DATA FIRST, THEN LOAD PRIORITY AND RECOMMENDATIONS
       await loadTeacherPerformanceData('all', 'all');
+      await fetchTeacherPriority('all', 'all');  // ✅ Add await here
       loadTeacherRecommendations();
-      
+
     } catch (err) {
       console.error('Failed to load baseline dashboard:', err);
       alert('Sorry—failed to load the dashboard. Please refresh the page.');
@@ -1037,16 +1143,16 @@ async function fetchBaselineThenRender() {
   /* ---------------- Theme Change Observer ---------------- */
   function observeThemeChanges() {
     let previousTheme = detectDarkMode();
-    
+
     const observer = new MutationObserver((mutations) => {
       let shouldRerender = false;
-      
+
       mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && 
-            (mutation.attributeName === 'class' || 
-             mutation.attributeName === 'data-theme' || 
-             mutation.attributeName === 'data-bs-theme')) {
-          
+        if (mutation.type === 'attributes' &&
+          (mutation.attributeName === 'class' ||
+            mutation.attributeName === 'data-theme' ||
+            mutation.attributeName === 'data-bs-theme')) {
+
           const currentTheme = detectDarkMode();
           if (currentTheme !== previousTheme) {
             shouldRerender = true;
@@ -1054,7 +1160,7 @@ async function fetchBaselineThenRender() {
           }
         }
       });
-      
+
       if (shouldRerender) {
         console.log('Theme changed, re-rendering charts');
         setTimeout(() => {
@@ -1068,7 +1174,7 @@ async function fetchBaselineThenRender() {
         }, 100);
       }
     });
-    
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class', 'data-theme', 'data-bs-theme']
@@ -1103,17 +1209,17 @@ async function fetchBaselineThenRender() {
 
       document.addEventListener('click', function (e) {
         if (filterDrawer && filterDrawer.classList.contains('show')) {
-          if (!filterDrawer.contains(e.target) && 
-              (!filterBtn || !filterBtn.contains(e.target))) {
+          if (!filterDrawer.contains(e.target) &&
+            (!filterBtn || !filterBtn.contains(e.target))) {
             hideDrawer();
           }
         }
       });
 
       document.addEventListener('keydown', function (keyEvent) {
-        if (keyEvent.key === 'Escape' && 
-            filterDrawer && 
-            filterDrawer.classList.contains('show')) {
+        if (keyEvent.key === 'Escape' &&
+          filterDrawer &&
+          filterDrawer.classList.contains('show')) {
           hideDrawer();
         }
       });
@@ -1170,7 +1276,7 @@ async function fetchBaselineThenRender() {
     try {
       const yearFilter = document.getElementById('year-filter');
       const semesterFilter = document.getElementById('semester-filter');
-      
+
       if (yearFilter && semesterFilter) {
         yearFilter.querySelectorAll('.filter-option').forEach(option => {
           option.classList.remove('active');
@@ -1205,7 +1311,7 @@ async function fetchBaselineThenRender() {
 
       fetchBaselineThenRender();
       fetchRecentEvaluations();
-      fetchTeacherPriority();
+      fetchTeacherPriority('all', 'all');  // ✅ Add parameters
 
       console.log('Teacher Evaluation Dashboard initialized successfully');
     } catch (error) {
@@ -1214,7 +1320,7 @@ async function fetchBaselineThenRender() {
     }
   });
 
-  window.addEventListener('beforeunload', function() {
+  window.addEventListener('beforeunload', function () {
     try {
       if (teacherPieChart && typeof teacherPieChart.destroy === 'function') {
         teacherPieChart.destroy();

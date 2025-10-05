@@ -82,16 +82,38 @@ def teacher_evaluation_dashboard_stats(request):
 @api_view(['GET'])
 def recent_teacher_evaluations(request):
     """
-    Get most recent teacher evaluations with teacher name, program, sentiment, and comments
+    Get most recent teacher evaluations with optional year/semester filtering
+    Supports: ?limit=5&year=2024&semester=1&all_time=true
     """
-    limit = int(request.GET.get('limit', 5))  
-    evaluations = (
-        Eval.objects
-        .select_related('teacher', 'sentiment')
-        .order_by('-timestamp')[:max(1, min(limit, 20))]
-    )
+    limit = int(request.GET.get('limit', 5))
+    year = request.GET.get("year")
+    all_time = request.GET.get("all_time", "false").lower() == "true"
+    semester = request.GET.get("semester")
+    
+    # Base queryset
+    qs = Eval.objects.select_related('teacher', 'sentiment')
+    
+    # Apply year filter
+    if not all_time:
+        if year and year != 'all':
+            try:
+                year_int = int(year)
+                qs = qs.annotate(eval_year=ExtractYear("timestamp")).filter(eval_year=year_int)
+            except ValueError:
+                pass
+    
+    # Apply semester filter (Aug–Dec = 1st; Jan–May = 2nd)
+    if semester in ("1", "2"):
+        if semester == "1":
+            qs = qs.filter(timestamp__month__gte=8, timestamp__month__lte=12)
+        else:  # "2"
+            qs = qs.filter(timestamp__month__gte=1, timestamp__month__lte=5)
+    
+    # Get most recent evaluations after filtering
+    qs = qs.order_by('-timestamp')[:max(1, min(limit, 20))]
+    
     data = []
-    for e in evaluations:
+    for e in qs:
         teacher_name = "Unknown Teacher"
         program_name = None
         if e.teacher:
@@ -102,6 +124,7 @@ def recent_teacher_evaluations(request):
         comments = e.comments or "No comments provided"
         if len(comments) > 150:
             comments = comments[:150] + "..."
+            
         data.append({
             "teacher": teacher_name,
             "program": program_name,
@@ -109,7 +132,8 @@ def recent_teacher_evaluations(request):
             "comments": comments,
             "timestamp": e.timestamp,
         })
-    return Response(data)
+    
+    return Response(data)  # Returns [] if no data matches filters
 
 
 @api_view(['GET'])
@@ -177,9 +201,11 @@ def teacher_performance_by_teacher(request):
 
     if semester:
         if semester == "1":
-            evals = evals.filter(timestamp__month__gte=1, timestamp__month__lte=6)
+            # 1st semester: August (8) to December (12)
+            evals = evals.filter(timestamp__month__gte=8, timestamp__month__lte=12)
         elif semester == "2":
-            evals = evals.filter(timestamp__month__gte=7, timestamp__month__lte=12)
+            # 2nd semester: January (1) to March (3)
+            evals = evals.filter(timestamp__month__gte=1, timestamp__month__lte=3)
 
     name_sq = Subquery(
         Teacher.objects.filter(teacher_id=OuterRef("teacher_id")).values("teacherName")[:1]
@@ -307,33 +333,6 @@ def teacher_evaluation_dashboard_stats(request):
 
 
 @api_view(['GET'])
-def recent_teacher_evaluations(request):
-    limit = int(request.GET.get('limit', 5))
-    evaluations = (
-        Eval.objects
-        .select_related('teacher', 'sentiment')
-        .order_by('-timestamp')[:max(1, min(limit, 20))]
-    )
-
-    data = []
-    for e in evaluations:
-        teacher_name = getattr(e.teacher, 'teacher_name', f"Teacher {e.teacher_id}")
-        program_name = getattr(e.teacher, 'program_name', None)
-        sentiment_label = getattr(e.sentiment, 'label', 'Unknown')
-        comments = e.comments or "No comments provided"
-        if len(comments) > 150:
-            comments = comments[:150] + "..."
-        data.append({
-            "teacher": teacher_name,
-            "program": program_name,
-            "sentiment": sentiment_label,
-            "comments": comments,
-            "timestamp": e.timestamp,
-        })
-    return Response(data)
-
-
-@api_view(['GET'])
 def teacher_performance_by_program(request):
     """
     Returns bar chart data grouped by program.
@@ -387,32 +386,87 @@ def teacher_performance_by_program(request):
 
 @api_view(['GET'])
 def teacher_improvement_priority(request):
-    teachers = dim_teacher.objects.all()
-    priority_list = []
-    for teacher in teachers:
-        evaluations = Eval.objects.filter(teacher=teacher)
-        total = evaluations.count()
-        if total == 0:
-            continue
-        negative = evaluations.filter(sentiment__label='Negative').count()
+    """
+    Get teacher improvement priority with optional year/semester filtering
+    Supports: ?year=2024&semester=1&all_time=true
+    """
+    try:
+        year = request.GET.get("year")
+        semester = request.GET.get("semester")
+        all_time = request.GET.get("all_time", "false").lower() == "true"
         
-        if negative >= 3:
-            priority = 'Urgent'
-        elif negative >= 1:
-            priority = 'Medium'
-        elif negative >= 0:
-            priority = 'Low'
-        else:
-            priority = None
-        if priority:
-            priority_list.append({
-                "teacher": teacher.teacher_name,
-                "program": teacher.program_name,
-                "priority": priority,
-                "negative_count": negative
+        print(f"📊 Priority API called with: year={year}, semester={semester}, all_time={all_time}")
+        
+        # Base queryset - exclude null teachers
+        qs = Eval.objects.select_related('teacher', 'sentiment').exclude(teacher__isnull=True)
+        
+        print(f"   Total evaluations in DB: {qs.count()}")
+        
+        # Apply year filter ONLY if not all_time
+        if not all_time and year and year != 'all':
+            try:
+                year_int = int(year)
+                qs = qs.annotate(eval_year=ExtractYear("timestamp")).filter(eval_year=year_int)
+                print(f"   After year filter: {qs.count()}")
+            except (ValueError, TypeError):
+                print(f"   Invalid year value: {year}")
+                pass
+        
+        # Apply semester filter (Aug–Dec = 1st; Jan–May = 2nd)
+        if semester in ("1", "2"):
+            if semester == "1":
+                qs = qs.filter(timestamp__month__gte=8, timestamp__month__lte=12)
+            else:
+                qs = qs.filter(timestamp__month__gte=1, timestamp__month__lte=5)
+            print(f"   After semester filter: {qs.count()}")
+        
+        # Group by teacher - ✅ FIXED: Use evaluation_id instead of eval_id
+        priority_list = (
+            qs.values("teacher__teacher_name", "teacher__program_name")
+            .annotate(
+                negative_count=Count("evaluation_id", filter=Q(sentiment__label="Negative")),
+                positive_count=Count("evaluation_id", filter=Q(sentiment__label="Positive")),
+                neutral_count=Count("evaluation_id", filter=Q(sentiment__label="Neutral")),
+                total=Count("evaluation_id")
+            )
+            .filter(total__gt=0)
+            .order_by('-negative_count')
+        )
+        
+        print(f"   Grouped teachers: {priority_list.count()}")
+        
+        # Calculate priority based on negative percentage
+        results = []
+        for item in priority_list:
+            total = item['total']
+            neg_pct = round((item['negative_count'] / total) * 100)
+            
+            if neg_pct >= 20:
+                priority = 'Urgent'
+            elif neg_pct >= 10:
+                priority = 'Medium'
+            else:
+                priority = 'Low'
+            
+            results.append({
+                "teacher": item['teacher__teacher_name'] or 'Unknown Teacher',
+                "program": item['teacher__program_name'],
+                "negative_count": item['negative_count'],
+                "positive_count": item['positive_count'],
+                "neutral_count": item['neutral_count'],
+                "total": total,
+                "priority": priority
             })
-    priority_list.sort(key=lambda x: x['negative_count'], reverse=True)
-    return Response(priority_list)
+        
+        print(f"   Returning {len(results)} results")
+        
+        return Response(results)
+        
+    except Exception as e:
+        print(f"❌ Priority API Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return Response([])
 
 
 # ============================================================
