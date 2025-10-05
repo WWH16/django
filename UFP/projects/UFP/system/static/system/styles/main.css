@@ -298,9 +298,6 @@ nav.navbar.bg-body-tertiary.scrolled {
 }
 
 
-/*--------------------------------------------------------------
-# Leadership Section
---------------------------------------------------------------*/
 /* Fonts */
 :root {
   --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -337,171 +334,13 @@ nav.navbar.bg-body-tertiary.scrolled {
   --contrast-color: #ffffff;
 }
 
-.leadership .section-subtitle {
-  color: var(--accent-color);
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding-top: 1rem;
-}
-
-.leadership .section-heading {
-  color: var(--heading-color);
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-.leadership .section-description {
-  margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.leadership .about-image {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  height: 100%;
-}
-
-.leadership .about-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.leadership .stats-container {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 92%);
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.leadership .stats-container .stat-item {
-  text-align: center;
-  padding: 15px 0;
-}
-
-.leadership .stats-container .stat-item h3 {
-  color: var(--heading-color);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-  line-height: 1.3;
-}
-
-.leadership .stats-container .stat-item p {
-  color: var(--default-color);
-  font-size: 1rem;
-  margin: 0;
-  line-height: 1.6;
-}
-
-.leadership .leadership-team {
-  margin-top: 4rem;
-}
-
-.leadership .leadership-team .leader-card {
-  background-color: var(--surface-color);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  height: 100%;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.leadership .leadership-team .leader-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.leadership .leadership-team .leader-card .leader-image {
-  position: relative;
-  overflow: hidden;
-}
-
-/* ✅ FIXED: Social links should always be visible */
-/* Initial hidden state */
-.leadership .leadership-team .leader-card .leader-image .social-links {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
-  padding: 15px 0 10px;
-  display: flex;
-  justify-content: center;
-  opacity: 0; /* Default: hidden */
-  transition: opacity 0.5s ease-in-out; /* ✅ Smooth transition */
-  z-index: 10;
-}
-
-/* Show on hover */
-.leadership .leadership-team .leader-card:hover .leader-image .social-links {
-  opacity: 1; /* ✅ Show with fade-in */
-}
-
-/* ✅ FIXED: Style for the icons */
-.leadership .leadership-team .leader-card .leader-image .social-links a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  margin: 0 5px;
-  color: var(--contrast-color);
-  font-size: 1rem;
-  transition: background-color 0.5s;
-}
-
-.leadership .leadership-team .leader-card .leader-image .social-links a:hover {
-  background-color: #006600;
-}
-
-.leadership .leadership-team .leader-card .leader-info {
-  padding: 20px;
-  text-align: center;
-}
-
-.leadership .leadership-team .leader-card .leader-info h4 {
-  font-weight: 700;
-  margin-bottom: 5px;
-  font-size: 1.25rem;
-  line-height: 1.4;
-}
-
-.leadership .leadership-team .leader-card .leader-info .position {
-  color: var(--accent-color);
-  font-weight: 600;
-  margin-bottom: 15px;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.leadership .leadership-team .leader-card .leader-info .bio {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 0;
-}
-
 @media (max-width: 992px) {
-  .leadership .section-heading {
+  h1, .h1 {
     font-size: 2rem;
   }
-
-  .leadership .about-image {
-    margin-top: 2rem;
-    height: 400px;
-  }
-
-  .leadership .leadership-team {
-    margin-top: 2rem;
+  
+  h2, .h2 {
+    font-size: 1.75rem;
   }
   
   h1, .h1 {
@@ -514,12 +353,17 @@ nav.navbar.bg-body-tertiary.scrolled {
 }
 
 @media (max-width: 768px) {
-  .leadership .about-image {
-    height: 300px;
+  
+  h1, .h1 {
+    font-size: 1.75rem;
   }
-
-  .leadership .stat-item {
-    margin-bottom: 15px;
+  
+  h2, .h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3, .h3 {
+    font-size: 1.25rem;
   }
   
   .leadership .section-heading {
@@ -664,43 +508,6 @@ nav.navbar.bg-body-tertiary.scrolled {
   margin-top: 8px;
   font-size: 0.875rem;
 }
-
-
-/*--------------------------------------------------------------
-# Preloader
---------------------------------------------------------------*/
-#preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 999999;
-  overflow: hidden;
-  background: var(--background-color);
-  transition: all 0.6s ease-out;
-}
-
-#preloader:before {
-  content: "";
-  position: fixed;
-  top: calc(50% - 30px);
-  left: calc(50% - 30px);
-  border: 6px solid #ffffff;
-  border-color: var(--accent-color) transparent var(--accent-color) transparent;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: animate-preloader 1.5s linear infinite;
-}
-
-@keyframes animate-preloader {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 /*--------------------------------------------------------------
 # Scroll Top Button
 --------------------------------------------------------------*/
