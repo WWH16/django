@@ -253,22 +253,39 @@
 
   /* ---------------- Dashboard Update Functions ---------------- */
   function updateOsasCards(responseData) {
-    if (!responseData || !Array.isArray(responseData.services)) {
+    if (!responseData) {
+      console.error('No response data received');
       return;
     }
 
-    // Calculate totals from services array
+    console.log('updateOsasCards received:', responseData);
+
     let totalPositive = 0;
     let totalNeutral = 0;
     let totalNegative = 0;
     let grandTotal = 0;
 
-    responseData.services.forEach(serviceItem => {
-      totalPositive += Number(serviceItem.positive || 0);
-      totalNeutral += Number(serviceItem.neutral || 0);
-      totalNegative += Number(serviceItem.negative || 0);
-      grandTotal += Number(serviceItem.total || 0);
-    });
+    // Check if data has direct totals (baseline API format)
+    if (responseData.total !== undefined) {
+      totalPositive = Number(responseData.positive || 0);
+      totalNeutral = Number(responseData.neutral || 0);
+      totalNegative = Number(responseData.negative || 0);
+      grandTotal = Number(responseData.total || 0);
+    }
+    // Otherwise calculate from services array (filter API format)
+    else if (Array.isArray(responseData.services)) {
+      responseData.services.forEach(serviceItem => {
+        const p = Number(serviceItem.positive || 0);
+        const n = Number(serviceItem.neutral || 0);
+        const neg = Number(serviceItem.negative || 0);
+        totalPositive += p;
+        totalNeutral += n;
+        totalNegative += neg;
+        grandTotal += (p + n + neg);
+      });
+    }
+
+    console.log('Calculated totals:', { totalPositive, totalNeutral, totalNegative, grandTotal });
 
     // Update KPI cards
     const elements = {
@@ -284,27 +301,36 @@
     if (elements.total) elements.total.textContent = grandTotal.toLocaleString();
 
     // Update percentages
-    if (grandTotal > 0) {
-      const posPercent = Math.round((totalPositive / grandTotal) * 100);
-      const neuPercent = Math.round((totalNeutral / grandTotal) * 100);
-      const negPercent = Math.round((totalNegative / grandTotal) * 100);
+    // Update percentages (always update, even when zero)
+    const posPercent = grandTotal > 0 ? Math.round((totalPositive / grandTotal) * 100) : 0;
+    const neuPercent = grandTotal > 0 ? Math.round((totalNeutral / grandTotal) * 100) : 0;
+    const negPercent = grandTotal > 0 ? Math.round((totalNegative / grandTotal) * 100) : 0;
 
-      const percentElements = [
-        { id: 'osas-positive-percent', value: `${posPercent}% of the feedbacks` },
-        { id: 'osas-neutral-percent', value: `${neuPercent}% of the feedbacks` },
-        { id: 'osas-negative-percent', value: `${negPercent}% of the feedbacks` },
-        { id: 'osas-pie-positive-percent', value: posPercent },
-        { id: 'osas-pie-neutral-percent', value: neuPercent },
-        { id: 'osas-pie-negative-percent', value: negPercent }
-      ];
+    const percentTextElements = [
+      { id: 'osas-positive-percent', value: `${posPercent}% of the feedbacks` },
+      { id: 'osas-neutral-percent', value: `${neuPercent}% of the feedbacks` },
+      { id: 'osas-negative-percent', value: `${negPercent}% of the feedbacks` }
+    ];
 
-      percentElements.forEach(item => {
-        const element = document.getElementById(item.id);
-        if (element) element.textContent = item.value;
-      });
-    }
+    percentTextElements.forEach(item => {
+      const element = document.getElementById(item.id);
+      if (element) element.textContent = item.value;
+    });
 
-    // Update service-specific cards
+    const percentPieElements = [
+      { id: 'osas-pie-positive-percent', value: posPercent },
+      { id: 'osas-pie-neutral-percent', value: neuPercent },
+      { id: 'osas-pie-negative-percent', value: negPercent }
+    ];
+
+    percentPieElements.forEach(item => {
+      const element = document.getElementById(item.id);
+      if (element) element.textContent = item.value;
+    });
+
+    // Get services array
+    const services = responseData.services || [];
+
     const serviceCardMapping = {
       wifi: ['wifi', 'internet', 'wi-fi'],
       admission: ['admission'],
@@ -312,6 +338,7 @@
       library: ['library']
     };
 
+    // Reset all service cards first
     Object.keys(serviceCardMapping).forEach(cardPrefix => {
       const serviceEl = {
         positive: document.getElementById(`${cardPrefix}-positive`),
@@ -320,20 +347,39 @@
         satisfaction: document.getElementById(`${cardPrefix}-satisfaction`)
       };
 
-      // Find matching service
-      const matchingService = responseData.services.find(service =>
+      if (serviceEl.positive) serviceEl.positive.textContent = '0';
+      if (serviceEl.neutral) serviceEl.neutral.textContent = '0';
+      if (serviceEl.negative) serviceEl.negative.textContent = '0';
+      if (serviceEl.satisfaction) serviceEl.satisfaction.textContent = '0% Positive Sentiments';
+    });
+
+    // Update with actual data
+    Object.keys(serviceCardMapping).forEach(cardPrefix => {
+      const serviceEl = {
+        positive: document.getElementById(`${cardPrefix}-positive`),
+        neutral: document.getElementById(`${cardPrefix}-neutral`),
+        negative: document.getElementById(`${cardPrefix}-negative`),
+        satisfaction: document.getElementById(`${cardPrefix}-satisfaction`)
+      };
+
+      const matchingService = services.find(service =>
         serviceCardMapping[cardPrefix].some(keyword =>
           (service.service || service.name || '').toLowerCase().includes(keyword)
         )
       );
 
       if (matchingService) {
-        if (serviceEl.positive) serviceEl.positive.textContent = matchingService.positive || 0;
-        if (serviceEl.neutral) serviceEl.neutral.textContent = matchingService.neutral || 0;
-        if (serviceEl.negative) serviceEl.negative.textContent = matchingService.negative || 0;
+        const pos = Number(matchingService.positive || 0);
+        const neu = Number(matchingService.neutral || 0);
+        const neg = Number(matchingService.negative || 0);
+        const total = pos + neu + neg;
+        const satisfactionRate = total > 0 ? Math.round((pos / total) * 100) : 0;
+
+        if (serviceEl.positive) serviceEl.positive.textContent = pos;
+        if (serviceEl.neutral) serviceEl.neutral.textContent = neu;
+        if (serviceEl.negative) serviceEl.negative.textContent = neg;
         if (serviceEl.satisfaction) {
-          const satisfactionRate = matchingService.positive_percent || 0;
-          serviceEl.satisfaction.textContent = `${satisfactionRate}% Satisfaction`;
+          serviceEl.satisfaction.textContent = `${satisfactionRate}% Positive Sentiments`;
         }
       }
     });
@@ -349,13 +395,17 @@
       const CHART_COLORS = getChartColors();
 
       // Calculate totals for pie chart
+      // Calculate totals for pie chart
       let total = 0, pos = 0, neu = 0, neg = 0;
       if (data.services && Array.isArray(data.services)) {
         data.services.forEach(service => {
-          pos += Number(service.positive || 0);
-          neu += Number(service.neutral || 0);
-          neg += Number(service.negative || 0);
-          total += Number(service.total || 0);
+          const p = Number(service.positive || 0);
+          const n = Number(service.neutral || 0);
+          const ng = Number(service.negative || 0);
+          pos += p;
+          neu += n;
+          neg += ng;
+          total += (p + n + ng);  // ✅ Calculate total
         });
       }
 
@@ -572,38 +622,87 @@
     hideDrawer();
   }
 
-  async function applyCurrentFilters() {
-    try {
-      const yearFilter = document.getElementById('year-filter');
-      const semesterFilter = document.getElementById('semester-filter');
+async function applyCurrentFilters() {
+  try {
+    const yearFilter = document.getElementById('year-filter');
+    const semesterFilter = document.getElementById('semester-filter');
 
-      let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-      let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+    let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+    let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
 
-      // Clean semester value - convert display values to API values
-      if (activeSemester && activeSemester !== 'all') {
-        // Convert display values like "1st", "2nd", "3rd" to numeric values
-        activeSemester = activeSemester.replace(/[^\d]/g, ''); // Remove non-digits
-        if (!activeSemester || activeSemester === '') {
-          activeSemester = 'all';
-        }
+    if (activeSemester && activeSemester !== 'all') {
+      activeSemester = activeSemester.replace(/[^\d]/g, '');
+      if (!activeSemester || activeSemester === '') {
+        activeSemester = 'all';
       }
-
-      // CRITICAL: Update current filters state
-      currentFilters.year = activeYear;
-      currentFilters.semester = activeSemester;
-
-      console.log('Applying OSAS filters:', currentFilters);
-
-      const data = await fetchFilteredOsasData(activeYear, activeSemester);
-      updateOsasCards(data);
-      renderCharts(data);
-
-    } catch (error) {
-      console.error('Failed to apply OSAS filters:', error);
-      alert('Failed to load OSAS data: ' + error.message);
     }
+
+    currentFilters.year = activeYear;
+    currentFilters.semester = activeSemester;
+
+    console.log('Applying OSAS filters:', currentFilters);
+
+    let data;
+
+    if (activeYear === 'all' && activeSemester === 'all') {
+      console.log('Using baseline API for All Time view');
+      const response = await fetch(buildBaselineApiUrl(), {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      data = await response.json();
+      baselineData = data;
+    } else {
+      data = await fetchFilteredOsasData(activeYear, activeSemester);
+    }
+
+    updateOsasCards(data);
+    renderCharts(data);
+    renderActionItems(data);
+
+    // Update Service Priority with CALCULATED percentages
+    const priorityContainer = document.getElementById('service-priority-list');
+    if (priorityContainer && data.services && data.services.length > 0) {
+      const sorted = [...data.services]
+        .map(svc => {
+          const pos = Number(svc.positive || 0);
+          const neu = Number(svc.neutral || 0);
+          const neg = Number(svc.negative || 0);
+          const total = pos + neu + neg;
+          const pctNeg = total > 0 ? Math.round((neg / total) * 100) : 0;
+          return { ...svc, calculatedPctNeg: pctNeg };
+        })
+        .sort((a, b) => b.calculatedPctNeg - a.calculatedPctNeg);
+
+      priorityContainer.innerHTML = '';
+      sorted.forEach(svc => {
+        const pctNeg = svc.calculatedPctNeg;
+        const barClass = pctNeg >= 20 ? 'bg-danger'
+          : pctNeg >= 10 ? 'bg-warning'
+            : pctNeg >= 5 ? 'bg-primary'
+              : 'bg-success';
+        const priority = pctNeg >= 20 ? 'Urgent'
+          : pctNeg >= 10 ? 'Medium'
+            : pctNeg >= 5 ? 'Low'
+              : 'Excellent';
+
+        priorityContainer.insertAdjacentHTML('beforeend', `
+          <h4 class="small fw-bold">${svc.name || svc.service}<span class="float-end">${priority}</span></h4>
+          <div class="progress mb-4"><div class="progress-bar ${barClass}" style="width:${pctNeg}%"></div></div>
+        `);
+      });
+    } else if (priorityContainer) {
+      priorityContainer.innerHTML = '<p class="text-muted">No data available for selected filters.</p>';
+    }
+
+    // Refresh Recent Feedbacks with current filters
+    await fetchRecentFeedback();
+
+  } catch (error) {
+    console.error('Failed to apply OSAS filters:', error);
+    alert('Failed to load OSAS data: ' + error.message);
   }
+}
 
   /* ---------------- CSV Export - FIXED FOR FILTERED DATA ---------------- */
   function buildFilteredCsvExport(data) {
@@ -632,12 +731,14 @@
     // Calculate summary totals
     let totalPositive = 0, totalNeutral = 0, totalNegative = 0, grandTotal = 0;
     data.services.forEach(service => {
-      totalPositive += Number(service.positive || 0);
-      totalNeutral += Number(service.neutral || 0);
-      totalNegative += Number(service.negative || 0);
-      grandTotal += Number(service.total || 0);
+      const p = Number(service.positive || 0);
+      const n = Number(service.neutral || 0);
+      const ng = Number(service.negative || 0);
+      totalPositive += p;
+      totalNeutral += n;
+      totalNegative += ng;
+      grandTotal += (p + n + ng);  // ✅ Calculate from the three values
     });
-
     const overallSatisfaction = grandTotal > 0 ? Math.round((totalPositive / grandTotal) * 100) : 0;
 
     // Summary section
@@ -656,8 +757,8 @@
       const positive = service.positive || 0;
       const neutral = service.neutral || 0;
       const negative = service.negative || 0;
-      const total = service.total || 0;
-      const satisfaction = service.positive_percent || (total > 0 ? Math.round((positive / total) * 100) : 0);
+      const total = positive + neutral + negative;  // ✅ Calculate it
+      const satisfaction = service.satisfaction || (total > 0 ? Math.round((positive / total) * 100) : 0);
 
       csvRows.push([serviceName, positive, neutral, negative, total, satisfaction]);
     });
@@ -751,19 +852,40 @@
       </li>`).join('');
   }
 
-  async function fetchRecentFeedback() {
-    try {
-      const response = await fetch(RECENT_FEEDBACK_URL, {
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      renderRecentFeedback(data);
-    } catch (err) {
-      console.error('Failed to load recent feedback:', err);
-      renderRecentFeedback([]);
+async function fetchRecentFeedback() {
+  try {
+    // Build URL with current filters
+    const url = new URL('/api/recent-osas-feedback/', window.location.origin);
+    url.searchParams.set('limit', '5');
+    
+    // Add year filter
+    if (currentFilters.year && currentFilters.year !== 'all') {
+      url.searchParams.set('year', currentFilters.year);
+      url.searchParams.set('all_time', 'false');
+    } else {
+      url.searchParams.set('all_time', 'true');
     }
+    
+    // Add semester filter
+    if (currentFilters.semester && currentFilters.semester !== 'all') {
+      url.searchParams.set('semester', currentFilters.semester);
+    }
+
+    console.log('Fetching recent feedback with URL:', url.toString());  // Debug log
+
+    const response = await fetch(url.toString(), {
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    console.log('Recent feedback received:', data);  // Debug log
+    renderRecentFeedback(data);
+  } catch (err) {
+    console.error('Failed to load recent feedback:', err);
+    renderRecentFeedback([]);
   }
+}
 
   /* ---------------- Action Items & Recommendations ---------------- */
   function renderActionItems(data) {
@@ -787,10 +909,10 @@
         neu: u,
         neg: n,
         total: t,
-        pctNeg: Number(s.percent_negative || (t ? Math.round((n / t) * 100) : 0)),
-        pctNeu: t ? Math.round((u / t) * 100) : 0,
-        pctPos: t ? Math.round((p / t) * 100) : 0,
-        sat: t ? Math.round((p / t) * 100) : 0
+        pctNeg: t > 0 ? Math.round((n / t) * 100) : 0,  // ✅ ALWAYS CALCULATE
+        pctNeu: t > 0 ? Math.round((u / t) * 100) : 0,
+        pctPos: t > 0 ? Math.round((p / t) * 100) : 0,
+        sat: t > 0 ? Math.round((p / t) * 100) : 0
       };
     }).filter(s => s.total > 0);
 
@@ -881,7 +1003,7 @@
         type: 'maintain',
         priority: 3,
         label: 'Maintain',
-        message: `${mostPositive.name} is showing excellent performance with ${mostPositive.sat}% satisfaction. Maintain current practices and recognize this achievement to sustain success.`,
+        message: `${mostPositive.name} is showing excellent performance with ${mostPositive.sat}% Positive Sentiments. Maintain current practices and recognize this achievement to sustain success.`,
         color: '#4bc0c0'
       });
     }
@@ -1051,30 +1173,10 @@
       if (posEl) posEl.textContent = p.toLocaleString();
       if (neuEl) neuEl.textContent = u.toLocaleString();
       if (negEl) negEl.textContent = n.toLocaleString();
-      if (satEl) satEl.textContent = `${sat}% Satisfaction`;
+      if (satEl) satEl.textContent = `${sat}% Positive Sentiments`;
     });
 
     renderActionItems(data);
-  }
-
-  /* ---------------- Range Handling ---------------- */
-  function applyChartRange(key) {
-    if (isChartLoading) return;
-
-    const end = toISODate(today());
-    let start = null;
-
-    switch (key) {
-      case '7d': start = toISODate(daysAgo(6)); break;
-      case '30d': start = toISODate(daysAgo(29)); break;
-      case 'this_month': start = toISODate(firstDayOfThisMonth()); break;
-      case '6m': start = toISODate(monthsAgo(6)); break;
-      case '1y': start = toISODate(yearsAgo(1)); break;
-      default: start = null;
-    }
-
-    chartRange = { key, start, end: start ? end : null };
-    fetchChartsThenRender();
   }
 
   /* ---------------- Theme Change Observer ---------------- */

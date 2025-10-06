@@ -125,6 +125,25 @@
       margin-bottom: 1.5rem;
     }
   }
+      /* Desktop: semi-transparent until scroll */
+      @media (min-width: 992px) {
+        .navbar {
+          background: rgba(33, 37, 41, 0.7) !important;
+        }
+      }
+
+      /* Cellphone only: reduce navbar height */
+      @media (max-width: 767px) {
+        .navbar {
+          padding-top: 0.25rem; /* smaller vertical space */
+          padding-bottom: 0.25rem;
+          background-color: #212529 !important; /* solid background */
+        }
+
+        .navbar-toggler {
+          padding: 0.25rem; /* optional: smaller hamburger spacing */
+        }
+      }
 
     /* Skeleton Loading Styles */
     @keyframes skeleton-loading {
