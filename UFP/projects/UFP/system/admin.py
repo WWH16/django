@@ -64,6 +64,7 @@ class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
     list_filter = ('program',)
     actions = ['export']
     import_form_class = ImportForm
+    export_form_class = ExportForm
     
 
 @admin.register(StudentFeedback)

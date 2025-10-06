@@ -202,7 +202,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def give_feedback(request):
-    cooldown_seconds = 3
     now = timezone.now()
     services = Service.objects.all().order_by("serviceName")
 
@@ -236,28 +235,12 @@ def give_feedback(request):
             messages.warning(request, "Student profile not found. Your feedback will be anonymous.")
             student = None
 
-    # ---- Cooldown logic (only for real students) ----
-    if student:
-        last_feedback = StudentFeedback.objects.filter(student=student).order_by("-timestamp").first()
-        if last_feedback:
-            elapsed = int((now - last_feedback.timestamp).total_seconds())
-            cooldown_remaining = max(0, cooldown_seconds - elapsed)
-        else:
-            cooldown_remaining = 0
-    else:
-        cooldown_remaining = 0
+    # Cooldown removed
+    cooldown_remaining = 0
 
     # ---- POST handling ----
     if request.method == "POST":
-        # re-check cooldown for safety
-        if cooldown_remaining > 0 and not is_guest:
-            messages.error(request, f"Please wait {cooldown_remaining} more seconds before submitting again.")
-            return render(request, "studentDashboard/feedback_form.html", {
-                "cooldown_remaining": cooldown_remaining,
-                "show_login_toast": show_login_toast,
-                "services": services,
-                "student": student,
-            })
+        # Cooldown removed: allow immediate submission
 
         service_id = request.POST.get("service")
         feedback_text = request.POST.get("feedback")
@@ -297,15 +280,13 @@ def give_feedback(request):
 
         # If we fallthrough because of an exception, render with full context
         return render(request, "studentDashboard/feedback_form.html", {
-            "cooldown_remaining": cooldown_remaining,
             "show_login_toast": show_login_toast,
             "services": services,
             "student": student,
         })
 
-    # ---- GET: render page with context (always include cooldown_remaining & show_login_toast) ----
+    # ---- GET: render page with context ----
     return render(request, "studentDashboard/feedback_form.html", {
-        "cooldown_remaining": cooldown_remaining,
         "show_login_toast": show_login_toast,
         "services": services,
         "student": student,
@@ -546,7 +527,6 @@ def change_password(request):
 
 @login_required
 def teacher_evaluation(request):
-    cooldown_seconds = 3
     now = timezone.now()
 
     teachers = Teacher.objects.all()
@@ -566,17 +546,7 @@ def teacher_evaluation(request):
                 student = Student.objects.get(studentID=request.user.username)
             except Student.DoesNotExist:
                 messages.error(request, "Student profile not found. Your evaluation will be anonymous.")
-    # 🔹 Cooldown logic (only applies to real students, not guests)
-    last_evaluation = None
-    if student:
-        last_evaluation = TeacherEvaluation.objects.filter(
-            submitted_by=request.user.username
-        ).order_by('-timestamp').first()
-
-    cooldown_remaining = max(
-        0,
-        cooldown_seconds - int((now - last_evaluation.timestamp).total_seconds())
-    ) if last_evaluation else 0
+    # Cooldown removed
 
     # 🔹 Handle form submission
     if request.method == 'POST':
@@ -625,7 +595,6 @@ def teacher_evaluation(request):
         'departments': departments,
         'programs': programs,
         'sentiments': sentiments,
-        'cooldown_remaining': cooldown_remaining,
         'student': student,  # Pass to template
     })
 

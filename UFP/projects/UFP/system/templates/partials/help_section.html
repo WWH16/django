@@ -1,282 +1,318 @@
 {% load static %}
 <style>
-  /* Help Resources Section Styles */
-  .help-section {
-    padding: 4rem 0;
-    background-color: #f8f9fa;
-  }
+/* ================= Help Section ================= */
+.help-section {
+  background: linear-gradient(135deg, rgba(0,102,0,0.05), rgba(0,102,0,0.12));
+  padding: 100px 0;
+  position: relative;
+  border-radius: 25px;
+}
 
-  /* Typography */
-  .section-heading
-  {
-    font-size: 2.5rem;
-    font-weight: 700;
+/* Section Heading: Main */
+.section-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #198754, #0bbf7a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+.section-heading::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #198754, #006600);
+  border-radius: 2px;
+  margin: 12px 0 0 0;
+}
+
+/* Step-by-Step Guide Label */
+.step-guide-label {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+/* Help Center Heading */
+.help-center h4 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+/* Quick Info Box */
+.quick-info-box {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(0,102,0,0.08);
+  padding: 25px 20px;
+  margin-bottom: 40px;
+}
+.quick-info-box h5 {
+  font-weight: 700;
+  color: #006600;
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+}
+
+/* Step-by-Step Guide Cards */
+.help-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: flex-start;
+  margin-bottom: 50px;
+}
+.help-card {
+  flex: 1 1 calc(50% - 25px);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(0,102,0,0.08);
+  padding: 30px 25px;
+  text-align: left;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.help-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0,102,0,0.18);
+}
+.help-card .step-number {
+  background: #0bbf7a;
+  color: #fff;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.help-card h5 {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: #006600;
+  margin-bottom: 12px;
+  font-size: 1.15rem;
+}
+.help-card p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Custom Accordion Styles */
+.custom-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.custom-accordion-item {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 22px rgba(0,102,0,0.08);
+}
+
+.custom-accordion-header {
+  background: #ffffff;
+  padding: 18px 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.custom-accordion-header:hover {
+  background: #f8f9fa;
+}
+
+.custom-accordion-header.active {
+  background: #f3fbf7;
+  color: #006600;
+}
+
+.custom-accordion-icon {
+  transition: transform 0.3s ease;
+  font-size: 1.2rem;
+  color: #006600;
+}
+
+.custom-accordion-header.active .custom-accordion-icon {
+  transform: rotate(180deg);
+}
+
+.custom-accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  background: #ffffff;
+  color: #555;
+}
+
+.custom-accordion-body.active {
+  max-height: 500px;
+  padding: 18px 24px;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .help-card {
+    flex: 1 1 100%;
+  }
+  .section-heading {
+    font-size: 2rem;
+  }
+  .step-guide-label,
+  .help-center h4 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .section-heading {
+    font-size: 1.6rem;
     margin-bottom: 1.5rem;
   }
-
-  .sub-heading {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem;
-  }
-
-  .card-heading {
+  .step-guide-label,
+  .help-center h4 {
     font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
   }
-
-  .body-text {
-    font-size: 1rem;
-    color: #6c757d;
-    line-height: 1.6;
-  }
-
-  /* Cards */
   .help-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 15px 12px;
   }
-
-  .help-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  .help-card h5 {
+    font-size: 1rem;
   }
-
-  /* Lists */
-  .guide-list li {
-    margin-bottom: 0.75rem;
-    line-height: 1.6;
+  .help-card p {
+    font-size: 0.9rem;
   }
-
-  /* Examples Box */
-  .example-box {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  .quick-info-box h5 {
+    font-size: 1rem;
   }
-
-  .example-good {
-    color: var(--bs-success);
-    font-weight: 600;
-  }
-
-  .example-bad {
-    color: var(--bs-danger);
-    font-weight: 600;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .section-heading {
-      font-size: 2rem;
-    }
-
-    .sub-heading {
-      font-size: 1.25rem;
-    }
-
-    .card-heading,
-    .accordion-button {
-      font-size: 0.95rem;
-    }
-    
-    .help-card {
-      margin-bottom: 1.5rem;
-    }
-  }
+}
 </style>
-{% load static %}
-<section id="help" class="help-section bg-light text-dark" data-aos="fade-up">
-  <div class="container">
-    <h4 class="fw-bold text-center mb-4" data-aos="fade-down" data-aos-delay="100">
-      <i class="bi bi-question-circle-fill text-primary me-2"></i>Help Center
-    </h4>
 
-    <!-- FAQ Accordion -->
-    <div class="accordion mb-5" id="faqAccordion" data-aos="fade-up" data-aos-delay="200">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq1">
-          <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
-            What is this website for?
-          </button>
-        </h2>
-        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            This platform enables students to provide feedback on both university services and faculty performance. Through sentiment analysis (Positive, Neutral, Negative), the system generates insights that support continuous improvement in service delivery and teaching quality.
+<section id="help" class="help-section" data-aos="fade-up">
+  <div class="container position-relative">
+    <!-- Main Heading -->
+    <h2 class="fw-bold section-heading">Help & Guide</h2>
+
+    <!-- Quick Info -->
+    <div class="quick-info-box">
+      <h5>Quick Info</h5>
+      <ul>
+        <li>Anonymous option available</li>
+        <li>AI analyzes your feedback automatically</li>
+        <li>Helps improve university services</li>
+      </ul>
+    </div>
+
+    <!-- Step-by-Step Guide Label -->
+    <h3 class="step-guide-label">How to Give Feedback</h3>
+
+    <!-- Step-by-Step Guide -->
+    <div class="help-cards">
+      <div class="help-card">
+        <h5><span class="step-number">1</span>Visit the Website</h5>
+        <p>Go to the platform URL to start the feedback process.</p>
+      </div>
+      <div class="help-card">
+        <h5><span class="step-number">2</span>Login or Sign Up</h5>
+        <p>Click <strong>"Login"</strong> if you have an account or click <strong>"Guest"</strong> for anonymous feedback.</p>
+      </div>
+      <div class="help-card">
+        <h5><span class="step-number">3</span>Select Feedback Type</h5>
+        <p>
+          Choose from the side navigation bar:<br>
+          <strong>Give Feedback (OSAS Services)</strong> → select a service (e.g., Wi-Fi, Library).<br>
+          <strong>Teacher Evaluation</strong> → select a teacher and department.
+        </p>
+      </div>
+      <div class="help-card">
+        <h5><span class="step-number">4</span>Submit Feedback</h5>
+        <p>Write honest feedback, optionally check "Submit as anonymous," and click "Submit". The system will automatically analyze the sentiment.</p>
+      </div>
+    </div>
+
+    <!-- Help Center / FAQ -->
+    <div class="help-center" data-aos="fade-up" data-aos-delay="100">
+      <h4>Help Center</h4>
+      <div class="custom-accordion">
+        <div class="custom-accordion-item">
+          <div class="custom-accordion-header" onclick="toggleAccordion(this)">
+            <span>What is this website for?</span>
+            <span class="custom-accordion-icon">▼</span>
+          </div>
+          <div class="custom-accordion-body">
+            This platform enables students to provide feedback on both university services and faculty performance. The system analyzes sentiment automatically for insights.
           </div>
         </div>
-      </div>
 
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-            Do I need to create an account to give feedback?
-          </button>
-        </h2>
-        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Yes, creating an account is required to submit feedback. This helps ensure the integrity of submissions and allows us to better organize feedback data. <br>
-            However, your responses are still handled with strict confidentiality and used only for research and service improvement purposes. Your identity is protected at all times.
+        <div class="custom-accordion-item">
+          <div class="custom-accordion-header" onclick="toggleAccordion(this)">
+            <span>Do I need an account to give feedback?</span>
+            <span class="custom-accordion-icon">▼</span>
+          </div>
+          <div class="custom-accordion-body">
+            Yes, creating an account ensures integrity and organization of feedback, but your identity is protected.
           </div>
         </div>
-      </div>
 
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq3">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
-            Who can see my feedback?
-          </button>
-        </h2>
-        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Only authorized faculty or staff (admin users) can see the feedback and sentiment analysis.
+        <div class="custom-accordion-item">
+          <div class="custom-accordion-header" onclick="toggleAccordion(this)">
+            <span>Who can see my feedback?</span>
+            <span class="custom-accordion-icon">▼</span>
+          </div>
+          <div class="custom-accordion-body">
+            Only authorized faculty or staff (admins) can view feedback and analysis.
           </div>
         </div>
-      </div>
 
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faq4">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
-            Can I edit my feedback?
-          </button>
-        </h2>
-        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            No, submitted feedback cannot be edited. If needed, you may submit a new one.
+        <div class="custom-accordion-item">
+          <div class="custom-accordion-header" onclick="toggleAccordion(this)">
+            <span>Can I edit my feedback?</span>
+            <span class="custom-accordion-icon">▼</span>
+          </div>
+          <div class="custom-accordion-body">
+            No, feedback cannot be edited. Submit a new one if needed.
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Student Guide -->
-    <div class="mb-5" data-aos="fade-up" data-aos-delay="300">
-<div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-success bg-opacity-10 border-0 py-3">
-          <h4 class="mb-0"><i class="bi bi-mortarboard-fill text-success me-2"></i>Student Guide</h4>
-        </div>
-        <div class="card-body p-4">
-          <p class="fw-semibold mb-3">How to Give Feedback for OSAS Services</p>
-          <div class="row">
-            <div class="col-lg-8">
-              <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">1.</span>
-                <div>
-                  <p class="mb-0">Visit the website.</p>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">2.</span>
-                <div>
-                  <p class="mb-0">Click on "Login" (or "Sign up" if you don't have an account).</p>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">3.</span>
-                <div>
-                  <p class="mb-0">Select "Student Login".</p>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">4.</span>
-                <div>
-                  <p class="mb-2">After logging in, choose the type of feedback from the side navigation bar:</p>
-                  <div class="ps-3">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-wifi text-primary me-2"></i>
-                      <span class="small"><strong>Give Feedback (OSAS Services)</strong> → Select a service (e.g., Wi-Fi, Library), then enter your honest feedback.</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      <i class="bi bi-person-check text-warning me-2"></i>
-                      <span class="small"><strong>Teacher Evaluation</strong> → Select a teacher and department, then enter your honest feedback.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-flex mb-3">
-                <span class="fw-bold text-muted me-3">5.</span>
-                <div>
-                  <p class="mb-0">(Optional) Check "Submit as anonymous" if you don't want your name attached.</p>
-                </div>
-              </div>
-
-              <div class="d-flex">
-                <span class="fw-bold text-muted me-3">6.</span>
-                <div>
-                  <p class="mb-0">Click "Submit" — the system will analyze the sentiment automatically.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4">
-              <div class="bg-light rounded p-3">
-                <h6 class="fw-semibold mb-3">
-                  <i class="bi bi-info-circle text-primary me-2"></i>Quick Info
-                </h6>
-                <ul class="list-unstyled small">
-                  <li class="mb-2">
-                    <i class="bi bi-shield-check text-success me-2"></i>
-                    Anonymous option available
-                  </li>
-                  <li class="mb-2">
-                    <i class="bi bi-cpu text-warning me-2"></i>
-                    AI analyzes your feedback automatically
-                  </li>
-                  <li class="mb-0">
-                    <i class="bi bi-graph-up text-info me-2"></i>
-                    Helps improve university services
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tips Card -->
-      <div class="card mb-4 border-0 shadow-sm" data-aos="fade-up" data-aos-delay="350">
-        <div class="card-header bg-transparent border-0 py-4">
-          <div class="d-flex align-items-center">
-            <i class="bi bi-lightbulb text-warning me-3"></i>
-            <h5 class="mb-0 fw-semibold">Writing Effective Feedback</h5>
-          </div>
-        </div>
-        <div class="card-body px-4 pb-4">
-          <div class="row g-5">
-            <div class="col-md-6">
-              <h6 class="text-muted mb-3 fw-normal">Best Practices</h6>
-              <ul class="list-unstyled">
-                <li class="mb-2">• Be honest and constructive</li>
-                <li class="mb-2">• Speak casually, no formality needed</li>
-                <li class="mb-2">• Do not include names or personal identifiers</li>
-                <li class="mb-2">• Take advantage of the anonymity</li>
-                <li class="mb-0">• <strong>Write at least 5 words</strong> for accurate analysis</li>
-              </ul>
-            </div>
-            
-            <div class="col-md-6">
-              <h6 class="text-muted mb-3 fw-normal">Examples</h6>
-              <div class="mb-4">
-                <small class="text-success fw-semibold">✓ Good examples:</small>
-                <p class="mb-1 text-muted small">"The Wi-Fi is slow and keeps disconnecting."</p>
-                <p class="mb-0 text-muted small">"The library is clean but sometimes noisy."</p>
-              </div>
-              <div>
-                <small class="text-danger fw-semibold">✗ Too short:</small>
-                <p class="mb-0 text-muted small">"Good only." • "Okay lang." • "Bad."</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- End Help Center -->
   </div>
 </section>
+
+<script>
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const isActive = header.classList.contains('active');
+  
+  // Toggle active states
+  if (isActive) {
+    header.classList.remove('active');
+    body.classList.remove('active');
+  } else {
+    header.classList.add('active');
+    body.classList.add('active');
+  }
+}
+</script>
