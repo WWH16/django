@@ -150,6 +150,17 @@ nav.navbar.bg-body-tertiary.scrolled {
   }
 }
 
+/* Mobile navbar sizing tweaks */
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.4rem 0.75rem;
+    min-height: 64px;
+  }
+  nav.navbar.bg-body-tertiary {
+    background-color: #212529 !important;
+  }
+}
+
 .navbar-nav > li > .nav-link {
   position: relative;
   color: #ffffff !important;
