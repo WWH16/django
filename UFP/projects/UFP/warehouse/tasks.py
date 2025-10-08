@@ -11,9 +11,15 @@ from wordcloud import WordCloud
 # -------------------------
 # 0️⃣ Load local SVM + TFIDF pipeline
 # -------------------------
-MODEL_PATH = os.path.join(settings.BASE_DIR, "warehouse", "model", "svm_tfidf_pipeline.pkl")
+MODEL_PATH = os.path.join(settings.BASE_DIR, "warehouse", "model", "sentiment_pipeline.pkl")
 svm_pipeline = load(MODEL_PATH)
 print(f"SVM + TFIDF pipeline loaded from {MODEL_PATH}")
+
+# Load stopwords for TextPreprocessor
+STOPWORDS_PATH = os.path.join(settings.BASE_DIR, "warehouse", "model", "STOPWORD", "stop_words.txt")
+from warehouse.text_preprocessor import TextPreprocessor
+tp = TextPreprocessor(stopwords_path=STOPWORDS_PATH)
+print(f"TextPreprocessor initialized with stopwords from {STOPWORDS_PATH}")
 
 # Map model predictions to labels
 SENTIMENT_LABELS = {
@@ -23,13 +29,30 @@ SENTIMENT_LABELS = {
 }
 
 def get_sentiment_label(text):
-    """Predict sentiment using local SVM pipeline."""
+    """Predict sentiment using local SVM pipeline after preprocessing."""
     try:
-        pred = svm_pipeline.predict([text])[0]
+        # Preprocess text first
+        cleaned_text = tp.transform([text])[0]  # tp is your TextPreprocessor
+        pred = svm_pipeline.predict([cleaned_text])[0]
         return SENTIMENT_LABELS.get(pred, "Unknown")
     except Exception as e:
         print(f"Error predicting sentiment for '{text[:50]}...': {e}")
         return "Unknown"
+
+
+# -------------------------
+# Helper: clean texts for WordCloud using pipeline's preprocessor
+# -------------------------
+def clean_texts_for_wordcloud(text_list):
+    try:
+        preprocessor = svm_pipeline.named_steps.get("preprocess")
+        if not preprocessor:
+            return text_list  # fallback: raw text
+        return preprocessor.transform(text_list)
+    except Exception as e:
+        print(f"Error cleaning texts for WordCloud: {e}")
+        return text_list
+    
 
 # -------------------------
 # 1️⃣ Sync new students
@@ -207,7 +230,7 @@ def cleanup_invalid_sentiments():
     return f"Cleaned up {count} invalid sentiment records."
 
 # -------------------------
-# 6️⃣ WordCloud tasks
+# 6 WordCloud tasks
 # -------------------------
 def generate_wordcloud(text_list, filename):
     if not text_list:
@@ -226,15 +249,17 @@ def generate_feedback_wordcloud_task():
     all_comments = [fb.comments for fb in StudentFeedback.objects.all() if fb.comments]
     if not all_comments:
         return "No feedback to generate WordCloud."
+    cleaned_comments = clean_texts_for_wordcloud(all_comments)  # ✅ use pipeline preprocessor
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"feedback_wordcloud_{timestamp}.png"
-    return generate_wordcloud(all_comments, filename)
+    return generate_wordcloud(cleaned_comments, filename)
 
 @shared_task
 def generate_teacher_eval_wordcloud_task():
     all_comments = [ev.comments for ev in TeacherEvaluation.objects.all() if ev.comments]
     if not all_comments:
         return "No teacher evaluations to generate WordCloud."
+    cleaned_comments = clean_texts_for_wordcloud(all_comments)  # ✅ use pipeline preprocessor
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"teacher_eval_wordcloud_{timestamp}.png"
-    return generate_wordcloud(all_comments, filename)
+    return generate_wordcloud(cleaned_comments, filename)
