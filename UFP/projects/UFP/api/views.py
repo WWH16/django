@@ -388,7 +388,7 @@ def teacher_performance_by_program(request):
 def teacher_improvement_priority(request):
     """
     Get teacher improvement priority with optional year/semester filtering
-    Supports: ?year=2024&semester=1&all_time=true
+    Priority is RELATIVE: highest negative counts = Urgent, middle = Medium, lowest = Low
     """
     try:
         year = request.GET.get("year")
@@ -420,43 +420,62 @@ def teacher_improvement_priority(request):
                 qs = qs.filter(timestamp__month__gte=1, timestamp__month__lte=5)
             print(f"   After semester filter: {qs.count()}")
         
-        # Group by teacher - ✅ FIXED: Use evaluation_id instead of eval_id
+        # Group by teacher
         priority_list = (
             qs.values("teacher__teacher_name", "teacher__program_name")
             .annotate(
                 negative_count=Count("evaluation_id", filter=Q(sentiment__label="Negative")),
                 positive_count=Count("evaluation_id", filter=Q(sentiment__label="Positive")),
                 neutral_count=Count("evaluation_id", filter=Q(sentiment__label="Neutral")),
-                total=Count("evaluation_id")
+                total_count=Count("evaluation_id")
             )
-            .filter(total__gt=0)
+            .filter(total_count__gt=0)
             .order_by('-negative_count')
         )
         
         print(f"   Grouped teachers: {priority_list.count()}")
         
-        # Calculate priority based on negative percentage
+        # Convert to list for processing
+        teachers = list(priority_list)
+        
+        if not teachers:
+            return Response([])
+        
+        # ✅ NEW LOGIC: Relative priority based on negative count distribution
+        # Find the highest negative count
+        max_negative = max(t['negative_count'] for t in teachers)
+        
+        # Calculate threshold: half of the highest
+        medium_threshold = max_negative / 2
+        
+        print(f"   Max negative: {max_negative}, Medium threshold: {medium_threshold}")
+        
         results = []
-        for item in priority_list:
-            total = item['total']
-            neg_pct = round((item['negative_count'] / total) * 100)
+        for item in teachers:
+            neg_count = item['negative_count']
             
-            if neg_pct >= 20:
-                priority = 'Urgent'
-            elif neg_pct >= 10:
-                priority = 'Medium'
+            # Relative priority calculation
+            if neg_count == max_negative:
+                priority = 'Urgent'  # Highest negative count
+            elif neg_count >= medium_threshold:
+                priority = 'Medium'  # Half or more of the highest
+            elif neg_count >= 0:
+                priority = 'Low'     # Has negatives but below medium threshold
             else:
-                priority = 'Low'
+                priority = 'Excellent'  # No negative feedback
             
             results.append({
                 "teacher": item['teacher__teacher_name'] or 'Unknown Teacher',
                 "program": item['teacher__program_name'],
-                "negative_count": item['negative_count'],
+                "negative_count": neg_count,
                 "positive_count": item['positive_count'],
                 "neutral_count": item['neutral_count'],
-                "total": total,
+                "total_count": item['total_count'],
                 "priority": priority
             })
+            
+            # Debug log
+            print(f"   Teacher: {item['teacher__teacher_name']}, Neg: {neg_count} → {priority}")
         
         print(f"   Returning {len(results)} results")
         
@@ -684,7 +703,7 @@ import json
 import os
 from openai import OpenAI
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 # Test call
 response = client.chat.completions.create(
@@ -734,4 +753,4 @@ def grammar_correct(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-'''
+        '''
