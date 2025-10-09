@@ -567,7 +567,6 @@
   </script>
 
   <!-- Grammar checker disabled. To re-enable, remove the surrounding HTML comment. -->
-  <!--
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       console.log('🚀 Grammar checker initialized');
@@ -808,7 +807,8 @@
 
           console.log('📡 Backend response status:', res.status);
 
-          if (!res.ok) throw new Error(Backend error: ${res.status});
+          if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+
 
           const data = await res.json();
           console.log('📋 Backend response data:', data);
@@ -948,7 +948,6 @@
       console.log('✅ Grammar checker setup complete');
     });
   </script>
-  -->
 
   <!-- Removed 5-word submission enforcement script -->
 </body>

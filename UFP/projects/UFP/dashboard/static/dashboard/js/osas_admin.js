@@ -622,87 +622,87 @@
     hideDrawer();
   }
 
-async function applyCurrentFilters() {
-  try {
-    const yearFilter = document.getElementById('year-filter');
-    const semesterFilter = document.getElementById('semester-filter');
+  async function applyCurrentFilters() {
+    try {
+      const yearFilter = document.getElementById('year-filter');
+      const semesterFilter = document.getElementById('semester-filter');
 
-    let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
-    let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+      let activeYear = yearFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
+      let activeSemester = semesterFilter?.querySelector('.filter-option.active')?.getAttribute('data-value') || 'all';
 
-    if (activeSemester && activeSemester !== 'all') {
-      activeSemester = activeSemester.replace(/[^\d]/g, '');
-      if (!activeSemester || activeSemester === '') {
-        activeSemester = 'all';
+      if (activeSemester && activeSemester !== 'all') {
+        activeSemester = activeSemester.replace(/[^\d]/g, '');
+        if (!activeSemester || activeSemester === '') {
+          activeSemester = 'all';
+        }
       }
-    }
 
-    currentFilters.year = activeYear;
-    currentFilters.semester = activeSemester;
+      currentFilters.year = activeYear;
+      currentFilters.semester = activeSemester;
 
-    console.log('Applying OSAS filters:', currentFilters);
+      console.log('Applying OSAS filters:', currentFilters);
 
-    let data;
+      let data;
 
-    if (activeYear === 'all' && activeSemester === 'all') {
-      console.log('Using baseline API for All Time view');
-      const response = await fetch(buildBaselineApiUrl(), {
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      data = await response.json();
-      baselineData = data;
-    } else {
-      data = await fetchFilteredOsasData(activeYear, activeSemester);
-    }
+      if (activeYear === 'all' && activeSemester === 'all') {
+        console.log('Using baseline API for All Time view');
+        const response = await fetch(buildBaselineApiUrl(), {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        data = await response.json();
+        baselineData = data;
+      } else {
+        data = await fetchFilteredOsasData(activeYear, activeSemester);
+      }
 
-    updateOsasCards(data);
-    renderCharts(data);
-    renderActionItems(data);
+      updateOsasCards(data);
+      renderCharts(data);
+      renderActionItems(data);
 
-    // Update Service Priority with CALCULATED percentages
-    const priorityContainer = document.getElementById('service-priority-list');
-    if (priorityContainer && data.services && data.services.length > 0) {
-      const sorted = [...data.services]
-        .map(svc => {
-          const pos = Number(svc.positive || 0);
-          const neu = Number(svc.neutral || 0);
-          const neg = Number(svc.negative || 0);
-          const total = pos + neu + neg;
-          const pctNeg = total > 0 ? Math.round((neg / total) * 100) : 0;
-          return { ...svc, calculatedPctNeg: pctNeg };
-        })
-        .sort((a, b) => b.calculatedPctNeg - a.calculatedPctNeg);
+      // Update Service Priority with CALCULATED percentages
+      const priorityContainer = document.getElementById('service-priority-list');
+      if (priorityContainer && data.services && data.services.length > 0) {
+        const sorted = [...data.services]
+          .map(svc => {
+            const pos = Number(svc.positive || 0);
+            const neu = Number(svc.neutral || 0);
+            const neg = Number(svc.negative || 0);
+            const total = pos + neu + neg;
+            const pctNeg = total > 0 ? Math.round((neg / total) * 100) : 0;
+            return { ...svc, calculatedPctNeg: pctNeg };
+          })
+          .sort((a, b) => b.calculatedPctNeg - a.calculatedPctNeg);
 
-      priorityContainer.innerHTML = '';
-      sorted.forEach(svc => {
-        const pctNeg = svc.calculatedPctNeg;
-        const barClass = pctNeg >= 20 ? 'bg-danger'
-          : pctNeg >= 10 ? 'bg-warning'
-            : pctNeg >= 5 ? 'bg-primary'
-              : 'bg-success';
-        const priority = pctNeg >= 20 ? 'Urgent'
-          : pctNeg >= 10 ? 'Medium'
-            : pctNeg >= 5 ? 'Low'
-              : 'Excellent';
+        priorityContainer.innerHTML = '';
+        sorted.forEach(svc => {
+          const pctNeg = svc.calculatedPctNeg;
+          const barClass = pctNeg >= 20 ? 'bg-danger'
+            : pctNeg >= 10 ? 'bg-warning'
+              : pctNeg >= 5 ? 'bg-primary'
+                : 'bg-success';
+          const priority = pctNeg >= 20 ? 'Urgent'
+            : pctNeg >= 10 ? 'Medium'
+              : pctNeg >= 5 ? 'Low'
+                : 'Excellent';
 
-        priorityContainer.insertAdjacentHTML('beforeend', `
+          priorityContainer.insertAdjacentHTML('beforeend', `
           <h4 class="small fw-bold">${svc.name || svc.service}<span class="float-end">${priority}</span></h4>
           <div class="progress mb-4"><div class="progress-bar ${barClass}" style="width:${pctNeg}%"></div></div>
         `);
-      });
-    } else if (priorityContainer) {
-      priorityContainer.innerHTML = '<p class="text-muted">No data available for selected filters.</p>';
+        });
+      } else if (priorityContainer) {
+        priorityContainer.innerHTML = '<p class="text-muted">No data available for selected filters.</p>';
+      }
+
+      // Refresh Recent Feedbacks with current filters
+      await fetchRecentFeedback();
+
+    } catch (error) {
+      console.error('Failed to apply OSAS filters:', error);
+      alert('Failed to load OSAS data: ' + error.message);
     }
-
-    // Refresh Recent Feedbacks with current filters
-    await fetchRecentFeedback();
-
-  } catch (error) {
-    console.error('Failed to apply OSAS filters:', error);
-    alert('Failed to load OSAS data: ' + error.message);
   }
-}
 
   /* ---------------- CSV Export - FIXED FOR FILTERED DATA ---------------- */
   function buildFilteredCsvExport(data) {
@@ -852,40 +852,40 @@ async function applyCurrentFilters() {
       </li>`).join('');
   }
 
-async function fetchRecentFeedback() {
-  try {
-    // Build URL with current filters
-    const url = new URL('/api/recent-osas-feedback/', window.location.origin);
-    url.searchParams.set('limit', '5');
-    
-    // Add year filter
-    if (currentFilters.year && currentFilters.year !== 'all') {
-      url.searchParams.set('year', currentFilters.year);
-      url.searchParams.set('all_time', 'false');
-    } else {
-      url.searchParams.set('all_time', 'true');
-    }
-    
-    // Add semester filter
-    if (currentFilters.semester && currentFilters.semester !== 'all') {
-      url.searchParams.set('semester', currentFilters.semester);
-    }
+  async function fetchRecentFeedback() {
+    try {
+      // Build URL with current filters
+      const url = new URL('/api/recent-osas-feedback/', window.location.origin);
+      url.searchParams.set('limit', '5');
 
-    console.log('Fetching recent feedback with URL:', url.toString());  // Debug log
+      // Add year filter
+      if (currentFilters.year && currentFilters.year !== 'all') {
+        url.searchParams.set('year', currentFilters.year);
+        url.searchParams.set('all_time', 'false');
+      } else {
+        url.searchParams.set('all_time', 'true');
+      }
 
-    const response = await fetch(url.toString(), {
-      headers: { 'Accept': 'application/json' }
-    });
-    
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    console.log('Recent feedback received:', data);  // Debug log
-    renderRecentFeedback(data);
-  } catch (err) {
-    console.error('Failed to load recent feedback:', err);
-    renderRecentFeedback([]);
+      // Add semester filter
+      if (currentFilters.semester && currentFilters.semester !== 'all') {
+        url.searchParams.set('semester', currentFilters.semester);
+      }
+
+      console.log('Fetching recent feedback with URL:', url.toString());  // Debug log
+
+      const response = await fetch(url.toString(), {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      console.log('Recent feedback received:', data);  // Debug log
+      renderRecentFeedback(data);
+    } catch (err) {
+      console.error('Failed to load recent feedback:', err);
+      renderRecentFeedback([]);
+    }
   }
-}
 
   /* ---------------- Action Items & Recommendations ---------------- */
   function renderActionItems(data) {
@@ -965,7 +965,7 @@ async function fetchRecentFeedback() {
   function generateOSASRecommendations(services) {
     const recommendations = [];
     const config = {
-      urgent: { negativeThreshold: 15, minSample: 3 },
+      urgent: { negativeThreshold: 50, minSample: 3 },
       review: { neutralThreshold: 20, minSample: 5 },
       maintain: { positiveThreshold: 50, minSample: 3 },
       engagement: { totalFeedbackMin: 30 }
@@ -1119,14 +1119,14 @@ async function fetchRecentFeedback() {
 
       priorityContainer.innerHTML = '';
       sorted.forEach(svc => {
-        const pctNeg = Number(svc.percent_negative || 0);
-        const barClass = pctNeg >= 20 ? 'bg-danger'
-          : pctNeg >= 10 ? 'bg-warning'
-            : pctNeg >= 5 ? 'bg-primary'
+        const pctNeg = svc.calculatedPctNeg;
+        const barClass = pctNeg >= 50 ? 'bg-danger'
+          : pctNeg >= 30 ? 'bg-warning'
+            : pctNeg >= 1 ? 'bg-primary'
               : 'bg-success';
-        const priority = pctNeg >= 20 ? 'Urgent'
-          : pctNeg >= 10 ? 'Medium'
-            : pctNeg >= 5 ? 'Low'
+        const priority = pctNeg >= 50 ? 'Urgent'
+          : pctNeg >= 30 ? 'Medium'
+            : pctNeg >= 1 ? 'Low'
               : 'Excellent';
 
         priorityContainer.insertAdjacentHTML('beforeend', `
