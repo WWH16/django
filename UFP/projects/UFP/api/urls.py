@@ -16,5 +16,5 @@ urlpatterns = [
     path('teacher-evaluation-by-semester/', views.teacher_evaluation_by_semester, name='teacher_evaluation_by_semester'),
     path('service-feedback-by-semester/', views.service_feedback_by_semester, name='service_feedback_by_semester'),
 
-    #path("grammar-correct/", views.grammar_correct, name="grammar_correct"),
+    path("grammar-correct/", views.grammar_correct, name="grammar_correct"),
 ]
