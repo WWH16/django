@@ -696,14 +696,14 @@ def service_feedback_by_semester(request, semester_slug=None):
         "program": None,
         "services": results
     })
-'''
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import os
 from openai import OpenAI
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 # Test call
 response = client.chat.completions.create(
@@ -753,4 +753,3 @@ def grammar_correct(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-        '''

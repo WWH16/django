@@ -209,4 +209,237 @@
   });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 Grammar checker initialized');
+
+  const feedbackTextarea = document.getElementById('comments');
+  if (!feedbackTextarea) {
+    console.error('❌ Textarea with id="feedback" not found');
+    return;
+  }
+
+  console.log('✅ Found textarea:', feedbackTextarea);
+
+  // ---------------- Config ----------------
+  const BACKEND_URL = '/api/grammar-correct/';
+  const IDLE_MS = 1500;
+  // ----------------------------------------
+
+  let idleTimer = null;
+  let inFlight = null;
+  let busy = false;
+  let lastCheckedText = '';
+  let lastIssuedToken = 0;
+  let suggestionBox = null;
+
+  // Escape HTML safely
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Create suggestion box
+  function createSuggestionBox() {
+    if (suggestionBox) return suggestionBox;
+    const box = document.createElement('div');
+    box.className = 'grammar-suggestion-box';
+    box.style.cssText = `
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      margin-top: 5px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    `;
+    const container = feedbackTextarea.parentElement;
+    container.style.position = container.style.position || 'relative';
+    container.appendChild(box);
+    suggestionBox = box;
+    return box;
+  }
+
+  // Show suggestion box
+  function showSuggestion(originalText, correctedText) {
+    if (originalText === correctedText) {
+      hideSuggestion();
+      return;
+    }
+    const box = createSuggestionBox();
+    box.innerHTML = `
+      <div style="padding: 12px;">
+        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+          💡 Grammar suggestion:
+        </div>
+        <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-bottom: 8px; font-size: 14px; line-height: 1.4;">
+          ${escapeHtml(correctedText)}
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" class="btn btn-sm btn-outline-secondary dismiss-suggestion">Dismiss</button>
+          <button type="button" class="btn btn-sm btn-success apply-suggestion">✓ Apply</button>
+        </div>
+      </div>
+    `;
+
+    box.querySelector('.apply-suggestion').addEventListener('click', () => {
+      applySuggestion(correctedText);
+    });
+    box.querySelector('.dismiss-suggestion').addEventListener('click', () => {
+      hideSuggestion();
+    });
+
+    box.style.display = 'block';
+  }
+
+  function hideSuggestion() {
+    if (suggestionBox) suggestionBox.style.display = 'none';
+  }
+
+  // Apply suggestion to textarea
+  function applySuggestion(correctedText) {
+    const wasFocused = document.activeElement === feedbackTextarea;
+    feedbackTextarea.value = correctedText;
+    lastCheckedText = correctedText;
+    showNotice('Suggestion applied!', true);
+    if (wasFocused) {
+      feedbackTextarea.focus();
+      feedbackTextarea.setSelectionRange(correctedText.length, correctedText.length);
+    }
+    hideSuggestion();
+  }
+
+  // Status notice
+  function showNotice(message, success = true) {
+    const existing = document.querySelector('.grammar-notice');
+    if (existing) existing.remove();
+
+    const el = document.createElement('div');
+    el.className = 'grammar-notice';
+    el.innerHTML = `<small class="${success ? 'text-success' : 'text-muted'}">${success ? '✓' : 'ℹ'} ${message}</small>`;
+    el.style.cssText = `
+      position: absolute; 
+      right: 10px; 
+      top: -25px; 
+      opacity: 0; 
+      transition: all 0.3s ease;
+      z-index: 15; 
+      font-size: 11px; 
+      background: ${success ? 'rgba(25,135,84,.1)' : 'rgba(108,117,125,.1)'};
+      padding: 3px 6px; 
+      border-radius: 10px; 
+      border: 1px solid ${success ? 'rgba(25,135,84,.2)' : 'rgba(108,117,125,.2)'};
+      white-space: nowrap;
+    `;
+    feedbackTextarea.parentElement.appendChild(el);
+    requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(-3px)'; });
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2000);
+  }
+
+  // Cancel inflight requests
+  function cancelInFlight() {
+    if (inFlight) inFlight.abort();
+    inFlight = null;
+  }
+
+  // Backend correction call
+  async function correctWithBackend(text) {
+    cancelInFlight();
+    const controller = new AbortController();
+    inFlight = controller;
+
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+      signal: controller.signal
+    });
+
+    if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+    const data = await res.json();
+    return data.corrected || text;
+  }
+
+  // Fallback LanguageTool
+  async function correctWithLanguageTool(text) {
+    const res = await fetch('https://api.languagetool.org/v2/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ text, language: 'en-US' })
+    });
+    const data = await res.json();
+    let corrected = text;
+    for (const m of [...data.matches].reverse()) {
+      if (m.replacements && m.replacements.length) {
+        corrected = corrected.slice(0, m.offset) + m.replacements[0].value + corrected.slice(m.offset + m.length);
+      }
+    }
+    return corrected;
+  }
+
+  // Main check
+  async function checkGrammar() {
+    const text = feedbackTextarea.value.trim();
+    if (!text || text.length < 10 || text === lastCheckedText || busy) return;
+
+    busy = true;
+    const token = ++lastIssuedToken;
+    feedbackTextarea.style.borderColor = '#ffc107';
+
+    try {
+      let corrected;
+      try {
+        corrected = await correctWithBackend(text);
+      } catch {
+        corrected = await correctWithLanguageTool(text);
+      }
+
+      if (token !== lastIssuedToken) return; // ignore outdated results
+      lastCheckedText = text;
+
+      if (corrected && corrected !== text) {
+        showSuggestion(text, corrected);
+      } else {
+        hideSuggestion();
+        if (text.length > 20) showNotice('Grammar looks good!', false);
+      }
+    } catch (e) {
+      console.error('Grammar check failed:', e);
+      hideSuggestion();
+      showNotice('Grammar check unavailable', false);
+    } finally {
+      busy = false;
+      feedbackTextarea.style.borderColor = '';
+      inFlight = null;
+    }
+  }
+
+  // Schedule check
+  function scheduleGrammarCheck() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => checkGrammar(), IDLE_MS);
+  }
+
+  // Event listeners
+  feedbackTextarea.addEventListener('input', () => { hideSuggestion(); scheduleGrammarCheck(); });
+  feedbackTextarea.addEventListener('blur', () => { setTimeout(() => { if (!document.activeElement || !suggestionBox?.contains(document.activeElement)) checkGrammar(); }, 100); });
+  feedbackTextarea.addEventListener('keyup', (e) => { if (['.', '!', '?'].includes(e.key)) { clearTimeout(idleTimer); setTimeout(() => checkGrammar(), 500); }});
+  document.addEventListener('click', (e) => { if (suggestionBox && !suggestionBox.contains(e.target) && e.target !== feedbackTextarea) hideSuggestion(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && suggestionBox && suggestionBox.style.display === 'block') { hideSuggestion(); feedbackTextarea.focus(); } });
+
+  // Initial check
+  if (feedbackTextarea.value.trim()) setTimeout(() => checkGrammar(), 1000);
+
+  console.log('✅ Grammar checker setup complete');
+});
+</script>
+
+
 {% endblock %}
