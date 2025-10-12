@@ -70,7 +70,7 @@ class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
 @admin.register(StudentFeedback)
 class StudentFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = StudentFeedbackResource
-    list_display = ('student', 'comments', 'service', 'timestamp', 'guest_id')
+    list_display = ('comments', 'service', 'timestamp')
     search_fields = ('student__studentName', 'service__serviceName')
     list_filter = ('service', 'sentiment', 'timestamp') 
     actions = ['export']
@@ -105,7 +105,7 @@ class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
 @admin.register(TeacherEvaluation)
 class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = TeacherEvaluationResource
-    list_display = ('teacher', 'timestamp', 'comments','program','submitted_by')
+    list_display = ('teacher', 'timestamp', 'comments','program')
     search_fields = ('teacher__teacherName',)
     list_filter = ('sentiment', 'timestamp','program') 
     actions = ['export']
@@ -118,9 +118,9 @@ class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
 @admin.register(FactFeedback)
 class FactFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactFeedbackResource
-    list_display = ('student', 'service','comments', 'sentiment', 'timestamp')
-    search_fields = ('student__student_name', 'service__service_name')
-    list_filter = ('service', 'sentiment', 'timestamp')
+    list_display = ('service','comments', 'sentiment', 'timestamp')
+    search_fields = ('comments', 'service__service_name')
+    list_filter = ('service', 'sentiment')
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
@@ -130,7 +130,7 @@ class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactTeacherEvaluationResource
     list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
     search_fields = ('teacher__teacher_name',)
-    list_filter = ('sentiment', 'timestamp') 
+    list_filter = ('sentiment', 'timestamp')
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm

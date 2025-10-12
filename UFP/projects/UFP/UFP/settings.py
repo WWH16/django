@@ -322,7 +322,7 @@ UNFOLD = {
                         "permission": lambda request: request.user.is_staff,
                     },
                     {
-                        "title": _("Teacher Evaluations"),
+                        "title": _("Teacher Evaluation"),
                         "icon": "school",
                         "link": reverse_lazy("admin_teachers_evaluation"),
                         "permission": lambda request: request.user.is_staff,
@@ -387,14 +387,13 @@ UNFOLD = {
                 "collapsible": True,
                 "items": [
                     {
-                        "title": _("Teacher Evaluations"),
-                        "icon": "rate_review",
-                        "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
-                    },
-                    {
                         "title": _("OSAS Feedbacks"),
                         "icon": "feedback",
                         "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
+                    },{
+                        "title": _("Teacher Evaluation"),
+                        "icon": "rate_review",
+                        "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
                     },
                     #{
                     #    "title": _("DimService"),
