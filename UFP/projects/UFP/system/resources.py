@@ -39,7 +39,7 @@ class FactFeedbackResource(resources.ModelResource):
     )
     sentiment = fields.Field(
         column_name='sentiment',
-        attribute='sentiment__label'  # ← CHANGED from sentiment_name to label
+        attribute='sentiment__label'  
     )
     
     class Meta:
@@ -54,7 +54,7 @@ class FactTeacherEvaluationResource(resources.ModelResource):
     )
     sentiment = fields.Field(
         column_name='sentiment',
-        attribute='sentiment__label'  # ← CHANGED from sentiment_name to label
+        attribute='sentiment__label'  
     )
 
     class Meta:

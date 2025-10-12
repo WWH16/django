@@ -36,28 +36,6 @@
   // Loading state tracker
   let isLoadingData = false;
 
-  /* ---------------- CSV Export Utilities ---------------- */
-  function csvEscape(value) {
-    const v = value ?? '';
-    const s = String(v).replace(/"/g, '""');
-    return `"${s}"`;
-  }
-
-  function arrayToCsv(rows) {
-    return rows.map(r => r.map(csvEscape).join(',')).join('\r\n');
-  }
-
-  function downloadCsv(filename, csvString) {
-    const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
 
   /* ---------------- API Functions ---------------- */
   async function fetchFilteredTeacherData(selectedYear = 'all', selectedSemester = 'all') {
@@ -643,105 +621,6 @@ async function applyCurrentFilters() {
   }
 }
 
-  /* ---------------- CSV Export ---------------- */
-  function buildFilteredCsvExport(data) {
-    const timestamp = new Date().toISOString();
-    const csvRows = [];
-
-    csvRows.push(['Teacher Evaluation Export']);
-    csvRows.push([`Generated: ${timestamp}`]);
-
-    let filterInfo = `Data Filter: Year ${currentFilters.year === 'all' ? 'All Years' : currentFilters.year}`;
-    if (currentFilters.semester && currentFilters.semester !== 'all') {
-      filterInfo += `, Semester ${currentFilters.semester}`;
-    } else {
-      filterInfo += ', All Semesters';
-    }
-    csvRows.push([filterInfo]);
-    csvRows.push([]);
-
-    if (!data || !data.programs || !data.programs.length) {
-      csvRows.push(['No data available for the selected filters']);
-      return arrayToCsv(csvRows);
-    }
-
-    let totalPositive = 0, totalNeutral = 0, totalNegative = 0, grandTotal = 0;
-    data.programs.forEach(program => {
-      totalPositive += Number(program.positive || 0);
-      totalNeutral += Number(program.neutral || 0);
-      totalNegative += Number(program.negative || 0);
-      grandTotal += Number(program.total || 0);
-    });
-
-    const overallPositivePercent = grandTotal > 0 ? Math.round((totalPositive / grandTotal) * 100) : 0;
-
-    csvRows.push(['Summary']);
-    csvRows.push(['Total Evaluations', 'Positive', 'Neutral', 'Negative', 'Overall Positive %']);
-    csvRows.push([grandTotal, totalPositive, totalNeutral, totalNegative, overallPositivePercent]);
-    csvRows.push([]);
-
-    csvRows.push(['Program Breakdown']);
-    csvRows.push(['Program', 'Positive', 'Neutral', 'Negative', 'Total', 'Positive %']);
-
-    data.programs.forEach(program => {
-      const programName = program.name || program.program || 'Unknown Program';
-      const positive = program.positive || 0;
-      const neutral = program.neutral || 0;
-      const negative = program.negative || 0;
-      const total = program.total || 0;
-      const positivePercent = program.positive_percent || (total > 0 ? Math.round((positive / total) * 100) : 0);
-
-      csvRows.push([programName, positive, neutral, negative, total, positivePercent]);
-    });
-
-    return arrayToCsv(csvRows);
-  }
-
-  async function exportFilteredTeacherData() {
-    try {
-      console.log('Exporting Teacher data with filters:', currentFilters);
-
-      let exportData = cachedFilteredData;
-
-      if (!exportData ||
-        !exportData._filterMeta ||
-        exportData._filterMeta.year !== currentFilters.year ||
-        exportData._filterMeta.semester !== currentFilters.semester) {
-
-        exportData = await fetchFilteredTeacherData(currentFilters.year, currentFilters.semester);
-      }
-
-      if (!exportData || !exportData.programs || !exportData.programs.length) {
-        alert('No data available to export for the selected filters.');
-        return;
-      }
-
-      const csvContent = buildFilteredCsvExport(exportData);
-
-      const date = new Date().toISOString().slice(0, 10);
-      let filename = 'teacher_evaluation_report';
-
-      if (currentFilters.year !== 'all') {
-        filename += `_${currentFilters.year}`;
-      }
-      if (currentFilters.semester !== 'all') {
-        filename += `_sem${currentFilters.semester}`;
-      }
-      if (currentFilters.year === 'all' && currentFilters.semester === 'all') {
-        filename += '_all_time';
-      }
-      filename += `_${date}.csv`;
-
-      downloadCsv(filename, csvContent);
-
-      console.log('Teacher export completed successfully:', filename);
-
-    } catch (error) {
-      console.error('Teacher export failed:', error);
-      alert(`Export failed: ${error.message}. Please try again.`);
-    }
-  }
-
   /* ---------------- Recent Evaluations ---------------- */
   function truncate(str, n) {
     if (!str) return '';
@@ -1211,7 +1090,6 @@ async function loadTeacherPerformanceData(year = 'all', semester = null) {
       const yearFilter = document.getElementById('year-filter');
       const semesterFilter = document.getElementById('semester-filter');
       const applyFiltersBtn = document.getElementById('apply-filters');
-      const exportBtn = document.getElementById('export-report-btn');
 
       if (filterBtn) {
         filterBtn.addEventListener('click', (e) => {
@@ -1274,13 +1152,6 @@ async function loadTeacherPerformanceData(year = 'all', semester = null) {
         applyFiltersBtn.addEventListener('click', function () {
           applyCurrentFilters();
           hideDrawer();
-        });
-      }
-
-      if (exportBtn) {
-        exportBtn.addEventListener('click', async function (exportEvent) {
-          exportEvent.preventDefault();
-          await exportFilteredTeacherData();
         });
       }
     } catch (error) {

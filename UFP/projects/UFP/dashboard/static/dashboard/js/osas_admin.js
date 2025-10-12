@@ -725,117 +725,6 @@ async function applyCurrentFilters() {
   }
 }
 
-  /* ---------------- CSV Export - FIXED FOR FILTERED DATA ---------------- */
-  function buildFilteredCsvExport(data) {
-    const timestamp = new Date().toISOString();
-    const csvRows = [];
-
-    // Report metadata
-    csvRows.push(['OSAS Service Feedback Export']);
-    csvRows.push([`Generated: ${timestamp}`]);
-
-    // Filter information
-    let filterInfo = `Data Filter: Year ${currentFilters.year === 'all' ? 'All Years' : currentFilters.year}`;
-    if (currentFilters.semester && currentFilters.semester !== 'all') {
-      filterInfo += `, Semester ${currentFilters.semester}`;
-    } else {
-      filterInfo += ', All Semesters';
-    }
-    csvRows.push([filterInfo]);
-    csvRows.push([]); // Empty row
-
-    if (!data || !data.services || !data.services.length) {
-      csvRows.push(['No data available for the selected filters']);
-      return arrayToCsv(csvRows);
-    }
-
-    // Calculate summary totals
-    let totalPositive = 0, totalNeutral = 0, totalNegative = 0, grandTotal = 0;
-    data.services.forEach(service => {
-      const p = Number(service.positive || 0);
-      const n = Number(service.neutral || 0);
-      const ng = Number(service.negative || 0);
-      totalPositive += p;
-      totalNeutral += n;
-      totalNegative += ng;
-      grandTotal += (p + n + ng);  // ✅ Calculate from the three values
-    });
-    const overallSatisfaction = grandTotal > 0 ? Math.round((totalPositive / grandTotal) * 100) : 0;
-
-    // Summary section
-    csvRows.push(['Summary']);
-    csvRows.push(['Total Feedback', 'Positive', 'Neutral', 'Negative', 'Overall Satisfaction %']);
-    csvRows.push([grandTotal, totalPositive, totalNeutral, totalNegative, overallSatisfaction]);
-    csvRows.push([]);
-
-    // Service breakdown header
-    csvRows.push(['Service Breakdown']);
-    csvRows.push(['Service', 'Positive', 'Neutral', 'Negative', 'Total', 'Satisfaction %']);
-
-    // Service data
-    data.services.forEach(service => {
-      const serviceName = service.service || service.name || 'Unknown Service';
-      const positive = service.positive || 0;
-      const neutral = service.neutral || 0;
-      const negative = service.negative || 0;
-      const total = positive + neutral + negative;  // ✅ Calculate it
-      const satisfaction = service.satisfaction || (total > 0 ? Math.round((positive / total) * 100) : 0);
-
-      csvRows.push([serviceName, positive, neutral, negative, total, satisfaction]);
-    });
-
-    return arrayToCsv(csvRows);
-  }
-
-  async function exportFilteredOsasData() {
-    try {
-      console.log('Exporting OSAS data with filters:', currentFilters);
-
-      // Use cached data if available and matches current filters
-      let exportData = cachedFilteredData;
-
-      if (!exportData ||
-        !exportData._filterMeta ||
-        exportData._filterMeta.year !== currentFilters.year ||
-        exportData._filterMeta.semester !== currentFilters.semester) {
-
-        exportData = await fetchFilteredOsasData(currentFilters.year, currentFilters.semester);
-      }
-
-      if (!exportData || !exportData.services || !exportData.services.length) {
-        alert('No data available to export for the selected filters.');
-        return;
-      }
-
-      // Generate CSV content
-      const csvContent = buildFilteredCsvExport(exportData);
-
-      // Generate filename with filter context
-      const date = new Date().toISOString().slice(0, 10);
-      let filename = 'osas_service_feedback_report';
-
-      if (currentFilters.year !== 'all') {
-        filename += `_${currentFilters.year}`;
-      }
-      if (currentFilters.semester !== 'all') {
-        filename += `_sem${currentFilters.semester}`;
-      }
-      if (currentFilters.year === 'all' && currentFilters.semester === 'all') {
-        filename += '_all_time';
-      }
-      filename += `_${date}.csv`;
-
-      // Download CSV
-      downloadCsv(filename, csvContent);
-
-      console.log('OSAS export completed successfully:', filename);
-
-    } catch (error) {
-      console.error('OSAS export failed:', error);
-      alert(`Export failed: ${error.message}. Please try again.`);
-    }
-  }
-
   /* ---------------- Recent Feedback ---------------- */
   function truncate(str, n) {
     if (!str) return '';
@@ -1249,7 +1138,6 @@ async function fetchRecentFeedback() {
     const yearFilter = document.getElementById('year-filter');
     const semesterFilter = document.getElementById('semester-filter');
     const applyFiltersBtn = document.getElementById('apply-filters');
-    const exportBtn = document.getElementById('export-report-btn');
 
     // Drawer controls
     if (filterBtn) {
@@ -1313,14 +1201,6 @@ async function fetchRecentFeedback() {
       applyFiltersBtn.addEventListener('click', function () {
         applyCurrentFilters();
         hideDrawer();
-      });
-    }
-
-    // Export button - FIXED TO USE FILTERED DATA
-    if (exportBtn) {
-      exportBtn.addEventListener('click', async function (exportEvent) {
-        exportEvent.preventDefault();
-        await exportFilteredOsasData();
       });
     }
 
