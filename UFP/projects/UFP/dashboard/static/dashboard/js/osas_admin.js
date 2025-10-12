@@ -387,189 +387,210 @@
     updateTotalDescription();
   }
 
-  /* ---------------- Chart Rendering ---------------- */
-  function renderCharts(data) {
-    try {
-      if (!data) return;
+/* ---------------- Chart Rendering ---------------- */
+function renderCharts(data) {
+  try {
+    if (!data) return;
 
-      const CHART_COLORS = getChartColors();
+    const CHART_COLORS = getChartColors();
 
-      // Calculate totals for pie chart
-      // Calculate totals for pie chart
-      let total = 0, pos = 0, neu = 0, neg = 0;
-      if (data.services && Array.isArray(data.services)) {
-        data.services.forEach(service => {
-          const p = Number(service.positive || 0);
-          const n = Number(service.neutral || 0);
-          const ng = Number(service.negative || 0);
-          pos += p;
-          neu += n;
-          neg += ng;
-          total += (p + n + ng);  // ✅ Calculate total
-        });
+    // Calculate totals for pie chart
+    let total = 0, pos = 0, neu = 0, neg = 0;
+    if (data.services && Array.isArray(data.services)) {
+      data.services.forEach(service => {
+        const p = Number(service.positive || 0);
+        const n = Number(service.neutral || 0);
+        const ng = Number(service.negative || 0);
+        pos += p;
+        neu += n;
+        neg += ng;
+        total += (p + n + ng);
+      });
+    }
+
+    // PIE CHART: destroy and recreate for animation
+    const pieCanvas = document.getElementById('osasPieChart');
+    if (pieCanvas && pieCanvas.getContext && window.Chart) {
+      const pieCtx = pieCanvas.getContext('2d');
+      const pieData = [pos, neu, neg];
+
+      // Always destroy and recreate for animation
+      if (osasPieChart) {
+        osasPieChart.destroy();
       }
 
-      // PIE CHART: destroy and recreate for animation
-      const pieCanvas = document.getElementById('osasPieChart');
-      if (pieCanvas && pieCanvas.getContext && window.Chart) {
-        const pieCtx = pieCanvas.getContext('2d');
-        const pieData = [pos, neu, neg];
-
-        // Always destroy and recreate for animation
-        if (osasPieChart) {
-          osasPieChart.destroy();
-        }
-
-        osasPieChart = new Chart(pieCtx, {
-          type: 'pie',
-          data: {
-            labels: ['Positive', 'Neutral', 'Negative'],
-            datasets: [{
-              backgroundColor: [
-                CHART_COLORS.positive.background,
-                CHART_COLORS.neutral.background,
-                CHART_COLORS.negative.background
-              ],
-              borderColor: [
-                CHART_COLORS.positive.border,
-                CHART_COLORS.neutral.border,
-                CHART_COLORS.negative.border
-              ],
-              data: pieData,
-              borderWidth: 1,
-              hoverOffset: 5
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            color: CHART_COLORS.textColor,
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  color: CHART_COLORS.legendColor,
-                  font: { weight: '600', size: 12 },
-                  usePointStyle: true,
-                  pointStyle: 'circle',
-                  boxWidth: 12,
-                  padding: 20
-                }
-              },
-              tooltip: {
-                titleColor: CHART_COLORS.tooltipTextColor,
-                bodyColor: CHART_COLORS.tooltipTextColor,
-                backgroundColor: CHART_COLORS.tooltipBackground,
-                borderColor: CHART_COLORS.tooltipBorderColor,
-                borderWidth: 1,
-                padding: 8
-              }
-            }
-          }
-        });
-      }
-
-      // BAR CHART: destroy and recreate for animation
-      const barCanvas = document.getElementById('osasBarChart');
-      if (barCanvas && barCanvas.getContext && window.Chart && data.services) {
-        const ctx = barCanvas.getContext('2d');
-        const serviceLabels = data.services.map(s => s.service || s.name);
-        const positiveData = data.services.map(s => Number(s.positive || 0));
-        const neutralData = data.services.map(s => Number(s.neutral || 0));
-        const negativeData = data.services.map(s => Number(s.negative || 0));
-
-        // Always destroy and recreate for animation
-        if (osasBarChart) {
-          osasBarChart.destroy();
-        }
-
-        osasBarChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: serviceLabels,
-            datasets: [
-              {
-                label: 'Positive',
-                data: positiveData,
-                backgroundColor: CHART_COLORS.positive.backgroundLight,
-                borderColor: CHART_COLORS.positive.border,
-                borderWidth: 1,
-                maxBarThickness: 48
-              },
-              {
-                label: 'Neutral',
-                data: neutralData,
-                backgroundColor: CHART_COLORS.neutral.backgroundLight,
-                borderColor: CHART_COLORS.neutral.border,
-                borderWidth: 1,
-                maxBarThickness: 48
-              },
-              {
-                label: 'Negative',
-                data: negativeData,
-                backgroundColor: CHART_COLORS.negative.backgroundLight,
-                borderColor: CHART_COLORS.negative.border,
-                borderWidth: 1,
-                maxBarThickness: 48
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            color: CHART_COLORS.textColor,
-            plugins: {
-              legend: {
-                position: 'top',
-                labels: {
-                  color: CHART_COLORS.legendColor,
-                  font: { weight: '600', size: 12 },
-                  usePointStyle: false,
-                  padding: 20
-                }
-              },
-              tooltip: {
-                titleColor: CHART_COLORS.tooltipTextColor,
-                bodyColor: CHART_COLORS.tooltipTextColor,
-                backgroundColor: CHART_COLORS.tooltipBackground,
-                borderColor: CHART_COLORS.tooltipBorderColor,
-                borderWidth: 1,
-                padding: 8
+      osasPieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+          labels: ['Positive', 'Neutral', 'Negative'],
+          datasets: [{
+            backgroundColor: [
+              CHART_COLORS.positive.background,
+              CHART_COLORS.neutral.background,
+              CHART_COLORS.negative.background
+            ],
+            borderColor: [
+              CHART_COLORS.positive.border,
+              CHART_COLORS.neutral.border,
+              CHART_COLORS.negative.border
+            ],
+            data: pieData,
+            borderWidth: 1,
+            hoverOffset: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          color: CHART_COLORS.textColor,
+          plugins: {
+            datalabels: {
+              display: false  // Disable for pie chart
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: CHART_COLORS.legendColor,
+                font: { weight: '600', size: 12 },
+                usePointStyle: true,
+                pointStyle: 'circle',
+                boxWidth: 12,
+                padding: 20
               }
             },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  color: CHART_COLORS.axisColor,
-                  font: { weight: '600', size: 11 },
-                  precision: 0
-                },
-                grid: {
-                  color: CHART_COLORS.gridColor,
-                  drawBorder: false
-                }
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8
+            }
+          }
+        }
+      });
+    }
+
+    // BAR CHART: destroy and recreate for animation
+    const barCanvas = document.getElementById('osasBarChart');
+    if (barCanvas && barCanvas.getContext && window.Chart && data.services) {
+      const ctx = barCanvas.getContext('2d');
+      const serviceLabels = data.services.map(s => s.service || s.name);
+      const positiveData = data.services.map(s => Number(s.positive || 0));
+      const neutralData = data.services.map(s => Number(s.neutral || 0));
+      const negativeData = data.services.map(s => Number(s.negative || 0));
+
+      // Always destroy and recreate for animation
+      if (osasBarChart) {
+        osasBarChart.destroy();
+      }
+
+      // Check if ChartDataLabels plugin is available
+      const useDataLabels = typeof ChartDataLabels !== 'undefined';
+      
+      osasBarChart = new Chart(ctx, {
+        type: 'bar',
+        plugins: useDataLabels ? [ChartDataLabels] : [],
+        data: {
+          labels: serviceLabels,
+          datasets: [
+            {
+              label: 'Positive',
+              data: positiveData,
+              backgroundColor: CHART_COLORS.positive.backgroundLight,
+              borderColor: CHART_COLORS.positive.border,
+              borderWidth: 1,
+              maxBarThickness: 48
+            },
+            {
+              label: 'Neutral',
+              data: neutralData,
+              backgroundColor: CHART_COLORS.neutral.backgroundLight,
+              borderColor: CHART_COLORS.neutral.border,
+              borderWidth: 1,
+              maxBarThickness: 48
+            },
+            {
+              label: 'Negative',
+              data: negativeData,
+              backgroundColor: CHART_COLORS.negative.backgroundLight,
+              borderColor: CHART_COLORS.negative.border,
+              borderWidth: 1,
+              maxBarThickness: 48
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          color: CHART_COLORS.textColor,
+          plugins: {
+            datalabels: useDataLabels ? {
+              display: true,
+              color: CHART_COLORS.textColor,
+              
+              anchor: 'start',
+              align: 'start',
+              offset: -15,
+              font: {
+                //weight: 'italic',
+                size: 11
               },
-              x: {
-                ticks: {
-                  color: CHART_COLORS.axisColor,
-                  font: { weight: '600', size: 11 }
-                },
-                grid: {
-                  display: false
-                }
+              formatter: function(value) {
+                return value > 0 ? value : '';
+              }
+            } : { display: false },
+            legend: {
+              position: 'top',
+              labels: {
+                color: CHART_COLORS.legendColor,
+                font: { weight: '600', size: 12 },
+                usePointStyle: false,
+                padding: 20
+              }
+            },
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: CHART_COLORS.axisColor,
+                font: { weight: '600', size: 11 },
+                precision: 0
+              },
+              grid: {
+                color: CHART_COLORS.gridColor,
+                drawBorder: false
+              }
+            },
+            x: {
+              ticks: {
+                color: CHART_COLORS.axisColor,
+                font: { weight: '600', size: 11 }
+              },
+              grid: {
+                display: false
               }
             }
           }
-        });
-      }
-
-      renderActionItems(data);
-
-    } catch (err) {
-      console.error('Chart rendering error:', err);
+        }
+      });
     }
+
+    renderActionItems(data);
+
+  } catch (err) {
+    console.error('Chart rendering error:', err);
   }
+}
 
   /* ---------------- Filter Management ---------------- */
   function showDrawer() {

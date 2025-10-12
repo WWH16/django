@@ -331,17 +331,18 @@
   }
 
   /* ---------------- Chart Rendering ---------------- */
-  function renderCharts(data) {
-    try {
-      if (!data || !window.Chart) {
-        console.warn('Missing data or Chart.js library');
-        return;
-      }
+function renderCharts(data) {
+  try {
+    if (!data || !window.Chart) {
+      console.warn('Missing data or Chart.js library');
+      return;
+    }
 
-      const CHART_COLORS = getChartColors();
+    const CHART_COLORS = getChartColors();
+    const useDataLabels = typeof ChartDataLabels !== 'undefined';  // ← ADD THIS LINE
 
-      let total = 0, pos = 0, neu = 0, neg = 0;
-      if (data.programs && Array.isArray(data.programs)) {
+    let total = 0, pos = 0, neu = 0, neg = 0;
+    if (data.programs && Array.isArray(data.programs)) {
         data.programs.forEach(program => {
           pos += Number(program.positive || 0);
           neu += Number(program.neutral || 0);
@@ -424,6 +425,7 @@
 
         teacherBarChart = new Chart(ctx, {
           type: 'bar',
+          plugins: useDataLabels ? [ChartDataLabels] : [],  // ← ADD THIS LINE
           data: {
             labels: programLabels,
             datasets: [
@@ -453,53 +455,68 @@
               }
             ]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            color: CHART_COLORS.textColor,
-            plugins: {
-              legend: {
-                position: 'top',
-                labels: {
-                  color: CHART_COLORS.legendColor,
-                  font: { weight: '600', size: 12 },
-                  usePointStyle: false,
-                  padding: 20
-                }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          color: CHART_COLORS.textColor,
+          plugins: {
+            datalabels: useDataLabels ? {
+              display: true,
+              color: CHART_COLORS.textColor,
+              
+              anchor: 'start',
+              align: 'start',
+              offset: -15,
+              font: {
+                //weight: 'italic',
+                size: 11
               },
-              tooltip: {
-                titleColor: CHART_COLORS.tooltipTextColor,
-                bodyColor: CHART_COLORS.tooltipTextColor,
-                backgroundColor: CHART_COLORS.tooltipBackground,
-                borderColor: CHART_COLORS.tooltipBorderColor,
-                borderWidth: 1,
-                padding: 8
+              formatter: function(value) {
+                return value > 0 ? value : '';
+              }
+            } : { display: false },
+            legend: {
+              position: 'top',
+              labels: {
+                color: CHART_COLORS.legendColor,
+                font: { weight: '600', size: 12 },
+                usePointStyle: false,
+                padding: 20
               }
             },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  color: CHART_COLORS.axisColor,
-                  font: { weight: '600', size: 11 },
-                  precision: 0
-                },
-                grid: {
-                  color: CHART_COLORS.gridColor,
-                  drawBorder: false
-                }
+            tooltip: {
+              titleColor: CHART_COLORS.tooltipTextColor,
+              bodyColor: CHART_COLORS.tooltipTextColor,
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              borderColor: CHART_COLORS.tooltipBorderColor,
+              borderWidth: 1,
+              padding: 8
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: CHART_COLORS.axisColor,
+                font: { weight: '600', size: 11 },
+                precision: 0
               },
-              x: {
-                ticks: {
-                  color: CHART_COLORS.axisColor,
-                  font: { weight: '600', size: 11 }
-                },
-                grid: {
-                  display: false
-                }
+              grid: {
+                color: CHART_COLORS.gridColor,
+                drawBorder: false
+              }
+            },
+            x: {
+              ticks: {
+                color: CHART_COLORS.axisColor,
+                font: { weight: '600', size: 11 }
+              },
+              grid: {
+                display: false
               }
             }
           }
+        }
         });
       }
     } catch (err) {
