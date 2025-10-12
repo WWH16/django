@@ -35,6 +35,35 @@ admin.site.unregister(Group)
 # ------------------------------
 # Regular models with Unfold
 # ------------------------------
+from django.contrib import admin
+from datetime import date
+
+#Semester Filter
+class SemesterFilter(admin.SimpleListFilter):
+    title = 'Semester'
+    parameter_name = 'semester'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1st', '1st Semester'),
+            ('2nd', '2nd Semester'),
+        )
+
+    def queryset(self, request, queryset):
+        
+        current_year = date.today().year
+
+        if self.value() == '1st':
+            start = date(current_year, 9, 1)
+            end = date(current_year, 12, 31)
+            return queryset.filter(timestamp__gte=start, timestamp__lte=end)
+
+        if self.value() == '2nd':
+            start = date(current_year, 1, 1)
+            end = date(current_year, 5, 31)
+            return queryset.filter(timestamp__gte=start, timestamp__lte=end)
+
+        return queryset
 
 @admin.register(Service)
 class ServiceAdmin(ModelAdmin):
@@ -56,6 +85,7 @@ class SentimentAdmin(ModelAdmin):
 class ProgramAdmin(ModelAdmin):
     list_display = ('programID', 'programName')
     search_fields = ('programName',)
+
 @admin.register(Student)
 class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = StudentResource
@@ -72,10 +102,11 @@ class StudentFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = StudentFeedbackResource
     list_display = ('comments', 'service', 'timestamp')
     search_fields = ('student__studentName', 'service__serviceName')
-    list_filter = ('service', 'sentiment', 'timestamp') 
+    list_filter = ('service', 'sentiment', SemesterFilter) 
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
+
 class DepartmentFilter(admin.SimpleListFilter):
     title = 'department'  # filter title
     parameter_name = 'department'  # URL query param
@@ -89,6 +120,7 @@ class DepartmentFilter(admin.SimpleListFilter):
         if self.value():
             return queryset.filter(department_id=self.value())
         return queryset
+    
 @admin.register(Teacher)
 class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = TeacherResource 
@@ -101,13 +133,12 @@ class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
     import_form_class = ImportForm
     export_form_class = ExportForm
 
-
 @admin.register(TeacherEvaluation)
 class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = TeacherEvaluationResource
     list_display = ('teacher', 'timestamp', 'comments','program')
     search_fields = ('teacher__teacherName',)
-    list_filter = ('sentiment', 'timestamp','program') 
+    list_filter = ('sentiment','program', SemesterFilter) 
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
@@ -120,20 +151,22 @@ class FactFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactFeedbackResource
     list_display = ('service','comments', 'sentiment', 'timestamp')
     search_fields = ('comments', 'service__service_name')
-    list_filter = ('service', 'sentiment')
+    list_filter = ('service', 'sentiment', SemesterFilter)
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
+
 
 @admin.register(fact_teacher_evaluation)
 class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactTeacherEvaluationResource
     list_display = ('teacher', 'comments', 'sentiment', 'timestamp')
     search_fields = ('teacher__teacher_name',)
-    list_filter = ('sentiment', 'timestamp')
+    list_filter = ('sentiment', 'timestamp', SemesterFilter)
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
+
 
 #@admin.register(DimService)
 #class DimServiceAdmin(ModelAdmin, ImportExportModelAdmin):
