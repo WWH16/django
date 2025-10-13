@@ -7,7 +7,8 @@
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'dashboard/styles/osas_admin.css' %}" />
 <!-- Load Chart.js first so osas_admin.js can register plugins and use Chart API -->
- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="{% static 'dashboard/js/osas_admin.js' %}"></script>
 {% endblock %}
@@ -15,57 +16,67 @@
 {% block content %}
 <div class="osas-wrap">
   <div class="osas-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
       <!-- Title -->
       <h3 class="mb-0 text-font-important-light dark:text-font-important-dark">
         OSAS Services Sentiment Analysis Dashboard
       </h3>
 
-      <!-- Buttons grouped together -->
-      <div class="d-flex align-items-center gap-2">
+      <!-- Last Processed Time & Filter Button -->
+      <div class="d-flex align-items-center gap-3">
+        {% if last_processed %}
+        <div class="text-sm text-muted d-flex align-items-center gap-2">
+          <i class="fas fa-clock"></i>
+          <span>Last Update: <strong>{{ last_processed|date:"M j, Y, g:i a" }}</strong></span>
+        </div>
+        {% else %}
+        <div class="text-sm text-muted">
+          <i class="fas fa-info-circle"></i> No processing data available
+        </div>
+        {% endif %}
+
         <!-- Filter Button -->
         <button id="filter-btn"
-          class="font-medium flex group items-center gap-0 px-3 py-2 rounded-default justify-center whitespace-nowrap border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
+          class="font-medium flex group items-center gap-2 px-3 py-2 rounded-default justify-center whitespace-nowrap border border-base-200 bg-white text-font-important-light dark:border-base-700 dark:bg-transparent dark:text-font-important-dark cursor-pointer"
           type="button">
           <i class="fas fa-filter"></i> Filter
         </button>
       </div>
     </div>
 
+    <!-- FILTER DRAWER -->
+    <div class="blur-overlay" id="blur-overlay"></div>
 
-<!-- FILTER DRAWER -->
-<div class="blur-overlay" id="blur-overlay"></div>
+    <div class="offcanvas-end" id="filter-drawer" aria-labelledby="filterDrawerLabel">
+      <div class="offcanvas-body">
 
-<div class="offcanvas-end" id="filter-drawer" aria-labelledby="filterDrawerLabel">
-  <div class="offcanvas-body">
+        <!-- By Year -->
+        <div class="filter-section">
+          <h6>By year</h6>
+          <ul id="year-filter">
+            <li class="filter-option active" data-value="all">All Time</li>
+            <li class="filter-option" data-value="2025">2025</li>
+            <li class="filter-option reset" data-value="-">Reset Filter</li>
+          </ul>
+        </div>
 
-    <!-- By Year -->
-    <div class="filter-section">
-      <h6>By year</h6>
-      <ul id="year-filter">
-        <li class="filter-option active" data-value="all">All Time</li>
-        <li class="filter-option" data-value="2025">2025</li>
-        <li class="filter-option reset" data-value="-">Reset Filter</li>
-      </ul>
+        <!-- By Semester -->
+        <div class="filter-section">
+          <h6>By semester</h6>
+          <ul id="semester-filter">
+            <li class="filter-option active" data-value="all">All Semesters</li>
+            <li class="filter-option" data-value="1st">1st Semester</li>
+            <li class="filter-option" data-value="2nd">2nd Semester</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom button -->
+      <div class="filter-footer">
+        <button id="apply-filters" class="apply-btn">Show counts</button>
+      </div>
     </div>
-
-    <!-- By Semester -->
-    <div class="filter-section">
-      <h6>By semester</h6>
-      <ul id="semester-filter">
-        <li class="filter-option active" data-value="all">All Semesters</li>
-        <li class="filter-option" data-value="1st">1st Semester</li>
-        <li class="filter-option" data-value="2nd">2nd Semester</li>
-      </ul>
-    </div>
-
-  </div>
-
-  <!-- Bottom button -->
-  <div class="filter-footer">
-    <button id="apply-filters" class="apply-btn">Show counts</button>
-  </div>
-</div>
 
     <!-- KPI CARDS -->
     <div class="row">
@@ -215,9 +226,10 @@
           </div>
           <div class="wordcloud-container text-center">
             {% if osas_wordcloud_url %}
-              <img src="{{ osas_wordcloud_url }}" alt="OSAS Feedback WordCloud" style="max-width:100%; height:auto; border-radius:8px;">
+            <img src="{{ osas_wordcloud_url }}" alt="OSAS Feedback WordCloud"
+              style="max-width:100%; height:auto; border-radius:8px;">
             {% else %}
-              <p class="text-muted">No WordCloud generated yet.</p>
+            <p class="text-muted">No WordCloud generated yet.</p>
             {% endif %}
           </div>
         </div>
@@ -336,7 +348,7 @@
       </div>
 
       <!-- Right Column: Priority + Action Items -->
-     <div class="col-lg-6 mb-4">
+      <div class="col-lg-6 mb-4">
         <!-- Service Improvement Priority Card -->
         <div
           class="bg-white block border border-base-200 flex flex-col overflow-hidden p-6 relative rounded-default shadow-xs dark:bg-base-900 dark:border-base-800 mb-4">
