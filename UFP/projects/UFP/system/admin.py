@@ -137,25 +137,69 @@ class TeacherAdmin(ModelAdmin, ImportExportModelAdmin):
 class TeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = TeacherEvaluationResource
     list_display = ('teacher', 'timestamp', 'comments','program')
-    search_fields = ('teacher__teacherName',)
-    list_filter = ('sentiment','program', SemesterFilter) 
-    actions = ['export']
-    import_form_class = ImportForm
-    export_form_class = ExportForm
 
-# ------------------------------
-# Warehouse models
-# ------------------------------
+
+from django.urls import reverse
+from django.template.loader import render_to_string
+
+from django.urls import reverse
+from django.utils.html import format_html
+
 @admin.register(FactFeedback)
 class FactFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactFeedbackResource
-    list_display = ('service','comments', 'sentiment', 'timestamp')
+    list_display = ('service', 'comments', 'sentiment', 'timestamp')
     search_fields = ('comments', 'service__service_name')
-    list_filter = ('service', 'sentiment', SemesterFilter)
-    actions = ['export']
-    import_form_class = ImportForm
-    export_form_class = ExportForm
+    list_filter = ('sentiment', SemesterFilter)
+    change_list_template = "admin/warehouse/factfeedback/change_list.html"
 
+    def changelist_view(self, request, extra_context=None):
+        """Render service filter buttons inline with search/filter area"""
+        try:
+            services = DimService.objects.all().order_by('service_name')
+            active_service = request.GET.get('service')
+
+            buttons = []
+
+            all_url = reverse('admin:warehouse_factfeedback_changelist')
+            is_all_active = not active_service
+
+            def btn_class(active):
+                # Match Unfold search bar & Filters button — slightly more rounded
+                base = (
+                    "inline-flex items-center rounded-lg border border-gray-200 bg-gray-50 "
+                    "px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 "
+                    "transition-colors shadow-sm"
+                )
+                if active:
+                    base = (
+                        "inline-flex items-center rounded-lg border border-green-600 bg-white "
+                        "px-4 py-2 text-sm font-semibold text-green-700 shadow-sm"
+                    )
+                return base
+
+            # "All" button
+            buttons.append(
+                f'<a href="{all_url}" class="{btn_class(is_all_active)}">All</a>'
+            )
+
+            for s in services:
+                url = f"{reverse('admin:warehouse_factfeedback_changelist')}?service={s.service_id}"
+                active = active_service == str(s.service_id)
+                buttons.append(f'<a href="{url}" class="{btn_class(active)}">{s.service_name}</a>')
+
+            # Wrap in a styled container
+            button_html = f'<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">{" ".join(buttons)}</div>'
+            
+            extra_context = extra_context or {}
+            extra_context["service_buttons"] = format_html(button_html)
+
+        except Exception as e:
+            print("Error in changelist_view:", e)
+            extra_context = extra_context or {}
+            extra_context["service_buttons"] = ""
+
+        return super().changelist_view(request, extra_context=extra_context)
 
 @admin.register(fact_teacher_evaluation)
 class FactTeacherEvaluationAdmin(ModelAdmin, ImportExportModelAdmin):
