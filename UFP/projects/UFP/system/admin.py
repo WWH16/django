@@ -15,17 +15,17 @@ from unfold.contrib.import_export.forms import ExportForm, ImportForm
 
 
 
-from .models import (
-    Service, Department, Sentiment, Program, Student,
-    StudentFeedback, StudentActivityLog, Teacher, TeacherEvaluation
-)
+from .models import (Service,  Sentiment, Student, StudentFeedback, StudentActivityLog)
+
 from warehouse.models import (
-    DimService, DimSentiment, DimStudent, dim_teacher,
-    fact_teacher_evaluation, FactFeedback
+    DimService, FactFeedback
 )
-from .resources import (TeacherResource, StudentFeedbackResource,
-                        FactFeedbackResource, TeacherEvaluationResource, DimTeacherResource,
-                        DimServiceResource, DimSentimentResource, DimStudentResource, StudentResource)
+from .resources import (
+    StudentFeedbackResource,
+    FactFeedbackResource,
+    StudentResource
+)
+
 
 
 admin.site.unregister(User)

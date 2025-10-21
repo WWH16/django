@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from system.models import Student, StudentFeedback, Service, Sentiment, StudentActivityLog, TeacherEvaluation, Teacher, Department, Program
+from system.models import Student, StudentFeedback, Service, Sentiment, StudentActivityLog, Department, Program
 from system.utils import log_student_activity
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
@@ -294,7 +294,7 @@ def give_feedback(request):
 
 
 
-from system.models import TeacherEvaluation, Teacher, Department, Program
+from system.models import Department, Program
 from django.shortcuts import render, redirect, get_object_or_404
 
 def _coerce_pk_for_model(model, raw_value):

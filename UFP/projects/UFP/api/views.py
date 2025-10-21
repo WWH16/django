@@ -9,15 +9,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
-from system.models import StudentFeedback, Teacher
+from system.models import StudentFeedback
 from warehouse.models import (
     FactFeedback,
-    fact_teacher_evaluation as Eval,
-    dim_teacher,
 )
 from .serializers import (
     FactFeedbackSerializer,
-    TeacherEvaluationSerializer,
 )
 
 # ============================================================
