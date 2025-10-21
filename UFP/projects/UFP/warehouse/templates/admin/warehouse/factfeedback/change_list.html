@@ -1,9 +1,54 @@
 {% extends "admin/change_list.html" %}
 
+{% block extrastyle %}
+{{ block.super }}
+<style>
+/* === Custom inline styles for Service Filter Buttons === */
+
+/* Container for the service buttons */
+.service-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Default button look — matches Unfold filter button */
+.service-button {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;       /* gray-200 */
+    background-color: #f9fafb;       /* gray-50 */
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;                  /* gray-700 */
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.15s ease-in-out;
+    text-decoration: none;
+}
+
+/* Hover state like Filters button */
+.service-button:hover {
+    background-color: #f3f4f6;       /* gray-100 */
+}
+
+/* Active/selected button (green border + text) */
+.service-button.active {
+    border-color: #16a34a;           /* green-600 */
+    color: #16a34a;                  /* green-700 */
+    background-color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 0 0 1px rgba(22,163,74,0.25);
+}
+</style>
+{% endblock %}
+
 {% block search %}
 <div class="flex flex-wrap items-center gap-2">
     {{ block.super }}
-    <div class="flex flex-wrap gap-2">
+    <div class="service-buttons-container">
         {{ service_buttons|safe }}
     </div>
 </div>
