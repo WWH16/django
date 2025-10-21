@@ -79,32 +79,3 @@ class StudentActivityLog(models.Model):
 
     def __str__(self):
         return f"Student {self.student} {str(self.activity_type).lower()} at {self.timestamp}"
-
-    
-class Teacher(models.Model):
-    teacher_id = models.CharField(max_length=50, primary_key=True)
-    teacherName = models.CharField(max_length=100)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.teacherName
-    
-from django.conf import settings
-
-class TeacherEvaluation(models.Model):
-    evaluationid = models.AutoField(primary_key=True)
-    comments = models.TextField()
-    timestamp = models.DateTimeField(default=timezone.now)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    is_anonymous = models.BooleanField(default=False)
-    submitted_by = models.CharField(max_length=100, null=True, blank=True)
-    specialization = models.CharField(max_length=100, null=True, blank=True)
-    sentiment = models.ForeignKey(Sentiment, on_delete=models.SET_NULL, null=True, blank=True)
-    
-
-    
-    def __str__(self):
-        return f"{self.teacher.teacherName} ({self.program.programName})"
-

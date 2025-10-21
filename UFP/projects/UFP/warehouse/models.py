@@ -54,32 +54,3 @@ class FactFeedback(models.Model):
 
     def __str__(self):
         return str(self.feedback_id)
-
-class dim_teacher(models.Model):
-    teacher_id = models.CharField(max_length=50, primary_key=True)
-    teacher_name = models.CharField(max_length=100, blank=True, null=True)
-    department_id = models.IntegerField(blank=True, null=True)
-    department_name = models.CharField(max_length=100, blank=True, null=True)
-    program_id = models.IntegerField(blank=True, null=True)
-    program_name = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        db_table = 'warehouse"."dim_teacher'
-
-    def __str__(self):
-        return self.teacher_name or self.teacher_id
-    
-class fact_teacher_evaluation(models.Model):
-    evaluation_id = models.AutoField(primary_key=True)
-    teacher = models.ForeignKey(dim_teacher, on_delete=models.SET_NULL, null=True, db_column='teacher_id')
-    student = models.ForeignKey(DimStudent, on_delete=models.SET_NULL, null=True, db_column='student_id')
-    sentiment = models.ForeignKey(DimSentiment, on_delete=models.SET_NULL, null=True, db_column='sentiment_id')
-    comment_length = models.IntegerField(blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
-    timestamp = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        db_table = 'warehouse"."fact_teacher_evaluation'
-
-    def __str__(self):
-        return str(self.evaluation_id) + " - " + (self.teacher.teacher_name if self.teacher else "Unknown Teacher")
