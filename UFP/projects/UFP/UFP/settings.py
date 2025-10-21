@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-du6e5_pr6n+edya3kso!$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-DEBUG = False
+DEBUG = True
 FRONTEND_URL = 'https://ufplatform.com/accounts/password_reset/'  # Used in email link
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ufplatform.com', 'www.ufplatform.com', 'ufpisu-cc.me', '157.230.243.90', 'localhost', '*']
 # or
@@ -311,20 +311,13 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Dashboard"),
-                "separator": True,
-                "collapsible":True,
-                "items": [
+                        "title": "",  # no section title
+                        "separator": True,
+                        "items": [
                     {
-                        "title": _("OSAS Dashboard"),
+                        "title": _("Dashboard"),
                         "icon": "pie_chart",
                         "link": reverse_lazy("admin_osas_services"),
-                        "permission": lambda request: request.user.is_staff,
-                    },
-                    {
-                        "title": _("Teacher Evaluation"),
-                        "icon": "school",
-                        "link": reverse_lazy("admin_teachers_evaluation"),
                         "permission": lambda request: request.user.is_staff,
                     },
                 ],
@@ -340,19 +333,9 @@ UNFOLD = {
                         "link": reverse_lazy("admin:system_service_changelist"),
                     },
                     {
-                        "title": _("Departments"),
-                        "icon": "apartment",
-                        "link": reverse_lazy("admin:system_department_changelist"),
-                    },
-                    {
                         "title": _("Sentiments"),
                         "icon": "emoji_emotions",
                         "link": reverse_lazy("admin:system_sentiment_changelist"),
-                    },
-                    {
-                        "title": _("Programs"),
-                        "icon": "school",
-                        "link": reverse_lazy("admin:system_program_changelist"),
                     },
                     {
                         "title": _("Students"),
@@ -363,16 +346,6 @@ UNFOLD = {
                         "title": _("Feedback"),
                         "icon": "feedback",
                         "link": reverse_lazy("admin:system_studentfeedback_changelist"),
-                    },
-                    {
-                        "title": _("Teachers"),
-                        "icon": "people",
-                        "link": reverse_lazy("admin:system_teacher_changelist"),
-                    },
-                    {
-                        "title": _("Teacher Evaluation"),
-                        "icon": "rate_review",
-                        "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
                     },
                     {
                         "title": _("Student Activity Log"),
@@ -387,34 +360,10 @@ UNFOLD = {
                 "collapsible": True,
                 "items": [
                     {
-                        "title": _("OSAS Feedbacks"),
+                        "title": _("Feedback"),
                         "icon": "feedback",
                         "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
-                    },{
-                        "title": _("Teacher Evaluation"),
-                        "icon": "rate_review",
-                        "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
                     },
-                    #{
-                    #    "title": _("DimService"),
-                    #    "icon": "build",
-                    #    "link": reverse_lazy("admin:warehouse_dimservice_changelist"),
-                    #},
-                    #{
-                    #    "title": _("DimSentiment"),
-                    #    "icon": "emoji_emotions",
-                    #    "link": reverse_lazy("admin:warehouse_dimsentiment_changelist"),
-                    #},
-                    #{
-                    #    "title": _("DimStudent"),
-                    #    "icon": "person",
-                    #    "link": reverse_lazy("admin:warehouse_dimstudent_changelist"),
-                    #},
-                    #{
-                    #    "title": _("DimTeacher"),
-                    #    "icon": "people",
-                    #    "link": reverse_lazy("admin:warehouse_dim_teacher_changelist"),
-                    #},
                 ],
             },
             {
@@ -469,58 +418,52 @@ UNFOLD = {
 
         ],
     },
-    "TABS": [
-        {
-            "models": [
-                "system.service",
-                "system.department",
-                "system.sentiment",
-                "system.program",
-                "system.student",
-                "system.studentfeedback",
-                "system.teacher",
-                "system.teacherevaluation",
-                "system.studentactivitylog",
-            ],
-            "items": [
-                {
-                    "title": _("Services"),
-                    "link": reverse_lazy("admin:system_service_changelist"),
-                },
-                {
-                    "title": _("Departments"),
-                    "link": reverse_lazy("admin:system_department_changelist"),
-                },
-                {
-                    "title": _("Sentiments"),
-                    "link": reverse_lazy("admin:system_sentiment_changelist"),
-                },
-                {
-                    "title": _("Programs"),
-                    "link": reverse_lazy("admin:system_program_changelist"),
-                },
-                {
-                    "title": _("Students"),
-                    "link": reverse_lazy("admin:system_student_changelist"),
-                },
-                {
-                    "title": _("Feedback"),
-                    "link": reverse_lazy("admin:system_studentfeedback_changelist"),
-                },
-                {
-                    "title": _("Teachers"),
-                    "link": reverse_lazy("admin:system_teacher_changelist"),
-                },
-                {
-                    "title": _("Teacher Evaluation"),
-                    "link": reverse_lazy("admin:system_teacherevaluation_changelist"),
-                },
-                {
-                    "title": _("Student Activity Log"),
-                    "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
-                },
-            ],
-        },
+"TABS": [
+    {
+        "models": ["system.service"],
+        "items": [
+            {
+                "title": _("Services"),
+                "link": reverse_lazy("admin:system_service_changelist"),
+            },
+        ],
+    },
+    {
+        "models": ["system.sentiment"],
+        "items": [
+            {
+                "title": _("Sentiments"),
+                "link": reverse_lazy("admin:system_sentiment_changelist"),
+            },
+        ],
+    },
+    {
+        "models": ["system.student"],
+        "items": [
+            {
+                "title": _("Students"),
+                "link": reverse_lazy("admin:system_student_changelist"),
+            },
+        ],
+    },
+    {
+        "models": ["system.studentfeedback"],
+        "items": [
+            {
+                "title": _("Feedback"),
+                "link": reverse_lazy("admin:system_studentfeedback_changelist"),
+            },
+        ],
+    },
+    {
+        "models": ["system.studentactivitylog"],
+        "items": [
+            {
+                "title": _("Student Activity Log"),
+                "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
+            },
+        ],
+    },
         {
             "models": [
                 "warehouse.dimservice",
@@ -531,10 +474,6 @@ UNFOLD = {
                 #warehouse.factfeedback",
             ],
             "items": [
-                {
-                    "title": _("Fact Teacher Evaluation"),
-                    "link": reverse_lazy("admin:warehouse_fact_teacher_evaluation_changelist"),
-                },
                 {
                     "title": _("Fact Feedback"),
                     "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),

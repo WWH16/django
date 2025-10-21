@@ -47,21 +47,6 @@ class FactFeedbackResource(resources.ModelResource):
         import_id_fields = ('feedback_id',)
         fields = ('service', 'sentiment', 'comments', 'timestamp')
 
-class FactTeacherEvaluationResource(resources.ModelResource):
-    teacher = fields.Field(
-        column_name='teacher',
-        attribute='teacher__teacher_name' 
-    )
-    sentiment = fields.Field(
-        column_name='sentiment',
-        attribute='sentiment__label'  
-    )
-
-    class Meta:
-        model = fact_teacher_evaluation
-        import_id_fields = ('evaluation_id',)
-        fields = ('teacher', 'sentiment', 'comments', 'timestamp')
-
 class DimServiceResource(resources.ModelResource):
     class Meta:
         model = DimService
