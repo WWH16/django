@@ -196,18 +196,18 @@
     <nav id="studentSidebar" class="sidebar">
       <ul class="sidebar-nav flex-column mb-3">
         {% if user.is_authenticated and user.username|slice:":6" != "guest_" %}
+                <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+            href="{% url 'profile' %}">
+            <i class="material-symbols-outlined">person</i>
+            <span class="sidebar-text">Profile</span>
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}"
             href="{% url 'my_feedback' %}">
             <i class="material-symbols-outlined">forum</i>
             <span class="sidebar-text">My Feedback</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
-            href="{% url 'profile' %}">
-            <i class="material-symbols-outlined">person</i>
-            <span class="sidebar-text">Profile</span>
           </a>
         </li>
         {% endif %}
@@ -216,12 +216,6 @@
             href="{% url 'give_feedback' %}">
             <i class="material-symbols-outlined">edit</i>
             <span class="sidebar-text">Give Feedback</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link sidebar-button" href="{% url 'teacher_evaluation' %}">
-            <i class="material-symbols-outlined" style="font-size:1.1em;">school</i>
-            <span class="sidebar-text">Teacher Evaluation</span>
           </a>
         </li>
         <!-- Divider to isolate logout button -->
