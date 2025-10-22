@@ -1,6 +1,6 @@
 from celery import shared_task, chain, group
-from system.models import Student, StudentFeedback, TeacherEvaluation
-from warehouse.models import DimStudent, FactFeedback, DimService, DimSentiment, dim_teacher, fact_teacher_evaluation
+from system.models import Student, StudentFeedback
+from warehouse.models import DimStudent, FactFeedback, DimService, DimSentiment
 from django.db import transaction
 from django.conf import settings
 import datetime
@@ -132,49 +132,6 @@ def run_feedback_to_warehouse_task(*args, **kwargs):
 
     return f"Processed {len(feedback_objs)} feedback entries into warehouse."
 
-
-# -------------------------
-# 3️⃣ Process Teacher Evaluation
-# -------------------------
-def run_teacher_eval_to_warehouse_task(*args, **kwargs):
-    processed_comments = set(fact_teacher_evaluation.objects.values_list('comments', flat=True))
-    new_evals = TeacherEvaluation.objects.exclude(comments__in=processed_comments)
-
-    if not new_evals.exists():
-        return "No new teacher evaluations to process."
-
-    eval_objs = []
-    dim_sentiments_cache = {}
-    dim_teachers_cache = {t.teacher_id: t for t in dim_teacher.objects.all()}
-
-    for ev in new_evals:
-        sentiment_label = get_sentiment_label(ev.comments)
-
-        # Cache DimSentiment objects
-        if sentiment_label not in dim_sentiments_cache:
-            sentiment_obj, _ = DimSentiment.objects.get_or_create(label=sentiment_label)
-            dim_sentiments_cache[sentiment_label] = sentiment_obj
-        else:
-            sentiment_obj = dim_sentiments_cache[sentiment_label]
-
-        teacher_obj = dim_teachers_cache.get(ev.teacher.teacher_id) if ev.teacher else None
-
-        eval_objs.append(
-            fact_teacher_evaluation(
-                teacher=teacher_obj,
-                sentiment=sentiment_obj,
-                timestamp=ev.timestamp,
-                comments=ev.comments,
-                comment_length=len(ev.comments)
-            )
-        )
-
-    if eval_objs:
-        with transaction.atomic():
-            fact_teacher_evaluation.objects.bulk_create(eval_objs)
-
-    return f"Processed {len(eval_objs)} teacher evaluations into warehouse."
-
 # -------------------------
 # 4️⃣ Chain tasks
 # -------------------------
@@ -188,21 +145,14 @@ def Process_all_Data(*args, **kwargs):
     feedback_result = run_feedback_to_warehouse_task()
     print(feedback_result)
 
-    # 3️⃣ Process new teacher evaluations
-    teacher_result = run_teacher_eval_to_warehouse_task()
-    print(teacher_result)
-
     # 4️⃣ Determine if WordClouds should be generated
     feedback_has_new = "No new feedback" not in feedback_result
-    teacher_has_new = "No new teacher evaluations" not in teacher_result
 
     if feedback_has_new or teacher_has_new:
         # Only generate WordClouds if there is new data
         wc_tasks = []
         if feedback_has_new:
             wc_tasks.append(generate_feedback_wordcloud_task.s())
-        if teacher_has_new:
-            wc_tasks.append(generate_teacher_eval_wordcloud_task.s())
 
         # Execute WordCloud tasks in parallel asynchronously
         from celery import group
@@ -225,7 +175,6 @@ def cleanup_invalid_sentiments():
     if count > 0:
         unknown_sentiment, _ = DimSentiment.objects.get_or_create(label="Unknown")
         FactFeedback.objects.filter(sentiment__in=invalid_sentiments).update(sentiment=unknown_sentiment)
-        fact_teacher_evaluation.objects.filter(sentiment__in=invalid_sentiments).update(sentiment=unknown_sentiment)
         invalid_sentiments.delete()
     return f"Cleaned up {count} invalid sentiment records."
 
@@ -252,14 +201,4 @@ def generate_feedback_wordcloud_task():
     cleaned_comments = clean_texts_for_wordcloud(all_comments)  # ✅ use pipeline preprocessor
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"feedback_wordcloud_{timestamp}.png"
-    return generate_wordcloud(cleaned_comments, filename)
-
-@shared_task
-def generate_teacher_eval_wordcloud_task():
-    all_comments = [ev.comments for ev in TeacherEvaluation.objects.all() if ev.comments]
-    if not all_comments:
-        return "No teacher evaluations to generate WordCloud."
-    cleaned_comments = clean_texts_for_wordcloud(all_comments)  # ✅ use pipeline preprocessor
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"teacher_eval_wordcloud_{timestamp}.png"
     return generate_wordcloud(cleaned_comments, filename)
