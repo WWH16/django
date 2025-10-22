@@ -161,19 +161,9 @@ def my_feedback(request):
     except Student.DoesNotExist:
         pass
 
-    # Teacher evaluations submitted by this user
-    teacher_evaluations = (
-        TeacherEvaluation.objects
-        .filter(submitted_by=username)  # <- ONLY this user's rows
-        .select_related('teacher', 'department', 'program', 'sentiment')
-        .annotate(teacher_name=F('teacher__teacherName'))
-        .order_by('-timestamp')
-    )
-
     return render(request, 'studentDashboard/my_feedback.html', {
         'feedback_list': feedback_list,
         'feedback_count': feedback_count,
-        'teacher_evaluations': teacher_evaluations,
     })
 
 @login_required
