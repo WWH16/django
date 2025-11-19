@@ -694,6 +694,7 @@ def service_feedback_by_semester(request, semester_slug=None):
         "services": results
     })
 
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -750,3 +751,4 @@ def grammar_correct(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+  
