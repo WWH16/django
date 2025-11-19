@@ -292,24 +292,19 @@ UNFOLD = {
         "command_search": True,  # Replace the sidebar search with the command search
         "show_all_applications": True,  # Dropdown with all applications and models
         "navigation": [
-            {
-                "title": _("Authentication and Authorization"),
-                "separator": True,  # Top border
-                # "collapsible": True,  # Collapsible group of links (optional)
-                "items": [
-                    {
-                        "title": _("Users"),
-                        "icon": "people",
-                        "link": reverse_lazy("admin:auth_user_changelist"),
-                        "permission": lambda request: request.user.is_superuser,
-                    },
-                    {
-                        "title": _("Groups"),
-                        "icon": "group",
-                        "link": reverse_lazy("admin:auth_group_changelist"),
-                    },
-                ],
-            },
+         #   {
+          #      "title": _(""),
+          #      "separator": True,  # Top border
+           #     # "collapsible": True,  # Collapsible group of links (optional)
+            #    "items": [
+             #       {
+              #          "title": _("Users"),
+               #         "icon": "people",
+                #        "link": reverse_lazy("admin:auth_user_changelist"),
+                 #       "permission": lambda request: request.user.is_superuser,
+                  #  },
+             #   ],
+          #  },
             {
                         "title": "",  # no section title
                         "separator": True,
@@ -323,44 +318,43 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("University Feedback Platform"),
+                "title": _(""),
                 "separator": True,
-                "collapsible": True,
+               # "collapsible": True,
                 "items": [
+                  #  {
+                  #      "title": _("Services"),
+                  #      "icon": "build",
+                  #      "link": reverse_lazy("admin:system_service_changelist"),
+                  #  },
+                  #  {
+                  #      "title": _("Sentiments"),
+                  #      "icon": "emoji_emotions",
+                  #      "link": reverse_lazy("admin:system_sentiment_changelist"),
+                  #  },
+                  #  {
+                  #      "title": _("Students"),
+                  #      "icon": "person",
+                  #      "link": reverse_lazy("admin:system_student_changelist"),
+                 # },
                     {
-                        "title": _("Services"),
-                        "icon": "build",
-                        "link": reverse_lazy("admin:system_service_changelist"),
-                    },
-                    {
-                        "title": _("Sentiments"),
-                        "icon": "emoji_emotions",
-                        "link": reverse_lazy("admin:system_sentiment_changelist"),
-                    },
-                    {
-                        "title": _("Students"),
-                        "icon": "person",
-                        "link": reverse_lazy("admin:system_student_changelist"),
-                    },
-                    {
-                        "title": _("Feedback"),
+                        "title": _("Feedbacks"),
                         "icon": "feedback",
                         "link": reverse_lazy("admin:system_studentfeedback_changelist"),
                     },
-                    {
-                        "title": _("Student Activity Log"),
-                        "icon": "history",
-                        "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
-                    },
+                  #  {
+                  #      "title": _("Student Activity Log"),
+                  #      "icon": "history",
+                  #      "link": reverse_lazy("admin:system_studentactivitylog_changelist"),
+                  #  },
                 ],
             },
             {
-                "title": _("Warehouse"),
+                "title": _(""),
                 "separator": True,
-                "collapsible": True,
                 "items": [
                     {
-                        "title": _("Feedback"),
+                        "title": _("Warehouse"),
                         "icon": "feedback",
                         "link": reverse_lazy("admin:warehouse_factfeedback_changelist"),
                     },
