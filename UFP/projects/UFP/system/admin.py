@@ -108,7 +108,7 @@ from django.utils.html import format_html
 @admin.register(FactFeedback)
 class FactFeedbackAdmin(ModelAdmin, ImportExportModelAdmin):
     resource_class = FactFeedbackResource
-    list_display = ('service', 'comments', 'sentiment', 'timestamp')
+    list_display = ('comments', 'sentiment', 'timestamp')
     list_filter = ('sentiment', SemesterFilter)
     import_form_class = ImportForm
     export_form_class = ExportForm
