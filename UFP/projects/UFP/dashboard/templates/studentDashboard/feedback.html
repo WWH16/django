@@ -3,39 +3,49 @@
 
 {% block content %}
 <div class="container" style="min-height: 100vh; padding-top: 90px;">
-    <div class="d-flex align-items-center justify-content-center" style="min-height: 75vh;">
-        <div class="row justify-content-center w-100">
-            <div class="col-md-8 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <!-- Changed: bi bi-chat-dots → fas fa-comment-dots -->
-                        <h3 class="mb-4 text-center text-success">
-                            <i class="fas fa-comment-dots"></i> Submit Your Feedback
-                        </h3>
-                        <form method="post" action="{% url 'give_feedback' %}">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="service" class="form-label">Service</label>
-                                <select class="form-select" id="service" name="service" required>
-                                    <option value="" disabled selected>Select a service</option>
-                                    <option value="Wi-Fi">Wi-Fi</option>
-                                    <option value="Library">Library</option>
-                                    <option value="Scholarship">Scholarship</option>
-                                    <!-- Add more services as needed -->
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="feedback" class="form-label">Your Feedback</label>
-                                <textarea class="form-control" id="feedback" name="feedback" rows="4" required placeholder="Type your feedback here..."></textarea>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-success">Submit Feedback</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+  <div class="d-flex align-items-center justify-content-center" style="min-height: 75vh;">
+    <div class="row justify-content-center w-100">
+      <div class="col-md-8 col-lg-6">
+        <div class="feedback-card shadow-lg">
+          <div class="feedback-card-header">
+            <div class="feedback-card-icon">
+              <i class="fas fa-comment-dots"></i>
             </div>
+            <div>
+              <h3 class="feedback-card-title mb-0">Submit your feedback</h3>
+              <div class="feedback-card-subtitle">Guest submissions use the same look and feel as the main platform.</div>
+            </div>
+          </div>
+
+          <div style="position: relative;">
+            <form method="post" action="{% url 'give_feedback' %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <div class="feedback-input-label">Service</div>
+                <select class="form-select feedback-input" id="service" name="service" required>
+                  <option value="" disabled selected>Select a service</option>
+                  <option value="Wi-Fi">Wi-Fi</option>
+                  <option value="Library">Library</option>
+                  <option value="Scholarship">Scholarship</option>
+                  <!-- Add more services as needed -->
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="feedback" class="feedback-input-label">Your feedback</label>
+                <textarea class="form-control feedback-input feedback-textarea" id="feedback" name="feedback" rows="4" required
+                  placeholder="Type your feedback here..."></textarea>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn feedback-submit-btn">
+                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">send</span>
+                  Submit feedback
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

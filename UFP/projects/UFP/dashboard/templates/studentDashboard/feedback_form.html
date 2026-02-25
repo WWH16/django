@@ -158,6 +158,154 @@
     .modal-footer {
       border-top: none !important;
     }
+
+    /* Feedback card + inputs using landing page palette */
+    .feedback-card {
+      position: relative;
+      border-radius: 2rem;
+      background: radial-gradient(circle at top left, rgba(248, 250, 252, 0.98), rgba(226, 232, 240, 0.96));
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.45),
+        0 0 0 1px rgba(148, 163, 184, 0.35);
+      backdrop-filter: blur(18px);
+      padding: 2.2rem 2rem 2rem;
+    }
+
+    @media (max-width: 576px) {
+      .feedback-card {
+        padding: 1.6rem 1.4rem 1.5rem;
+        border-radius: 1.6rem;
+      }
+    }
+
+    .feedback-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .feedback-card-icon {
+      width: 2.8rem;
+      height: 2.8rem;
+      border-radius: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #f9fafb;
+      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.45);
+      font-size: 1.6rem;
+      margin-top: -1.4rem; /* Slightly lower than previous for fine alignment */
+    }
+
+    .feedback-card-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .feedback-card-subtitle {
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-bottom: 1.4rem;
+    }
+
+    .feedback-input-label {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.35rem;
+    }
+
+    .feedback-input {
+      border-radius: 0.9rem;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      font-size: 0.9rem;
+      padding: 0.68rem 0.9rem;
+      box-shadow: none !important;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+      background-color: rgba(248, 250, 252, 0.95);
+    }
+
+    .feedback-input:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25), 0 10px 25px rgba(22, 163, 74, 0.18);
+      background-color: #ffffff;
+    }
+
+    .feedback-input::placeholder {
+      color: #9ca3af;
+      font-size: 0.86rem;
+    }
+
+    .feedback-textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .feedback-form-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: #6b7280;
+      margin-top: 0.2rem;
+    }
+
+    .feedback-anon-check {
+      font-size: 0.84rem;
+      color: #4b5563;
+    }
+
+    .feedback-anon-check .form-check-input {
+      margin-top: 0.1rem;
+      border-radius: 0.55rem;
+      border-color: rgba(148, 163, 184, 0.9);
+    }
+
+    .feedback-anon-check .form-check-input:checked {
+      background-color: #16a34a;
+      border-color: #16a34a;
+    }
+
+    .feedback-submit-btn {
+      border-radius: 999px;
+      padding: 0.78rem 1.1rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      border: none;
+      background: #079e07; /* Lighter green as default */
+      box-shadow: 0 10px 24px rgba(7, 158, 7, 0.45);
+      color: #ffffff;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+    }
+
+    .feedback-submit-btn:hover {
+      transform: translateY(-1px) scale(1.01);
+      background-color: #006600; /* Darker green on hover (navbar color) */
+      box-shadow: 0 18px 36px rgba(0, 102, 0, 0.55);
+    }
+
+    .feedback-submit-btn:active {
+      transform: translateY(1px) scale(0.99);
+      background-color: #006600;
+      box-shadow: 0 6px 18px rgba(0, 102, 0, 0.45);
+    }
+
+    .feedback-footer-note {
+      font-size: 0.78rem;
+      color: #6b7280;
+    }
   </style>
 </head>
 
@@ -243,68 +391,76 @@
       <div class="container-fluid">
         <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
           <div class="col-12 col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-              <div class="card-body" id="feedbackFormContainer">
-                <h3 class="mb-4 text-center text-success">
-                  <i class="fas fa-comment-dots"></i> Submit Your Feedback
-                </h3>
-                <!-- ALERTS for form feedback -->
-                {% if messages %}
-                {% for message in messages %}
-                {% if 'login' not in message.tags and 'success' not in message.tags %}
-                <div
-                  class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show"
-                  role="alert">
-                  {{ message }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="feedback-card shadow-lg" id="feedbackFormContainer">
+              <div class="feedback-card-header">
+                <div class="feedback-card-icon">
+                  <i class="fas fa-comment-dots"></i>
                 </div>
-                {% endif %}
-                {% endfor %}
-                {% endif %}
+                <div>
+                  <h3 class="feedback-card-title mb-0">Submit your feedback</h3>
+                  <div class="feedback-card-subtitle">It only takes a minute, but it helps us a lot.</div>
+                </div>
+              </div>
 
-                <!-- Form with relative positioning container -->
-                <div style="position: relative;">
-                  
+              <!-- ALERTS for form feedback -->
+              {% if messages %}
+              {% for message in messages %}
+              {% if 'login' not in message.tags and 'success' not in message.tags %}
+              <div
+                class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show mb-3"
+                role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
 
-
-                  <form method="post" action="" id="feedbackForm">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                      <select class="form-select" id="service" name="service">
-                        <option value="" disabled selected>Select a service</option>
-                        {% for service in services %}
-                        <option value="{{ service.serviceID }}">{{ service.serviceName }}</option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                    <div class="mb-3">
-                      <label for="feedback" class="form-label">Your Feedback</label>
-                      <textarea class="form-control" id="feedback" name="feedback" rows="4"
-                        placeholder="Type your feedback here..."></textarea>
+              <!-- Form with relative positioning container -->
+              <div style="position: relative;">
+                <form method="post" action="" id="feedbackForm">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <div class="feedback-input-label">Select a service</div>
+                    <select class="form-select feedback-input" id="service" name="service">
+                      <option value="" disabled selected>Select a service</option>
+                      {% for service in services %}
+                      <option value="{{ service.serviceID }}">{{ service.serviceName }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label for="feedback" class="feedback-input-label">Your feedback</label>
+                    <textarea class="form-control feedback-input feedback-textarea" id="feedback" name="feedback" rows="4"
+                      placeholder="Describe your experience, what went well, and what can be improved."></textarea>
+                    <div class="feedback-form-meta">
                       <!-- Service-specific prompt / hint -->
-                      <div id="feedbackHint" class="form-text text-muted">Please describe your experience in a few sentences.</div>
+                      <div id="feedbackHint" class="form-text text-muted m-0">Please describe your experience in a few sentences.</div>
                       <!-- Live word count -->
-                      <div id="wordCount" class="form-text text-muted text-end">0 words</div>
+                      <div id="wordCount" class="form-text text-muted text-end m-0">0 words</div>
                     </div>
-                    <div class="mb-3">
-                      <label for="anonymous" class="form-check-label">
-                        <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
+                  </div>
+                  <div class="mb-3">
+                    <div class="form-check feedback-anon-check">
+                      <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
+                      <label for="anonymous" class="form-check-label ms-1">
                         Submit as anonymous
                       </label>
                     </div>
-                    <!-- Feedback Form Button -->
-                    <div class="d-grid">
-                      <button type="submit" class="btn btn-success" id="submitBtn">
-                        <span class="material-symbols-outlined">send</span> Submit Feedback
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  </div>
+                  <!-- Feedback Form Button -->
+                  <div class="d-grid">
+                    <button type="submit" class="btn feedback-submit-btn" id="submitBtn">
+                      <span class="material-symbols-outlined" style="font-size: 1.1rem;">send</span>
+                      Submit feedback
+                    </button>
+                  </div>
+                </form>
+              </div>
 
-                <hr>
-                <div class="text-center text-muted" style="font-size: 0.95em;">
-                  Your feedback helps us improve our services. Thank you!
-                </div>
+              <hr class="mt-4 mb-3">
+              <div class="text-center feedback-footer-note">
+                Your feedback helps us improve campus services. Thank you for taking the time.
               </div>
             </div>
           </div>

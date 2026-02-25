@@ -53,13 +53,13 @@
   }
 </style>
 
-<div class="container py-4" style="background-color: #eeeeee; min-height: 100vh;">
+<div class="container py-4" style="min-height: 100vh;">
   <h3 class="text-success mb-4" style="font-size: 1.3rem;">
     <i class="fas fa-user-circle"></i> My Profile
   </h3>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-body" style="font-size: 0.95rem;">
+  <div class="feedback-card shadow-lg mb-4">
+    <div class="card-body" style="font-size: 0.95rem; background: transparent; border: 0; padding: 0;">
       <h5 class="card-title" style="font-size: 1.05rem;">Account Details</h5>
       <p style="font-size: 0.92rem;"><strong>Student ID:</strong> {{ user.username }}</p>
       <p style="font-size: 0.92rem;"><strong>Full Name:</strong> {{ user.first_name }}</p>
