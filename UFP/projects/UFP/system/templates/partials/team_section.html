@@ -1,316 +1,66 @@
 {% load static %}
-<section id="team" class="team-section py-5" data-aos="fade-up">
-  <div class="container">
-    <div class="row align-items-center mb-5 flex-column-reverse flex-lg-row">
-      <!-- Left Intro -->
-      <div class="col-lg-5 text-center text-lg-start" data-aos="fade-right" data-aos-delay="100">
-        <h3 class="team-subtitle text-success">Meet Our Team</h3>
-        <h2 class="team-heading">The Student Development Team Behind the Platform</h2>
-        <p class="team-description">We developed this platform as part of our thesis to enable meaningful student feedback — built with research, collaboration, and care.</p>
-      </div>
-
-      <!-- Right Team Members -->
-      <div class="col-lg-7 d-flex justify-content-start flex-wrap gap-4 team-members-wrapper" data-aos="fade-left" data-aos-delay="200">
-
-        <!-- Leader 1 -->
-        <div class="team-member" data-bs-toggle="modal" data-bs-target="#teamModal1" data-aos="zoom-in" data-aos-delay="300">
-          <div class="member-img">
-            <img src="{% static 'system/images/ken.webp' %}" alt="Kennie Angelo R. Estrellon">
-          </div>
-          <h5 class="member-name mt-2">Kennie Angelo R.</h5>
-          <p class="member-role text-success small">4th Year BSCS-DM</p>
-          <div class="social-links">
-            <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://www.facebook.com/shinichikenn" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/kensstre/" target="_blank"><i class="bi bi-instagram"></i></a>
-          </div>
-        </div>
-
-        <!-- Leader 2 -->
-        <div class="team-member" data-bs-toggle="modal" data-bs-target="#teamModal2" data-aos="zoom-in" data-aos-delay="400">
-          <div class="member-img">
-            <img src="{% static 'system/images/panis2.webp' %}" alt="Nathaniel Panis">
-          </div>
-          <h5 class="member-name mt-2">Nathaniel Panis</h5>
-          <p class="member-role text-success small">4th Year BSCS-DM</p>
-          <div class="social-links">
-            <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://www.facebook.com/nathaniel.panis.355" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/nielpns/" target="_blank"><i class="bi bi-instagram"></i></a>
-          </div>
-        </div>
-
-        <!-- Leader 3 -->
-        <div class="team-member" data-bs-toggle="modal" data-bs-target="#teamModal3" data-aos="zoom-in" data-aos-delay="500">
-          <div class="member-img">
-            <img src="{% static 'system/images/cen.webp' %}" alt="John Ansley Rocel">
-          </div>
-          <h5 class="member-name mt-2">John Ansley Rocel</h5>
-          <p class="member-role text-success small">4th Year BSCS-DM</p>
-          <div class="social-links">
-            <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://www.facebook.com/johnansley.esteves" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/b._.boss__/" target="_blank"><i class="bi bi-instagram"></i></a>
-          </div>
-        </div>
-
-      </div>
+<section class="py-32 bg-[#e8efeb] dark:bg-background-dark/80" id="team">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-24">
+      <h2 class="text-sm font-black text-primary uppercase tracking-[0.3em] mb-4">Meet Our Team</h2>
+      <h3 class="text-4xl md:text-5xl font-extrabold tracking-tight text-[#0e1b13] dark:text-white">The Student Development Team Behind the Platform</h3>
+      <p class="text-slate-500 mt-6 max-w-2xl mx-auto font-medium">We developed this platform as part of our thesis to enable meaningful student feedback — built with research, collaboration, and care.</p>
     </div>
-  </div>
-
-  <!-- ================= Modals ================= -->
-  <!-- Modal 1 -->
-  <div class="modal fade" id="teamModal1" tabindex="-1" aria-labelledby="teamModal1Label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="teamModal1Label">Kennie Angelo R. Estrellon</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="grid md:grid-cols-3 gap-16">
+      <div class="text-center group p-6 rounded-3xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:bg-white/50 dark:hover:bg-white/5 rounded-3xl border border-transparent hover:border-primary/20">
+        <div class="relative mx-auto mb-8 w-56 h-56 overflow-hidden blob-shape transition-transform group-hover:scale-105 duration-500 border-4 border-primary/20">
+          <img class="w-full h-full object-cover" alt="Kennie Angelo R. Estrellon" src="{% static 'system/images/ken.webp' %}"/>
         </div>
-        <div class="modal-body">
-          <p>Member of the development team behind the student-centered feedback systems. Passionate about full-stack development, problem-solving, and leveraging AI to improve user experience.</p>
-          <div class="d-flex gap-3 justify-content-center">
-            <a href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://www.facebook.com/shinichikenn" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/kensstre/" target="_blank"><i class="bi bi-instagram"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 2 -->
-  <div class="modal fade" id="teamModal2" tabindex="-1" aria-labelledby="teamModal2Label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="teamModal2Label">Nathaniel Panis</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Member of the development team focusing on front-end development. Specializes in creating responsive user interfaces and enhancing user experience through modern web technologies.</p>
-          <div class="d-flex gap-3 justify-content-center">
-            <a href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://www.facebook.com/nathaniel.panis.355" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/nielpns/" target="_blank"><i class="bi bi-instagram"></i></a>
-          </div>
+        <h4 class="text-2xl font-black text-[#0e1b13] dark:text-white group-hover:text-primary transition-colors duration-300">Kennie Angelo R.</h4>
+        <p class="text-primary font-bold uppercase tracking-widest text-xs mb-4">4th Year BSCS-DM</p>
+        <div class="flex justify-center gap-4">
+          <a class="text-slate-400 hover:text-[#0a66c2] transition-colors" href="https://www.linkedin.com/in/kennie-angelo-estrellon-3b47ba350/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a class="text-slate-400 hover:text-[#1877f2] transition-colors" href="https://www.facebook.com/shinichikenn" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a class="text-slate-400 hover:text-[#e4405f] transition-colors" href="https://www.instagram.com/kensstre/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal 3 -->
-  <div class="modal fade" id="teamModal3" tabindex="-1" aria-labelledby="teamModal3Label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="teamModal3Label">John Ansley Rocel</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="text-center group p-6 rounded-3xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:bg-white/50 dark:hover:bg-white/5 rounded-3xl border border-transparent hover:border-primary/20">
+        <div class="relative mx-auto mb-8 w-56 h-56 overflow-hidden blob-shape transition-transform group-hover:scale-105 duration-500 border-4 border-primary/20">
+          <img class="w-full h-full object-cover" alt="Nathaniel Panis" src="{% static 'system/images/panis2.webp' %}"/>
         </div>
-        <div class="modal-body">
-          <p>Part of the development team behind a student-centered feedback system. Interested in software engineering and real-world applications of AI.</p>
-          <div class="d-flex gap-3 justify-content-center">
-            <a href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="https://www.facebook.com/johnansley.esteves" target="_blank"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/b._.boss__/" target="_blank"><i class="bi bi-instagram"></i></a>
-          </div>
+        <h4 class="text-2xl font-black text-[#0e1b13] dark:text-white group-hover:text-primary transition-colors duration-300">Nathaniel Panis</h4>
+        <p class="text-primary font-bold uppercase tracking-widest text-xs mb-4">4th Year BSCS-DM</p>
+        <div class="flex justify-center gap-4">
+          <a class="text-slate-400 hover:text-[#0a66c2] transition-colors" href="https://www.linkedin.com/in/panis-nathaniel-0b1174370/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a class="text-slate-400 hover:text-[#1877f2] transition-colors" href="https://www.facebook.com/nathaniel.panis.355" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a class="text-slate-400 hover:text-[#e4405f] transition-colors" href="https://www.instagram.com/nielpns/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="text-center group p-6 rounded-3xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:bg-white/50 dark:hover:bg-white/5 rounded-3xl border border-transparent hover:border-primary/20">
+        <div class="relative mx-auto mb-8 w-56 h-56 overflow-hidden blob-shape transition-transform group-hover:scale-105 duration-500 border-4 border-primary/20">
+          <img class="w-full h-full object-cover" alt="John Ansley Rocel" src="{% static 'system/images/cen.webp' %}"/>
+        </div>
+        <h4 class="text-2xl font-black text-[#0e1b13] dark:text-white group-hover:text-primary transition-colors duration-300">John Ansley Rocel</h4>
+        <p class="text-primary font-bold uppercase tracking-widest text-xs mb-4">4th Year BSCS-DM</p>
+        <div class="flex justify-center gap-4">
+          <a class="text-slate-400 hover:text-[#0a66c2] transition-colors" href="https://www.linkedin.com/in/rocel-john-ansley-982336307/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a class="text-slate-400 hover:text-[#1877f2] transition-colors" href="https://www.facebook.com/johnansley.esteves" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a class="text-slate-400 hover:text-[#e4405f] transition-colors" href="https://www.instagram.com/b._.boss__/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-<style>
-/* ================= Team Section Scoped ================= */
-#team {
-  padding: 60px 0;
-  background: linear-gradient(135deg, rgba(0,102,0,0.05), rgba(0,102,0,0.15));
-  border-radius: 15px;
-}
-
-#team .team-subtitle {
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #006600;
-  margin-bottom: 0.5rem;
-}
-
-#team .team-heading {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-#team .team-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #555;
-}
-
-/* Right column flex */
-#team .col-lg-7 {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 15px;
-}
-
-/* Team Member Cards */
-#team .team-member {
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 12px;
-  padding: 15px;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  flex: 1 1 200px;
-  max-width: 240px;
-  position: relative;
-}
-
-#team .team-member:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-#team .member-img {
-  width: 140px;
-  height: 140px;
-  overflow: hidden;
-  border-radius: 8px;
-  margin: 0 auto 8px;
-  transition: transform 0.3s ease;
-}
-
-#team .team-member:hover .member-img {
-  transform: scale(1.05);
-}
-
-#team .member-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-#team .member-name {
-  font-weight: 600;
-  margin-top: 0.5rem;
-  font-size: 1rem;
-}
-
-#team .member-role {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #006600;
-}
-
-/* Social Media Hover */
-#team .team-member .social-links {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  margin-top: 10px;
-}
-
-#team .team-member:hover .social-links {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Modal links */
-#team .modal-body a {
-  font-size: 1.25rem;
-  color: #006600;
-  transition: color 0.3s;
-}
-
-#team .modal-body a:hover {
-  color: #28a745;
-}
-
-/* ================= Responsive ================= */
-@media (max-width: 768px) {
-  .flex-column-reverse {
-    flex-direction: column !important;
-  }
-
-  #team .team-members-wrapper {
-    justify-content: center !important;
-  }
-
-  #team .team-member {
-    flex: 1 1 220px !important;
-    max-width: 220px !important;
-    padding: 14px !important;
-  }
-
-  #team .member-img {
-    width: 150px !important;
-    height: 150px !important;
-  }
-
-  #team .member-name {
-    font-size: 0.95rem;
-    margin-top: 0.4rem;
-  }
-
-  #team .member-role {
-    font-size: 0.8rem;
-  }
-
-  #team .team-heading {
-    font-size: 2.5rem;
-  }
-
-  #team .team-subtitle {
-    font-size: 1.25rem;
-  }
-
-  #team .team-member .social-links {
-    gap: 8px;
-  }
-
-  #team .social-links a i {
-    font-size: 1rem;
-  }
-}
-
-/* ✅ Extra small screens <500px */
-@media (max-width: 500px) {
-  #team .team-member {
-    flex: 1 1 200px !important;
-    max-width: 200px !important;
-    padding: 12px !important;
-  }
-
-  #team .member-img {
-    width: 140px !important;
-    height: 140px !important;
-  }
-
-  #team .member-name {
-    font-size: 0.9rem;
-  }
-
-  #team .member-role {
-    font-size: 0.75rem;
-  }
-
-  /* ✅ Make heading match "Selected OSAS Services" */
-  #team .team-heading {
-    font-size: 1.8rem !important;
-  }
-
-  /* ✅ Slightly smaller subtitle */
-  #team .team-subtitle {
-    font-size: 1.1rem !important;
-  }
-}
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
