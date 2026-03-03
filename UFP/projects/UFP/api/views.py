@@ -699,20 +699,20 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import os
-from openai import OpenAI
+# from openai import OpenAI
 
-client = OpenAI(api_key="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")
+# client = OpenAI(api_key="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")
 
 # Test call
-response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "You are a grammar corrector."},
-        {"role": "user", "content": "This are wrong sentence."}
-    ]
-)
+# response = client.chat.completions.create(
+#    model="gpt-4o-mini",
+#    messages=[
+#        {"role": "system", "content": "You are a grammar corrector."},
+#        {"role": "user", "content": "This are wrong sentence."}
+#    ]
+#)
 
-print(response.choices[0].message.content)
+#print(response.choices[0].message.content)
 
 
 @csrf_exempt
