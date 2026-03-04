@@ -14,8 +14,7 @@ from import_export.admin import ImportExportModelAdmin
 from unfold.contrib.import_export.forms import ExportForm, ImportForm
 
 
-
-from .models import (Service,  Sentiment, Student, StudentFeedback, StudentActivityLog)
+from .models import Service, Sentiment, Student, StudentFeedback, StudentActivityLog, Department, Program
 
 from warehouse.models import (
     DimService, FactFeedback
@@ -25,7 +24,6 @@ from .resources import (
     FactFeedbackResource,
     StudentResource
 )
-
 
 
 admin.site.unregister(User)
@@ -86,6 +84,16 @@ class StudentAdmin(ModelAdmin, ImportExportModelAdmin):
     actions = ['export']
     import_form_class = ImportForm
     export_form_class = ExportForm
+
+@admin.register(Department)
+class DepartmentAdmin(ModelAdmin):
+    list_display = ('departmentID', 'departmentName')
+    search_fields = ('departmentName',)
+
+@admin.register(Program)
+class ProgramAdmin(ModelAdmin):
+    list_display = ('programID', 'programName')
+    search_fields = ('programName',)
     
 
 @admin.register(StudentFeedback)
