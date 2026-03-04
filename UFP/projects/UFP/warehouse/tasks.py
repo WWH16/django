@@ -147,7 +147,7 @@ def Process_all_Data(*args, **kwargs):
 
     # 4️⃣ Determine if WordClouds should be generated
     feedback_has_new = "No new feedback" not in feedback_result
-
+    teacher_has_new = False
     if feedback_has_new or teacher_has_new:
         # Only generate WordClouds if there is new data
         wc_tasks = []

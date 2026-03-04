@@ -44,7 +44,6 @@ numpy==1.26.4
 packaging==25.0
 pillow==11.3.0
 prompt_toolkit==3.0.52
-psycopg2==2.9.10
 psycopg2-binary==2.9.10
 pyparsing==3.2.5
 python-crontab==3.3.0
