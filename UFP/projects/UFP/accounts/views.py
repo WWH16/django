@@ -20,9 +20,10 @@ def select_view(request):
 
 # Student Login
 def login_student_view(request):
-    # 🔹 If already authenticated, redirect to dashboard
+    # 🔹 If already authenticated (and NOT a guest), redirect to dashboard
     if request.user.is_authenticated and not request.user.is_staff:
-        return redirect('give_feedback')
+        if not request.user.username.startswith('guest_'):
+            return redirect('give_feedback')
 
     if request.method == 'POST':
         form = StudentLoginForm(request.POST)
