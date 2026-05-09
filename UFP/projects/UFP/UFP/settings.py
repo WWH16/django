@@ -203,16 +203,13 @@ RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')
 
 RECAPTCHA_REQUIRED_SCORE = 0.85  # 0.0 to 1.0, adjust as needed
 
-# Namecheap PrivateEmail SMTP
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-#EMAIL_HOST = "mail.privateemail.com"
-#EMAIL_PORT = 587
-SENDGRID_API_KEY = "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"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.resend.com'
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = "no-reply@ufplatform.com"
-EMAIL_HOST_PASSWORD = "Ge!O56!=Ujes"
-
+EMAIL_HOST_USER = 'resend'
+EMAIL_HOST_PASSWORD = config('RESEND_API_KEY')
 DEFAULT_FROM_EMAIL = "University Feedback Platform <no-reply@ufplatform.com>"
 
 
