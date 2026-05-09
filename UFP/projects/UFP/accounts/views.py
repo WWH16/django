@@ -382,4 +382,10 @@ def guest_login(request):
     )
     # optionally add to a "Guest" group
     login(request, guest_user)
+    messages.success(
+        request, 
+        "You are now in Guest Mode.", 
+        extra_tags='Guest Mode'
+    )
+    request.session["guest_notified"] = True
     return redirect("give_feedback")

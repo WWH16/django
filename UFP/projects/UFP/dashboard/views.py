@@ -214,13 +214,20 @@ def give_feedback(request):
     # check for login toast
     show_login_toast = request.session.pop("show_login_toast", False)
 
+    # 🔹 Guest Notification Modal
+    if is_guest and not request.session.get("guest_notified", False):
+        messages.success(
+            request, 
+            "You are now in Guest Mode.", 
+            extra_tags='Guest Mode'
+        )
+        request.session["guest_notified"] = True
+
     # ---- Identify student profile ----
     if not is_guest:
         try:
             student = Student.objects.get(studentID=request.user.username)
         except Student.DoesNotExist:
-            # If not a recognized student, try to treat as guest or redirect
-            messages.warning(request, "Student profile not found.")
             student = None
 
     # ---- POST handling ----
@@ -536,13 +543,17 @@ def teacher_evaluation(request):
     if request.user.is_authenticated:
         if request.user.username.startswith("guest_"):
             if not request.session.get("guest_notified", False):
-                messages.warning(request, "You are in guest mode. Your evaluation will be anonymous.")
+                messages.success(
+                    request, 
+                    "You are now in Guest Mode.", 
+                    extra_tags='Guest Mode'
+                )
                 request.session["guest_notified"] = True
         else:
             try:
                 student = Student.objects.get(studentID=request.user.username)
             except Student.DoesNotExist:
-                messages.error(request, "Student profile not found. Your evaluation will be anonymous.")
+                student = None
     # Cooldown removed
 
     # 🔹 Handle form submission
