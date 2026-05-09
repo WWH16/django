@@ -20,13 +20,9 @@ def select_view(request):
 
 # Student Login
 def login_student_view(request):
-    # 🔹 Skip login form only if "Remember Me" was checked before
-    if request.user.is_authenticated and request.session.get('remember_me', False):
-        try:
-            Student.objects.get(studentID=request.user.username)
-            return redirect('give_feedback')  # student dashboard
-        except Student.DoesNotExist:
-            pass
+    # 🔹 If already authenticated, redirect to dashboard
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('give_feedback')
 
     if request.method == 'POST':
         form = StudentLoginForm(request.POST)
@@ -57,6 +53,8 @@ def login_student_view(request):
                 else:
                     request.session.set_expiry(0)  # Until browser closes
                     request.session['remember_me'] = False
+
+                request.session['show_login_toast'] = True  # <--- Set this flag
 
                 messages.success(
                     request,

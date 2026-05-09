@@ -135,7 +135,20 @@ def osas_sentiment_dashboard(request):
     return JsonResponse(data)
 
 
-# ---------- Existing dashboard / student views ----------
+from functools import wraps
+from django.shortcuts import redirect
+
+def student_required(view_func):
+    """
+    Decorator that checks if the user is authenticated.
+    Redirects to login_student if the user is not authenticated.
+    """
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("login_student")
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
 def _resolve_username(user):
     """Use the SAME logic used when saving TeacherEvaluation.submitted_by."""
@@ -147,7 +160,7 @@ def _resolve_username(user):
         username = str(getattr(user, 'pk', '') or user) or 'Unknown'
     return username
 
-@login_required
+@student_required
 def my_feedback(request):
     username = _resolve_username(request.user)
 
@@ -166,7 +179,7 @@ def my_feedback(request):
         'feedback_count': feedback_count,
     })
 
-@login_required
+@student_required
 def profile(request):
     try:
         student = Student.objects.get(studentID=request.user.username)
@@ -188,79 +201,61 @@ def profile(request):
         }
     return render(request, 'studentDashboard/profile.html', context)
 
-from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+@student_required
 def give_feedback(request):
     now = timezone.now()
     services = Service.objects.all().order_by("serviceName")
 
-    # default values (guarantee these exist for every render)
+    # default values
     student = None
-    is_guest = False
-    cooldown_remaining = 0
-
-    # pop one-time login toast flag (set this in your login/guest_login view)
+    is_guest = request.user.username.startswith("guest_")
+    
+    # check for login toast
     show_login_toast = request.session.pop("show_login_toast", False)
 
-    # ---- Identify guest vs student ----
-    if request.user.username.startswith("guest_"):
-        is_guest = True
-        # one-time guest notice in-session
-        if not request.session.get("guest_notified", False):
-            messages.info(request, "You are in guest mode. Your feedback will be anonymous.")
-            request.session["guest_notified"] = True
-    else:
-        # try to find Student profile (if none, we keep student=None and warn)
+    # ---- Identify student profile ----
+    if not is_guest:
         try:
             student = Student.objects.get(studentID=request.user.username)
-            # optional one-time welcome for real students
-            if not request.session.get("student_notified", False):
-                messages.success(
-                    request,
-                    f"Welcome back {student.studentName}!"
-                )
-                request.session["student_notified"] = True
         except Student.DoesNotExist:
-            messages.warning(request, "Student profile not found. Your feedback will be anonymous.")
+            # If not a recognized student, try to treat as guest or redirect
+            messages.warning(request, "Student profile not found.")
             student = None
-
-    # Cooldown removed
-    cooldown_remaining = 0
 
     # ---- POST handling ----
     if request.method == "POST":
-        # Cooldown removed: allow immediate submission
-
         service_id = request.POST.get("service")
         feedback_text = request.POST.get("feedback")
+        
+        # Capture anonymous checkbox state
+        # Note: 'anonymous' in request.POST matches the name attribute in the form
+        is_anonymous = request.POST.get("anonymous") == "on"
 
         if not service_id or not feedback_text:
             messages.error(request, "Please fill in all required fields.")
             return render(request, "studentDashboard/feedback_form.html", {
-                "cooldown_remaining": cooldown_remaining,
-                "show_login_toast": show_login_toast,
                 "services": services,
                 "student": student,
+                "show_login_toast": show_login_toast,
             })
 
         try:
             service = Service.objects.get(pk=service_id)
 
             StudentFeedback.objects.create(
-                student=student if student else None,
-                guest_id=request.user.username if is_guest else None,
+                student=student if student and not is_anonymous else None,
+                guest_id=request.user.username if is_guest or is_anonymous else None,
                 service=service,
                 sentiment=None,
                 comments=feedback_text,
                 timestamp=timezone.now()
             )
 
-            if student:
+            if student and not is_anonymous:
                 log_student_activity(student=student, activity_type="StudentProvidedFeedback")
 
             messages.success(request, "Thank you for your feedback!")
-            # After successful POST redirect (PRG) — keep login toast state consumed already
             return redirect("give_feedback")
 
         except Service.DoesNotExist:
@@ -268,18 +263,12 @@ def give_feedback(request):
         except Exception as e:
             messages.error(request, f"Error submitting feedback: {str(e)}")
 
-        # If we fallthrough because of an exception, render with full context
-        return render(request, "studentDashboard/feedback_form.html", {
-            "show_login_toast": show_login_toast,
-            "services": services,
-            "student": student,
-        })
-
-    # ---- GET: render page with context ----
+    # ---- GET: render page ----
     return render(request, "studentDashboard/feedback_form.html", {
-        "show_login_toast": show_login_toast,
         "services": services,
         "student": student,
+        "is_guest": is_guest,
+        "show_login_toast": show_login_toast,
     })
 
 
@@ -533,7 +522,7 @@ def change_password(request):
 
     return render(request, 'studentDashboard/change_password.html')
 
-@login_required
+@student_required
 def teacher_evaluation(request):
     now = timezone.now()
 
