@@ -77,7 +77,6 @@
     </div>
 
     <!-- Captcha -->
-    <div style="margin-top: 1rem; display: flex; justify-content: center;"> <!-- Centered reCAPTCHA -->
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
@@ -86,7 +85,6 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-    </div>
 
     <!-- Remember Me -->
     <div style="margin-top: 1rem; display: flex; align-items: center;">
@@ -105,6 +103,12 @@
 <p style="margin-top: 1rem; font-size: 0.85rem; color: #555;"> <!-- Styled tertiary action -->
     <a href="{% url 'password_reset_form_view' %}" style="color: #009900; text-decoration: underline;">Forgot Password?</a>
 </p>
+
+<!-- Sign Up Link -->
+<div class="info-text" style="margin-top: 1.2rem;">
+    <span class="text-muted small">Don't have an account?</span>
+    <a href="{% url 'register' %}" class="ms-1 back-link">Sign Up</a>
+</div>
 
 <!-- ✅ Inline CSS for styling messages -->
 <style>
@@ -154,52 +158,8 @@
     line-height: 1;
 }
 </style>
-<!-- Enable submit only when reCAPTCHA is completed -->
+
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-    const submit = document.getElementById('login-submit');
-    if(!submit) return;
-    const form = submit.closest('form');
-    // start disabled until grecaptcha shows a response
-    submit.disabled = true;
-
-    function checkGRecaptcha(){
-        try{
-            if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse){
-                const resp = grecaptcha.getResponse();
-                submit.disabled = !(resp && resp.length > 0);
-                return !submit.disabled;
-            }
-        }catch(e){
-            console.error('recaptcha check error', e);
-        }
-        return false;
-    }
-
-    // Poll until grecaptcha becomes available and a response exists
-    const poll = setInterval(function(){
-        if(checkGRecaptcha()){
-            clearInterval(poll);
-        }
-    }, 400);
-
-    // Prevent submit if reCAPTCHA not completed
-    form.addEventListener('submit', function(e){
-        try{
-            if (!(typeof grecaptcha !== 'undefined' && grecaptcha.getResponse && grecaptcha.getResponse().length > 0)){
-                e.preventDefault();
-                // Friendly inline message instead of blocking silently
-                alert('Please complete the reCAPTCHA verification before logging in.');
-                return false;
-            }
-        }catch(err){
-            e.preventDefault();
-            alert('reCAPTCHA not ready. Please try again in a moment.');
-            return false;
-        }
-    });
-});
-
 function togglePassword() {
     const passwordField = document.getElementById('password');
     const eyeIcon = document.getElementById('eye-icon');

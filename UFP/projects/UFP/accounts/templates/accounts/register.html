@@ -205,14 +205,12 @@
         {% endif %}
     </div>
 
-    <div style="margin-bottom: 0.8rem; display:flex; justify-content:center; align-items:center;">
         {{ form.captcha }}
         {% if form.captcha.errors %}
             {% for error in form.captcha.errors %}
                 <div class="field-error">{{ error }}</div>
             {% endfor %}
         {% endif %}
-    </div>
 
     <button id="register-submit" type="submit" class="btn-primary">
         Register
@@ -235,27 +233,24 @@
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm_password');
 
-        // ✅ Added: Confirm Password Validation (prevents refresh if mismatch)
         form.addEventListener('submit', function (e) {
             const errorDiv = document.getElementById('confirm-password-error');
             if (password.value !== confirmPassword.value) {
-                e.preventDefault(); // ✅ Added: stop form submission
+                e.preventDefault();
                 if (!errorDiv) {
                     const errorMsg = document.createElement('div');
                     errorMsg.id = 'confirm-password-error';
                     errorMsg.classList.add('field-error');
                     errorMsg.textContent = 'Passwords do not match.';
-                    confirmPassword.insertAdjacentElement('afterend', errorMsg); // ✅ Added: inline error
+                    confirmPassword.insertAdjacentElement('afterend', errorMsg);
                 } else {
-                    errorDiv.textContent = 'Passwords do not match.'; // ✅ Added: update error text
+                    errorDiv.textContent = 'Passwords do not match.';
                 }
             } else {
-                // ✅ Added: clear error if fixed
                 if (errorDiv) errorDiv.remove();
             }
         });
 
-        // Existing Program Loading Logic (unchanged)
         departmentSelect.addEventListener('change', function () {
             const departmentId = this.value;
             programSelect.innerHTML = '<option value="" selected disabled>Select Program</option>';
@@ -298,56 +293,4 @@
         }
     }
 </script>
-
-<!-- Ensure Register Button is Disabled Until reCAPTCHA is Completed -->
-<!-- Adjust Disabled State for Register Button -->
-        <style>
-          .btn-primary:disabled {
-            opacity: 0.5; /* Reduce opacity to indicate disabled state */
-            cursor: not-allowed;
-          }
-        </style>
-
-        <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            const submit = document.getElementById('register-submit');
-            if(!submit) return;
-            const form = submit.closest('form');
-            // start disabled until grecaptcha shows a response
-            submit.disabled = true;
-
-            function checkGRecaptcha(){
-                try{
-                    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse){
-                        const resp = grecaptcha.getResponse();
-                        submit.disabled = !(resp && resp.length > 0);
-                        return !submit.disabled;
-                    }
-                }catch(e){
-                    console.error('recaptcha check error', e);
-                }
-                return false;
-            }
-
-            const poll = setInterval(function(){
-                if(checkGRecaptcha()){
-                    clearInterval(poll);
-                }
-            }, 400);
-
-            form.addEventListener('submit', function(e){
-                try{
-                    if (!(typeof grecaptcha !== 'undefined' && grecaptcha.getResponse && grecaptcha.getResponse().length > 0)){
-                        e.preventDefault();
-                        alert('Please complete the reCAPTCHA verification before registering.');
-                        return false;
-                    }
-                }catch(err){
-                    e.preventDefault();
-                    alert('reCAPTCHA not ready. Please try again in a moment.');
-                    return false;
-                }
-            });
-        });
-        </script>
 {% endblock %}

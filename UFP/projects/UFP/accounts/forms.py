@@ -1,5 +1,6 @@
 from django import forms
 from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV3
 
 class StudentLoginForm(forms.Form):
     student_id = forms.CharField(
@@ -17,12 +18,12 @@ class StudentLoginForm(forms.Form):
             'id': 'password',
         })
     )
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaV3)
 
 class AdminLoginForm(forms.Form):
     username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput)
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaV3)
 
 class RegisterForm(forms.Form):
     student_id = forms.CharField(max_length=8)
@@ -32,5 +33,4 @@ class RegisterForm(forms.Form):
     program = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
-    captcha = ReCaptchaField()
-
+    captcha = ReCaptchaField(widget=ReCaptchaV3)
