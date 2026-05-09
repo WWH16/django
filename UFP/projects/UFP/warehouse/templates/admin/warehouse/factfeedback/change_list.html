@@ -13,7 +13,7 @@
     align-items: center;
 }
 
-/* Default button look — matches Unfold filter button */
+/* Default button look */
 .service-button {
     display: inline-flex;
     align-items: center;
@@ -29,18 +29,38 @@
     text-decoration: none;
 }
 
-/* Hover state like Filters button */
+/* Hover state */
 .service-button:hover {
     background-color: #f3f4f6;       /* gray-100 */
 }
 
-/* Active/selected button (green border + text) */
+/* Active/selected button */
 .service-button.active {
     border-color: #16a34a;           /* green-600 */
     color: #16a34a;                  /* green-700 */
     background-color: #ffffff;
     font-weight: 600;
     box-shadow: 0 0 0 1px rgba(22,163,74,0.25);
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .service-button,
+.dark .service-button {
+    background-color: #1e293b;       /* matches other dark components */
+    border-color: #374151;           /* gray-700 */
+    color: #e5e7eb;                  /* gray-200 */
+}
+
+[data-theme="dark"] .service-button:hover,
+.dark .service-button:hover {
+    background-color: #2d3748;       /* slightly lighter for hover */
+}
+
+[data-theme="dark"] .service-button.active,
+.dark .service-button.active {
+    border-color: #16a34a;           /* remains green */
+    color: #16a34a;
+    background-color: #1e293b;
 }
 </style>
 {% endblock %}
