@@ -14,93 +14,49 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
   {% block extra_head %}{% endblock %}
   <style>
-    /* Highlight active sidebar link with a green border on the left */
     .sidebar .nav-link.active {
       background-color: rgba(255, 255, 255, 0.2) !important;
       border-left: 3px solid white !important;
       color: white !important;
     }
 
-    .sidebar-button {
-      font-size: 0.85rem;
-      /* 13.6px in rem units */
-    }
+    .sidebar-button { font-size: 0.85rem; }
 
     .sidebar .nav-link {
       font-size: 0.85rem;
-      /* 13.6px in rem units */
       display: flex;
       align-items: center;
       gap: 0;
-      /* No gap between icon and text */
     }
 
-    .sidebar .nav-link i {
-      margin-right: 0rem;
-      /* Minimal space between icon and text */
-    }
+    .sidebar .nav-link i { margin-right: 0rem; }
 
     .material-symbols-outlined {
       font-size: 1.1em;
-      /* Smaller than default, adjust as needed */
       vertical-align: middle;
     }
 
-    .sidebar .material-symbols-outlined {
-      font-size: 1.1em;
-      /* Sidebar icons specifically */
-    }
+    .sidebar .material-symbols-outlined { font-size: 1.1em; }
+    .btn .material-symbols-outlined { font-size: 1.1em; }
 
-    .btn .material-symbols-outlined {
-      font-size: 1.1em;
-      /* Button icons specifically */
-    }
-
-    /* Enhanced cooldown overlay styles */
-    #cooldownOverlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      border-radius: 8px;
-    }
-
-    .blurred {
-      filter: blur(2px);
-      pointer-events: none;
-    }
-
-    /* Mobile modal adjustments */
     @media (max-width: 576px) {
       .modal-dialog {
         width: 90vw;
         max-width: 95vw;
         margin: 1rem auto;
       }
-
       .modal-content {
         border-radius: 10px;
         padding: 0.5rem;
         font-size: 0.97em;
       }
-
       .modal-header,
       .modal-footer {
         padding: 0.5rem 1rem;
       }
-
-      .modal-body {
-        padding: 1rem 0.5rem;
-      }
+      .modal-body { padding: 1rem 0.5rem; }
     }
 
-    /* Burger menu animation styles */
     .sidebar-toggle {
       background: none;
       border: none;
@@ -133,33 +89,16 @@
       transform-origin: center;
     }
 
-    /* Burger animation when sidebar is open */
-    .sidebar-toggle.active .burger-line:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
-    }
+    .sidebar-toggle.active .burger-line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .sidebar-toggle.active .burger-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .sidebar-toggle.active .burger-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    .sidebar-toggle.active .burger-line:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0);
-    }
-
-    .sidebar-toggle.active .burger-line:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
-    }
-
-    /* Only apply these styles on mobile screens */
     @media (max-width: 576px) {
-      .login-toast-mobile {
-        margin-top: 70px !important;
-      }
+      .login-toast-mobile { margin-top: 70px !important; }
     }
 
-    /* Remove the thin top border line in modal footers on this page */
-    .modal-footer {
-      border-top: none !important;
-    }
+    .modal-footer { border-top: none !important; }
 
-    /* Feedback card + inputs using landing page palette */
     .feedback-card {
       position: relative;
       border-radius: 2rem;
@@ -198,7 +137,7 @@
       color: #f9fafb;
       box-shadow: 0 12px 30px rgba(22, 163, 74, 0.45);
       font-size: 1.6rem;
-      margin-top: -1.4rem; /* Slightly lower than previous for fine alignment */
+      margin-top: -1.4rem;
     }
 
     .feedback-card-title {
@@ -246,16 +185,6 @@
       resize: vertical;
     }
 
-    .feedback-form-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.75rem;
-      font-size: 0.78rem;
-      color: #6b7280;
-      margin-top: 0.2rem;
-    }
-
     .feedback-anon-check {
       font-size: 0.84rem;
       color: #4b5563;
@@ -284,7 +213,7 @@
       justify-content: center;
       gap: 0.4rem;
       border: none;
-      background: #079e07; /* Lighter green as default */
+      background: #079e07;
       box-shadow: 0 10px 24px rgba(7, 158, 7, 0.45);
       color: #ffffff;
       transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
@@ -292,7 +221,7 @@
 
     .feedback-submit-btn:hover {
       transform: translateY(-1px) scale(1.01);
-      background-color: #006600; /* Darker green on hover (navbar color) */
+      background-color: #006600;
       box-shadow: 0 18px 36px rgba(0, 102, 0, 0.55);
     }
 
@@ -310,8 +239,6 @@
 </head>
 
 <body>
-  <!-- Logout Confirmation Modal (Bootstrap basic) -->
-  <!-- SweetAlert2 Logout Modal will be triggered by JS -->
 
   <!-- Top Navbar -->
   <nav class="navbar student-navbar fixed-top">
@@ -330,8 +257,7 @@
         <a href="{% url 'site' %}" class="btn btn-sm btn-outline-light border-0" title="Visit Website">
           <i class="fas fa-globe"></i> Visit site
         </a>
-        <span
-          style="width:1px; height:30px; background:linear-gradient(to bottom, #d4f3e3 60%, #006600 100%); opacity:0.7; border-radius:2px; display:inline-block;"></span>
+        <span style="width:1px; height:30px; background:linear-gradient(to bottom, #d4f3e3 60%, #006600 100%); opacity:0.7; border-radius:2px; display:inline-block;"></span>
         <span class="small d-flex align-items-center">
           <span class="fw-semibold text-light ms-1">{{ user.first_name|default:user.username|title }}</span>
         </span>
@@ -344,35 +270,28 @@
     <nav id="studentSidebar" class="sidebar">
       <ul class="sidebar-nav flex-column mb-3">
         {% if user.is_authenticated and user.username|slice:":6" != "guest_" %}
-                <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
-            href="{% url 'profile' %}">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}">
             <i class="material-symbols-outlined">person</i>
             <span class="sidebar-text">Profile</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}"
-            href="{% url 'my_feedback' %}">
+          <a class="nav-link {% if request.resolver_match.url_name == 'my_feedback' %}active{% endif %}" href="{% url 'my_feedback' %}">
             <i class="material-symbols-outlined">forum</i>
             <span class="sidebar-text">My Feedback</span>
           </a>
         </li>
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}"
-            href="{% url 'give_feedback' %}">
+          <a class="nav-link {% if request.resolver_match.url_name == 'give_feedback' %}active{% endif %}" href="{% url 'give_feedback' %}">
             <i class="material-symbols-outlined">edit</i>
             <span class="sidebar-text">Give Feedback</span>
           </a>
         </li>
-        <!-- Divider to isolate logout button -->
         <li class="px-3">
-          <div
-            style="height:1px; border-top:2px dashed #d4f3e3; opacity:0.1; margin:1.5rem 0 1rem 0; border-radius:2px;">
-          </div>
+          <div style="height:1px; border-top:2px dashed #d4f3e3; opacity:0.1; margin:1.5rem 0 1rem 0; border-radius:2px;"></div>
         </li>
-        <!-- Logout button: same style and alignment as other sidebar buttons, placed last -->
         <li class="nav-item">
           <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
             <i class="material-symbols-outlined">logout</i>
@@ -381,13 +300,11 @@
         </li>
       </ul>
     </nav>
-    <!-- Sidebar Backdrop for mobile -->
     <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
 
     <!-- Main Content -->
     <div class="main-content">
       {% block dashboard_content %}
-      <!-- Feedback Form Only -->
       <div class="container-fluid">
         <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
           <div class="col-12 col-md-8 col-lg-6">
@@ -402,13 +319,10 @@
                 </div>
               </div>
 
-              <!-- ALERTS for form feedback -->
               {% if messages %}
               {% for message in messages %}
               {% if 'login' not in message.tags and 'success' not in message.tags %}
-              <div
-                class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show mb-3"
-                role="alert">
+              <div class="alert alert-{% if 'error' in message.tags %}danger{% else %}info{% endif %} alert-dismissible fade show mb-3" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
               </div>
@@ -416,7 +330,6 @@
               {% endfor %}
               {% endif %}
 
-              <!-- Form with relative positioning container -->
               <div style="position: relative;">
                 <form method="post" action="" id="feedbackForm">
                   {% csrf_token %}
@@ -433,22 +346,14 @@
                     <label for="feedback" class="feedback-input-label">Your feedback</label>
                     <textarea class="form-control feedback-input feedback-textarea" id="feedback" name="feedback" rows="4"
                       placeholder="Describe your experience, what went well, and what can be improved."></textarea>
-                    <div class="feedback-form-meta">
-                      <!-- Service-specific prompt / hint -->
-                      <div id="feedbackHint" class="form-text text-muted m-0">Please describe your experience in a few sentences.</div>
-                      <!-- Live word count -->
-                      <div id="wordCount" class="form-text text-muted text-end m-0">0 words</div>
-                    </div>
+                    <div class="form-text text-muted mt-1">Please describe your experience in a few sentences.</div>
                   </div>
                   <div class="mb-3">
                     <div class="form-check feedback-anon-check">
                       <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
-                      <label for="anonymous" class="form-check-label ms-1">
-                        Submit as anonymous
-                      </label>
+                      <label for="anonymous" class="form-check-label ms-1">Submit as anonymous</label>
                     </div>
                   </div>
-                  <!-- Feedback Form Button -->
                   <div class="d-grid">
                     <button type="submit" class="btn feedback-submit-btn" id="submitBtn">
                       <span class="material-symbols-outlined" style="font-size: 1.1rem;">send</span>
@@ -473,8 +378,10 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{% static 'dashboard/js/student-sidebar.js' %}"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // Logout confirmation
       var logoutBtn = document.querySelector('a.nav-link[href="#"][data-bs-toggle="modal"]');
       if (logoutBtn) {
         logoutBtn.removeAttribute('data-bs-toggle');
@@ -497,9 +404,61 @@
           });
         });
       }
+
+      // Active state management
+      const currentPath = window.location.pathname;
+      const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+      sidebarLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && currentPath === href) {
+          link.classList.add('active');
+        }
+      });
+
+      // Sidebar toggle
+      const sidebarToggle = document.getElementById('sidebarToggleBtn');
+      const sidebar = document.getElementById('studentSidebar');
+      const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+      function isMobile() { return window.innerWidth <= 768; }
+
+      function openSidebar() {
+        sidebar.classList.add('open');
+        sidebarToggle.classList.add('active');
+        if (isMobile()) sidebarBackdrop.style.display = 'block';
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarToggle.classList.remove('active');
+        if (isMobile()) sidebarBackdrop.style.display = 'none';
+      }
+
+      sidebarToggle.addEventListener('click', function () {
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+      });
+
+      sidebarBackdrop.addEventListener('click', closeSidebar);
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('open') && isMobile()) closeSidebar();
+      });
+
+      window.addEventListener('resize', function () {
+        if (!isMobile()) sidebarBackdrop.style.display = 'none';
+      });
+
+      // Prevent back navigation
+      if (history.length === 1) history.pushState({ dashboard: true }, '', location.href);
+      history.pushState({ preventBack: true }, '', location.href);
+      window.addEventListener('popstate', function () {
+        const logoutBtn = document.querySelector('a.nav-link[href="#"]');
+        if (logoutBtn) logoutBtn.click();
+        history.pushState({ preventBack: true }, '', location.href);
+      });
     });
   </script>
-  <!-- Login Success Toast -->
+
   {% if show_login_toast %}
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -515,7 +474,7 @@
           toast.onmouseleave = Swal.resumeTimer;
         }
       });
-      Toast.fire({ icon: 'success', title: 'Signed in successfully"' });
+      Toast.fire({ icon: 'success', title: 'Signed in successfully' });
     });
   </script>
   {% endif %}
@@ -529,7 +488,7 @@
         title: "{{ message.extra_tags|default:'Success'|escapejs }}",
         text: "{{ message|escapejs }}",
         icon: "{% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% elif 'info' in message.tags %}info{% else %}question{% endif %}",
-        confirmButtonColor: '#006600', // Set SweetAlert2 OK button color to green
+        confirmButtonColor: '#006600',
       });
     });
   </script>
@@ -537,422 +496,6 @@
   {% endfor %}
   {% endif %}
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Feedback cooldown logic
-      var cooldown = parseInt('{{ cooldown_remaining|default:"0" }}', 10);
-      var form = document.getElementById('feedbackForm');
-      var cooldownOverlay = document.getElementById('cooldownOverlay');
-      var countdownElem = document.getElementById('countdown');
-
-      if (cooldown > 0) {
-        cooldownOverlay.style.display = 'flex';
-        form.classList.add('blurred');
-        Array.from(form.elements).forEach(el => el.disabled = true);
-
-        var interval = setInterval(function () {
-          cooldown--;
-          if (cooldown < 0) cooldown = 0;
-          countdownElem.textContent = cooldown;
-          if (cooldown <= 0) {
-            clearInterval(interval);
-            cooldownOverlay.style.display = 'none';
-            form.classList.remove('blurred');
-            Array.from(form.elements).forEach(el => el.disabled = false);
-          }
-        }, 1000);
-      }
-
-      // Active state management based on current page
-      const currentPath = window.location.pathname;
-      const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
-      sidebarLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && currentPath === href) {
-          link.classList.add('active');
-        }
-      });
-      
-      // --- Service-specific hint and word-count validation ---
-      const serviceSelect = document.getElementById('service');
-      const feedbackEl = document.getElementById('feedback');
-      const hintEl = document.getElementById('feedbackHint');
-      const wordCountEl = document.getElementById('wordCount');
-      const formEl = document.getElementById('feedbackForm');
-
-      const hints = {
-        'Scholarship Services': 'Please describe your experience with scholarship services (e.g., timeliness of updates on Facebook, clarity of information, ease of application).',
-        'Library Facility': 'Please describe your experience with the library facility (e.g., cleanliness, availability of books, seating, study environment).',
-        'WiFi': 'Please describe your experience with campus WiFi (e.g., speed, accessibility, reliability, areas with weak signal).',
-        'College Admission': 'Please describe your experience with the admission process (e.g., requirements, clarity of instructions, staff assistance, processing time).'
-      };
-
-      function updateHint() {
-        const opt = serviceSelect.options[serviceSelect.selectedIndex];
-        const name = opt ? (opt.text || opt.value) : '';
-        // Map common names or fallback
-        if (!name) {
-          hintEl.textContent = 'Please describe your experience in a few sentences.';
-          return;
-        }
-        // Find matching hint by exact name or by keyword
-        if (hints[name]) {
-          hintEl.textContent = hints[name];
-        } else if (/scholarship/i.test(name)) {
-          hintEl.textContent = hints['Scholarship Services'];
-        } else if (/library/i.test(name)) {
-          hintEl.textContent = hints['Library Facility'];
-        } else if (/wifi|wi-?fi/i.test(name)) {
-          hintEl.textContent = hints['WiFi'];
-        } else if (/admission/i.test(name)) {
-          hintEl.textContent = hints['College Admission'];
-        } else {
-          hintEl.textContent = 'Please describe your experience in a few sentences.';
-        }
-      }
-
-      function countWords(text) {
-        if (!text) return 0;
-        // Normalize whitespace and split on spaces
-        const words = text.trim().split(/\s+/).filter(Boolean);
-        return words.length;
-      }
-
-      function refreshWordCount() {
-        const n = countWords(feedbackEl.value);
-        wordCountEl.textContent = n + (n === 1 ? ' word' : ' words');
-        return n;
-      }
-
-      if (serviceSelect) {
-        serviceSelect.addEventListener('change', updateHint);
-      }
-
-      if (feedbackEl) {
-        feedbackEl.addEventListener('input', refreshWordCount);
-        // initialize
-        refreshWordCount();
-      }
-
-      // initialize hint from current selection
-      updateHint();
-      // -------------------------------------------------------
-    });
-  </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const sidebarToggle = document.getElementById('sidebarToggleBtn');
-      const sidebar = document.getElementById('studentSidebar');
-      const sidebarBackdrop = document.getElementById('sidebarBackdrop');
-
-      function isMobile() {
-        return window.innerWidth <= 768;
-      }
-
-      function openSidebar() {
-        sidebar.classList.add('open');
-        sidebarToggle.classList.add('active'); // Animate burger on all screens
-        if (isMobile()) {
-          sidebarBackdrop.style.display = 'block';
-        }
-      }
-
-      function closeSidebar() {
-        sidebar.classList.remove('open');
-        sidebarToggle.classList.remove('active'); // Animate burger on all screens
-        if (isMobile()) {
-          sidebarBackdrop.style.display = 'none';
-        }
-      }
-
-      sidebarToggle.addEventListener('click', function () {
-        if (sidebar.classList.contains('open')) {
-          closeSidebar();
-        } else {
-          openSidebar();
-        }
-      });
-
-      sidebarBackdrop.addEventListener('click', function () {
-        closeSidebar();
-      });
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && sidebar.classList.contains('open') && isMobile()) {
-          closeSidebar();
-        }
-      });
-
-      window.addEventListener('resize', function () {
-        if (!isMobile()) {
-          sidebarBackdrop.style.display = 'none';
-        }
-      });
-    });
-  </script>
-
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Force browser history to always have at least one entry
-      if (history.length === 1) {
-        history.pushState({ dashboard: true }, '', location.href);
-      }
-
-      // Always push our own state
-      history.pushState({ preventBack: true }, '', location.href);
-
-      // Listen for any popstate event
-      window.addEventListener('popstate', function (e) {
-        // Find and click the existing logout button to reuse its SweetAlert
-        const logoutBtn = document.querySelector('a.nav-link[href="#"]');
-        if (logoutBtn) {
-          logoutBtn.click();
-        }
-
-        // Always push state back to prevent navigation
-        history.pushState({ preventBack: true }, '', location.href);
-      });
-    });
-  </script>
-
-  <!-- Grammar checker disabled. To re-enable, remove the surrounding HTML comment. -->
-  <script>
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Grammar checker initialized');
-
-  const feedbackTextarea = document.getElementById('feedback');
-  if (!feedbackTextarea) {
-    console.error('❌ Textarea with id="feedback" not found');
-    return;
-  }
-
-  console.log('✅ Found textarea:', feedbackTextarea);
-
-  // ---------------- Config ----------------
-  const BACKEND_URL = '/api/grammar-correct/';
-  const IDLE_MS = 1500;
-  // ----------------------------------------
-
-  let idleTimer = null;
-  let inFlight = null;
-  let busy = false;
-  let lastCheckedText = '';
-  let lastIssuedToken = 0;
-  let suggestionBox = null;
-
-  // Escape HTML safely
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // Create suggestion box
-  function createSuggestionBox() {
-    if (suggestionBox) return suggestionBox;
-    const box = document.createElement('div');
-    box.className = 'grammar-suggestion-box';
-    box.style.cssText = `
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 1000;
-      margin-top: 5px;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-    `;
-    const container = feedbackTextarea.parentElement;
-    container.style.position = container.style.position || 'relative';
-    container.appendChild(box);
-    suggestionBox = box;
-    return box;
-  }
-
-  // Show suggestion box
-  function showSuggestion(originalText, correctedText) {
-    if (originalText === correctedText) {
-      hideSuggestion();
-      return;
-    }
-    const box = createSuggestionBox();
-    box.innerHTML = `
-      <div style="padding: 12px;">
-        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-          💡 Grammar suggestion:
-        </div>
-        <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-bottom: 8px; font-size: 14px; line-height: 1.4;">
-          ${escapeHtml(correctedText)}
-        </div>
-        <div style="display: flex; gap: 8px; justify-content: flex-end;">
-          <button type="button" class="btn btn-sm btn-outline-secondary dismiss-suggestion">Dismiss</button>
-          <button type="button" class="btn btn-sm btn-success apply-suggestion">✓ Apply</button>
-        </div>
-      </div>
-    `;
-
-    box.querySelector('.apply-suggestion').addEventListener('click', () => {
-      applySuggestion(correctedText);
-    });
-    box.querySelector('.dismiss-suggestion').addEventListener('click', () => {
-      hideSuggestion();
-    });
-
-    box.style.display = 'block';
-  }
-
-  function hideSuggestion() {
-    if (suggestionBox) suggestionBox.style.display = 'none';
-  }
-
-  // Apply suggestion to textarea
-  function applySuggestion(correctedText) {
-    const wasFocused = document.activeElement === feedbackTextarea;
-    feedbackTextarea.value = correctedText;
-    lastCheckedText = correctedText;
-    showNotice('Suggestion applied!', true);
-    if (wasFocused) {
-      feedbackTextarea.focus();
-      feedbackTextarea.setSelectionRange(correctedText.length, correctedText.length);
-    }
-    hideSuggestion();
-  }
-
-  // Status notice
-  function showNotice(message, success = true) {
-    const existing = document.querySelector('.grammar-notice');
-    if (existing) existing.remove();
-
-    const el = document.createElement('div');
-    el.className = 'grammar-notice';
-    el.innerHTML = `<small class="${success ? 'text-success' : 'text-muted'}">${success ? '✓' : 'ℹ'} ${message}</small>`;
-    el.style.cssText = `
-      position: absolute; 
-      right: 10px; 
-      top: -25px; 
-      opacity: 0; 
-      transition: all 0.3s ease;
-      z-index: 15; 
-      font-size: 11px; 
-      background: ${success ? 'rgba(25,135,84,.1)' : 'rgba(108,117,125,.1)'};
-      padding: 3px 6px; 
-      border-radius: 10px; 
-      border: 1px solid ${success ? 'rgba(25,135,84,.2)' : 'rgba(108,117,125,.2)'};
-      white-space: nowrap;
-    `;
-    feedbackTextarea.parentElement.appendChild(el);
-    requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(-3px)'; });
-    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2000);
-  }
-
-  // Cancel inflight requests
-  function cancelInFlight() {
-    if (inFlight) inFlight.abort();
-    inFlight = null;
-  }
-
-  // Backend correction call
-  async function correctWithBackend(text) {
-    cancelInFlight();
-    const controller = new AbortController();
-    inFlight = controller;
-
-    const res = await fetch(BACKEND_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-      signal: controller.signal
-    });
-
-    if (!res.ok) throw new Error(`Backend error: ${res.status}`);
-    const data = await res.json();
-    return data.corrected || text;
-  }
-
-  // Fallback LanguageTool
-  async function correctWithLanguageTool(text) {
-    const res = await fetch('https://api.languagetool.org/v2/check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ text, language: 'en-US' })
-    });
-    const data = await res.json();
-    let corrected = text;
-    for (const m of [...data.matches].reverse()) {
-      if (m.replacements && m.replacements.length) {
-        corrected = corrected.slice(0, m.offset) + m.replacements[0].value + corrected.slice(m.offset + m.length);
-      }
-    }
-    return corrected;
-  }
-
-  // Main check
-  async function checkGrammar() {
-    const text = feedbackTextarea.value.trim();
-    if (!text || text.length < 10 || text === lastCheckedText || busy) return;
-
-    busy = true;
-    const token = ++lastIssuedToken;
-    feedbackTextarea.style.borderColor = '#ffc107';
-
-    try {
-      let corrected;
-      try {
-        corrected = await correctWithBackend(text);
-      } catch {
-        corrected = await correctWithLanguageTool(text);
-      }
-
-      if (token !== lastIssuedToken) return; // ignore outdated results
-      lastCheckedText = text;
-
-      if (corrected && corrected !== text) {
-        showSuggestion(text, corrected);
-      } else {
-        hideSuggestion();
-        if (text.length > 20) showNotice('Grammar looks good!', false);
-      }
-    } catch (e) {
-      console.error('Grammar check failed:', e);
-      hideSuggestion();
-      showNotice('Grammar check unavailable', false);
-    } finally {
-      busy = false;
-      feedbackTextarea.style.borderColor = '';
-      inFlight = null;
-    }
-  }
-
-  // Schedule check
-  function scheduleGrammarCheck() {
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => checkGrammar(), IDLE_MS);
-  }
-
-  // Event listeners
-  feedbackTextarea.addEventListener('input', () => { hideSuggestion(); scheduleGrammarCheck(); });
-  feedbackTextarea.addEventListener('blur', () => { setTimeout(() => { if (!document.activeElement || !suggestionBox?.contains(document.activeElement)) checkGrammar(); }, 100); });
-  feedbackTextarea.addEventListener('keyup', (e) => { if (['.', '!', '?'].includes(e.key)) { clearTimeout(idleTimer); setTimeout(() => checkGrammar(), 500); }});
-  document.addEventListener('click', (e) => { if (suggestionBox && !suggestionBox.contains(e.target) && e.target !== feedbackTextarea) hideSuggestion(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && suggestionBox && suggestionBox.style.display === 'block') { hideSuggestion(); feedbackTextarea.focus(); } });
-
-  // Initial check
-  if (feedbackTextarea.value.trim()) setTimeout(() => checkGrammar(), 1000);
-
-  console.log('✅ Grammar checker setup complete');
-});
-</script>
-
-
-  <!-- Removed 5-word submission enforcement script -->
-   
 </body>
 
 </html>
