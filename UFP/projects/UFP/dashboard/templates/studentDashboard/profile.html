@@ -53,25 +53,39 @@
   }
 </style>
 
-<div class="container py-4" style="min-height: 100vh;">
+<div class="container py-4" style="background-color: #eeeeee; min-height: 100vh;">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="font-size: 0.85rem;">
+      <li class="breadcrumb-item active" aria-current="page" style="color: #6b7280;">Profile</li>
+    </ol>
+  </nav>
   <h3 class="text-success mb-4" style="font-size: 1.3rem;">
     <i class="fas fa-user-circle"></i> My Profile
   </h3>
 
-  <div class="feedback-card shadow-lg mb-4">
-    <div class="card-body" style="font-size: 0.95rem; background: transparent; border: 0; padding: 0;">
-      <h5 class="card-title" style="font-size: 1.05rem;">Account Details</h5>
-      <p style="font-size: 0.92rem;"><strong>Student ID:</strong> {{ user.username }}</p>
-      <p style="font-size: 0.92rem;"><strong>Full Name:</strong> {{ user.first_name }}</p>
-      <p style="font-size: 0.92rem;"><strong>Email:</strong> {{ user_email }}</p>
+  <div class="feedback-card shadow-sm mb-4">
+    <div class="card-body" style="font-size: 0.95rem;">
+      <h5 class="card-title mb-4" style="font-size: 1.1rem; font-weight: 700; color: #0f172a;">Account Details</h5>
+      <div class="row">
+        <div class="col-sm-3 text-muted" style="font-size: 0.9rem;">Student ID</div>
+        <div class="col-sm-9 fw-bold mb-2">{{ user.username }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3 text-muted" style="font-size: 0.9rem;">Full Name</div>
+        <div class="col-sm-9 fw-bold mb-2">{{ user.first_name }}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3 text-muted" style="font-size: 0.9rem;">Email</div>
+        <div class="col-sm-9 fw-bold mb-0">{{ user_email }}</div>
+      </div>
     </div>
   </div>
 
   <div class="d-flex gap-2">
-    <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal" style="font-size: 0.92rem; min-width: 100px;">
+    <a href="#" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal" style="font-size: 0.92rem; min-width: 100px; border-radius: 50px;">
       <i class="fas fa-pencil-alt"></i> Edit Profile
     </a>
-    <a href="{% url 'change_password' %}" class="btn btn-success btn-sm" style="font-size: 0.92rem; min-width: 100px;">
+    <a href="{% url 'change_password' %}" class="btn btn-success btn-sm" style="font-size: 0.92rem; min-width: 100px; border-radius: 50px;">
       <i class="fas fa-key"></i> Change Password
     </a>
   </div>

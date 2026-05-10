@@ -1,19 +1,23 @@
 {% extends 'studentDashboard/feedback_form.html' %}
 {% block dashboard_content %}
-  <div class="container-fluid" style="background-color: transparent; min-height: 100vh; padding-bottom: 2rem;">
-    <!-- Header Section -->
+  <div class="container py-4" style="background-color: #eeeeee; min-height: 100vh; padding-bottom: 2rem;">
     <div class="row mb-1 mt-1">
       <div class="col-12">
-        <div>
-          <h3 class="fw-bold feedback-title">My Feedback</h3>
-          <p class="feedback-title">Track your feedback submissions</p>
+        <div class="mb-3">
+          <h3 class="fw-bold feedback-title text-success" style="font-size: 1.3rem;">My Feedback</h3>
+          <p class="text-muted" style="font-size: 0.92rem;">Track your feedback submissions</p>
         </div>
       </div>
     </div>
     <div class="row g-4">
       <div class="col-12">
-        <div class="floating-card feedback-card shadow-lg" style="margin-top: 0; margin-bottom: 2rem;">
+        <div class="feedback-card shadow-sm" style="margin-top: 0; margin-bottom: 2rem;">
           <div class="card-body p-0">
+            <!-- Buttons for switching -->
+            <div class="d-flex gap-2 mb-3">
+                <button type="button" id="osasBtn" class="btn btn-outline-success btn-sm active">Services Feedback</button>
+                <button type="button" id="teacherBtn" class="btn btn-outline-success btn-sm">Teacher Evaluations</button>
+            </div>
             <!-- OSAS Services Table -->
             <div id="osasTable">
               {% if feedback_list %}
@@ -38,7 +42,7 @@
                           <span class="text-muted">{{ feedback.comments|truncatechars:80 }}</span>
                         </td>
                         <td>
-                          <span class="text-secondary">{{ feedback.timestamp|date:"m d, y" }}</span>
+                          <span class="text-secondary">{{ feedback.timestamp|date:"M/d/y" }}</span>
                         </td>
                       </tr>
                       {% endfor %}
@@ -52,7 +56,7 @@
                   </div>
                   <h5 class="text-muted mb-2">No feedback yet</h5>
                   <p class="text-muted mb-4">Start by submitting your first feedback to help us improve our services.</p>
-                  <a href="{% url 'give_feedback' %}" class="btn btn-success px-3 py-2" style="font-size: 1rem; min-width: 140px; max-width: 100%; white-space: nowrap;">
+                  <a href="{% url 'give_feedback' %}" class="btn btn-success px-3 py-2" style="font-size: 1rem; min-width: 140px; max-width: 100%; white-space: nowrap; border-radius: 50px;">
                     Submit Your First Feedback
                   </a>
                 </div>
@@ -81,7 +85,7 @@
                         <span class="text-muted">{{ evaluation.comments|truncatechars:80 }}</span>
                       </td>
                       <td>
-                        <span class="text-secondary">{{ evaluation.timestamp|date:"m d, y" }}</span>
+                        <span class="text-secondary">{{ evaluation.timestamp|date:"M/d/y" }}</span>
                       </td>
                     </tr>
                     {% empty %}
